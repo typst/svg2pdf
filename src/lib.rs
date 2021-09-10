@@ -1,5 +1,7 @@
 use pdf_writer::types::{ColorSpace, LineCapStyle, LineJoinStyle, ShadingType};
-use pdf_writer::writers::{ExponentialFunction, ExtGraphicsState, ShadingPattern};
+use pdf_writer::writers::{
+    ExponentialFunction, ExtGraphicsState, Resources, ShadingPattern,
+};
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
 use std::collections::HashMap;
 use usvg::{
@@ -113,6 +115,7 @@ impl CoordToPdf {
 
 struct PendingPattern {
     id: String,
+    num: u32,
     shading_type: ShadingType,
     bbox: usvg::Rect,
     coords: [f64; 6],
@@ -120,8 +123,94 @@ struct PendingPattern {
 }
 
 struct PendingGS {
+    num: u32,
     stroke_opacity: Option<f32>,
     fill_opacity: Option<f32>,
+}
+
+struct Context<'a> {
+    tree: &'a Tree,
+    c: &'a CoordToPdf,
+    function_map: &'a HashMap<String, Ref>,
+    next_id: &'a mut i32,
+    next_pattern: u32,
+    next_graphic: u32,
+    next_xobject: u32,
+    pending_patterns: &'a mut Vec<PendingPattern>,
+    pending_graphics: &'a mut Vec<PendingGS>,
+    pending_xobjects: &'a mut Vec<(u32, Ref)>,
+    checkpoints: Vec<[usize; 3]>,
+}
+
+impl<'a> Context<'a> {
+    fn new(
+        tree: &'a Tree,
+        c: &'a CoordToPdf,
+        function_map: &'a HashMap<String, Ref>,
+        next_id: &'a mut i32,
+        pending_patterns: &'a mut Vec<PendingPattern>,
+        pending_graphics: &'a mut Vec<PendingGS>,
+        pending_xobjects: &'a mut Vec<(u32, Ref)>,
+    ) -> Self {
+        Self {
+            tree,
+            c,
+            function_map,
+            next_id,
+            next_pattern: 0,
+            next_graphic: 0,
+            next_xobject: 0,
+            pending_patterns,
+            pending_graphics,
+            pending_xobjects,
+            checkpoints: vec![],
+        }
+    }
+
+    fn push(&mut self) {
+        self.checkpoints.push([
+            self.pending_patterns.len(),
+            self.pending_graphics.len(),
+            self.pending_xobjects.len(),
+        ]);
+    }
+
+    fn pop(&mut self, resources: &mut Resources) {
+        let [patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
+
+        let pending_patterns = self.pending_patterns.split_off(patterns);
+        write_patterns(&pending_patterns, self.c, self.function_map, resources);
+
+        let pending_graphics = self.pending_graphics.split_off(graphics);
+        write_graphics(&pending_graphics, resources);
+
+        let pending_xobjects = self.pending_xobjects.split_off(xobjects);
+        write_xobjects(&pending_xobjects, resources);
+    }
+
+    fn alloc_ref(&mut self) -> Ref {
+        let reference = Ref::new(*self.next_id);
+        *self.next_id += 1;
+        reference
+    }
+
+    fn alloc_pattern(&mut self) -> u32 {
+        let num = self.next_pattern;
+        self.next_pattern += 1;
+        num
+    }
+
+    fn alloc_gs(&mut self) -> u32 {
+        let num = self.next_graphic;
+        self.next_graphic += 1;
+        num
+    }
+
+    fn alloc_xobject(&mut self) -> u32 {
+        let num = self.next_xobject;
+        self.next_xobject += 1;
+        num
+    }
 }
 
 pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
@@ -179,14 +268,19 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
 
     let mut pending_graphics = Vec::new();
     let mut pending_patterns = Vec::new();
+    let mut pending_xobjects = Vec::new();
 
-    let content = content_stream(
-        &tree.root(),
+    let mut context = Context::new(
         &tree,
         &c,
-        &mut pending_graphics,
+        &function_map,
+        &mut next_id,
         &mut pending_patterns,
+        &mut pending_graphics,
+        &mut pending_xobjects,
     );
+
+    let content = content_stream(&tree.root(), &mut writer, &mut context);
 
     let mut page = writer.page(page_id);
     page.media_box(Rect::new(
@@ -199,71 +293,9 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
     page.contents(content_id);
 
     let mut resources = page.resources();
-    let mut patterns = resources.patterns();
-
-    for (i, pending) in pending_patterns.into_iter().enumerate() {
-        let name = format!("p{}", i);
-        let pattern_name = Name(name.as_bytes());
-        let mut pattern = ShadingPattern::new(patterns.key(pattern_name));
-
-        let mut shading = pattern.shading();
-        shading.shading_type(pending.shading_type);
-        shading.color_space(ColorSpace::DeviceRgb);
-
-        let max = if pending.bbox.width() > pending.bbox.height() {
-            pending.bbox.width()
-        } else {
-            pending.bbox.height()
-        };
-
-        let coords = if pending.transform_coords {
-            [
-                c.x(pending.bbox.x() + pending.coords[0] * pending.bbox.width()),
-                c.y(pending.bbox.y() + pending.coords[1] * pending.bbox.height()),
-                c.x(pending.bbox.x() + pending.coords[2] * pending.bbox.width()),
-                c.y(pending.bbox.y() + pending.coords[3] * pending.bbox.height()),
-                c.px_to_pt(pending.coords[4] * max),
-                c.px_to_pt(pending.coords[5] * max),
-            ]
-        } else {
-            [
-                c.x(pending.coords[0]),
-                c.y(pending.coords[1]),
-                c.x(pending.coords[2]),
-                c.y(pending.coords[3]),
-                c.px_to_pt(pending.coords[4]),
-                c.px_to_pt(pending.coords[5]),
-            ]
-        };
-
-        if pending.shading_type == ShadingType::Axial {
-            shading.coords(coords[0 .. 4].iter().copied());
-        } else {
-            shading.coords([
-                coords[0], coords[1], coords[4], coords[2], coords[3], coords[5],
-            ]);
-        }
-        shading.function(function_map[&pending.id]);
-        shading.extend([true, true]);
-        shading.finish();
-    }
-
-    patterns.finish();
-
-    let mut ext_gs = resources.key(Name(b"ExtGState")).dict();
-    for (i, gs) in pending_graphics.into_iter().enumerate() {
-        let mut ext_g =
-            ExtGraphicsState::new(ext_gs.key(Name(format!("gs{}", i).as_bytes())));
-
-        if let Some(stroke_opacity) = gs.stroke_opacity {
-            ext_g.stroking_alpha(stroke_opacity);
-        }
-
-        if let Some(fill_opacity) = gs.fill_opacity {
-            ext_g.non_stroking_alpha(fill_opacity);
-        }
-    }
-    ext_gs.finish();
+    write_patterns(&pending_patterns, &c, &function_map, &mut resources);
+    write_graphics(&pending_graphics, &mut resources);
+    write_xobjects(&pending_xobjects, &mut resources);
 
     resources.finish();
     page.finish();
@@ -273,17 +305,15 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
     Some(writer.finish(catalog_id))
 }
 
-fn content_stream(
+fn content_stream<'a>(
     node: &usvg::Node,
-    tree: &Tree,
-    c: &CoordToPdf,
-    pending_graphics: &mut Vec<PendingGS>,
-    pending_patterns: &mut Vec<PendingPattern>,
+    writer: &mut PdfWriter,
+    ctx: &mut Context<'a>,
 ) -> Vec<u8> {
     let mut content = Content::new();
 
-    for element in node.descendants() {
-        if tree.is_in_defs(&element) {
+    for element in node.children() {
+        if ctx.tree.is_in_defs(&element) || &element == node {
             continue;
         }
 
@@ -317,14 +347,17 @@ fn content_stream(
                 if stroke_opacity.unwrap_or(1.0) != 1.0
                     || fill_opacity.unwrap_or(1.0) != 1.0
                 {
-                    content.set_parameters(Name(
-                        format!("gs{}", pending_graphics.len()).as_bytes(),
-                    ));
-                    pending_graphics.push(PendingGS { stroke_opacity, fill_opacity });
+                    let num = ctx.alloc_gs();
+                    content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+                    ctx.pending_graphics.push(PendingGS {
+                        stroke_opacity,
+                        fill_opacity,
+                        num,
+                    });
                 }
 
                 if let Some(stroke) = &path.stroke {
-                    content.set_line_width(c.px_to_pt(stroke.width.value()));
+                    content.set_line_width(ctx.c.px_to_pt(stroke.width.value()));
                     match stroke.linecap {
                         LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
                         LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
@@ -376,12 +409,14 @@ fn content_stream(
                             );
                         }
                         Paint::Link(id) => {
-                            let item = tree.defs_by_id(id).unwrap();
+                            let item = ctx.tree.defs_by_id(id).unwrap();
                             match *item.borrow() {
                                 NodeKind::LinearGradient(ref lg) => {
-                                    let name = format!("p{}", pending_patterns.len());
-                                    pending_patterns.push(PendingPattern {
+                                    let num = ctx.alloc_pattern();
+                                    let name = format!("p{}", num);
+                                    ctx.pending_patterns.push(PendingPattern {
                                         id: lg.id.clone(),
+                                        num,
                                         shading_type: ShadingType::Axial,
                                         bbox: element.calculate_bbox().unwrap_or_else(
                                             || {
@@ -399,9 +434,11 @@ fn content_stream(
                                     content.set_fill_pattern(None, Name(name.as_bytes()));
                                 }
                                 NodeKind::RadialGradient(ref rg) => {
-                                    let name = format!("p{}", pending_patterns.len());
-                                    pending_patterns.push(PendingPattern {
+                                    let num = ctx.alloc_pattern();
+                                    let name = format!("p{}", num);
+                                    ctx.pending_patterns.push(PendingPattern {
                                         id: rg.id.clone(),
+                                        num,
                                         shading_type: ShadingType::Radial,
                                         bbox: element.calculate_bbox().unwrap_or_else(
                                             || {
@@ -433,19 +470,19 @@ fn content_stream(
                 for &operation in path.data.iter() {
                     match operation {
                         PathSegment::MoveTo { x, y } => {
-                            content.move_to(c.x(x), c.y(y));
+                            content.move_to(ctx.c.x(x), ctx.c.y(y));
                         }
                         PathSegment::LineTo { x, y } => {
-                            content.line_to(c.x(x), c.y(y));
+                            content.line_to(ctx.c.x(x), ctx.c.y(y));
                         }
                         PathSegment::CurveTo { x1, y1, x2, y2, x, y } => {
                             content.cubic_to(
-                                c.x(x1),
-                                c.y(y1),
-                                c.x(x2),
-                                c.y(y2),
-                                c.x(x),
-                                c.y(y),
+                                ctx.c.x(x1),
+                                ctx.c.y(y1),
+                                ctx.c.x(x2),
+                                ctx.c.y(y2),
+                                ctx.c.x(x),
+                                ctx.c.y(y),
                             );
                         }
                         PathSegment::ClosePath => {
@@ -466,7 +503,55 @@ fn content_stream(
                 content.restore_state();
             }
 
-            NodeKind::Group(ref group) => {}
+            NodeKind::Group(ref group) => {
+                if !group.filter.is_empty() {
+                    todo!();
+                    continue;
+                }
+
+                ctx.push();
+                let group_ref = ctx.alloc_ref();
+
+                let child_content = content_stream(&element, writer, ctx);
+
+                let mut form = writer.form_xobject(group_ref, &child_content);
+                let bbox = element
+                    .calculate_bbox()
+                    .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
+                form.bbox(Rect::new(
+                    0.0,
+                    0.0,
+                    bbox.width() as f32,
+                    bbox.height() as f32,
+                ));
+                form.group()
+                    .transparency()
+                    .color_space(ColorSpace::DeviceRgb)
+                    .isolated(true)
+                    .knockout(false);
+
+                let mut resources = form.resources();
+                ctx.pop(&mut resources);
+
+                let num = ctx.alloc_xobject();
+                let name = format!("xo{}", num);
+                content.save_state();
+
+                if group.opacity.value() != 1.0 {
+                    let num = ctx.alloc_gs();
+                    content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+
+                    ctx.pending_graphics.push(PendingGS {
+                        num,
+                        fill_opacity: Some(group.opacity.value() as f32),
+                        stroke_opacity: None,
+                    });
+                }
+
+                content.x_object(Name(name.as_bytes()));
+                content.restore_state();
+                ctx.pending_xobjects.push((num, group_ref));
+            }
 
             _ => {}
         }
@@ -526,6 +611,101 @@ fn stops_to_function(writer: &mut PdfWriter, id: Ref, stops: &[Stop]) -> bool {
     true
 }
 
+fn write_patterns(
+    pending_patterns: &[PendingPattern],
+    c: &CoordToPdf,
+    function_map: &HashMap<String, Ref>,
+    resources: &mut Resources,
+) {
+    if pending_patterns.is_empty() {
+        return;
+    }
+
+    let mut patterns = resources.key(Name(b"Pattern")).dict();
+
+    for pending in pending_patterns.iter() {
+        let name = format!("p{}", pending.num);
+        let pattern_name = Name(name.as_bytes());
+        let mut pattern = ShadingPattern::new(patterns.key(pattern_name));
+
+        let mut shading = pattern.shading();
+        shading.shading_type(pending.shading_type);
+        shading.color_space(ColorSpace::DeviceRgb);
+
+        let max = if pending.bbox.width() > pending.bbox.height() {
+            pending.bbox.width()
+        } else {
+            pending.bbox.height()
+        };
+
+        let coords = if pending.transform_coords {
+            [
+                c.x(pending.bbox.x() + pending.coords[0] * pending.bbox.width()),
+                c.y(pending.bbox.y() + pending.coords[1] * pending.bbox.height()),
+                c.x(pending.bbox.x() + pending.coords[2] * pending.bbox.width()),
+                c.y(pending.bbox.y() + pending.coords[3] * pending.bbox.height()),
+                c.px_to_pt(pending.coords[4] * max),
+                c.px_to_pt(pending.coords[5] * max),
+            ]
+        } else {
+            [
+                c.x(pending.coords[0]),
+                c.y(pending.coords[1]),
+                c.x(pending.coords[2]),
+                c.y(pending.coords[3]),
+                c.px_to_pt(pending.coords[4]),
+                c.px_to_pt(pending.coords[5]),
+            ]
+        };
+
+        if pending.shading_type == ShadingType::Axial {
+            shading.coords(coords[0 .. 4].iter().copied());
+        } else {
+            shading.coords([
+                coords[0], coords[1], coords[4], coords[2], coords[3], coords[5],
+            ]);
+        }
+        shading.function(function_map[&pending.id]);
+        shading.extend([true, true]);
+        shading.finish();
+    }
+
+    patterns.finish();
+}
+
+fn write_graphics(pending_graphics: &[PendingGS], resources: &mut Resources) {
+    if pending_graphics.is_empty() {
+        return;
+    }
+
+    let mut ext_gs = resources.key(Name(b"ExtGState")).dict();
+    for gs in pending_graphics {
+        let mut ext_g =
+            ExtGraphicsState::new(ext_gs.key(Name(format!("gs{}", gs.num).as_bytes())));
+
+        if let Some(stroke_opacity) = gs.stroke_opacity {
+            ext_g.stroking_alpha(stroke_opacity);
+        }
+
+        if let Some(fill_opacity) = gs.fill_opacity {
+            ext_g.non_stroking_alpha(fill_opacity);
+        }
+    }
+    ext_gs.finish();
+}
+
+fn write_xobjects(pending_xobjects: &[(u32, Ref)], resources: &mut Resources) {
+    if pending_xobjects.is_empty() {
+        return;
+    }
+
+    let mut xobjects = resources.x_objects();
+    for (num, ref_id) in pending_xobjects {
+        let name = format!("xo{}", num);
+        xobjects.pair(Name(name.as_bytes()), *ref_id);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -549,5 +729,12 @@ mod tests {
         let doc = r##"<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="a"><stop offset="10%" stop-color="gold"/><stop offset="95%" stop-color="red"/></radialGradient></defs><circle cx="5" cy="5" r="4" fill="url(#a)"/></svg>"##;
         let buf = convert(doc, Options::default()).unwrap();
         std::fs::write("target/radial-gradient.pdf", buf).unwrap();
+    }
+
+    #[test]
+    fn test_group() {
+        let doc = r##"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><g opacity=".5"><circle fill="#00f" r="40"/><path fill="red" d="M0 0h80v60H0z"/></g></svg>"##;
+        let buf = convert(doc, Options::default()).unwrap();
+        std::fs::write("target/group.pdf", buf).unwrap();
     }
 }
