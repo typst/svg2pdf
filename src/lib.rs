@@ -1,12 +1,14 @@
-use pdf_writer::types::{ColorSpace, LineCapStyle, LineJoinStyle, ShadingType};
+use image::io::Reader as ImageReader;
+use image::{DynamicImage, GenericImageView, ImageFormat};
+use pdf_writer::types::{ColorSpace, LineCapStyle, LineJoinStyle, MaskType, ShadingType};
 use pdf_writer::writers::{
-    ExponentialFunction, ExtGraphicsState, Resources, ShadingPattern,
+    ExponentialFunction, ExtGraphicsState, Image, Resources, ShadingPattern,
 };
-use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
+use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref};
 use std::collections::HashMap;
 use usvg::{
-    Align, FillRule, LineCap, LineJoin, NodeExt, NodeKind, Paint, PathSegment, Stop,
-    Tree, ViewBox, Visibility,
+    Align, FillRule, ImageKind, LineCap, LineJoin, NodeExt, NodeKind, Paint, PathSegment,
+    Stop, Tree, ViewBox, Visibility,
 };
 
 pub struct Options {
@@ -90,6 +92,9 @@ impl CoordToPdf {
             }
         }
 
+        offset_x -= viewbox.rect.x() * factor_x;
+        offset_y -= viewbox.rect.y() * factor_y;
+
         CoordToPdf {
             factor_x,
             factor_y,
@@ -126,44 +131,56 @@ struct PendingGS {
     num: u32,
     stroke_opacity: Option<f32>,
     fill_opacity: Option<f32>,
+    soft_mask: Option<Ref>,
+}
+
+#[derive(Clone)]
+struct PendingGroup {
+    reference: Ref,
+    bbox: Rect,
+    matrix: Option<[f32; 6]>,
+    initial_mask: Option<String>,
 }
 
 struct Context<'a> {
     tree: &'a Tree,
+    bbox: &'a Rect,
     c: &'a CoordToPdf,
-    function_map: &'a HashMap<String, Ref>,
+    function_map: HashMap<String, Ref>,
     next_id: &'a mut i32,
     next_pattern: u32,
     next_graphic: u32,
     next_xobject: u32,
-    pending_patterns: &'a mut Vec<PendingPattern>,
-    pending_graphics: &'a mut Vec<PendingGS>,
-    pending_xobjects: &'a mut Vec<(u32, Ref)>,
+    pending_patterns: Vec<PendingPattern>,
+    pending_graphics: Vec<PendingGS>,
+    pending_xobjects: Vec<(u32, Ref)>,
+    pending_groups: HashMap<String, PendingGroup>,
     checkpoints: Vec<[usize; 3]>,
+    initial_mask: Option<String>,
 }
 
 impl<'a> Context<'a> {
     fn new(
         tree: &'a Tree,
+        bbox: &'a Rect,
         c: &'a CoordToPdf,
-        function_map: &'a HashMap<String, Ref>,
         next_id: &'a mut i32,
-        pending_patterns: &'a mut Vec<PendingPattern>,
-        pending_graphics: &'a mut Vec<PendingGS>,
-        pending_xobjects: &'a mut Vec<(u32, Ref)>,
     ) -> Self {
         Self {
             tree,
+            bbox,
             c,
-            function_map,
+            function_map: HashMap::new(),
             next_id,
             next_pattern: 0,
             next_graphic: 0,
             next_xobject: 0,
-            pending_patterns,
-            pending_graphics,
-            pending_xobjects,
+            pending_patterns: vec![],
+            pending_graphics: vec![],
+            pending_xobjects: vec![],
+            pending_groups: HashMap::new(),
             checkpoints: vec![],
+            initial_mask: None,
         }
     }
 
@@ -179,7 +196,7 @@ impl<'a> Context<'a> {
         let [patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
 
         let pending_patterns = self.pending_patterns.split_off(patterns);
-        write_patterns(&pending_patterns, self.c, self.function_map, resources);
+        write_patterns(&pending_patterns, self.c, &self.function_map, resources);
 
         let pending_graphics = self.pending_graphics.split_off(graphics);
         write_graphics(&pending_graphics, resources);
@@ -244,60 +261,64 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
     writer.catalog(catalog_id).pages(page_tree_id);
     writer.pages(page_tree_id).kids([page_id]);
 
-    let mut function_map = HashMap::new();
+    let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
+
+    let mut ctx = Context::new(&tree, &bbox, &c, &mut next_id);
 
     for element in tree.defs().children() {
         match *element.borrow() {
             NodeKind::LinearGradient(ref lg) => {
-                let func_ref = Ref::new(next_id);
-                next_id += 1;
+                let func_ref = ctx.alloc_ref();
 
                 stops_to_function(&mut writer, func_ref, &lg.base.stops);
-                function_map.insert(lg.id.clone(), func_ref);
+                ctx.function_map.insert(lg.id.clone(), func_ref);
             }
             NodeKind::RadialGradient(ref rg) => {
-                let func_ref = Ref::new(next_id);
-                next_id += 1;
+                let func_ref = ctx.alloc_ref();
 
                 stops_to_function(&mut writer, func_ref, &rg.base.stops);
-                function_map.insert(rg.id.clone(), func_ref);
+                ctx.function_map.insert(rg.id.clone(), func_ref);
             }
             _ => {}
         }
     }
 
-    let mut pending_graphics = Vec::new();
-    let mut pending_patterns = Vec::new();
-    let mut pending_xobjects = Vec::new();
+    ctx.push();
+    let content = content_stream(&tree.root(), &mut writer, &mut ctx);
+    for (id, gp) in ctx.pending_groups.clone() {
+        let mask_node = tree.defs_by_id(&id).unwrap();
+        let borrowed = mask_node.borrow();
+        if let NodeKind::Mask(_) = *borrowed {
+            ctx.push();
+            ctx.initial_mask = gp.initial_mask;
+            let content = content_stream(&mask_node, &mut writer, &mut ctx);
 
-    let mut context = Context::new(
-        &tree,
-        &c,
-        &function_map,
-        &mut next_id,
-        &mut pending_patterns,
-        &mut pending_graphics,
-        &mut pending_xobjects,
-    );
-
-    let content = content_stream(&tree.root(), &mut writer, &mut context);
+            let mut group = writer.form_xobject(gp.reference, &content);
+            group.bbox(gp.bbox);
+            if let Some(matrix) = gp.matrix {
+                group.matrix(matrix);
+            }
+            let mut resources = group.resources();
+            ctx.pop(&mut resources);
+            resources.finish();
+            group
+                .group()
+                .transparency()
+                .color_space(ColorSpace::DeviceRgb)
+                .isolated(true);
+        }
+    }
+    ctx.initial_mask = None;
 
     let mut page = writer.page(page_id);
-    page.media_box(Rect::new(
-        0.0,
-        0.0,
-        c.px_to_pt(viewport.0),
-        c.px_to_pt(viewport.1),
-    ));
+    page.media_box(bbox);
     page.parent(page_tree_id);
     page.contents(content_id);
 
     let mut resources = page.resources();
-    write_patterns(&pending_patterns, &c, &function_map, &mut resources);
-    write_graphics(&pending_graphics, &mut resources);
-    write_xobjects(&pending_xobjects, &mut resources);
-
+    ctx.pop(&mut resources);
     resources.finish();
+
     page.finish();
 
     writer.stream(content_id, content);
@@ -312,12 +333,26 @@ fn content_stream<'a>(
 ) -> Vec<u8> {
     let mut content = Content::new();
 
+    let num = ctx.alloc_gs();
+    if let Some(id) = ctx.initial_mask.as_ref() {
+        content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+        ctx.pending_graphics.push(PendingGS {
+            stroke_opacity: None,
+            fill_opacity: None,
+            num,
+            soft_mask: ctx.pending_groups.get(id).map(|g| g.reference),
+        });
+    }
+
     for element in node.children() {
-        if ctx.tree.is_in_defs(&element) || &element == node {
+        if &element == node {
             continue;
         }
 
         match *element.borrow() {
+            NodeKind::Defs => {
+                continue;
+            }
             NodeKind::Path(ref path) => {
                 if path.visibility != Visibility::Visible {
                     continue;
@@ -353,6 +388,7 @@ fn content_stream<'a>(
                         stroke_opacity,
                         fill_opacity,
                         num,
+                        soft_mask: None,
                     });
                 }
 
@@ -467,29 +503,7 @@ fn content_stream<'a>(
                     }
                 }
 
-                for &operation in path.data.iter() {
-                    match operation {
-                        PathSegment::MoveTo { x, y } => {
-                            content.move_to(ctx.c.x(x), ctx.c.y(y));
-                        }
-                        PathSegment::LineTo { x, y } => {
-                            content.line_to(ctx.c.x(x), ctx.c.y(y));
-                        }
-                        PathSegment::CurveTo { x1, y1, x2, y2, x, y } => {
-                            content.cubic_to(
-                                ctx.c.x(x1),
-                                ctx.c.y(y1),
-                                ctx.c.x(x2),
-                                ctx.c.y(y2),
-                                ctx.c.x(x),
-                                ctx.c.y(y),
-                            );
-                        }
-                        PathSegment::ClosePath => {
-                            content.close_path();
-                        }
-                    }
-                }
+                draw_path(&path.data.0, &mut content, ctx.c);
 
                 match (path.fill.as_ref().map(|f| f.rule), path.stroke.is_some()) {
                     (Some(FillRule::NonZero), true) => content.fill_and_stroke_nonzero(),
@@ -515,15 +529,14 @@ fn content_stream<'a>(
                 let child_content = content_stream(&element, writer, ctx);
 
                 let mut form = writer.form_xobject(group_ref, &child_content);
+
                 let bbox = element
                     .calculate_bbox()
                     .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
-                form.bbox(Rect::new(
-                    0.0,
-                    0.0,
-                    bbox.width() as f32,
-                    bbox.height() as f32,
-                ));
+                let pdf_bbox =
+                    Rect::new(0.0, 0.0, bbox.width() as f32, bbox.height() as f32);
+                form.bbox(pdf_bbox);
+
                 form.group()
                     .transparency()
                     .color_space(ColorSpace::DeviceRgb)
@@ -537,6 +550,21 @@ fn content_stream<'a>(
                 let name = format!("xo{}", num);
                 content.save_state();
 
+                apply_clip_path(group.clip_path.as_ref(), &mut content, ctx);
+
+                if let Some(reference) =
+                    apply_mask(group.mask.as_ref(), bbox, pdf_bbox, &mut content, ctx)
+                {
+                    let num = ctx.alloc_gs();
+                    content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+                    ctx.pending_graphics.push(PendingGS {
+                        num,
+                        fill_opacity: None,
+                        stroke_opacity: None,
+                        soft_mask: Some(reference),
+                    });
+                }
+
                 if group.opacity.value() != 1.0 {
                     let num = ctx.alloc_gs();
                     content.set_parameters(Name(format!("gs{}", num).as_bytes()));
@@ -545,6 +573,7 @@ fn content_stream<'a>(
                         num,
                         fill_opacity: Some(group.opacity.value() as f32),
                         stroke_opacity: None,
+                        soft_mask: None,
                     });
                 }
 
@@ -558,6 +587,90 @@ fn content_stream<'a>(
     }
 
     content.finish()
+}
+
+fn apply_clip_path(path_id: Option<&String>, content: &mut Content, ctx: &mut Context) {
+    if let Some(clip_path) = path_id.and_then(|id| ctx.tree.defs_by_id(id)) {
+        if let NodeKind::ClipPath(ref path) = *clip_path.borrow() {
+            apply_clip_path(path.clip_path.as_ref(), content, ctx);
+
+            for child in clip_path.children() {
+                match *child.borrow() {
+                    NodeKind::Path(ref path) => {
+                        draw_path(&path.data.0, content, ctx.c);
+                        content.clip_nonzero();
+                        content.end_path();
+                    }
+                    NodeKind::ClipPath(_) => {}
+                    _ => unreachable!(),
+                }
+            }
+        } else {
+            unreachable!();
+        }
+    }
+}
+
+fn apply_mask(
+    mask_id: Option<&String>,
+    bbox: usvg::Rect,
+    pdf_bbox: Rect,
+    content: &mut Content,
+    ctx: &mut Context,
+) -> Option<Ref> {
+    if let Some(mask_node) = mask_id.and_then(|id| ctx.tree.defs_by_id(id)) {
+        if let NodeKind::Mask(ref mask) = *mask_node.borrow() {
+            let reference = ctx.alloc_ref();
+            let (bbox, matrix) = if mask.content_units == usvg::Units::UserSpaceOnUse {
+                (*ctx.bbox, None)
+            } else {
+                (
+                    pdf_bbox,
+                    Some([
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        bbox.x() as f32 + ctx.c.x(mask.rect.x()),
+                        bbox.y() as f32 + ctx.c.y(mask.rect.y()),
+                    ]),
+                )
+            };
+            apply_mask(mask.mask.as_ref(), mask.rect, pdf_bbox, content, ctx);
+
+            ctx.pending_groups.insert(mask.id.clone(), PendingGroup {
+                reference,
+                bbox,
+                matrix,
+                initial_mask: mask.mask.clone(),
+            });
+
+            Some(reference)
+        } else {
+            unreachable!()
+        }
+    } else {
+        None
+    }
+}
+
+fn draw_path(path_data: &[PathSegment], content: &mut Content, c: &CoordToPdf) {
+    for &operation in path_data {
+        match operation {
+            PathSegment::MoveTo { x, y } => {
+                content.move_to(c.x(x), c.y(y));
+            }
+            PathSegment::LineTo { x, y } => {
+                content.line_to(c.x(x), c.y(y));
+            }
+            PathSegment::CurveTo { x1, y1, x2, y2, x, y } => {
+                content.cubic_to(c.x(x1), c.y(y1), c.x(x2), c.y(y2), c.x(x), c.y(y));
+            }
+            PathSegment::ClosePath => {
+                content.close_path();
+            }
+        }
+    }
 }
 
 fn stops_to_function(writer: &mut PdfWriter, id: Ref, stops: &[Stop]) -> bool {
@@ -690,6 +803,13 @@ fn write_graphics(pending_graphics: &[PendingGS], resources: &mut Resources) {
         if let Some(fill_opacity) = gs.fill_opacity {
             ext_g.non_stroking_alpha(fill_opacity);
         }
+
+        if let Some(smask_id) = gs.soft_mask {
+            let mut soft_mask = ext_g.soft_mask();
+            soft_mask.subtype(MaskType::Luminosity);
+            soft_mask.group(smask_id);
+            soft_mask.finish();
+        }
     }
     ext_gs.finish();
 }
@@ -736,5 +856,19 @@ mod tests {
         let doc = r##"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><g opacity=".5"><circle fill="#00f" r="40"/><path fill="red" d="M0 0h80v60H0z"/></g></svg>"##;
         let buf = convert(doc, Options::default()).unwrap();
         std::fs::write("target/group.pdf", buf).unwrap();
+    }
+
+    #[test]
+    fn test_clip_path() {
+        let doc = r##"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><clipPath id="myClip"><circle cx="40" cy="35" r="35"/></clipPath><path id="heart" d="M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z" clip-path="url(#myClip)"/></svg>"##;
+        let buf = convert(doc, Options::default()).unwrap();
+        std::fs::write("target/clip-path.pdf", buf).unwrap();
+    }
+
+    #[test]
+    fn test_mask() {
+        let doc = r##"<svg viewBox="-10 -10 120 120" xmlns="http://www.w3.org/2000/svg"><mask id="a"><path fill="#fff" d="M0 0h100v100H0z"/><path d="M10 35a20 20 0 0 1 40 0 20 20 0 0 1 40 0q0 30-40 60-40-30-40-60Z"/></mask><path fill="orange" d="M-10 110h120V-10z"/><circle cx="50" cy="50" r="50" mask="url(#a)"/></svg>"##;
+        let buf = convert(doc, Options::default()).unwrap();
+        std::fs::write("target/mask.pdf", buf).unwrap();
     }
 }
