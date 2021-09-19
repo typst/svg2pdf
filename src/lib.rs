@@ -1,19 +1,21 @@
 use image::io::Reader as ImageReader;
-use image::{DynamicImage, GenericImageView, ImageFormat};
+use image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba};
+use miniz_oxide::deflate::compress_to_vec_zlib;
 use pdf_writer::types::{ColorSpace, LineCapStyle, LineJoinStyle, MaskType, ShadingType};
 use pdf_writer::writers::{
     ExponentialFunction, ExtGraphicsState, Image, Resources, ShadingPattern,
 };
-use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref};
+use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr};
 use std::collections::HashMap;
 use usvg::{
-    Align, FillRule, ImageKind, LineCap, LineJoin, NodeExt, NodeKind, Paint, PathSegment,
-    Stop, Tree, ViewBox, Visibility,
+    Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, NodeKind,
+    Paint, PathSegment, Stop, Tree, ViewBox, Visibility,
 };
 
 pub struct Options {
     viewport: Option<(f64, f64)>,
     respect_native_size: bool,
+    aspect_ratio: Option<usvg::AspectRatio>,
     dpi: f64,
 }
 
@@ -22,6 +24,7 @@ impl Default for Options {
         Options {
             viewport: None,
             respect_native_size: true,
+            aspect_ratio: None,
             dpi: 96.0,
         }
     }
@@ -37,7 +40,12 @@ struct CoordToPdf {
 }
 
 impl CoordToPdf {
-    fn new(viewport: (f64, f64), dpi: f64, viewbox: ViewBox) -> Self {
+    fn new(
+        viewport: (f64, f64),
+        dpi: f64,
+        viewbox: ViewBox,
+        aspect_ratio: Option<usvg::AspectRatio>,
+    ) -> Self {
         let mut factor_x: f64;
         let mut factor_y: f64;
         let mut offset_x = 0.0;
@@ -46,7 +54,13 @@ impl CoordToPdf {
         let original_ratio = viewbox.rect.width() / viewbox.rect.height();
         let viewport_ratio = viewport.0 / viewport.1;
 
-        if viewbox.aspect.slice == (original_ratio < viewport_ratio) {
+        let aspect = if let Some(aspect) = aspect_ratio {
+            if aspect.defer { viewbox.aspect } else { aspect }
+        } else {
+            viewbox.aspect
+        };
+
+        if aspect.slice == (original_ratio < viewport_ratio) {
             // Scale to fit width.
             factor_x = viewport.0 / viewbox.rect.width();
             factor_y = factor_x;
@@ -56,29 +70,29 @@ impl CoordToPdf {
             factor_x = factor_y;
         }
 
-        match viewbox.aspect.align {
+        match aspect.align {
             Align::None => {
                 factor_x = viewport.0 / viewbox.rect.width();
                 factor_y = viewport.1 / viewbox.rect.height();
             }
-            Align::XMinYMin => {}
-            Align::XMidYMin => {
+            Align::XMinYMax => {}
+            Align::XMidYMax => {
                 offset_x = (viewport.0 - viewbox.rect.width() * factor_x) / 2.0;
             }
-            Align::XMaxYMin => {
+            Align::XMaxYMax => {
                 offset_x = viewport.0 - viewbox.rect.width() * factor_x;
             }
             Align::XMinYMid => {
                 offset_y = (viewport.1 - viewbox.rect.height() * factor_y) / 2.0;
             }
-            Align::XMinYMax => {
+            Align::XMinYMin => {
                 offset_y = viewport.1 - viewbox.rect.height() * factor_y;
             }
             Align::XMidYMid => {
                 offset_x = (viewport.0 - viewbox.rect.width() * factor_x) / 2.0;
                 offset_y = (viewport.1 - viewbox.rect.height() * factor_y) / 2.0;
             }
-            Align::XMidYMax => {
+            Align::XMidYMin => {
                 offset_x = (viewport.0 - viewbox.rect.width() * factor_x) / 2.0;
                 offset_y = viewport.1 - viewbox.rect.height() * factor_y;
             }
@@ -86,7 +100,7 @@ impl CoordToPdf {
                 offset_x = viewport.0 - viewbox.rect.width() * factor_x;
                 offset_y = (viewport.1 - viewbox.rect.height() * factor_y) / 2.0;
             }
-            Align::XMaxYMax => {
+            Align::XMaxYMin => {
                 offset_x = viewport.0 - viewbox.rect.width() * factor_x;
                 offset_y = viewport.1 - viewbox.rect.height() * factor_y;
             }
@@ -105,16 +119,33 @@ impl CoordToPdf {
         }
     }
 
+    /// Convert from x SVG source coordinates to PDF coordinates.
     fn x(&self, x: f64) -> f32 {
         self.px_to_pt(x * self.factor_x + self.offset_x)
     }
 
+    /// Convert from x PDF coordinates to SVG source coordinates.
+    fn svg_x(&self, x: f32) -> f64 {
+        println!("factor {}, offset {}", self.factor_x, self.offset_x);
+        (self.pt_to_px(x) - self.offset_x) / self.factor_x
+    }
+
+    /// Convert from y SVG source coordinates to PDF coordinates.
     fn y(&self, y: f64) -> f32 {
         self.px_to_pt(self.height_y - (y * self.factor_y + self.offset_y))
     }
 
+    /// Convert from y PDF coordinates to SVG source coordinates.
+    fn svg_y(&self, y: f32) -> f64 {
+        (self.pt_to_px(y) - self.offset_y) / self.factor_y
+    }
+
     fn px_to_pt(&self, px: f64) -> f32 {
         (px * 72.0 / self.dpi) as f32
+    }
+
+    fn pt_to_px(&self, pt: f32) -> f64 {
+        pt as f64 * self.dpi / 72.0
     }
 }
 
@@ -151,6 +182,7 @@ struct Context<'a> {
     next_pattern: u32,
     next_graphic: u32,
     next_xobject: u32,
+    dpi: f64,
     pending_patterns: Vec<PendingPattern>,
     pending_graphics: Vec<PendingGS>,
     pending_xobjects: Vec<(u32, Ref)>,
@@ -164,6 +196,7 @@ impl<'a> Context<'a> {
         tree: &'a Tree,
         bbox: &'a Rect,
         c: &'a CoordToPdf,
+        dpi: f64,
         next_id: &'a mut i32,
     ) -> Self {
         Self {
@@ -175,6 +208,7 @@ impl<'a> Context<'a> {
             next_pattern: 0,
             next_graphic: 0,
             next_xobject: 0,
+            dpi,
             pending_patterns: vec![],
             pending_graphics: vec![],
             pending_xobjects: vec![],
@@ -236,7 +270,10 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
         usvg_opts.default_size = usvg::Size::new(width, height)?;
     }
     let tree = Tree::from_str(svg, &usvg_opts.to_ref()).map_err(|e| dbg!(e)).ok()?;
+    from_tree(&tree, opt)
+}
 
+pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
     let native_size = tree.svg_node().size;
     let viewport = if let Some((width, height)) = opt.viewport {
         if opt.respect_native_size {
@@ -248,7 +285,12 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
         (native_size.width(), native_size.height())
     };
 
-    let c = CoordToPdf::new(viewport, opt.dpi, tree.svg_node().view_box);
+    let c = CoordToPdf::new(
+        viewport,
+        opt.dpi,
+        tree.svg_node().view_box,
+        opt.aspect_ratio,
+    );
 
     let mut writer = PdfWriter::new();
     let catalog_id = Ref::new(1);
@@ -261,9 +303,16 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
     writer.catalog(catalog_id).pages(page_tree_id);
     writer.pages(page_tree_id).kids([page_id]);
 
-    let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
+    dbg!(viewport);
 
-    let mut ctx = Context::new(&tree, &bbox, &c, &mut next_id);
+    let bbox = dbg!(Rect::new(
+        0.0,
+        0.0,
+        c.px_to_pt(viewport.0),
+        c.px_to_pt(viewport.1)
+    ));
+
+    let mut ctx = Context::new(&tree, &bbox, &c, opt.dpi, &mut next_id);
 
     for element in tree.defs().children() {
         match *element.borrow() {
@@ -285,6 +334,7 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
 
     ctx.push();
     let content = content_stream(&tree.root(), &mut writer, &mut ctx);
+
     for (id, gp) in ctx.pending_groups.clone() {
         let mask_node = tree.defs_by_id(&id).unwrap();
         let borrowed = mask_node.borrow();
@@ -353,233 +403,12 @@ fn content_stream<'a>(
             NodeKind::Defs => {
                 continue;
             }
-            NodeKind::Path(ref path) => {
-                if path.visibility != Visibility::Visible {
-                    continue;
-                }
-
-                content.save_state();
-
-                let stroke_opacity = path.stroke.as_ref().map(|s| {
-                    let mut res = s.opacity.value() as f32;
-
-                    if let Paint::Color(c) = s.paint {
-                        res *= c.alpha as f32 / 255.0;
-                    }
-
-                    res
-                });
-                let fill_opacity = path.fill.as_ref().map(|f| {
-                    let mut res = f.opacity.value() as f32;
-
-                    if let Paint::Color(c) = f.paint {
-                        res *= c.alpha as f32 / 255.0;
-                    }
-
-                    res
-                });
-
-                if stroke_opacity.unwrap_or(1.0) != 1.0
-                    || fill_opacity.unwrap_or(1.0) != 1.0
-                {
-                    let num = ctx.alloc_gs();
-                    content.set_parameters(Name(format!("gs{}", num).as_bytes()));
-                    ctx.pending_graphics.push(PendingGS {
-                        stroke_opacity,
-                        fill_opacity,
-                        num,
-                        soft_mask: None,
-                    });
-                }
-
-                if let Some(stroke) = &path.stroke {
-                    content.set_line_width(ctx.c.px_to_pt(stroke.width.value()));
-                    match stroke.linecap {
-                        LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
-                        LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
-                        LineCap::Square => {
-                            content.set_line_cap(LineCapStyle::ProjectingSquareCap)
-                        }
-                    };
-
-                    match stroke.linejoin {
-                        LineJoin::Miter => {
-                            content.set_line_join(LineJoinStyle::MiterJoin)
-                        }
-                        LineJoin::Round => {
-                            content.set_line_join(LineJoinStyle::RoundJoin)
-                        }
-                        LineJoin::Bevel => {
-                            content.set_line_join(LineJoinStyle::BevelJoin)
-                        }
-                    };
-
-                    content.set_miter_limit(stroke.miterlimit.value() as f32);
-
-                    if let Some(dasharray) = &stroke.dasharray {
-                        content.set_dash_pattern(
-                            dasharray.iter().map(|&x| x as f32),
-                            stroke.dashoffset,
-                        );
-                    }
-
-                    match stroke.paint {
-                        Paint::Color(c) => {
-                            content.set_stroke_rgb(
-                                c.red as f32 / 255.0,
-                                c.green as f32 / 255.0,
-                                c.blue as f32 / 255.0,
-                            );
-                        }
-                        _ => todo!(),
-                    }
-                }
-
-                if let Some(fill) = &path.fill {
-                    match &fill.paint {
-                        Paint::Color(c) => {
-                            content.set_fill_rgb(
-                                c.red as f32 / 255.0,
-                                c.green as f32 / 255.0,
-                                c.blue as f32 / 255.0,
-                            );
-                        }
-                        Paint::Link(id) => {
-                            let item = ctx.tree.defs_by_id(id).unwrap();
-                            match *item.borrow() {
-                                NodeKind::LinearGradient(ref lg) => {
-                                    let num = ctx.alloc_pattern();
-                                    let name = format!("p{}", num);
-                                    ctx.pending_patterns.push(PendingPattern {
-                                        id: lg.id.clone(),
-                                        num,
-                                        shading_type: ShadingType::Axial,
-                                        bbox: element.calculate_bbox().unwrap_or_else(
-                                            || {
-                                                usvg::Rect::new(0.0, 0.0, 0.0, 0.0)
-                                                    .unwrap()
-                                            },
-                                        ),
-                                        coords: [lg.x1, lg.y1, lg.x2, lg.y2, 0.0, 0.0],
-                                        transform_coords: lg.base.units
-                                            == usvg::Units::ObjectBoundingBox,
-                                    });
-
-
-                                    content.set_fill_color_space(ColorSpace::Pattern);
-                                    content.set_fill_pattern(None, Name(name.as_bytes()));
-                                }
-                                NodeKind::RadialGradient(ref rg) => {
-                                    let num = ctx.alloc_pattern();
-                                    let name = format!("p{}", num);
-                                    ctx.pending_patterns.push(PendingPattern {
-                                        id: rg.id.clone(),
-                                        num,
-                                        shading_type: ShadingType::Radial,
-                                        bbox: element.calculate_bbox().unwrap_or_else(
-                                            || {
-                                                usvg::Rect::new(0.0, 0.0, 0.0, 0.0)
-                                                    .unwrap()
-                                            },
-                                        ),
-                                        coords: [
-                                            rg.fx,
-                                            rg.fy,
-                                            rg.cx,
-                                            rg.cy,
-                                            0.0,
-                                            rg.r.value(),
-                                        ],
-                                        transform_coords: rg.base.units
-                                            == usvg::Units::ObjectBoundingBox,
-                                    });
-
-                                    content.set_fill_color_space(ColorSpace::Pattern);
-                                    content.set_fill_pattern(None, Name(name.as_bytes()));
-                                }
-                                _ => todo!(),
-                            };
-                        }
-                    }
-                }
-
-                draw_path(&path.data.0, &mut content, ctx.c);
-
-                match (path.fill.as_ref().map(|f| f.rule), path.stroke.is_some()) {
-                    (Some(FillRule::NonZero), true) => content.fill_and_stroke_nonzero(),
-                    (Some(FillRule::EvenOdd), true) => content.fill_and_stroke_even_odd(),
-                    (Some(FillRule::NonZero), false) => content.fill_nonzero(),
-                    (Some(FillRule::EvenOdd), false) => content.fill_even_odd(),
-                    (None, true) => content.stroke(),
-                    (None, false) => &mut content,
-                };
-
-                content.restore_state();
-            }
-
+            NodeKind::Path(ref path) => path.render(&element, writer, &mut content, ctx),
             NodeKind::Group(ref group) => {
-                if !group.filter.is_empty() {
-                    todo!();
-                    continue;
-                }
-
-                ctx.push();
-                let group_ref = ctx.alloc_ref();
-
-                let child_content = content_stream(&element, writer, ctx);
-
-                let mut form = writer.form_xobject(group_ref, &child_content);
-
-                let bbox = element
-                    .calculate_bbox()
-                    .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
-                let pdf_bbox =
-                    Rect::new(0.0, 0.0, bbox.width() as f32, bbox.height() as f32);
-                form.bbox(pdf_bbox);
-
-                form.group()
-                    .transparency()
-                    .color_space(ColorSpace::DeviceRgb)
-                    .isolated(true)
-                    .knockout(false);
-
-                let mut resources = form.resources();
-                ctx.pop(&mut resources);
-
-                let num = ctx.alloc_xobject();
-                let name = format!("xo{}", num);
-                content.save_state();
-
-                apply_clip_path(group.clip_path.as_ref(), &mut content, ctx);
-
-                if let Some(reference) =
-                    apply_mask(group.mask.as_ref(), bbox, pdf_bbox, &mut content, ctx)
-                {
-                    let num = ctx.alloc_gs();
-                    content.set_parameters(Name(format!("gs{}", num).as_bytes()));
-                    ctx.pending_graphics.push(PendingGS {
-                        num,
-                        fill_opacity: None,
-                        stroke_opacity: None,
-                        soft_mask: Some(reference),
-                    });
-                }
-
-                if group.opacity.value() != 1.0 {
-                    let num = ctx.alloc_gs();
-                    content.set_parameters(Name(format!("gs{}", num).as_bytes()));
-
-                    ctx.pending_graphics.push(PendingGS {
-                        num,
-                        fill_opacity: Some(group.opacity.value() as f32),
-                        stroke_opacity: None,
-                        soft_mask: None,
-                    });
-                }
-
-                content.x_object(Name(name.as_bytes()));
-                content.restore_state();
-                ctx.pending_xobjects.push((num, group_ref));
+                group.render(&element, writer, &mut content, ctx)
+            }
+            NodeKind::Image(ref image) => {
+                image.render(&element, writer, &mut content, ctx)
             }
 
             _ => {}
@@ -587,6 +416,452 @@ fn content_stream<'a>(
     }
 
     content.finish()
+}
+
+trait Render {
+    fn render(
+        &self,
+        element: &Node,
+        writer: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+    );
+}
+
+impl Render for usvg::Path {
+    fn render(
+        &self,
+        element: &Node,
+        _: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+    ) {
+        if self.visibility != Visibility::Visible {
+            return;
+        }
+
+        content.save_state();
+
+        let stroke_opacity = self.stroke.as_ref().map(|s| {
+            let mut res = s.opacity.value() as f32;
+
+            if let Paint::Color(c) = s.paint {
+                res *= c.alpha as f32 / 255.0;
+            }
+
+            res
+        });
+        let fill_opacity = self.fill.as_ref().map(|f| {
+            let mut res = f.opacity.value() as f32;
+
+            if let Paint::Color(c) = f.paint {
+                res *= c.alpha as f32 / 255.0;
+            }
+
+            res
+        });
+
+        if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
+            let num = ctx.alloc_gs();
+            content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+            ctx.pending_graphics.push(PendingGS {
+                stroke_opacity,
+                fill_opacity,
+                num,
+                soft_mask: None,
+            });
+        }
+
+        if let Some(stroke) = &self.stroke {
+            content.set_line_width(ctx.c.px_to_pt(stroke.width.value()));
+            match stroke.linecap {
+                LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
+                LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
+                LineCap::Square => {
+                    content.set_line_cap(LineCapStyle::ProjectingSquareCap)
+                }
+            };
+
+            match stroke.linejoin {
+                LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
+                LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
+                LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
+            };
+
+            content.set_miter_limit(stroke.miterlimit.value() as f32);
+
+            if let Some(dasharray) = &stroke.dasharray {
+                content.set_dash_pattern(
+                    dasharray.iter().map(|&x| x as f32),
+                    stroke.dashoffset,
+                );
+            }
+
+            match stroke.paint {
+                Paint::Color(c) => {
+                    content.set_stroke_rgb(
+                        c.red as f32 / 255.0,
+                        c.green as f32 / 255.0,
+                        c.blue as f32 / 255.0,
+                    );
+                }
+                _ => todo!(),
+            }
+        }
+
+        if let Some(fill) = &self.fill {
+            match &fill.paint {
+                Paint::Color(c) => {
+                    content.set_fill_rgb(
+                        c.red as f32 / 255.0,
+                        c.green as f32 / 255.0,
+                        c.blue as f32 / 255.0,
+                    );
+                }
+                Paint::Link(id) => {
+                    let item = ctx.tree.defs_by_id(id).unwrap();
+                    match *item.borrow() {
+                        NodeKind::LinearGradient(ref lg) => {
+                            let num = ctx.alloc_pattern();
+                            let name = format!("p{}", num);
+                            ctx.pending_patterns.push(PendingPattern {
+                                id: lg.id.clone(),
+                                num,
+                                shading_type: ShadingType::Axial,
+                                bbox: element.calculate_bbox().unwrap_or_else(|| {
+                                    usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap()
+                                }),
+                                coords: [lg.x1, lg.y1, lg.x2, lg.y2, 0.0, 0.0],
+                                transform_coords: lg.base.units
+                                    == usvg::Units::ObjectBoundingBox,
+                            });
+
+
+                            content.set_fill_color_space(ColorSpace::Pattern);
+                            content.set_fill_pattern(None, Name(name.as_bytes()));
+                        }
+                        NodeKind::RadialGradient(ref rg) => {
+                            let num = ctx.alloc_pattern();
+                            let name = format!("p{}", num);
+                            ctx.pending_patterns.push(PendingPattern {
+                                id: rg.id.clone(),
+                                num,
+                                shading_type: ShadingType::Radial,
+                                bbox: element.calculate_bbox().unwrap_or_else(|| {
+                                    usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap()
+                                }),
+                                coords: [rg.fx, rg.fy, rg.cx, rg.cy, 0.0, rg.r.value()],
+                                transform_coords: rg.base.units
+                                    == usvg::Units::ObjectBoundingBox,
+                            });
+
+                            content.set_fill_color_space(ColorSpace::Pattern);
+                            content.set_fill_pattern(None, Name(name.as_bytes()));
+                        }
+                        _ => todo!(),
+                    };
+                }
+            }
+        }
+
+        draw_path(&self.data.0, content, ctx.c);
+
+        match (self.fill.as_ref().map(|f| f.rule), self.stroke.is_some()) {
+            (Some(FillRule::NonZero), true) => content.fill_and_stroke_nonzero(),
+            (Some(FillRule::EvenOdd), true) => content.fill_and_stroke_even_odd(),
+            (Some(FillRule::NonZero), false) => content.fill_nonzero(),
+            (Some(FillRule::EvenOdd), false) => content.fill_even_odd(),
+            (None, true) => content.stroke(),
+            (None, false) => content,
+        };
+
+        content.restore_state();
+    }
+}
+
+impl Render for usvg::Group {
+    fn render(
+        &self,
+        element: &Node,
+        writer: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+    ) {
+        if !self.filter.is_empty() {
+            todo!();
+            return;
+        }
+
+        ctx.push();
+        let group_ref = ctx.alloc_ref();
+
+        let child_content = content_stream(&element, writer, ctx);
+
+        let mut form = writer.form_xobject(group_ref, &child_content);
+
+        let bbox = element
+            .calculate_bbox()
+            .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
+        let pdf_bbox = Rect::new(0.0, 0.0, bbox.width() as f32, bbox.height() as f32);
+        form.bbox(pdf_bbox);
+
+        form.group()
+            .transparency()
+            .color_space(ColorSpace::DeviceRgb)
+            .isolated(true)
+            .knockout(false);
+
+        let mut resources = form.resources();
+        ctx.pop(&mut resources);
+
+        let num = ctx.alloc_xobject();
+        let name = format!("xo{}", num);
+        content.save_state();
+
+        apply_clip_path(self.clip_path.as_ref(), content, ctx);
+
+        if let Some(reference) =
+            apply_mask(self.mask.as_ref(), bbox, pdf_bbox, content, ctx)
+        {
+            let num = ctx.alloc_gs();
+            content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+            ctx.pending_graphics.push(PendingGS {
+                num,
+                fill_opacity: None,
+                stroke_opacity: None,
+                soft_mask: Some(reference),
+            });
+        }
+
+        if self.opacity.value() != 1.0 {
+            let num = ctx.alloc_gs();
+            content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+
+            ctx.pending_graphics.push(PendingGS {
+                num,
+                fill_opacity: Some(self.opacity.value() as f32),
+                stroke_opacity: None,
+                soft_mask: None,
+            });
+        }
+
+        content.x_object(Name(name.as_bytes()));
+        content.restore_state();
+        ctx.pending_xobjects.push((num, group_ref));
+    }
+}
+
+impl Render for usvg::Image {
+    fn render(
+        &self,
+        _: &Node,
+        writer: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+    ) {
+        {
+            if self.visibility != Visibility::Visible {
+                return;
+            }
+
+            let image_ref = ctx.alloc_ref();
+            let set_image_props = |
+                image: &mut Image,
+                raster_size: &mut Option<(u32, u32)>,
+                decoded: &DynamicImage,
+                grey: bool,
+            | {
+                let color = decoded.color();
+                *raster_size = Some((decoded.width(), decoded.height()));
+                image
+                    .width(decoded.width() as i32)
+                    .height(decoded.height() as i32)
+                    .color_space(if !grey && color.has_color() {
+                        ColorSpace::DeviceRgb
+                    } else {
+                        ColorSpace::DeviceGray
+                    })
+                    .bits_per_component(
+                        (color.bits_per_pixel() / color.channel_count() as u16) as i32,
+                    );
+            };
+
+            let mut raster_size: Option<(u32, u32)> = None;
+            let rect = self.view_box.rect;
+
+
+            match &self.kind {
+                ImageKind::JPEG(buf) => {
+                    let cursor = std::io::Cursor::new(buf);
+                    let decoded = if let Ok(decoded) =
+                        ImageReader::with_format(cursor, ImageFormat::Jpeg).decode()
+                    {
+                        decoded
+                    } else {
+                        return;
+                    };
+
+                    let mut image = writer.image(image_ref, buf);
+                    set_image_props(&mut image, &mut raster_size, &decoded, false);
+                    image.filter(Filter::DctDecode);
+                }
+                ImageKind::PNG(buf) => {
+                    let cursor = std::io::Cursor::new(buf);
+                    let decoded = if let Ok(decoded) =
+                        ImageReader::with_format(cursor, ImageFormat::Png).decode()
+                    {
+                        decoded
+                    } else {
+                        return;
+                    };
+
+                    let color = decoded.color();
+
+                    println!(
+                        "viewbox {:?}, rwidth in pt {}, width {:?}, height {:?}",
+                        self.view_box,
+                        ctx.c.px_to_pt(rect.width()),
+                        decoded.width(),
+                        decoded.height()
+                    );
+
+                    let image_bytes: Vec<u8> =
+                        if (color.bits_per_pixel() / color.channel_count() as u16) > 8 {
+                            decoded
+                                .to_rgb16()
+                                .pixels()
+                                .flat_map(|&Rgb(c)| c)
+                                .flat_map(|x| x.to_be_bytes())
+                                .collect()
+                        } else {
+                            decoded.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
+                        };
+
+
+                    let compressed = compress_to_vec_zlib(&image_bytes, 8);
+
+                    let mut image = writer.image(image_ref, &compressed);
+                    set_image_props(&mut image, &mut raster_size, &decoded, false);
+                    image.filter(Filter::FlateDecode);
+
+                    if color.has_alpha() {
+                        let mask_id = ctx.alloc_ref();
+                        image.pair(Name(b"SMask"), mask_id);
+                        drop(image);
+
+                        let alpha_bytes: Vec<u8> = if (color.bits_per_pixel()
+                            / color.channel_count() as u16)
+                            > 8
+                        {
+                            decoded
+                                .to_rgba16()
+                                .pixels()
+                                .flat_map(|&Rgba([.., a])| a.to_be_bytes())
+                                .collect()
+                        } else {
+                            decoded.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect()
+                        };
+                        let compressed = compress_to_vec_zlib(&alpha_bytes, 8);
+
+                        let mut mask = writer.image(mask_id, &compressed);
+                        let mut void = None;
+                        set_image_props(&mut mask, &mut void, &decoded, true);
+                        mask.filter(Filter::FlateDecode);
+                    }
+                }
+                ImageKind::SVG(tree) => {
+                    let opt = Options {
+                        viewport: Some((rect.width(), rect.height())),
+                        respect_native_size: false,
+                        aspect_ratio: Some(self.view_box.aspect),
+                        dpi: ctx.dpi,
+                    };
+
+                    let bytes = match from_tree(tree, opt) {
+                        Some(bytes) => bytes,
+                        None => return,
+                    };
+                    let byte_len = bytes.len();
+                    let compressed = compress_to_vec_zlib(&bytes, 8);
+
+                    let file_embedd_num = ctx.alloc_ref();
+                    let mut embedded = writer.embedded_file(file_embedd_num, &compressed);
+                    embedded
+                        .subtype(Name(b"application#2Fpdf"))
+                        .filter(Filter::FlateDecode);
+                    embedded.params().size(byte_len as i32);
+                    embedded.finish();
+
+                    writer
+                        .form_xobject(image_ref, &[])
+                        .bbox(Rect::new(
+                            0.0,
+                            0.0,
+                            ctx.c.px_to_pt(rect.width()),
+                            ctx.c.px_to_pt(rect.height()),
+                        ))
+                        .reference()
+                        .page_no(0)
+                        .file()
+                        .description(TextStr("Embedded SVG image"))
+                        .embedded_file(file_embedd_num);
+                }
+            }
+
+            let image_ref = if let Some((width, height)) = raster_size {
+                let mut content = Content::new();
+                let xobj_name = Name(b"EmbRaster");
+                let converter = CoordToPdf::new(
+                    (rect.width(), rect.height()),
+                    ctx.dpi,
+                    ViewBox {
+                        rect: usvg::Rect::new(0.0, 0.0, width as f64, height as f64)
+                            .unwrap(),
+                        aspect: AspectRatio::default(),
+                    },
+                    Some(self.view_box.aspect),
+                );
+
+                content.save_state();
+                content.concat_matrix([
+                    (width as f64 * converter.factor_x) as f32,
+                    0.0,
+                    0.0,
+                    (height as f64 * converter.factor_y) as f32,
+                    converter.offset_x as f32,
+                    converter.offset_y as f32,
+                ]);
+                content.x_object(xobj_name);
+                content.restore_state();
+
+
+                let content = content.finish();
+                let external_ref = ctx.alloc_ref();
+
+                let mut xobject = writer.form_xobject(external_ref, &content);
+                xobject.resources().x_objects().pair(xobj_name, image_ref);
+                xobject.bbox(dbg!(Rect::new(
+                    0.0,
+                    0.0,
+                    rect.width() as f32,
+                    rect.height() as f32,
+                )));
+                let scaling = (72.0 / ctx.dpi) as f32;
+                xobject.matrix([scaling, 0.0, 0.0, scaling, 0.0, 0.0]);
+
+                external_ref
+            } else {
+                image_ref
+            };
+
+            let num = ctx.alloc_xobject();
+            ctx.pending_xobjects.push((num, image_ref));
+            let name = format!("xo{}", num);
+
+            content.move_to(ctx.c.x(rect.x()), ctx.c.y(rect.y()));
+            content.x_object(Name(name.as_bytes()));
+        }
+    }
 }
 
 fn apply_clip_path(path_id: Option<&String>, content: &mut Content, ctx: &mut Context) {
@@ -870,5 +1145,19 @@ mod tests {
         let doc = r##"<svg viewBox="-10 -10 120 120" xmlns="http://www.w3.org/2000/svg"><mask id="a"><path fill="#fff" d="M0 0h100v100H0z"/><path d="M10 35a20 20 0 0 1 40 0 20 20 0 0 1 40 0q0 30-40 60-40-30-40-60Z"/></mask><path fill="orange" d="M-10 110h120V-10z"/><circle cx="50" cy="50" r="50" mask="url(#a)"/></svg>"##;
         let buf = convert(doc, Options::default()).unwrap();
         std::fs::write("target/mask.pdf", buf).unwrap();
+    }
+
+    #[test]
+    fn test_image() {
+        let doc = r##"<svg xmlns="http://www.w3.org/2000/svg" width="5" height="5" viewBox="0 0 5 5" xmlns:xlink="http://www.w3.org/1999/xlink"><image width="5" height="5" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="/></svg>"##;
+        let buf = convert(doc, Options::default()).unwrap();
+        std::fs::write("target/image.pdf", buf).unwrap();
+    }
+
+    #[test]
+    fn test_image_2() {
+        let doc = r##"<svg xmlns="http://www.w3.org/2000/svg" width="5" height="5" viewBox="0 0 5 5" xmlns:xlink="http://www.w3.org/1999/xlink"><image width="5" height="5" preserveAspectRatio="xMaxYMid slice" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAFCAIAAAAG+GGPAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAeUlEQVQImQFuAJH/AJLg//3+/8rryv9BNu3t0f///3/b/wD/hRz9pX7h4QD+/v7i4gz09KTpjkcA8z81MSYf+vDpf9v//f3wHx8c/0E2AP+GHeXeTOXgHf/9/eHhAPmziP+FGwB/2//8/O32yIT/Qjf8vqH//v6C2Psy2Ep/9lvaZwAAAABJRU5ErkJggg=="/></svg>"##;
+        let buf = convert(doc, Options::default()).unwrap();
+        std::fs::write("target/image-2.pdf", buf).unwrap();
     }
 }
