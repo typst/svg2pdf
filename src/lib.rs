@@ -177,7 +177,7 @@ struct Context<'a> {
     bbox: &'a Rect,
     c: &'a CoordToPdf,
     function_map: HashMap<String, Ref>,
-    next_id: &'a mut i32,
+    next_id: i32,
     next_pattern: u32,
     next_graphic: u32,
     next_xobject: u32,
@@ -191,19 +191,13 @@ struct Context<'a> {
 }
 
 impl<'a> Context<'a> {
-    fn new(
-        tree: &'a Tree,
-        bbox: &'a Rect,
-        c: &'a CoordToPdf,
-        dpi: f64,
-        next_id: &'a mut i32,
-    ) -> Self {
+    fn new(tree: &'a Tree, bbox: &'a Rect, c: &'a CoordToPdf, dpi: f64) -> Self {
         Self {
             tree,
             bbox,
             c,
             function_map: HashMap::new(),
-            next_id,
+            next_id: 1,
             next_pattern: 0,
             next_graphic: 0,
             next_xobject: 0,
@@ -239,8 +233,8 @@ impl<'a> Context<'a> {
     }
 
     fn alloc_ref(&mut self) -> Ref {
-        let reference = Ref::new(*self.next_id);
-        *self.next_id += 1;
+        let reference = Ref::new(self.next_id);
+        self.next_id += 1;
         reference
     }
 
@@ -291,20 +285,17 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
         opt.aspect_ratio,
     );
 
-    let mut writer = PdfWriter::new();
-    let catalog_id = Ref::new(1);
-    let page_tree_id = Ref::new(2);
-    let page_id = Ref::new(3);
-    let content_id = Ref::new(4);
+    let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
+    let mut ctx = Context::new(&tree, &bbox, &c, opt.dpi);
 
-    let mut next_id = 5;
+    let mut writer = PdfWriter::new();
+    let catalog_id = ctx.alloc_ref();
+    let page_tree_id = ctx.alloc_ref();
+    let page_id = ctx.alloc_ref();
+    let content_id = ctx.alloc_ref();
 
     writer.catalog(catalog_id).pages(page_tree_id);
     writer.pages(page_tree_id).kids([page_id]);
-
-    let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
-
-    let mut ctx = Context::new(&tree, &bbox, &c, opt.dpi, &mut next_id);
 
     for element in tree.defs().children() {
         match *element.borrow() {
@@ -491,11 +482,8 @@ impl Render for usvg::Path {
 
             match stroke.paint {
                 Paint::Color(c) => {
-                    content.set_stroke_rgb(
-                        c.red as f32 / 255.0,
-                        c.green as f32 / 255.0,
-                        c.blue as f32 / 255.0,
-                    );
+                    let [r, g, b] = RgbaColor::from(c).to_array();
+                    content.set_stroke_rgb(r, g, b);
                 }
                 _ => todo!(),
             }
@@ -504,11 +492,8 @@ impl Render for usvg::Path {
         if let Some(fill) = &self.fill {
             match &fill.paint {
                 Paint::Color(c) => {
-                    content.set_fill_rgb(
-                        c.red as f32 / 255.0,
-                        c.green as f32 / 255.0,
-                        c.blue as f32 / 255.0,
-                    );
+                    let [r, g, b] = RgbaColor::from(*c).to_array();
+                    content.set_fill_rgb(r, g, b);
                 }
                 Paint::Link(id) => {
                     let item = ctx.tree.defs_by_id(id).unwrap();
@@ -954,21 +939,51 @@ fn draw_path(
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+struct RgbaColor {
+    r: f32,
+    g: f32,
+    b: f32,
+    a: f32,
+}
+
+impl RgbaColor {
+    fn new(r: f32, g: f32, b: f32, a: f32) -> RgbaColor {
+        RgbaColor { r, g, b, a }
+    }
+
+    fn from_u8(r: u8, g: u8, b: u8, a: u8) -> RgbaColor {
+        RgbaColor::new(
+            r as f32 / 255.0,
+            g as f32 / 255.0,
+            b as f32 / 255.0,
+            a as f32 / 255.0,
+        )
+    }
+
+    fn to_array(&self) -> [f32; 3] {
+        [self.r, self.g, self.b]
+    }
+}
+
+impl From<usvg::Color> for RgbaColor {
+    fn from(color: usvg::Color) -> Self {
+        Self::from_u8(color.red, color.green, color.blue, color.alpha)
+    }
+}
+
 fn stops_to_function(writer: &mut PdfWriter, id: Ref, stops: &[Stop]) -> bool {
     if stops.is_empty() {
         return false;
     } else if stops.len() == 1 {
         let mut exp = writer.exponential_function(id);
         let stop = stops[0];
+        let color = RgbaColor::from(stop.color);
 
         exp.domain([0.0, 1.0]);
         exp.range([0.0, 1.0, 0.0, 1.0, 0.0, 1.0]);
-        let color = [stop.color.red, stop.color.green, stop.color.blue]
-            .iter()
-            .map(|&x| x as f32 / 255.0)
-            .collect::<Vec<_>>();
-        exp.c0(color.iter().copied());
-        exp.c1(color);
+        exp.c0(color.to_array());
+        exp.c1(color.to_array());
         exp.n(1.0);
         return true;
     }
@@ -982,16 +997,13 @@ fn stops_to_function(writer: &mut PdfWriter, id: Ref, stops: &[Stop]) -> bool {
 
     for window in stops.windows(2) {
         let (a, b) = (window[0], window[1]);
+        let (a_color, b_color) = (RgbaColor::from(a.color), RgbaColor::from(b.color));
         bounds.push(b.offset.value() as f32);
         let mut exp = ExponentialFunction::new(func_array.obj());
         exp.domain([0.0, 1.0]);
         exp.range([0.0, 1.0, 0.0, 1.0, 0.0, 1.0]);
-        exp.c0([a.color.red, a.color.green, a.color.blue]
-            .iter()
-            .map(|&x| x as f32 / 255.0));
-        exp.c1([b.color.red, b.color.green, b.color.blue]
-            .iter()
-            .map(|&x| x as f32 / 255.0));
+        exp.c0(a_color.to_array());
+        exp.c1(b_color.to_array());
         exp.n(1.0);
 
         encode.extend([0.0, 1.0]);
