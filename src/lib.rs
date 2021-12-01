@@ -321,9 +321,11 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
     for (id, gp) in ctx.pending_groups.clone() {
         let mask_node = tree.defs_by_id(&id).unwrap();
         let borrowed = mask_node.borrow();
+
         if let NodeKind::Mask(_) = *borrowed {
             ctx.push();
             ctx.initial_mask = gp.initial_mask;
+
             let content = content_stream(&mask_node, &mut writer, &mut ctx);
 
             let mut group = writer.form_xobject(gp.reference, &content);
@@ -331,9 +333,11 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
             if let Some(matrix) = gp.matrix {
                 group.matrix(matrix);
             }
+
             let mut resources = group.resources();
             ctx.pop(&mut resources);
             resources.finish();
+
             group
                 .group()
                 .transparency()
@@ -341,6 +345,7 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
                 .isolated(true);
         }
     }
+
     ctx.initial_mask = None;
 
     let mut page = writer.page(page_id);
@@ -365,8 +370,8 @@ fn content_stream<'a>(
     ctx: &mut Context<'a>,
 ) -> Vec<u8> {
     let mut content = Content::new();
-
     let num = ctx.alloc_gs();
+
     if let Some(id) = ctx.initial_mask.as_ref() {
         content.set_parameters(Name(format!("gs{}", num).as_bytes()));
         ctx.pending_graphics.push(PendingGS {
@@ -520,6 +525,7 @@ impl Render for usvg::Path {
                         NodeKind::RadialGradient(ref rg) => {
                             let num = ctx.alloc_pattern();
                             let name = format!("p{}", num);
+
                             ctx.pending_patterns.push(PendingPattern {
                                 id: rg.id.clone(),
                                 num,
@@ -544,8 +550,8 @@ impl Render for usvg::Path {
         draw_path(&self.data.0, self.transform, content, ctx.c);
 
         match (self.fill.as_ref().map(|f| f.rule), self.stroke.is_some()) {
-            (Some(FillRule::NonZero), true) => content.fill_and_stroke_nonzero(),
-            (Some(FillRule::EvenOdd), true) => content.fill_and_stroke_even_odd(),
+            (Some(FillRule::NonZero), true) => content.fill_nonzero_and_stroke(),
+            (Some(FillRule::EvenOdd), true) => content.fill_even_odd_and_stroke(),
             (Some(FillRule::NonZero), false) => content.fill_nonzero(),
             (Some(FillRule::EvenOdd), false) => content.fill_even_odd(),
             (None, true) => content.stroke(),
@@ -573,13 +579,17 @@ impl Render for usvg::Group {
         let group_ref = ctx.alloc_ref();
 
         let child_content = content_stream(&element, writer, ctx);
-
         let mut form = writer.form_xobject(group_ref, &child_content);
 
         let bbox = element
             .calculate_bbox()
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
-        let pdf_bbox = Rect::new(0.0, 0.0, bbox.width() as f32, bbox.height() as f32);
+        let pdf_bbox = Rect::new(
+            ctx.c.x(bbox.x()),
+            ctx.c.y(bbox.y()),
+            ctx.c.x(bbox.x() + bbox.width()),
+            ctx.c.y(bbox.y() + bbox.height()),
+        );
         form.bbox(pdf_bbox);
 
         form.group()
@@ -602,6 +612,7 @@ impl Render for usvg::Group {
         {
             let num = ctx.alloc_gs();
             content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+
             ctx.pending_graphics.push(PendingGS {
                 num,
                 fill_opacity: None,
@@ -730,11 +741,13 @@ impl Render for usvg::Image {
                         } else {
                             decoded.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect()
                         };
-                        let compressed = compress_to_vec_zlib(&alpha_bytes, 8);
 
+                        let compressed = compress_to_vec_zlib(&alpha_bytes, 8);
                         let mut mask = writer.image(mask_id, &compressed);
                         let mut void = None;
+
                         set_image_props(&mut mask, &mut void, &decoded, true);
+
                         mask.filter(Filter::FlateDecode);
                     }
                 }
@@ -766,11 +779,11 @@ impl Render for usvg::Image {
                         .bbox(Rect::new(
                             0.0,
                             0.0,
-                            ctx.c.px_to_pt(rect.width()),
-                            ctx.c.px_to_pt(rect.height()),
+                            ctx.c.px_to_pt(rect.x() + rect.width()),
+                            ctx.c.px_to_pt(rect.y() + rect.height()),
                         ))
                         .reference()
-                        .page_no(0)
+                        .page_number(0)
                         .file()
                         .description(TextStr("Embedded SVG image"))
                         .embedded_file(file_embedd_num);
@@ -792,7 +805,7 @@ impl Render for usvg::Image {
                 );
 
                 content.save_state();
-                content.concat_matrix([
+                content.transform([
                     (width as f64 * converter.factor_x) as f32,
                     0.0,
                     0.0,
@@ -812,8 +825,8 @@ impl Render for usvg::Image {
                 xobject.bbox(Rect::new(
                     0.0,
                     0.0,
-                    rect.width() as f32,
-                    rect.height() as f32,
+                    (rect.x() + rect.width()) as f32,
+                    (rect.y() + rect.height()) as f32,
                 ));
 
                 let scaling = 72.0 / ctx.dpi;
