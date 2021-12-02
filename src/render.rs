@@ -1,3 +1,5 @@
+//! Provide rendering capabilities for SVG's primitives.
+
 use image::io::Reader as ImageReader;
 use image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba};
 use miniz_oxide::deflate::compress_to_vec_zlib;
@@ -16,10 +18,15 @@ use super::{
 use crate::defer::{PendingGS, PendingPattern};
 use crate::scale::CoordToPdf;
 
+/// Write the appropriate instructions for a node into the content stream.
+///
+/// The method may use its `PdfWriter` to write auxillary indirect objects such
+/// as Form XObjects and use the context to enque pending references to them in
+/// corresponding object's `Resources` dictionary.
 pub(crate) trait Render {
     fn render(
         &self,
-        element: &Node,
+        node: &Node,
         writer: &mut PdfWriter,
         content: &mut Content,
         ctx: &mut Context,
@@ -29,7 +36,7 @@ pub(crate) trait Render {
 impl Render for usvg::Path {
     fn render(
         &self,
-        element: &Node,
+        node: &Node,
         writer: &mut PdfWriter,
         content: &mut Content,
         ctx: &mut Context,
@@ -38,8 +45,7 @@ impl Render for usvg::Path {
             return;
         }
 
-
-        let bbox = element
+        let bbox = node
             .calculate_bbox()
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
 
@@ -50,31 +56,49 @@ impl Render for usvg::Path {
             ctx.c.y(bbox.y()),
         );
 
-        let fill_gradient_pattern =
-            if let Some(Paint::Link(id)) = self.fill.as_ref().map(|fill| &fill.paint) {
-                let node = ctx.tree.defs_by_id(id).unwrap();
-                Pattern::from_node(node)
-            } else {
-                None
-            };
+        let paint = self.fill.as_ref().map(|fill| &fill.paint);
 
-        let alpha_func =
-            if let Some(Paint::Link(id)) = self.fill.as_ref().map(|fill| &fill.paint) {
-                ctx.function_map.get(id).and_then(|x| x.1)
-            } else {
-                content.save_state();
-                None
-            };
+        // Retrieve the fill gradient description struct if the fill is a
+        // gradient.
+        let fill_gradient_pattern = if let Some(Paint::Link(id)) = paint {
+            let node = ctx.tree.defs_by_id(id).unwrap();
+            Pattern::from_node(node)
+        } else {
+            None
+        };
 
+        // Get the alpha function for the gradient if there is some.
+        let alpha_func = if let Some(Paint::Link(id)) = paint {
+            ctx.function_map.get(id).and_then(|x| x.1)
+        } else {
+            content.save_state();
+            None
+        };
+
+        // In order to apply non-uniform transparency, e.g. in a gradient, we
+        // have to create a Soft Mask in an external graphics state dictionary.
+        //
+        // The operator for setting the graphics state overrides the previous
+        // Soft Mask. Because we want the masks to intersect instead, we wrap
+        // the path in a transparency group instead.
         let mut xobj_content = if let Some(alpha_func) = alpha_func {
+            // Number of the inner transparency group
             let path_ref = ctx.alloc_xobject();
-            let shaded_area_ref = ctx.alloc_ref();
+
+            // Reference and content stream of the Form XObject containing the
+            // Soft Mask shading as a Luminance gradient.
+            let smask_form_ref = ctx.alloc_ref();
             let mut shading_content = Content::new();
+
+            // We draw the gradient with the shading operator instead of
+            // registering a pattern, so we allocate a shading number for the
+            // `Resources` dictionary.
             let shading_num = ctx.alloc_shading();
             let shading_name = format!("sh{}", shading_num);
             shading_content.shading(Name(shading_name.as_bytes()));
             let shading_content = shading_content.finish();
 
+            // Reference for the indirect Shading dictionary.
             let shading_ref = ctx.alloc_ref();
             let mut shading = Shading::new(writer.indirect(shading_ref));
             let pattern = fill_gradient_pattern.clone().unwrap();
@@ -95,23 +119,32 @@ impl Render for usvg::Path {
             shading.extend([true, true]);
             shading.finish();
 
-            let mut form = form_xobject(
+            // Write the Form XObject for with the luminance-encoded alpha
+            // values for the Soft Mask.
+            let mut smask_form = form_xobject(
                 writer,
-                shaded_area_ref,
+                smask_form_ref,
                 &shading_content,
                 pdf_bbox,
                 ColorSpace::DeviceGray,
             );
 
-            form.resources()
+            smask_form
+                .resources()
                 .shadings()
                 .pair(Name(shading_name.as_bytes()), shading_ref);
 
+            // Write the reference to the transparency group containing the path
+            // to the original content stream. For all following operations, we
+            // will populate a content stream for this group.
             content.x_object(Name(format!("xo{}", path_ref).as_bytes()));
+
+            // Apply the Graphics State with the Soft Mask first thing in the
+            // new content stream.
             let gs_num = ctx.alloc_gs();
             let gs_name = format!("gs{}", gs_num);
             ctx.pending_graphics
-                .push(PendingGS::soft_mask(shaded_area_ref, gs_num));
+                .push(PendingGS::soft_mask(smask_form_ref, gs_num));
 
             let mut path_content = Content::new();
             path_content.set_parameters(Name(gs_name.as_bytes()));
@@ -121,12 +154,15 @@ impl Render for usvg::Path {
             None
         };
 
+        // Exchange the references for the inner content stream if there was an
+        // alpha value.
         let content = if let Some((xobj_content, _)) = xobj_content.as_mut() {
             xobj_content
         } else {
             content
         };
 
+        // Combine alpha and opacity values.
         let stroke_opacity = self.stroke.as_ref().map(|s| {
             let mut res = s.opacity.value() as f32;
             if let Paint::Color(c) = s.paint {
@@ -143,6 +179,7 @@ impl Render for usvg::Path {
             res
         });
 
+        // Write a graphics state for stroke and fill opacity.
         if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
             let num = ctx.alloc_gs();
             content.set_parameters(Name(format!("gs{}", num).as_bytes()));
@@ -224,10 +261,13 @@ impl Render for usvg::Path {
             (None, false) => content,
         };
 
+        // We only backed up the graphics state if there was no alpha
+        // transparency so we only restore it in that case.
         if alpha_func.is_none() {
             content.restore_state();
         }
 
+        // Write the Form XObject if there was a gradient with alpha values.
         if let Some((xobj_content, path_no)) = xobj_content {
             let path_ref = ctx.alloc_ref();
             let data = xobj_content.finish();
@@ -240,7 +280,7 @@ impl Render for usvg::Path {
 impl Render for usvg::Group {
     fn render(
         &self,
-        element: &Node,
+        node: &Node,
         writer: &mut PdfWriter,
         content: &mut Content,
         ctx: &mut Context,
@@ -251,11 +291,11 @@ impl Render for usvg::Group {
         }
 
         ctx.push();
+
         let group_ref = ctx.alloc_ref();
+        let child_content = content_stream(&node, writer, ctx);
 
-        let child_content = content_stream(&element, writer, ctx);
-
-        let bbox = element
+        let bbox = node
             .calculate_bbox()
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
         let pdf_bbox = Rect::new(
@@ -265,6 +305,8 @@ impl Render for usvg::Group {
             ctx.c.y(bbox.y() + bbox.height()),
         );
 
+        // Every group is an isolated transparency group, it needs to be painted
+        // onto its own canvas.
         let mut form = form_xobject(
             writer,
             group_ref,
@@ -341,7 +383,6 @@ impl Render for usvg::Image {
             let mut raster_size: Option<(u32, u32)> = None;
             let rect = self.view_box.rect;
 
-
             match &self.kind {
                 ImageKind::JPEG(buf) => {
                     let cursor = std::io::Cursor::new(buf);
@@ -388,10 +429,12 @@ impl Render for usvg::Image {
                     set_image_props(&mut image, &mut raster_size, &decoded, false);
                     image.filter(Filter::FlateDecode);
 
+                    // The alpha channel has to be written separately, as a Soft
+                    // Mask.
                     if color.has_alpha() {
                         let mask_id = ctx.alloc_ref();
                         image.pair(Name(b"SMask"), mask_id);
-                        drop(image);
+                        image.finish();
 
                         let alpha_bytes: Vec<u8> = if (color.bits_per_pixel()
                             / color.channel_count() as u16)
@@ -416,11 +459,14 @@ impl Render for usvg::Image {
                     }
                 }
                 ImageKind::SVG(tree) => {
+                    // An SVG image means that the file gets embedded in a
+                    // completely isolated fashion, thus we convert its tree
+                    // recursively here.
                     let opt = Options {
                         viewport: Some((rect.width(), rect.height())),
                         respect_native_size: false,
                         aspect_ratio: Some(self.view_box.aspect),
-                        dpi: ctx.dpi,
+                        dpi: ctx.c.dpi(),
                     };
 
                     let bytes = match from_tree(tree, opt) {
@@ -454,12 +500,13 @@ impl Render for usvg::Image {
                 }
             }
 
+            // Common operations for raster image formats.
             let image_ref = if let Some((width, height)) = raster_size {
                 let mut content = Content::new();
                 let xobj_name = Name(b"EmbRaster");
                 let converter = CoordToPdf::new(
                     (rect.width(), rect.height()),
-                    ctx.dpi,
+                    ctx.c.dpi(),
                     ViewBox {
                         rect: usvg::Rect::new(0.0, 0.0, width as f64, height as f64)
                             .unwrap(),
@@ -492,7 +539,7 @@ impl Render for usvg::Image {
                     (rect.y() + rect.height()) as f32,
                 ));
 
-                let scaling = 72.0 / ctx.dpi;
+                let scaling = 72.0 / ctx.c.dpi();
                 let mut transform = self.transform.clone();
                 transform.scale(scaling, scaling);
                 xobject.matrix([
@@ -519,6 +566,8 @@ impl Render for usvg::Image {
     }
 }
 
+/// Draw a path into a content stream. Does close the path but not perform any
+/// drawing operators.
 pub fn draw_path(
     path_data: &[PathSegment],
     transform: Transform,
@@ -549,11 +598,18 @@ pub fn draw_path(
     }
 }
 
+/// Describes a pattern in use for some object.
 #[derive(Clone)]
 pub(crate) struct Pattern {
+    /// The SVG id of the pattern that can also be used to retreive its
+    /// functions.
     pub(crate) id: String,
+    /// The type of gradient.
     pub(crate) shading_type: ShadingType,
+    /// The coordinates of the gradient.
     pub(crate) coords: [f64; 6],
+    /// Whether to transform the coords to the bounding box of the element or
+    /// keep them in the page coordinate system.
     pub(crate) transform_coords: bool,
 }
 
@@ -576,6 +632,8 @@ impl Pattern {
         }
     }
 
+    /// Apply the transformation and reorder the coordinates depending on the
+    /// shading type.
     pub(crate) fn transformed_coords(
         &self,
         c: &CoordToPdf,

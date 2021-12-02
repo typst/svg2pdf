@@ -1,8 +1,10 @@
+//! Convert SVG files to PDFs.
+
 use std::collections::HashMap;
 
 use pdf_writer::types::ColorSpace;
 use pdf_writer::writers::{ExponentialFunction, FormXObject, Resources};
-use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
+use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, TextStr};
 use usvg::{NodeExt, NodeKind, Stop, Tree};
 
 mod defer;
@@ -13,11 +15,20 @@ use defer::*;
 use render::*;
 pub use scale::*;
 
+/// Set size and scaling preferences for the conversion.
 pub struct Options {
-    viewport: Option<(f64, f64)>,
-    respect_native_size: bool,
-    aspect_ratio: Option<usvg::AspectRatio>,
-    dpi: f64,
+    /// Specific dimensions the SVG can be forced to fill. This size will also
+    /// be used if the SVG does not have a native size.
+    pub viewport: Option<(f64, f64)>,
+    /// Whether to respect the SVG's native size, even if the viewport is set.
+    pub respect_native_size: bool,
+    /// Override the scaling mode of the SVG within its viewport.
+    pub aspect_ratio: Option<usvg::AspectRatio>,
+    /// The Dots per Inch to assume for the conversion to PDF's printers points.
+    /// Common values include `72.0` (1pt = 1px; Adobe and macOS) and `96.0`
+    /// (Microsoft) for standard resolution screens and multiples of `300.0` for
+    /// print quality.
+    pub dpi: f64,
 }
 
 impl Default for Options {
@@ -26,32 +37,52 @@ impl Default for Options {
             viewport: None,
             respect_native_size: true,
             aspect_ratio: None,
-            dpi: 96.0,
+            dpi: 72.0,
         }
     }
 }
 
+/// Data is needed during the preparation of the file.
 struct Context<'a> {
+    /// The SVG tree.
     tree: &'a Tree,
+    /// The bounding box of the PDF page.
     bbox: &'a Rect,
+    /// Converter to the PDF coordinate system.
     c: &'a CoordToPdf,
+    /// References for functions for gradient color and alpha values.
     function_map: HashMap<String, (Ref, Option<Ref>)>,
+    /// The next indirect reference id.
     next_id: i32,
+    /// The next pattern id, to be used as e.g. `p1`.
     next_pattern: u32,
+    /// The next graphics state id, to be used as e.g. `gs2`.
     next_graphic: u32,
+    /// The next XObject id, to be used as e.g. `xo3`.
     next_xobject: u32,
+    /// The next shading id, to be used as e.g. `sh5`.
     next_shading: u32,
-    dpi: f64,
+    /// Patterns which have been used but not yet written to the file.
     pending_patterns: Vec<PendingPattern>,
+    /// Graphics states which have been used but not yet written to the file.
     pending_graphics: Vec<PendingGS>,
+    /// XObjects that have been both written as indirect objects and referenced
+    /// but still need to be registered with the `Resources` dictionary.
     pending_xobjects: Vec<(u32, Ref)>,
+    /// IDs of nodes which need to be written to the root of the document as a
+    /// transparency group along with their metadata.
     pending_groups: HashMap<String, PendingGroup>,
+    /// This array stores the lengths of the pending vectors and allows to push
+    /// each of their elements onto the closes `Resources` dictionary.
     checkpoints: Vec<[usize; 3]>,
+    /// The mask that needs to be applied at the start of a path drawing
+    /// operation.
     initial_mask: Option<String>,
 }
 
 impl<'a> Context<'a> {
-    fn new(tree: &'a Tree, bbox: &'a Rect, c: &'a CoordToPdf, dpi: f64) -> Self {
+    /// Create a new context.
+    fn new(tree: &'a Tree, bbox: &'a Rect, c: &'a CoordToPdf) -> Self {
         Self {
             tree,
             bbox,
@@ -62,7 +93,6 @@ impl<'a> Context<'a> {
             next_graphic: 0,
             next_xobject: 0,
             next_shading: 0,
-            dpi,
             pending_patterns: vec![],
             pending_graphics: vec![],
             pending_xobjects: vec![],
@@ -72,6 +102,7 @@ impl<'a> Context<'a> {
         }
     }
 
+    /// Push a new context frame for the pending objects.
     fn push(&mut self) {
         self.checkpoints.push([
             self.pending_patterns.len(),
@@ -80,6 +111,8 @@ impl<'a> Context<'a> {
         ]);
     }
 
+    /// Pop a context frame and write all pending objects onto an `Resources`
+    /// dictionary.
     fn pop(&mut self, resources: &mut Resources) {
         let [patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
 
@@ -93,30 +126,35 @@ impl<'a> Context<'a> {
         write_xobjects(&pending_xobjects, resources);
     }
 
+    /// Allocate a new indirect reference id.
     fn alloc_ref(&mut self) -> Ref {
         let reference = Ref::new(self.next_id);
         self.next_id += 1;
         reference
     }
 
+    /// Allocate a new pattern id.
     fn alloc_pattern(&mut self) -> u32 {
         let num = self.next_pattern;
         self.next_pattern += 1;
         num
     }
 
+    /// Allocate a new graphics state id.
     fn alloc_gs(&mut self) -> u32 {
         let num = self.next_graphic;
         self.next_graphic += 1;
         num
     }
 
+    /// Allocate a new XObject id.
     fn alloc_xobject(&mut self) -> u32 {
         let num = self.next_xobject;
         self.next_xobject += 1;
         num
     }
 
+    /// Allocate a new shading id.
     fn alloc_shading(&mut self) -> u32 {
         let num = self.next_shading;
         self.next_shading += 1;
@@ -124,6 +162,7 @@ impl<'a> Context<'a> {
     }
 }
 
+/// Convert an SVG source string to a PDF buffer.
 pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
     let mut usvg_opts = usvg::Options::default();
     if let Some((width, height)) = opt.viewport {
@@ -133,6 +172,7 @@ pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
     from_tree(&tree, opt)
 }
 
+/// Convert an usvg source tree to a PDF buffer.
 pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
     let native_size = tree.svg_node().size;
     let viewport = if let Some((width, height)) = opt.viewport {
@@ -153,7 +193,7 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
     );
 
     let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
-    let mut ctx = Context::new(&tree, &bbox, &c, opt.dpi);
+    let mut ctx = Context::new(&tree, &bbox, &c);
 
     let mut writer = PdfWriter::new();
     let catalog_id = ctx.alloc_ref();
@@ -189,8 +229,14 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
 
             let content = content_stream(&mask_node, &mut writer, &mut ctx);
 
-            let mut group = writer.form_xobject(gp.reference, &content);
-            group.bbox(gp.bbox);
+            let mut group = form_xobject(
+                &mut writer,
+                gp.reference,
+                &content,
+                gp.bbox,
+                ColorSpace::DeviceRgb,
+            );
+
             if let Some(matrix) = gp.matrix {
                 group.matrix(matrix);
             }
@@ -198,12 +244,6 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
             let mut resources = group.resources();
             ctx.pop(&mut resources);
             resources.finish();
-
-            group
-                .group()
-                .transparency()
-                .color_space(ColorSpace::DeviceRgb)
-                .isolated(true);
         }
     }
 
@@ -223,9 +263,14 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
 
     writer.stream(content_id, content);
 
+    let mut doc_info = writer.document_info(ctx.alloc_ref());
+    doc_info.producer(TextStr("svg2pdf"));
+    doc_info.finish();
+
     Some(writer.finish(catalog_id))
 }
 
+/// Write a content stream for a node.
 fn content_stream<'a>(
     node: &usvg::Node,
     writer: &mut PdfWriter,
@@ -265,6 +310,7 @@ fn content_stream<'a>(
     content.finish()
 }
 
+/// Draw a clipping path into a content stream.
 fn apply_clip_path(path_id: Option<&String>, content: &mut Content, ctx: &mut Context) {
     if let Some(clip_path) = path_id.and_then(|id| ctx.tree.defs_by_id(id)) {
         if let NodeKind::ClipPath(ref path) = *clip_path.borrow() {
@@ -287,6 +333,8 @@ fn apply_clip_path(path_id: Option<&String>, content: &mut Content, ctx: &mut Co
     }
 }
 
+/// Prepare a mask to be written to the file. This will calculate the metadata
+/// and create a `pending_group`.
 fn apply_mask(
     mask_id: Option<&String>,
     bbox: usvg::Rect,
@@ -330,19 +378,26 @@ fn apply_mask(
     }
 }
 
+/// A color helper function that stores colors with values between 0.0 and 1.0.
 #[derive(Debug, Clone, Copy)]
 struct RgbaColor {
+    /// Red.
     r: f32,
+    /// Green.
     g: f32,
+    /// Blue.
     b: f32,
+    /// Alpha.
     a: f32,
 }
 
 impl RgbaColor {
+    /// Create a new color.
     fn new(r: f32, g: f32, b: f32, a: f32) -> RgbaColor {
         RgbaColor { r, g, b, a }
     }
 
+    /// Create a new color from u8 color components between 0.0 and 255.0.
     fn from_u8(r: u8, g: u8, b: u8, a: u8) -> RgbaColor {
         RgbaColor::new(
             r as f32 / 255.0,
@@ -352,6 +407,7 @@ impl RgbaColor {
         )
     }
 
+    /// Create a RGB array for use in PDF.
     fn to_array(&self) -> [f32; 3] {
         [self.r, self.g, self.b]
     }
@@ -363,6 +419,8 @@ impl From<usvg::Color> for RgbaColor {
     }
 }
 
+/// Write the functions for a gradient with its stops. Also registers them with
+/// the context and can create an alpha gradient function.
 fn register_functions(
     writer: &mut PdfWriter,
     ctx: &mut Context,
@@ -397,6 +455,7 @@ fn register_functions(
     ctx.function_map.insert(id.to_string(), (func_ref, alpha_ref));
 }
 
+/// Convert a list of stops to a function and write it.
 fn stops_to_function(
     writer: &mut PdfWriter,
     id: Ref,
@@ -474,6 +533,7 @@ fn stops_to_function(
     true
 }
 
+/// Create and return the writer for an transparency group form XObject.
 fn form_xobject<'a>(
     writer: &'a mut PdfWriter,
     reference: Ref,

@@ -1,5 +1,9 @@
+//! Provide transformations between PDF and SVG coordinate systems.
+
 use usvg::{Align, AspectRatio, ViewBox};
 
+/// Convert point data between two coordinate systems.
+#[derive(Debug, Copy, Clone)]
 pub struct CoordToPdf {
     factor_x: f64,
     factor_y: f64,
@@ -10,6 +14,9 @@ pub struct CoordToPdf {
 }
 
 impl CoordToPdf {
+    /// Create a new coordinate transform from the ViewBox of the SVG file to
+    /// some viewport. A certain scaling mode can be forced by setting
+    /// `aspect_ratio`.
     pub fn new(
         viewport: (f64, f64),
         dpi: f64,
@@ -139,5 +146,10 @@ impl CoordToPdf {
     /// Get the factor for the Y axis.
     pub fn factor_y(&self) -> f64 {
         self.factor_y
+    }
+
+    /// Get the Dots Per Inch.
+    pub fn dpi(&self) -> f64 {
+        self.dpi
     }
 }
