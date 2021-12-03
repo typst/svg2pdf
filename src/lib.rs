@@ -571,10 +571,6 @@ mod tests {
                 continue;
             }
 
-            if !base_name.contains("pattern1") {
-                continue;
-            }
-
             println!("{}", base_name);
 
             let doc = fs::read_to_string(path.path()).unwrap();

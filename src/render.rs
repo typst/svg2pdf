@@ -7,7 +7,7 @@ use pdf_writer::types::{
     ColorSpace, LineCapStyle, LineJoinStyle, PaintType, ShadingType, TilingType,
 };
 use pdf_writer::writers::{Image, Shading};
-use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, TextStr};
+use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr};
 use usvg::{
     Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, NodeKind,
     Paint, PathSegment, Pattern, Transform, Units, ViewBox, Visibility,
@@ -50,143 +50,136 @@ impl Render for usvg::Path {
         let bbox = node
             .calculate_bbox()
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
-        let pdf_bbox = ctx.c.pdf_rect(bbox);
 
-        let paint = self.fill.as_ref().map(|fill| &fill.paint);
+        let (fill_gradient, fill_g_alpha) =
+            get_gradient(self.fill.as_ref().map(|fill| &fill.paint), ctx);
+        let (stroke_gradient, stroke_g_alpha) =
+            get_gradient(self.stroke.as_ref().map(|stroke| &stroke.paint), ctx);
 
-        // Retrieve the fill gradient description struct if the fill is a
-        // gradient.
-        let fill_gradient_pattern = if let Some(Paint::Link(id)) = paint {
-            let node = ctx.tree.defs_by_id(id).unwrap();
-            Gradient::from_node(node)
-        } else {
-            None
-        };
-
-        // Get the alpha function for the gradient if there is some.
-        let alpha_func = if let Some(Paint::Link(id)) = paint {
-            ctx.function_map.get(id).and_then(|x| x.1)
-        } else {
-            None
-        };
-
-        // In order to apply non-uniform transparency, e.g. in a gradient, we
-        // have to create a Soft Mask in an external graphics state dictionary.
-        //
-        // The operator for setting the graphics state overrides the previous
-        // Soft Mask. Because we want the masks to intersect instead, we wrap
-        // the path in a transparency group instead.
-        let mut xobj_content = if let Some(alpha_func) = alpha_func {
-            // Number of the inner transparency group
-            let path_ref = ctx.alloc_xobject();
-
-            // Reference and content stream of the Form XObject containing the
-            // Soft Mask shading as a Luminance gradient.
-            let smask_form_ref = ctx.alloc_ref();
-            let mut shading_content = Content::new();
-
-            // We draw the gradient with the shading operator instead of
-            // registering a pattern, so we allocate a shading number for the
-            // `Resources` dictionary.
-            let shading_num = ctx.alloc_shading();
-            let shading_name = format!("sh{}", shading_num);
-            shading_content.shading(Name(shading_name.as_bytes()));
-            let shading_content = shading_content.finish();
-
-            // Reference for the indirect Shading dictionary.
-            let shading_ref = ctx.alloc_ref();
-            let mut shading = Shading::new(writer.indirect(shading_ref));
-            let pattern = fill_gradient_pattern.clone().unwrap();
-
-            shading.shading_type(pattern.shading_type);
-            shading.color_space(ColorSpace::DeviceGray);
-
-            shading.function(alpha_func);
-            shading.coords(
-                IntoIterator::into_iter(pattern.transformed_coords(&ctx.c, bbox)).take(
-                    if pattern.shading_type == ShadingType::Axial {
-                        4
-                    } else {
-                        6
-                    },
-                ),
-            );
-            shading.extend([true, true]);
-            shading.finish();
-
-            // Write the Form XObject for with the luminance-encoded alpha
-            // values for the Soft Mask.
-            let mut smask_form = form_xobject(
+        if fill_g_alpha.is_some() || stroke_g_alpha.is_some() {
+            render_path_partial(
+                self,
+                bbox,
+                true,
+                false,
+                fill_gradient,
+                None,
+                fill_g_alpha,
+                None,
                 writer,
-                smask_form_ref,
-                &shading_content,
-                pdf_bbox,
-                ColorSpace::DeviceGray,
+                content,
+                ctx,
             );
-
-            smask_form
-                .resources()
-                .shadings()
-                .pair(Name(shading_name.as_bytes()), shading_ref);
-
-            // Write the reference to the transparency group containing the path
-            // to the original content stream. For all following operations, we
-            // will populate a content stream for this group.
-            content.x_object(Name(format!("xo{}", path_ref).as_bytes()));
-
-            // Apply the Graphics State with the Soft Mask first thing in the
-            // new content stream.
-            let gs_num = ctx.alloc_gs();
-            let gs_name = format!("gs{}", gs_num);
-            ctx.pending_graphics
-                .push(PendingGS::soft_mask(smask_form_ref, gs_num));
-
-            let mut path_content = Content::new();
-            path_content.set_parameters(Name(gs_name.as_bytes()));
-
-            Some((path_content, path_ref))
+            render_path_partial(
+                self,
+                bbox,
+                false,
+                true,
+                None,
+                stroke_gradient,
+                None,
+                stroke_g_alpha,
+                writer,
+                content,
+                ctx,
+            );
         } else {
-            content.save_state();
-            None
-        };
-
-        // Exchange the references for the inner content stream if there was an
-        // alpha value.
-        let content = if let Some((xobj_content, _)) = xobj_content.as_mut() {
-            xobj_content
-        } else {
-            content
-        };
-
-        // Combine alpha and opacity values.
-        let stroke_opacity = self.stroke.as_ref().map(|s| {
-            let mut res = s.opacity.value() as f32;
-            if let Paint::Color(c) = s.paint {
-                res *= c.alpha as f32 / 255.0;
-            }
-            res
-        });
-
-        let fill_opacity = self.fill.as_ref().map(|f| {
-            let mut res = f.opacity.value() as f32;
-            if let Paint::Color(c) = f.paint {
-                res *= c.alpha as f32 / 255.0;
-            }
-            res
-        });
-
-        // Write a graphics state for stroke and fill opacity.
-        if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
-            let num = ctx.alloc_gs();
-            content.set_parameters(Name(format!("gs{}", num).as_bytes()));
-            ctx.pending_graphics.push(PendingGS::opacity(
-                stroke_opacity,
-                fill_opacity,
-                num,
-            ));
+            render_path_partial(
+                self,
+                bbox,
+                true,
+                true,
+                fill_gradient,
+                stroke_gradient,
+                fill_g_alpha,
+                stroke_g_alpha,
+                writer,
+                content,
+                ctx,
+            )
         }
+    }
+}
 
-        if let Some(stroke) = &self.stroke {
+fn render_path_partial(
+    path: &usvg::Path,
+    bbox: usvg::Rect,
+    fill: bool,
+    stroke: bool,
+    fill_gradient: Option<Gradient>,
+    stroke_gradient: Option<Gradient>,
+    fill_g_alpha: Option<Ref>,
+    stroke_g_alpha: Option<Ref>,
+    writer: &mut PdfWriter,
+    content: &mut Content,
+    ctx: &mut Context,
+) {
+    // In order to apply non-uniform transparency, e.g. in a gradient, we
+    // have to create a Soft Mask in an external graphics state dictionary.
+    //
+    // The operator for setting the graphics state overrides the previous
+    // Soft Mask. Because we want the masks to intersect instead, we wrap
+    // the path in a transparency group instead.
+    let mut xobj_content = if let Some(alpha_func) = fill_g_alpha {
+        let smask_form_ref = prep_shading(
+            alpha_func,
+            fill_gradient.as_ref().unwrap(),
+            bbox,
+            writer,
+            ctx,
+        );
+
+        Some(start_wrap(smask_form_ref, content, ctx))
+    } else if let Some(alpha_func) = stroke_g_alpha {
+        let smask_form_ref = prep_shading(
+            alpha_func,
+            stroke_gradient.as_ref().unwrap(),
+            bbox,
+            writer,
+            ctx,
+        );
+
+        Some(start_wrap(smask_form_ref, content, ctx))
+    } else {
+        content.save_state();
+        None
+    };
+
+    // Exchange the references for the inner content stream if there was an
+    // alpha value.
+    let content = if let Some((xobj_content, _)) = xobj_content.as_mut() {
+        xobj_content
+    } else {
+        content
+    };
+
+    // Combine alpha and opacity values.
+    let stroke_opacity = path.stroke.as_ref().map(|s| {
+        let mut res = s.opacity.value() as f32;
+        if let Paint::Color(c) = s.paint {
+            res *= c.alpha as f32 / 255.0;
+        }
+        res
+    });
+
+    let fill_opacity = path.fill.as_ref().map(|f| {
+        let mut res = f.opacity.value() as f32;
+        if let Paint::Color(c) = f.paint {
+            res *= c.alpha as f32 / 255.0;
+        }
+        res
+    });
+
+    // Write a graphics state for stroke and fill opacity.
+    if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
+        let num = ctx.alloc_gs();
+        content.set_parameters(Name(format!("gs{}", num).as_bytes()));
+        ctx.pending_graphics
+            .push(PendingGS::opacity(stroke_opacity, fill_opacity, num));
+    }
+
+    if stroke {
+        if let Some(stroke) = &path.stroke {
             content.set_line_width(ctx.c.px_to_pt(stroke.width.value()));
             match stroke.linecap {
                 LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
@@ -223,7 +216,13 @@ impl Render for usvg::Path {
                     let name = format!("p{}", num);
 
                     match *item.borrow() {
-                        NodeKind::RadialGradient(_) | NodeKind::LinearGradient(_) => {}
+                        NodeKind::RadialGradient(_) | NodeKind::LinearGradient(_) => {
+                            let pattern = stroke_gradient.unwrap();
+
+                            ctx.pending_gradients.push(PendingGradient::from_gradient(
+                                pattern, bbox, num, &ctx.c,
+                            ));
+                        }
                         NodeKind::Pattern(ref pattern) => {
                             prep_pattern(pattern, &item, num, bbox, writer, ctx);
                         }
@@ -234,8 +233,10 @@ impl Render for usvg::Path {
                 }
             }
         }
+    }
 
-        match self.fill.as_ref().map(|fill| &fill.paint) {
+    if fill {
+        match path.fill.as_ref().map(|fill| &fill.paint) {
             Some(Paint::Color(c)) => {
                 let [r, g, b] = RgbaColor::from(*c).to_array();
                 content.set_fill_rgb(r, g, b);
@@ -248,7 +249,7 @@ impl Render for usvg::Path {
 
                 match *item.borrow() {
                     NodeKind::RadialGradient(_) | NodeKind::LinearGradient(_) => {
-                        let pattern = fill_gradient_pattern.unwrap();
+                        let pattern = fill_gradient.unwrap();
 
                         ctx.pending_gradients.push(PendingGradient::from_gradient(
                             pattern, bbox, num, &ctx.c,
@@ -264,31 +265,41 @@ impl Render for usvg::Path {
             }
             None => {}
         }
+    }
 
-        draw_path(&self.data.0, self.transform, content, &ctx.c);
+    draw_path(&path.data.0, path.transform, content, &ctx.c);
 
-        match (self.fill.as_ref().map(|f| f.rule), self.stroke.is_some()) {
-            (Some(FillRule::NonZero), true) => content.fill_nonzero_and_stroke(),
-            (Some(FillRule::EvenOdd), true) => content.fill_even_odd_and_stroke(),
-            (Some(FillRule::NonZero), false) => content.fill_nonzero(),
-            (Some(FillRule::EvenOdd), false) => content.fill_even_odd(),
-            (None, true) => content.stroke(),
-            (None, false) => content,
-        };
+    match (
+        path.fill.as_ref().map(|f| f.rule),
+        fill,
+        path.stroke.is_some() && stroke,
+    ) {
+        (Some(FillRule::NonZero), true, true) => content.fill_nonzero_and_stroke(),
+        (Some(FillRule::EvenOdd), true, true) => content.fill_even_odd_and_stroke(),
+        (Some(FillRule::NonZero), true, false) => content.fill_nonzero(),
+        (Some(FillRule::EvenOdd), true, false) => content.fill_even_odd(),
+        (None, _, true) | (_, false, true) => content.stroke(),
+        (None, _, false) | (_, false, false) => content.end_path(),
+    };
 
-        // We only backed up the graphics state if there was no alpha
-        // transparency so we only restore it in that case.
-        if alpha_func.is_none() {
-            content.restore_state();
-        }
+    // We only backed up the graphics state if there was no alpha
+    // transparency so we only restore it in that case.
+    if fill_g_alpha.is_none() && stroke_g_alpha.is_none() {
+        content.restore_state();
+    }
 
-        // Write the Form XObject if there was a gradient with alpha values.
-        if let Some((xobj_content, path_no)) = xobj_content {
-            let path_ref = ctx.alloc_ref();
-            let data = xobj_content.finish();
+    let pdf_bbox = ctx.c.pdf_rect(bbox);
+
+    // Write the Form XObject if there was a gradient with alpha values.
+    if let Some((xobj_content, path_no)) = xobj_content {
+        let path_ref = ctx.alloc_ref();
+        let data = xobj_content.finish();
+        let mut form =
             form_xobject(writer, path_ref, &data, pdf_bbox, ColorSpace::DeviceRgb);
-            ctx.pending_xobjects.push((path_no, path_ref));
-        }
+        let mut resources = form.resources();
+        ctx.pop(&mut resources);
+
+        ctx.pending_xobjects.push((path_no, path_ref));
     }
 }
 
@@ -302,6 +313,115 @@ fn transform_to_matrix(transform: Transform) -> [f32; 6] {
         transform.e as f32,
         transform.f as f32,
     ]
+}
+
+/// Retreive the pattern and alpha values for a paint.
+fn get_gradient(paint: Option<&Paint>, ctx: &Context) -> (Option<Gradient>, Option<Ref>) {
+    // Retrieve the fill gradient description struct if the fill is a
+    // gradient.
+    let gradient = if let Some(Paint::Link(id)) = paint {
+        let node = ctx.tree.defs_by_id(id).unwrap();
+        Gradient::from_node(node)
+    } else {
+        None
+    };
+
+    // Get the alpha function for the gradient if there is some.
+    let alpha_func = if let Some(Paint::Link(id)) = paint {
+        ctx.function_map.get(id).and_then(|x| x.1)
+    } else {
+        None
+    };
+
+    (gradient, alpha_func)
+}
+
+/// Write the alpha shading Form XObject using a function. Returns an indirect
+/// reference to a Luminance-shaded XObject.
+fn prep_shading(
+    alpha_func: Ref,
+    gradient: &Gradient,
+    bbox: usvg::Rect,
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+) -> Ref {
+    // Reference and content stream of the Form XObject containing the
+    // Soft Mask shading as a Luminance gradient.
+    let smask_form_ref = ctx.alloc_ref();
+    let mut shading_content = Content::new();
+
+    // We draw the gradient with the shading operator instead of
+    // registering a pattern, so we allocate a shading number for the
+    // `Resources` dictionary.
+    let shading_num = ctx.alloc_shading();
+    let shading_name = format!("sh{}", shading_num);
+    shading_content.shading(Name(shading_name.as_bytes()));
+    let shading_content = shading_content.finish();
+
+    // Reference for the indirect Shading dictionary.
+    let shading_ref = ctx.alloc_ref();
+    let mut shading = Shading::new(writer.indirect(shading_ref));
+
+    shading.shading_type(gradient.shading_type);
+    shading.color_space(ColorSpace::DeviceGray);
+
+    shading.function(alpha_func);
+    shading.coords(
+        IntoIterator::into_iter(gradient.transformed_coords(&ctx.c, bbox)).take(
+            if gradient.shading_type == ShadingType::Axial {
+                4
+            } else {
+                6
+            },
+        ),
+    );
+    shading.extend([true, true]);
+    shading.finish();
+
+    // Write the Form XObject for with the luminance-encoded alpha
+    // values for the Soft Mask.
+    let mut smask_form = form_xobject(
+        writer,
+        smask_form_ref,
+        &shading_content,
+        ctx.c.pdf_rect(bbox),
+        ColorSpace::DeviceGray,
+    );
+
+    smask_form
+        .resources()
+        .shadings()
+        .pair(Name(shading_name.as_bytes()), shading_ref);
+
+    smask_form_ref
+}
+
+/// Start wrapping a content stream in an Form XObject to combine graphics state
+/// applicability.
+fn start_wrap(
+    smask_ref: Ref,
+    content: &mut Content,
+    ctx: &mut Context,
+) -> (Content, u32) {
+    // Number of the inner transparency group
+    let path_ref = ctx.alloc_xobject();
+
+    // Write the reference to the transparency group containing the path
+    // to the original content stream. For all following operations, we
+    // will populate a content stream for this group.
+    content.x_object(Name(format!("xo{}", path_ref).as_bytes()));
+
+    // Apply the Graphics State with the Soft Mask first thing in the
+    // new content stream.
+    let gs_num = ctx.alloc_gs();
+    let gs_name = format!("gs{}", gs_num);
+    ctx.push();
+    ctx.pending_graphics.push(PendingGS::soft_mask(smask_ref, gs_num));
+
+    let mut path_content = Content::new();
+    path_content.set_parameters(Name(gs_name.as_bytes()));
+
+    (path_content, path_ref)
 }
 
 /// Write a pattern to the file for use for filling or stroking.
@@ -325,7 +445,7 @@ fn prep_pattern(
     };
 
     let matrix = transform_to_matrix(pattern.transform);
-    let pdf_rect = ctx.c.pdf_rect(rect).transform(matrix);
+    let pdf_rect = ctx.c.pdf_rect(rect);
 
     let mut inner_matrix = if let Some(viewbox) = pattern.view_box {
         CoordToPdf::new((rect.width(), rect.height()), ctx.c.dpi(), viewbox, None)
