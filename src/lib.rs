@@ -49,7 +49,7 @@ struct Context<'a> {
     /// The bounding box of the PDF page.
     bbox: &'a Rect,
     /// Converter to the PDF coordinate system.
-    c: &'a CoordToPdf,
+    c: CoordToPdf,
     /// References for functions for gradient color and alpha values.
     function_map: HashMap<String, (Ref, Option<Ref>)>,
     /// The next indirect reference id.
@@ -63,7 +63,9 @@ struct Context<'a> {
     /// The next shading id, to be used as e.g. `sh5`.
     next_shading: u32,
     /// Patterns which have been used but not yet written to the file.
-    pending_patterns: Vec<PendingPattern>,
+    pending_gradients: Vec<PendingGradient>,
+    /// Patterns which have been used but not yet written to the file.
+    pending_patterns: Vec<(u32, Ref)>,
     /// Graphics states which have been used but not yet written to the file.
     pending_graphics: Vec<PendingGS>,
     /// XObjects that have been both written as indirect objects and referenced
@@ -74,7 +76,7 @@ struct Context<'a> {
     pending_groups: HashMap<String, PendingGroup>,
     /// This array stores the lengths of the pending vectors and allows to push
     /// each of their elements onto the closes `Resources` dictionary.
-    checkpoints: Vec<[usize; 3]>,
+    checkpoints: Vec<[usize; 4]>,
     /// The mask that needs to be applied at the start of a path drawing
     /// operation.
     initial_mask: Option<String>,
@@ -82,7 +84,7 @@ struct Context<'a> {
 
 impl<'a> Context<'a> {
     /// Create a new context.
-    fn new(tree: &'a Tree, bbox: &'a Rect, c: &'a CoordToPdf) -> Self {
+    fn new(tree: &'a Tree, bbox: &'a Rect, c: CoordToPdf) -> Self {
         Self {
             tree,
             bbox,
@@ -93,6 +95,7 @@ impl<'a> Context<'a> {
             next_graphic: 0,
             next_xobject: 0,
             next_shading: 0,
+            pending_gradients: vec![],
             pending_patterns: vec![],
             pending_graphics: vec![],
             pending_xobjects: vec![],
@@ -105,6 +108,7 @@ impl<'a> Context<'a> {
     /// Push a new context frame for the pending objects.
     fn push(&mut self) {
         self.checkpoints.push([
+            self.pending_gradients.len(),
             self.pending_patterns.len(),
             self.pending_graphics.len(),
             self.pending_xobjects.len(),
@@ -114,10 +118,16 @@ impl<'a> Context<'a> {
     /// Pop a context frame and write all pending objects onto an `Resources`
     /// dictionary.
     fn pop(&mut self, resources: &mut Resources) {
-        let [patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
+        let [gradients, patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
 
+        let pending_gradients = self.pending_gradients.split_off(gradients);
         let pending_patterns = self.pending_patterns.split_off(patterns);
-        write_patterns(&pending_patterns, &self.function_map, resources);
+        write_gradients(
+            &pending_gradients,
+            &pending_patterns,
+            &self.function_map,
+            resources,
+        );
 
         let pending_graphics = self.pending_graphics.split_off(graphics);
         write_graphics(&pending_graphics, resources);
@@ -193,7 +203,7 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
     );
 
     let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
-    let mut ctx = Context::new(&tree, &bbox, &c);
+    let mut ctx = Context::new(&tree, &bbox, c);
 
     let mut writer = PdfWriter::new();
     let catalog_id = ctx.alloc_ref();
@@ -319,7 +329,7 @@ fn apply_clip_path(path_id: Option<&String>, content: &mut Content, ctx: &mut Co
             for child in clip_path.children() {
                 match *child.borrow() {
                     NodeKind::Path(ref path) => {
-                        draw_path(&path.data.0, path.transform, content, ctx.c);
+                        draw_path(&path.data.0, path.transform, content, &ctx.c);
                         content.clip_nonzero();
                         content.end_path();
                     }
@@ -347,17 +357,12 @@ fn apply_mask(
             let (bbox, matrix) = if mask.content_units == usvg::Units::UserSpaceOnUse {
                 (*ctx.bbox, None)
             } else {
-                let (x, y) = mask_node.transform().apply(mask.rect.x(), mask.rect.y());
+                let (x, y) = ctx
+                    .c
+                    .point(mask_node.transform().apply(mask.rect.x(), mask.rect.y()));
                 (
                     pdf_bbox,
-                    Some([
-                        1.0,
-                        0.0,
-                        0.0,
-                        1.0,
-                        bbox.x() as f32 + ctx.c.x(x),
-                        bbox.y() as f32 + ctx.c.y(y),
-                    ]),
+                    Some([1.0, 0.0, 0.0, 1.0, bbox.x() as f32 + x, bbox.y() as f32 + y]),
                 )
             };
             apply_mask(mask.mask.as_ref(), mask.rect, pdf_bbox, ctx);
@@ -566,10 +571,16 @@ mod tests {
                 continue;
             }
 
+            if !base_name.contains("pattern1") {
+                continue;
+            }
+
             println!("{}", base_name);
 
             let doc = fs::read_to_string(path.path()).unwrap();
-            let buf = convert(&doc, Options::default()).unwrap();
+            let mut options = Options::default();
+            options.dpi = 72.0;
+            let buf = convert(&doc, options).unwrap();
 
             let len = base_name.len();
             let file_name = format!("{}.pdf", &base_name[0 .. len - 4]);

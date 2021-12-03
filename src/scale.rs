@@ -11,6 +11,7 @@ pub struct CoordToPdf {
     offset_y: f64,
     height_y: f64,
     dpi: f64,
+    matrix: [f64; 6],
 }
 
 impl CoordToPdf {
@@ -93,22 +94,32 @@ impl CoordToPdf {
             offset_y,
             height_y: viewport.1,
             dpi,
+            matrix: [1.0, 0.0, 0.0, 1.0, 0.0, 0.0],
         }
     }
 
     /// Convert from x SVG source coordinates to PDF coordinates.
     pub fn x(&self, x: f64) -> f32 {
-        self.px_to_pt(x * self.factor_x + self.offset_x)
+        self.px_to_pt(self.apply_x(x) * self.factor_x + self.offset_x)
+    }
+
+    /// Convert from y SVG source coordinates to PDF coordinates.
+    pub fn y(&self, y: f64) -> f32 {
+        self.px_to_pt(self.height_y - (self.apply_y(y) * self.factor_y + self.offset_y))
+    }
+
+    /// Convert from SVG source coordinates to PDF coordinates.
+    pub fn point(&self, point: (f64, f64)) -> (f32, f32) {
+        let (x, y) = self.apply(point);
+        (
+            self.px_to_pt(x * self.factor_x + self.offset_x),
+            self.px_to_pt(self.height_y - (y * self.factor_y + self.offset_y)),
+        )
     }
 
     /// Convert from x PDF coordinates to SVG source coordinates.
     pub fn svg_x(&self, x: f32) -> f64 {
         (self.pt_to_px(x) - self.offset_x) / self.factor_x
-    }
-
-    /// Convert from y SVG source coordinates to PDF coordinates.
-    pub fn y(&self, y: f64) -> f32 {
-        self.px_to_pt(self.height_y - (y * self.factor_y + self.offset_y))
     }
 
     /// Convert from y PDF coordinates to SVG source coordinates.
@@ -151,5 +162,69 @@ impl CoordToPdf {
     /// Get the Dots Per Inch.
     pub fn dpi(&self) -> f64 {
         self.dpi
+    }
+
+    /// Get the transformation matrix for this converter.
+    pub fn matrix(&self) -> [f32; 6] {
+        let correct = (self.dpi / 72.0) as f32;
+        [
+            self.factor_x as f32 * correct,
+            0.0,
+            0.0,
+            -self.factor_y as f32 * correct,
+            self.offset_x as f32 * correct,
+            (self.offset_y + self.height_y) as f32 * correct,
+        ]
+    }
+
+    /// Get the transformation matrix for this converter but without accounting
+    /// for either DPI or that the PDF coordinate system is flipped. This is
+    /// useful for converting between two SVG coordinate systems.
+    pub fn uncorrected_matrix(&self) -> [f64; 6] {
+        [
+            self.factor_x,
+            0.0,
+            0.0,
+            self.factor_y,
+            self.offset_x,
+            self.offset_y,
+        ]
+    }
+
+    /// Transform a rectangle from SVG to PDF formats.
+    pub fn pdf_rect(&self, rect: usvg::Rect) -> pdf_writer::Rect {
+        let (x1, y1) = self.point((rect.x(), rect.y() + rect.height()));
+        let (x2, y2) = self.point((rect.x() + rect.width(), rect.y()));
+        pdf_writer::Rect::new(x1, y1, x2, y2)
+    }
+
+    /// Apply a transformation matrix to a point.
+    fn apply(&self, point: (f64, f64)) -> (f64, f64) {
+        (
+            point.0 * self.matrix[0] + point.1 * self.matrix[1] + self.matrix[4],
+            point.0 * self.matrix[2] + point.1 * self.matrix[3] + self.matrix[5],
+        )
+    }
+
+    /// Apply a transformation matrix to a point, this is okay for diagonal
+    /// transformations.
+    fn apply_x(&self, x: f64) -> f64 {
+        x * self.matrix[0] + self.matrix[4]
+    }
+
+    /// Apply a transformation matrix to a point, this is okay for diagonal
+    /// transformations.
+    fn apply_y(&self, y: f64) -> f64 {
+        y * self.matrix[3] + self.matrix[5]
+    }
+
+    /// Set a pre-transformation, overriding the old one.
+    pub fn transform(&mut self, matrix: [f64; 6]) {
+        self.matrix = matrix
+    }
+
+    /// Set the identity transform
+    pub fn identity(&mut self) {
+        self.matrix = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0];
     }
 }

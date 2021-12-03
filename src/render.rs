@@ -3,19 +3,21 @@
 use image::io::Reader as ImageReader;
 use image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba};
 use miniz_oxide::deflate::compress_to_vec_zlib;
-use pdf_writer::types::{ColorSpace, LineCapStyle, LineJoinStyle, ShadingType};
+use pdf_writer::types::{
+    ColorSpace, LineCapStyle, LineJoinStyle, PaintType, ShadingType, TilingType,
+};
 use pdf_writer::writers::{Image, Shading};
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, TextStr};
 use usvg::{
-    AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, NodeKind, Paint,
-    PathSegment, Transform, ViewBox, Visibility,
+    Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, NodeKind,
+    Paint, PathSegment, Pattern, Transform, Units, ViewBox, Visibility,
 };
 
 use super::{
     apply_clip_path, apply_mask, content_stream, form_xobject, from_tree, Context,
     Options, RgbaColor,
 };
-use crate::defer::{PendingGS, PendingPattern};
+use crate::defer::{PendingGS, PendingGradient};
 use crate::scale::CoordToPdf;
 
 /// Write the appropriate instructions for a node into the content stream.
@@ -48,13 +50,7 @@ impl Render for usvg::Path {
         let bbox = node
             .calculate_bbox()
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
-
-        let pdf_bbox = Rect::new(
-            ctx.c.x(bbox.x()),
-            ctx.c.y(bbox.y() + bbox.height()),
-            ctx.c.x(bbox.x() + bbox.width()),
-            ctx.c.y(bbox.y()),
-        );
+        let pdf_bbox = ctx.c.pdf_rect(bbox);
 
         let paint = self.fill.as_ref().map(|fill| &fill.paint);
 
@@ -62,7 +58,7 @@ impl Render for usvg::Path {
         // gradient.
         let fill_gradient_pattern = if let Some(Paint::Link(id)) = paint {
             let node = ctx.tree.defs_by_id(id).unwrap();
-            Pattern::from_node(node)
+            Gradient::from_node(node)
         } else {
             None
         };
@@ -71,7 +67,6 @@ impl Render for usvg::Path {
         let alpha_func = if let Some(Paint::Link(id)) = paint {
             ctx.function_map.get(id).and_then(|x| x.1)
         } else {
-            content.save_state();
             None
         };
 
@@ -108,7 +103,7 @@ impl Render for usvg::Path {
 
             shading.function(alpha_func);
             shading.coords(
-                IntoIterator::into_iter(pattern.transformed_coords(ctx.c, bbox)).take(
+                IntoIterator::into_iter(pattern.transformed_coords(&ctx.c, bbox)).take(
                     if pattern.shading_type == ShadingType::Axial {
                         4
                     } else {
@@ -151,6 +146,7 @@ impl Render for usvg::Path {
 
             Some((path_content, path_ref))
         } else {
+            content.save_state();
             None
         };
 
@@ -215,12 +211,27 @@ impl Render for usvg::Path {
                 );
             }
 
-            match stroke.paint {
+            match &stroke.paint {
                 Paint::Color(c) => {
-                    let [r, g, b] = RgbaColor::from(c).to_array();
+                    let [r, g, b] = RgbaColor::from(*c).to_array();
                     content.set_stroke_rgb(r, g, b);
                 }
-                _ => todo!(),
+                Paint::Link(id) => {
+                    let item = ctx.tree.defs_by_id(id).unwrap();
+                    content.set_stroke_color_space(ColorSpace::Pattern);
+                    let num = ctx.alloc_pattern();
+                    let name = format!("p{}", num);
+
+                    match *item.borrow() {
+                        NodeKind::RadialGradient(_) | NodeKind::LinearGradient(_) => {}
+                        NodeKind::Pattern(ref pattern) => {
+                            prep_pattern(pattern, &item, num, bbox, writer, ctx);
+                        }
+                        _ => unreachable!(),
+                    }
+
+                    content.set_stroke_pattern(None, Name(name.as_bytes()));
+                }
             }
         }
 
@@ -231,26 +242,30 @@ impl Render for usvg::Path {
             }
             Some(Paint::Link(id)) => {
                 let item = ctx.tree.defs_by_id(id).unwrap();
+                content.set_fill_color_space(ColorSpace::Pattern);
+                let num = ctx.alloc_pattern();
+                let name = format!("p{}", num);
+
                 match *item.borrow() {
                     NodeKind::RadialGradient(_) | NodeKind::LinearGradient(_) => {
                         let pattern = fill_gradient_pattern.unwrap();
-                        let num = ctx.alloc_pattern();
-                        let name = format!("p{}", num);
 
-                        ctx.pending_patterns.push(PendingPattern::from_pattern(
-                            pattern, bbox, num, ctx.c,
+                        ctx.pending_gradients.push(PendingGradient::from_gradient(
+                            pattern, bbox, num, &ctx.c,
                         ));
-
-                        content.set_fill_color_space(ColorSpace::Pattern);
-                        content.set_fill_pattern(None, Name(name.as_bytes()));
                     }
-                    _ => todo!(),
-                };
+                    NodeKind::Pattern(ref pattern) => {
+                        prep_pattern(pattern, &item, num, bbox, writer, ctx);
+                    }
+                    _ => unreachable!(),
+                }
+
+                content.set_fill_pattern(None, Name(name.as_bytes()));
             }
             None => {}
         }
 
-        draw_path(&self.data.0, self.transform, content, ctx.c);
+        draw_path(&self.data.0, self.transform, content, &ctx.c);
 
         match (self.fill.as_ref().map(|f| f.rule), self.stroke.is_some()) {
             (Some(FillRule::NonZero), true) => content.fill_nonzero_and_stroke(),
@@ -277,6 +292,87 @@ impl Render for usvg::Path {
     }
 }
 
+/// Convert usvg's transforms to PDF matrices.
+fn transform_to_matrix(transform: Transform) -> [f32; 6] {
+    [
+        transform.a as f32,
+        transform.b as f32,
+        transform.c as f32,
+        transform.d as f32,
+        transform.e as f32,
+        transform.f as f32,
+    ]
+}
+
+/// Write a pattern to the file for use for filling or stroking.
+fn prep_pattern(
+    pattern: &Pattern,
+    node: &Node,
+    num: u32,
+    bbox: usvg::Rect,
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+) {
+    let rect = match pattern.units {
+        Units::UserSpaceOnUse => pattern.rect,
+        Units::ObjectBoundingBox => usvg::Rect::new(
+            pattern.rect.x() * bbox.width() + bbox.x(),
+            pattern.rect.y() * bbox.height() + bbox.y(),
+            pattern.rect.width() * bbox.width(),
+            pattern.rect.height() * bbox.height(),
+        )
+        .unwrap(),
+    };
+
+    let matrix = transform_to_matrix(pattern.transform);
+    let pdf_rect = ctx.c.pdf_rect(rect).transform(matrix);
+
+    let mut inner_matrix = if let Some(viewbox) = pattern.view_box {
+        CoordToPdf::new((rect.width(), rect.height()), ctx.c.dpi(), viewbox, None)
+            .uncorrected_matrix()
+    } else if pattern.content_units == Units::ObjectBoundingBox {
+        let viewbox = ViewBox {
+            rect: usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap(),
+            aspect: AspectRatio {
+                defer: false,
+                align: Align::None,
+                slice: false,
+            },
+        };
+
+        CoordToPdf::new((bbox.width(), bbox.height()), ctx.c.dpi(), viewbox, None)
+            .uncorrected_matrix()
+    } else {
+        [1.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+    };
+
+    ctx.push();
+
+    inner_matrix[4] += rect.x();
+    inner_matrix[5] += rect.y();
+
+    ctx.c.transform(inner_matrix);
+    let pattern_stream = content_stream(node, writer, ctx);
+    ctx.c.identity();
+
+    let pattern_ref = ctx.alloc_ref();
+    let mut pdf_pattern = writer.tiling_pattern(pattern_ref, &pattern_stream);
+    pdf_pattern
+        .tiling_type(TilingType::ConstantSpacing)
+        .paint_type(PaintType::Colored);
+
+    pdf_pattern
+        .bbox(pdf_rect)
+        .x_step(pdf_rect.x2 - pdf_rect.x1)
+        .y_step(pdf_rect.y2 - pdf_rect.y1);
+    let mut resources = pdf_pattern.resources();
+    ctx.pop(&mut resources);
+    resources.finish();
+
+    pdf_pattern.matrix(matrix);
+    ctx.pending_patterns.push((num, pattern_ref))
+}
+
 impl Render for usvg::Group {
     fn render(
         &self,
@@ -298,12 +394,7 @@ impl Render for usvg::Group {
         let bbox = node
             .calculate_bbox()
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
-        let pdf_bbox = Rect::new(
-            ctx.c.x(bbox.x()),
-            ctx.c.y(bbox.y()),
-            ctx.c.x(bbox.x() + bbox.width()),
-            ctx.c.y(bbox.y() + bbox.height()),
-        );
+        let pdf_bbox = ctx.c.pdf_rect(bbox);
 
         // Every group is an isolated transparency group, it needs to be painted
         // onto its own canvas.
@@ -560,7 +651,8 @@ impl Render for usvg::Image {
             ctx.pending_xobjects.push((num, image_ref));
             let name = format!("xo{}", num);
 
-            content.move_to(ctx.c.x(rect.x()), ctx.c.y(rect.y()));
+            let (x, y) = ctx.c.point((rect.x(), rect.y()));
+            content.move_to(x, y);
             content.x_object(Name(name.as_bytes()));
         }
     }
@@ -577,19 +669,19 @@ pub fn draw_path(
     for &operation in path_data {
         match operation {
             PathSegment::MoveTo { x, y } => {
-                let (x, y) = transform.apply(x, y);
-                content.move_to(c.x(x), c.y(y));
+                let (x, y) = c.point(transform.apply(x, y));
+                content.move_to(x, y);
             }
             PathSegment::LineTo { x, y } => {
-                let (x, y) = transform.apply(x, y);
-                content.line_to(c.x(x), c.y(y));
+                let (x, y) = c.point(transform.apply(x, y));
+                content.line_to(x, y);
             }
             PathSegment::CurveTo { x1, y1, x2, y2, x, y } => {
-                let (x1, y1) = transform.apply(x1, y1);
-                let (x2, y2) = transform.apply(x2, y2);
-                let (x, y) = transform.apply(x, y);
+                let (x1, y1) = c.point(transform.apply(x1, y1));
+                let (x2, y2) = c.point(transform.apply(x2, y2));
+                let (x, y) = c.point(transform.apply(x, y));
 
-                content.cubic_to(c.x(x1), c.y(y1), c.x(x2), c.y(y2), c.x(x), c.y(y));
+                content.cubic_to(x1, y1, x2, y2, x, y);
             }
             PathSegment::ClosePath => {
                 content.close_path();
@@ -600,7 +692,7 @@ pub fn draw_path(
 
 /// Describes a pattern in use for some object.
 #[derive(Clone)]
-pub(crate) struct Pattern {
+pub(crate) struct Gradient {
     /// The SVG id of the pattern that can also be used to retreive its
     /// functions.
     pub(crate) id: String,
@@ -613,7 +705,7 @@ pub(crate) struct Pattern {
     pub(crate) transform_coords: bool,
 }
 
-impl Pattern {
+impl Gradient {
     fn from_node(node: Node) -> Option<Self> {
         match *node.borrow() {
             NodeKind::LinearGradient(ref lg) => Some(Self {
@@ -646,20 +738,30 @@ impl Pattern {
         };
 
         let coords = if self.transform_coords {
+            let (x1, y1) = c.point((
+                bbox.x() + self.coords[0] * bbox.width(),
+                bbox.y() + self.coords[1] * bbox.height(),
+            ));
+            let (x2, y2) = c.point((
+                bbox.x() + self.coords[2] * bbox.width(),
+                bbox.y() + self.coords[3] * bbox.height(),
+            ));
             [
-                c.x(bbox.x() + self.coords[0] * bbox.width()),
-                c.y(bbox.y() + self.coords[1] * bbox.height()),
-                c.x(bbox.x() + self.coords[2] * bbox.width()),
-                c.y(bbox.y() + self.coords[3] * bbox.height()),
+                x1,
+                y1,
+                x2,
+                y2,
                 c.px_to_pt(self.coords[4] * max),
                 c.px_to_pt(self.coords[5] * max),
             ]
         } else {
+            let (x1, y1) = c.point((self.coords[0], self.coords[1]));
+            let (x2, y2) = c.point((self.coords[2], self.coords[3]));
             [
-                c.x(self.coords[0]),
-                c.y(self.coords[1]),
-                c.x(self.coords[2]),
-                c.y(self.coords[3]),
+                x1,
+                y1,
+                x2,
+                y2,
                 c.px_to_pt(self.coords[4]),
                 c.px_to_pt(self.coords[5]),
             ]

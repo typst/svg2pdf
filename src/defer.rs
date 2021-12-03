@@ -11,13 +11,13 @@ use pdf_writer::writers::{ExtGraphicsState, Resources, ShadingPattern};
 use pdf_writer::{Finish, Name, Rect, Ref};
 
 use super::CoordToPdf;
-use crate::render::Pattern;
+use crate::render::Gradient;
 
 /// A gradient to be written.
 ///
 /// In PDF parlance, a gradient is a type of pattern and is specific to its
 /// dimensions.
-pub struct PendingPattern {
+pub struct PendingGradient {
     /// The unique SVG id of the pattern which is used to fetch the associated
     /// pattern function.
     pub id: String,
@@ -32,10 +32,10 @@ pub struct PendingPattern {
     pub coords: [f32; 6],
 }
 
-impl PendingPattern {
+impl PendingGradient {
     /// Create a new instance from a pattern property struct.
-    pub(crate) fn from_pattern(
-        pattern: Pattern,
+    pub(crate) fn from_gradient(
+        pattern: Gradient,
         bbox: usvg::Rect,
         num: u32,
         c: &CoordToPdf,
@@ -134,22 +134,23 @@ pub struct PendingGroup {
     pub initial_mask: Option<String>,
 }
 
-/// Writes all pending patterns into a `Resources` dictionary. The gradient
-/// functions do not depend on the dimensions of the element they are applied
-/// to, are written at the start of the conversion process, and therefore the
-/// `function_map` retains their references.
-pub fn write_patterns(
-    pending_patterns: &[PendingPattern],
+/// Writes all pending gradients and patterns into a `Resources` dictionary. The
+/// gradient functions do not depend on the dimensions of the element they are
+/// applied to, are written at the start of the conversion process, and
+/// therefore the `function_map` retains their references.
+pub fn write_gradients(
+    pending_gradients: &[PendingGradient],
+    pending_patterns: &[(u32, Ref)],
     function_map: &HashMap<String, (Ref, Option<Ref>)>,
     resources: &mut Resources,
 ) {
-    if pending_patterns.is_empty() {
+    if pending_gradients.is_empty() && pending_patterns.is_empty() {
         return;
     }
 
     let mut patterns = resources.key(Name(b"Pattern")).dict();
 
-    for pending in pending_patterns.iter() {
+    for pending in pending_gradients.iter() {
         let name = format!("p{}", pending.num);
         let pattern_name = Name(name.as_bytes());
         let mut pattern = ShadingPattern::new(patterns.key(pattern_name));
@@ -171,6 +172,11 @@ pub fn write_patterns(
             },
         ));
         shading.extend([true, true]);
+    }
+
+    for (num, ref_id) in pending_patterns {
+        let name = format!("p{}", num);
+        patterns.pair(Name(name.as_bytes()), *ref_id);
     }
 
     patterns.finish();
