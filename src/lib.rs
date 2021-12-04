@@ -567,9 +567,6 @@ mod tests {
         for path in paths {
             let path = path.unwrap();
             let base_name = path.file_name().to_string_lossy().to_string();
-            if !base_name.ends_with(".svg") {
-                continue;
-            }
 
             println!("{}", base_name);
 

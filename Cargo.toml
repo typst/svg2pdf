@@ -6,8 +6,13 @@ license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["png", "jpeg"]
+png = ["image/png"]
+jpeg = ["image/jpeg"]
+
 [dependencies]
-image = { version = "0.23", default-features = false, features = ["png", "jpeg"] }
+image = { package="image", version = "0.23", default-features = false, optional = true }
 miniz_oxide = "0.4"
 usvg = "0.17"
 pdf-writer = { path = "../pdf-writer" }

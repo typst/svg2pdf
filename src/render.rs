@@ -1,17 +1,22 @@
 //! Provide rendering capabilities for SVG's primitives.
 
-use image::io::Reader as ImageReader;
-use image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba};
 use miniz_oxide::deflate::compress_to_vec_zlib;
 use pdf_writer::types::{
     ColorSpace, LineCapStyle, LineJoinStyle, PaintType, ShadingType, TilingType,
 };
-use pdf_writer::writers::{Image, Shading};
+use pdf_writer::writers::Shading;
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr};
 use usvg::{
     Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, NodeKind,
     Paint, PathSegment, Pattern, Transform, Units, ViewBox, Visibility,
 };
+
+#[cfg(any(feature = "png", feature = "jpeg"))]
+use image::io::Reader as ImageReader;
+#[cfg(any(feature = "png", feature = "jpeg"))]
+use image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba};
+#[cfg(any(feature = "png", feature = "jpeg"))]
+use pdf_writer::writers::Image;
 
 use super::{
     apply_clip_path, apply_mask, content_stream, form_xobject, from_tree, Context,
@@ -501,11 +506,6 @@ impl Render for usvg::Group {
         content: &mut Content,
         ctx: &mut Context,
     ) {
-        if !self.filter.is_empty() {
-            todo!();
-            return;
-        }
-
         ctx.push();
 
         let group_ref = ctx.alloc_ref();
@@ -570,6 +570,7 @@ impl Render for usvg::Image {
             }
 
             let image_ref = ctx.alloc_ref();
+            #[cfg(any(feature = "png", feature = "jpeg"))]
             let set_image_props = |
                 image: &mut Image,
                 raster_size: &mut Option<(u32, u32)>,
@@ -591,10 +592,12 @@ impl Render for usvg::Image {
                     );
             };
 
+            #[cfg(any(feature = "png", feature = "jpeg"))]
             let mut raster_size: Option<(u32, u32)> = None;
             let rect = self.view_box.rect;
 
             match &self.kind {
+                #[cfg(feature = "jpeg")]
                 ImageKind::JPEG(buf) => {
                     let cursor = std::io::Cursor::new(buf);
                     let decoded = if let Ok(decoded) =
@@ -609,6 +612,7 @@ impl Render for usvg::Image {
                     set_image_props(&mut image, &mut raster_size, &decoded, false);
                     image.filter(Filter::DctDecode);
                 }
+                #[cfg(feature = "png")]
                 ImageKind::PNG(buf) => {
                     let cursor = std::io::Cursor::new(buf);
                     let decoded = if let Ok(decoded) =
@@ -709,9 +713,12 @@ impl Render for usvg::Image {
                         .description(TextStr("Embedded SVG image"))
                         .embedded_file(file_embedd_num);
                 }
+                #[cfg(any(not(feature = "jpeg"), not(feature = "png")))]
+                _ => {}
             }
 
             // Common operations for raster image formats.
+            #[cfg(any(feature = "png", feature = "jpeg"))]
             let image_ref = if let Some((width, height)) = raster_size {
                 let mut content = Content::new();
                 let xobj_name = Name(b"EmbRaster");
