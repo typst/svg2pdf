@@ -2,9 +2,8 @@
 
 use std::collections::HashMap;
 
-use pdf_writer::types::ColorSpace;
 use pdf_writer::writers::{ExponentialFunction, FormXObject, Resources};
-use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, TextStr};
+use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
 use usvg::{NodeExt, NodeKind, Stop, Tree};
 
 mod defer;
@@ -212,7 +211,7 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
     let content_id = ctx.alloc_ref();
 
     writer.catalog(catalog_id).pages(page_tree_id);
-    writer.pages(page_tree_id).kids([page_id]);
+    writer.pages(page_tree_id).count(1).kids([page_id]);
 
     for element in tree.defs().children() {
         match *element.borrow() {
@@ -239,13 +238,8 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
 
             let content = content_stream(&mask_node, &mut writer, &mut ctx);
 
-            let mut group = form_xobject(
-                &mut writer,
-                gp.reference,
-                &content,
-                gp.bbox,
-                ColorSpace::DeviceRgb,
-            );
+            let mut group =
+                form_xobject(&mut writer, gp.reference, &content, gp.bbox, true);
 
             if let Some(matrix) = gp.matrix {
                 group.matrix(matrix);
@@ -268,16 +262,12 @@ pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
     ctx.pop(&mut resources);
 
     resources.finish();
-
     page.finish();
 
-    writer.stream(content_id, content);
+    writer.stream(content_id, &content);
+    writer.document_info(ctx.alloc_ref()).producer(TextStr("svg2pdf"));
 
-    let mut doc_info = writer.document_info(ctx.alloc_ref());
-    doc_info.producer(TextStr("svg2pdf"));
-    doc_info.finish();
-
-    Some(writer.finish(catalog_id))
+    Some(writer.finish())
 }
 
 /// Write a content stream for a node.
@@ -305,14 +295,15 @@ fn content_stream<'a>(
 
         match *element.borrow() {
             NodeKind::Defs => continue,
-            NodeKind::Path(ref path) => path.render(&element, writer, &mut content, ctx),
+            NodeKind::Path(ref path) => {
+                path.render(&element, writer, &mut content, ctx);
+            }
             NodeKind::Group(ref group) => {
-                group.render(&element, writer, &mut content, ctx)
+                group.render(&element, writer, &mut content, ctx);
             }
             NodeKind::Image(ref image) => {
-                image.render(&element, writer, &mut content, ctx)
+                image.render(&element, writer, &mut content, ctx);
             }
-
             _ => {}
         }
     }
@@ -357,14 +348,13 @@ fn apply_mask(
             let (bbox, matrix) = if mask.content_units == usvg::Units::UserSpaceOnUse {
                 (*ctx.bbox, None)
             } else {
-                let (x, y) = ctx
-                    .c
-                    .point(mask_node.transform().apply(mask.rect.x(), mask.rect.y()));
-                (
-                    pdf_bbox,
-                    Some([1.0, 0.0, 0.0, 1.0, bbox.x() as f32 + x, bbox.y() as f32 + y]),
-                )
+                let point = mask_node.transform().apply(mask.rect.x(), mask.rect.y());
+                let (x, y) = ctx.c.point(point);
+                let transform =
+                    [1.0, 0.0, 0.0, 1.0, bbox.x() as f32 + x, bbox.y() as f32 + y];
+                (pdf_bbox, Some(transform))
             };
+
             apply_mask(mask.mask.as_ref(), mask.rect, pdf_bbox, ctx);
 
             ctx.pending_groups.insert(mask.id.clone(), PendingGroup {
@@ -451,7 +441,6 @@ fn register_functions(
         let alpha_ref = ctx.alloc_ref();
         stops_to_function(writer, alpha_ref, &stops, true);
 
-
         Some(alpha_ref)
     } else {
         None
@@ -501,7 +490,8 @@ fn stops_to_function(
     let mut stitching = writer.stitching_function(id);
     stitching.domain([0.0, 1.0]);
     stitching.range(range.clone());
-    let mut func_array = stitching.key(Name(b"Functions")).array();
+
+    let mut func_array = stitching.insert(Name(b"Functions")).array();
     let mut bounds = Vec::new();
     let mut encode = Vec::with_capacity(2 * (stops.len() - 1));
 
@@ -520,7 +510,7 @@ fn stops_to_function(
         let (a, b) = (window[0], window[1]);
         let (a_color, b_color) = (RgbaColor::from(a.color), RgbaColor::from(b.color));
         bounds.push(b.offset.value() as f32);
-        let mut exp = ExponentialFunction::new(func_array.obj());
+        let mut exp = ExponentialFunction::start(func_array.push());
         exp.domain([0.0, 1.0]);
         exp.range(range.clone());
         set_colors(&mut exp, a_color, b_color);
@@ -544,15 +534,24 @@ fn form_xobject<'a>(
     reference: Ref,
     content: &'a [u8],
     bbox: Rect,
-    color_space: ColorSpace,
+    has_color: bool,
 ) -> FormXObject<'a> {
     let mut form = writer.form_xobject(reference, content);
     form.bbox(bbox);
-    form.group()
-        .transparency()
-        .color_space(color_space)
-        .isolated(true)
-        .knockout(false);
+
+    let mut group = form.group();
+    group.transparency();
+    group.isolated(true);
+    group.knockout(false);
+
+    let space = group.color_space();
+    if has_color {
+        space.device_rgb();
+    } else {
+        space.device_gray();
+    }
+
+    group.finish();
     form
 }
 

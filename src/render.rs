@@ -2,21 +2,21 @@
 
 use miniz_oxide::deflate::compress_to_vec_zlib;
 use pdf_writer::types::{
-    ColorSpace, LineCapStyle, LineJoinStyle, PaintType, ShadingType, TilingType,
+    ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, ShadingType, TilingType,
 };
 use pdf_writer::writers::Shading;
-use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr};
+use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
 use usvg::{
     Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, NodeKind,
     Paint, PathSegment, Pattern, Transform, Units, ViewBox, Visibility,
 };
 
 #[cfg(any(feature = "png", feature = "jpeg"))]
-use image::io::Reader as ImageReader;
-#[cfg(any(feature = "png", feature = "jpeg"))]
-use image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba};
-#[cfg(any(feature = "png", feature = "jpeg"))]
-use pdf_writer::writers::Image;
+use {
+    image::io::Reader as ImageReader,
+    image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba},
+    pdf_writer::writers::ImageXObject,
+};
 
 use super::{
     apply_clip_path, apply_mask, content_stream, form_xobject, from_tree, Context,
@@ -58,6 +58,7 @@ impl Render for usvg::Path {
 
         let (fill_gradient, fill_g_alpha) =
             get_gradient(self.fill.as_ref().map(|fill| &fill.paint), ctx);
+
         let (stroke_gradient, stroke_g_alpha) =
             get_gradient(self.stroke.as_ref().map(|stroke| &stroke.paint), ctx);
 
@@ -186,6 +187,7 @@ fn render_path_partial(
     if stroke {
         if let Some(stroke) = &path.stroke {
             content.set_line_width(ctx.c.px_to_pt(stroke.width.value()));
+
             match stroke.linecap {
                 LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
                 LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
@@ -216,7 +218,7 @@ fn render_path_partial(
                 }
                 Paint::Link(id) => {
                     let item = ctx.tree.defs_by_id(id).unwrap();
-                    content.set_stroke_color_space(ColorSpace::Pattern);
+                    content.set_stroke_color_space(ColorSpaceOperand::Pattern);
                     let num = ctx.alloc_pattern();
                     let name = format!("p{}", num);
 
@@ -248,7 +250,8 @@ fn render_path_partial(
             }
             Some(Paint::Link(id)) => {
                 let item = ctx.tree.defs_by_id(id).unwrap();
-                content.set_fill_color_space(ColorSpace::Pattern);
+                content.set_fill_color_space(ColorSpaceOperand::Pattern);
+
                 let num = ctx.alloc_pattern();
                 let name = format!("p{}", num);
 
@@ -299,11 +302,9 @@ fn render_path_partial(
     if let Some((xobj_content, path_no)) = xobj_content {
         let path_ref = ctx.alloc_ref();
         let data = xobj_content.finish();
-        let mut form =
-            form_xobject(writer, path_ref, &data, pdf_bbox, ColorSpace::DeviceRgb);
+        let mut form = form_xobject(writer, path_ref, &data, pdf_bbox, true);
         let mut resources = form.resources();
         ctx.pop(&mut resources);
-
         ctx.pending_xobjects.push((path_no, path_ref));
     }
 }
@@ -320,7 +321,7 @@ fn transform_to_matrix(transform: Transform) -> [f32; 6] {
     ]
 }
 
-/// Retreive the pattern and alpha values for a paint.
+/// Retrieve the pattern and alpha values for a paint.
 fn get_gradient(paint: Option<&Paint>, ctx: &Context) -> (Option<Gradient>, Option<Ref>) {
     // Retrieve the fill gradient description struct if the fill is a
     // gradient.
@@ -365,11 +366,10 @@ fn prep_shading(
 
     // Reference for the indirect Shading dictionary.
     let shading_ref = ctx.alloc_ref();
-    let mut shading = Shading::new(writer.indirect(shading_ref));
+    let mut shading = Shading::start(writer.indirect(shading_ref));
 
     shading.shading_type(gradient.shading_type);
-    shading.color_space(ColorSpace::DeviceGray);
-
+    shading.color_space().device_gray();
     shading.function(alpha_func);
     shading.coords(
         IntoIterator::into_iter(gradient.transformed_coords(&ctx.c, bbox)).take(
@@ -390,7 +390,7 @@ fn prep_shading(
         smask_form_ref,
         &shading_content,
         ctx.c.pdf_rect(bbox),
-        ColorSpace::DeviceGray,
+        false,
     );
 
     smask_form
@@ -477,6 +477,7 @@ fn prep_pattern(
     inner_matrix[5] += rect.y();
 
     ctx.c.transform(inner_matrix);
+
     let pattern_stream = content_stream(node, writer, ctx);
     ctx.c.identity();
 
@@ -490,6 +491,7 @@ fn prep_pattern(
         .bbox(pdf_rect)
         .x_step(pdf_rect.x2 - pdf_rect.x1)
         .y_step(pdf_rect.y2 - pdf_rect.y1);
+
     let mut resources = pdf_pattern.resources();
     ctx.pop(&mut resources);
     resources.finish();
@@ -514,18 +516,12 @@ impl Render for usvg::Group {
         let bbox = node
             .calculate_bbox()
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
+
         let pdf_bbox = ctx.c.pdf_rect(bbox);
 
         // Every group is an isolated transparency group, it needs to be painted
         // onto its own canvas.
-        let mut form = form_xobject(
-            writer,
-            group_ref,
-            &child_content,
-            pdf_bbox,
-            ColorSpace::DeviceRgb,
-        );
-
+        let mut form = form_xobject(writer, group_ref, &child_content, pdf_bbox, true);
         let mut resources = form.resources();
         ctx.pop(&mut resources);
 
@@ -538,14 +534,12 @@ impl Render for usvg::Group {
         if let Some(reference) = apply_mask(self.mask.as_ref(), bbox, pdf_bbox, ctx) {
             let num = ctx.alloc_gs();
             content.set_parameters(Name(format!("gs{}", num).as_bytes()));
-
             ctx.pending_graphics.push(PendingGS::soft_mask(reference, num));
         }
 
         if self.opacity.value() != 1.0 {
             let num = ctx.alloc_gs();
             content.set_parameters(Name(format!("gs{}", num).as_bytes()));
-
             ctx.pending_graphics
                 .push(PendingGS::fill_opacity(self.opacity.value() as f32, num));
         }
@@ -570,26 +564,28 @@ impl Render for usvg::Image {
             }
 
             let image_ref = ctx.alloc_ref();
+
             #[cfg(any(feature = "png", feature = "jpeg"))]
             let set_image_props = |
-                image: &mut Image,
+                image: &mut ImageXObject,
                 raster_size: &mut Option<(u32, u32)>,
                 decoded: &DynamicImage,
                 grey: bool,
             | {
                 let color = decoded.color();
                 *raster_size = Some((decoded.width(), decoded.height()));
-                image
-                    .width(decoded.width() as i32)
-                    .height(decoded.height() as i32)
-                    .color_space(if !grey && color.has_color() {
-                        ColorSpace::DeviceRgb
-                    } else {
-                        ColorSpace::DeviceGray
-                    })
-                    .bits_per_component(
-                        (color.bits_per_pixel() / color.channel_count() as u16) as i32,
-                    );
+                image.width(decoded.width() as i32);
+                image.height(decoded.height() as i32);
+                image.bits_per_component(
+                    (color.bits_per_pixel() / color.channel_count() as u16) as i32,
+                );
+
+                let space = image.color_space();
+                if !grey && color.has_color() {
+                    space.device_rgb();
+                } else {
+                    space.device_gray();
+                }
             };
 
             #[cfg(any(feature = "png", feature = "jpeg"))]
@@ -608,7 +604,7 @@ impl Render for usvg::Image {
                         return;
                     };
 
-                    let mut image = writer.image(image_ref, buf);
+                    let mut image = writer.image_xobject(image_ref, buf);
                     set_image_props(&mut image, &mut raster_size, &decoded, false);
                     image.filter(Filter::DctDecode);
                 }
@@ -640,7 +636,7 @@ impl Render for usvg::Image {
 
                     let compressed = compress_to_vec_zlib(&image_bytes, 8);
 
-                    let mut image = writer.image(image_ref, &compressed);
+                    let mut image = writer.image_xobject(image_ref, &compressed);
                     set_image_props(&mut image, &mut raster_size, &decoded, false);
                     image.filter(Filter::FlateDecode);
 
@@ -665,7 +661,7 @@ impl Render for usvg::Image {
                         };
 
                         let compressed = compress_to_vec_zlib(&alpha_bytes, 8);
-                        let mut mask = writer.image(mask_id, &compressed);
+                        let mut mask = writer.image_xobject(mask_id, &compressed);
                         let mut void = None;
 
                         set_image_props(&mut mask, &mut void, &decoded, true);
@@ -691,11 +687,10 @@ impl Render for usvg::Image {
                     let byte_len = bytes.len();
                     let compressed = compress_to_vec_zlib(&bytes, 8);
 
-                    let file_embedd_num = ctx.alloc_ref();
-                    let mut embedded = writer.embedded_file(file_embedd_num, &compressed);
-                    embedded
-                        .subtype(Name(b"application#2Fpdf"))
-                        .filter(Filter::FlateDecode);
+                    let file_ref = ctx.alloc_ref();
+                    let mut embedded = writer.embedded_file(file_ref, &compressed);
+                    embedded.subtype(Name(b"application/pdf"));
+                    embedded.filter(Filter::FlateDecode);
                     embedded.params().size(byte_len as i32);
                     embedded.finish();
 
@@ -711,8 +706,9 @@ impl Render for usvg::Image {
                         .page_number(0)
                         .file()
                         .description(TextStr("Embedded SVG image"))
-                        .embedded_file(file_embedd_num);
+                        .embedded_file(file_ref);
                 }
+
                 #[cfg(any(not(feature = "jpeg"), not(feature = "png")))]
                 _ => {}
             }
@@ -807,7 +803,6 @@ pub fn draw_path(
                 let (x1, y1) = c.point(transform.apply(x1, y1));
                 let (x2, y2) = c.point(transform.apply(x2, y2));
                 let (x, y) = c.point(transform.apply(x, y));
-
                 content.cubic_to(x1, y1, x2, y2, x, y);
             }
             PathSegment::ClosePath => {
@@ -820,7 +815,7 @@ pub fn draw_path(
 /// Describes a pattern in use for some object.
 #[derive(Clone)]
 pub(crate) struct Gradient {
-    /// The SVG id of the pattern that can also be used to retreive its
+    /// The SVG id of the pattern that can also be used to retrieve its
     /// functions.
     pub(crate) id: String,
     /// The type of gradient.

@@ -6,9 +6,9 @@
 
 use std::collections::HashMap;
 
-use pdf_writer::types::{ColorSpace, MaskType, ShadingType};
+use pdf_writer::types::{MaskType, ShadingType};
 use pdf_writer::writers::{ExtGraphicsState, Resources, ShadingPattern};
-use pdf_writer::{Finish, Name, Rect, Ref};
+use pdf_writer::{Name, Rect, Ref};
 
 use super::CoordToPdf;
 use crate::render::Gradient;
@@ -148,12 +148,12 @@ pub fn write_gradients(
         return;
     }
 
-    let mut patterns = resources.key(Name(b"Pattern")).dict();
+    let mut patterns = resources.patterns();
 
     for pending in pending_gradients.iter() {
         let name = format!("p{}", pending.num);
-        let pattern_name = Name(name.as_bytes());
-        let mut pattern = ShadingPattern::new(patterns.key(pattern_name));
+        let mut pattern =
+            patterns.insert(Name(name.as_bytes())).start::<ShadingPattern>();
 
         // The object has already been outfitted with an alpha soft mask, so we
         // can disregard the alpha function option.
@@ -161,8 +161,7 @@ pub fn write_gradients(
 
         let mut shading = pattern.shading();
         shading.shading_type(pending.shading_type);
-        shading.color_space(ColorSpace::DeviceRgb);
-
+        shading.color_space().device_rgb();
         shading.function(func);
         shading.coords(IntoIterator::into_iter(pending.coords).take(
             if pending.shading_type == ShadingType::Axial {
@@ -178,8 +177,6 @@ pub fn write_gradients(
         let name = format!("p{}", num);
         patterns.pair(Name(name.as_bytes()), *ref_id);
     }
-
-    patterns.finish();
 }
 
 /// Writes all pending graphics states into a `Resources` dictionary.
@@ -193,27 +190,24 @@ pub fn write_graphics(pending_graphics: &[PendingGS], resources: &mut Resources)
     // point create a new indirect object since the top-level writer is already
     // mutably borrowed through the `Resources` writer. We resort to direct
     // objects instead.
-    let mut ext_gs = resources.key(Name(b"ExtGState")).dict();
+    let mut states = resources.ext_g_states();
     for gs in pending_graphics {
-        let mut ext_g =
-            ExtGraphicsState::new(ext_gs.key(Name(format!("gs{}", gs.num).as_bytes())));
+        let mut state = states
+            .insert(Name(format!("gs{}", gs.num).as_bytes()))
+            .start::<ExtGraphicsState>();
 
         if let Some(stroke_opacity) = gs.stroke_opacity {
-            ext_g.stroking_alpha(stroke_opacity);
+            state.stroking_alpha(stroke_opacity);
         }
 
         if let Some(fill_opacity) = gs.fill_opacity {
-            ext_g.non_stroking_alpha(fill_opacity);
+            state.non_stroking_alpha(fill_opacity);
         }
 
         if let Some(smask_id) = gs.soft_mask {
-            let mut soft_mask = ext_g.soft_mask();
-            soft_mask.subtype(MaskType::Luminosity);
-            soft_mask.group(smask_id);
-            soft_mask.finish();
+            state.soft_mask().subtype(MaskType::Luminosity).group(smask_id);
         }
     }
-    ext_gs.finish();
 }
 
 /// Register indirect XObjects with the `Resources` dictionary such that they
