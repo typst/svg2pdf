@@ -19,11 +19,12 @@ use {
 };
 
 use super::{
-    apply_clip_path, apply_mask, content_stream, form_xobject, from_tree, Context,
-    Options, RgbaColor,
+    apply_clip_path, apply_mask, content_stream, form_xobject, Context, Options,
+    RgbaColor, SRGB,
 };
 use crate::defer::{PendingGS, PendingGradient};
 use crate::scale::CoordToPdf;
+use crate::SvgConversion;
 
 /// Write the appropriate instructions for a node into the content stream.
 ///
@@ -159,6 +160,9 @@ fn render_path_partial(
         content
     };
 
+    content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+    content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+
     // Combine alpha and opacity values.
     let stroke_opacity = path.stroke.as_ref().map(|s| {
         let mut res = s.opacity.value() as f32;
@@ -213,8 +217,7 @@ fn render_path_partial(
 
             match &stroke.paint {
                 Paint::Color(c) => {
-                    let [r, g, b] = RgbaColor::from(*c).to_array();
-                    content.set_stroke_rgb(r, g, b);
+                    content.set_stroke_color(RgbaColor::from(*c).to_array());
                 }
                 Paint::Link(id) => {
                     let item = ctx.tree.defs_by_id(id).unwrap();
@@ -245,8 +248,7 @@ fn render_path_partial(
     if fill {
         match path.fill.as_ref().map(|fill| &fill.paint) {
             Some(Paint::Color(c)) => {
-                let [r, g, b] = RgbaColor::from(*c).to_array();
-                content.set_fill_rgb(r, g, b);
+                content.set_fill_color(RgbaColor::from(*c).to_array());
             }
             Some(Paint::Link(id)) => {
                 let item = ctx.tree.defs_by_id(id).unwrap();
@@ -369,7 +371,7 @@ fn prep_shading(
     let mut shading = Shading::start(writer.indirect(shading_ref));
 
     shading.shading_type(gradient.shading_type);
-    shading.color_space().device_gray();
+    shading.color_space().srgb_gray();
     shading.function(alpha_func);
     shading.coords(
         IntoIterator::into_iter(gradient.transformed_coords(&ctx.c, bbox)).take(
@@ -680,10 +682,7 @@ impl Render for usvg::Image {
                         dpi: ctx.c.dpi(),
                     };
 
-                    let bytes = match from_tree(tree, opt) {
-                        Some(bytes) => bytes,
-                        None => return,
-                    };
+                    let bytes = SvgConversion::from_tree_ref(tree, opt).convert();
                     let byte_len = bytes.len();
                     let compressed = compress_to_vec_zlib(&bytes, 8);
 

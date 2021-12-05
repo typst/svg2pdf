@@ -1,8 +1,9 @@
 //! Convert SVG files to PDFs.
 
+use std::borrow::Cow;
 use std::collections::HashMap;
 
-use pdf_writer::writers::{ExponentialFunction, FormXObject, Resources};
+use pdf_writer::writers::{ColorSpace, ExponentialFunction, FormXObject, Resources};
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
 use usvg::{NodeExt, NodeKind, Stop, Tree};
 
@@ -14,7 +15,10 @@ use defer::*;
 use render::*;
 pub use scale::*;
 
+const SRGB: Name = Name(b"srgb");
+
 /// Set size and scaling preferences for the conversion.
+#[derive(Debug, Clone)]
 pub struct Options {
     /// Specific dimensions the SVG can be forced to fill. This size will also
     /// be used if the SVG does not have a native size.
@@ -38,6 +42,182 @@ impl Default for Options {
             aspect_ratio: None,
             dpi: 72.0,
         }
+    }
+}
+
+/// Holds the SVG tree to be converted. Can be used to query the final file
+/// dimensions before converting.
+#[derive(Clone)]
+pub struct SvgConversion<'a> {
+    /// The tree of the input SVG.
+    tree: Cow<'a, Tree>,
+    /// The user-set preferences.
+    options: Options,
+    /// The bounding box of the PDF file.
+    bbox: Rect,
+    /// The coordinate conversion
+    c: CoordToPdf,
+}
+
+impl<'a> SvgConversion<'a> {
+    /// Create a converter from a source string.
+    pub fn from_str(src: &str, options: Options) -> Option<Self> {
+        let mut usvg_opts = usvg::Options::default();
+        if let Some((width, height)) = options.viewport {
+            usvg_opts.default_size = usvg::Size::new(width, height)?;
+        }
+        let tree = Tree::from_str(src, &usvg_opts.to_ref()).ok()?;
+        Some(Self::new(tree, options))
+    }
+
+    /// Create a converter from a usvg tree.
+    pub fn new(tree: Tree, options: Options) -> Self {
+        let (c, bbox) = Self::new_impl(&tree, &options);
+        Self { tree: Cow::Owned(tree), options, bbox, c }
+    }
+
+    /// Create a converter from a usvg tree reference.
+    pub fn from_tree_ref(tree: &'a Tree, options: Options) -> Self {
+        let (c, bbox) = Self::new_impl(&tree, &options);
+        Self {
+            tree: Cow::Borrowed(tree),
+            options,
+            bbox,
+            c,
+        }
+    }
+
+    fn new_impl(tree: &Tree, options: &Options) -> (CoordToPdf, Rect) {
+        let native_size = tree.svg_node().size;
+        let viewport = if let Some((width, height)) = options.viewport {
+            if options.respect_native_size {
+                (native_size.width(), native_size.height())
+            } else {
+                (width, height)
+            }
+        } else {
+            (native_size.width(), native_size.height())
+        };
+
+        let c = CoordToPdf::new(
+            viewport,
+            options.dpi,
+            tree.svg_node().view_box,
+            options.aspect_ratio,
+        );
+
+        (
+            c,
+            Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1)),
+        )
+    }
+
+    /// Perform the conversion.
+    pub fn convert(&self) -> Vec<u8> {
+        let mut ctx = Context::new(&self.tree, &self.bbox, self.c);
+
+        let mut writer = PdfWriter::new();
+        let catalog_id = ctx.alloc_ref();
+        let page_tree_id = ctx.alloc_ref();
+        let page_id = ctx.alloc_ref();
+        let content_id = ctx.alloc_ref();
+
+        writer.catalog(catalog_id).pages(page_tree_id);
+        writer.pages(page_tree_id).count(1).kids([page_id]);
+
+        for element in self.tree.defs().children() {
+            match *element.borrow() {
+                NodeKind::LinearGradient(ref lg) => {
+                    register_functions(&mut writer, &mut ctx, &lg.id, &lg.base.stops);
+                }
+                NodeKind::RadialGradient(ref rg) => {
+                    register_functions(&mut writer, &mut ctx, &rg.id, &rg.base.stops);
+                }
+                _ => {}
+            }
+        }
+
+        ctx.push();
+        let content = content_stream(&self.tree.root(), &mut writer, &mut ctx);
+
+        for (id, gp) in ctx.pending_groups.clone() {
+            let mask_node = self.tree.defs_by_id(&id).unwrap();
+            let borrowed = mask_node.borrow();
+
+            if let NodeKind::Mask(_) = *borrowed {
+                ctx.push();
+                ctx.initial_mask = gp.initial_mask;
+
+                let content = content_stream(&mask_node, &mut writer, &mut ctx);
+
+                let mut group =
+                    form_xobject(&mut writer, gp.reference, &content, gp.bbox, true);
+
+                if let Some(matrix) = gp.matrix {
+                    group.matrix(matrix);
+                }
+
+                let mut resources = group.resources();
+                ctx.pop(&mut resources);
+                resources.finish();
+            }
+        }
+
+        ctx.initial_mask = None;
+
+        let mut page = writer.page(page_id);
+        page.media_box(self.bbox);
+        page.parent(page_tree_id);
+        page.contents(content_id);
+
+        let mut resources = page.resources();
+        ctx.pop(&mut resources);
+
+        resources.finish();
+        page.finish();
+
+        writer.stream(content_id, &content);
+        writer.document_info(ctx.alloc_ref()).producer(TextStr("svg2pdf"));
+
+        writer.finish()
+    }
+
+    /// Get a reference to the SVG tree.
+    pub fn tree(&self) -> &Tree {
+        &self.tree
+    }
+
+    /// Get a mutable reference to the SVG tree.
+    pub fn tree_mut(&mut self) -> &mut Tree {
+        self.tree.to_mut()
+    }
+
+    /// The width of the final image in PostScript points.
+    pub fn width_pt(&self) -> f32 {
+        self.bbox.x2 - self.bbox.x1
+    }
+
+    /// The height of the final image in PostScript points.
+    pub fn height_pt(&self) -> f32 {
+        self.bbox.y2 - self.bbox.y1
+    }
+
+    /// The ratio between width and height of an image.
+    ///
+    /// A ratio greater than one means that the image is wide, a ratio smaller
+    /// than one means that it is tall.
+    pub fn aspect_ratio(&self) -> f32 {
+        self.width_pt() / self.height_pt()
+    }
+
+    /// The width of the final image in pixels, as specified in the SVG source.
+    pub fn width_px(&self) -> f32 {
+        self.c.pt_to_px(self.width_pt()) as f32
+    }
+
+    /// The height of the final image in pixels, as specified in the SVG source.
+    pub fn height_px(&self) -> f32 {
+        self.c.pt_to_px(self.height_pt()) as f32
     }
 }
 
@@ -117,6 +297,8 @@ impl<'a> Context<'a> {
     /// Pop a context frame and write all pending objects onto an `Resources`
     /// dictionary.
     fn pop(&mut self, resources: &mut Resources) {
+        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
+
         let [gradients, patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
 
         let pending_gradients = self.pending_gradients.split_off(gradients);
@@ -171,103 +353,14 @@ impl<'a> Context<'a> {
     }
 }
 
-/// Convert an SVG source string to a PDF buffer.
-pub fn convert(svg: &str, opt: Options) -> Option<Vec<u8>> {
-    let mut usvg_opts = usvg::Options::default();
-    if let Some((width, height)) = opt.viewport {
-        usvg_opts.default_size = usvg::Size::new(width, height)?;
-    }
-    let tree = Tree::from_str(svg, &usvg_opts.to_ref()).map_err(|e| dbg!(e)).ok()?;
-    from_tree(&tree, opt)
+/// Convenience method to convert an SVG source string to a PDF buffer.
+pub fn convert(src: &str, options: Options) -> Option<Vec<u8>> {
+    Some(SvgConversion::from_str(src, options)?.convert())
 }
 
-/// Convert an usvg source tree to a PDF buffer.
-pub fn from_tree(tree: &Tree, opt: Options) -> Option<Vec<u8>> {
-    let native_size = tree.svg_node().size;
-    let viewport = if let Some((width, height)) = opt.viewport {
-        if opt.respect_native_size {
-            (native_size.width(), native_size.height())
-        } else {
-            (width, height)
-        }
-    } else {
-        (native_size.width(), native_size.height())
-    };
-
-    let c = CoordToPdf::new(
-        viewport,
-        opt.dpi,
-        tree.svg_node().view_box,
-        opt.aspect_ratio,
-    );
-
-    let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
-    let mut ctx = Context::new(&tree, &bbox, c);
-
-    let mut writer = PdfWriter::new();
-    let catalog_id = ctx.alloc_ref();
-    let page_tree_id = ctx.alloc_ref();
-    let page_id = ctx.alloc_ref();
-    let content_id = ctx.alloc_ref();
-
-    writer.catalog(catalog_id).pages(page_tree_id);
-    writer.pages(page_tree_id).count(1).kids([page_id]);
-
-    for element in tree.defs().children() {
-        match *element.borrow() {
-            NodeKind::LinearGradient(ref lg) => {
-                register_functions(&mut writer, &mut ctx, &lg.id, &lg.base.stops);
-            }
-            NodeKind::RadialGradient(ref rg) => {
-                register_functions(&mut writer, &mut ctx, &rg.id, &rg.base.stops);
-            }
-            _ => {}
-        }
-    }
-
-    ctx.push();
-    let content = content_stream(&tree.root(), &mut writer, &mut ctx);
-
-    for (id, gp) in ctx.pending_groups.clone() {
-        let mask_node = tree.defs_by_id(&id).unwrap();
-        let borrowed = mask_node.borrow();
-
-        if let NodeKind::Mask(_) = *borrowed {
-            ctx.push();
-            ctx.initial_mask = gp.initial_mask;
-
-            let content = content_stream(&mask_node, &mut writer, &mut ctx);
-
-            let mut group =
-                form_xobject(&mut writer, gp.reference, &content, gp.bbox, true);
-
-            if let Some(matrix) = gp.matrix {
-                group.matrix(matrix);
-            }
-
-            let mut resources = group.resources();
-            ctx.pop(&mut resources);
-            resources.finish();
-        }
-    }
-
-    ctx.initial_mask = None;
-
-    let mut page = writer.page(page_id);
-    page.media_box(bbox);
-    page.parent(page_tree_id);
-    page.contents(content_id);
-
-    let mut resources = page.resources();
-    ctx.pop(&mut resources);
-
-    resources.finish();
-    page.finish();
-
-    writer.stream(content_id, &content);
-    writer.document_info(ctx.alloc_ref()).producer(TextStr("svg2pdf"));
-
-    Some(writer.finish())
+/// Convenience method to convert an usvg source tree to a PDF buffer.
+pub fn from_tree(tree: Tree, options: Options) -> Vec<u8> {
+    SvgConversion::new(tree, options).convert()
 }
 
 /// Write a content stream for a node.
@@ -546,9 +639,9 @@ fn form_xobject<'a>(
 
     let space = group.color_space();
     if has_color {
-        space.device_rgb();
+        space.srgb();
     } else {
-        space.device_gray();
+        space.srgb_gray();
     }
 
     group.finish();

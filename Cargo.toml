@@ -12,5 +12,5 @@ jpeg = ["image/jpeg"]
 [dependencies]
 image = { package="image", version = "0.23", default-features = false, optional = true }
 miniz_oxide = "0.4"
-pdf-writer = { git = "https://github.com/typst/pdf-writer", rev = "757fa50" }
+pdf-writer = { git = "https://github.com/typst/pdf-writer", rev = "a8880b6" }
 usvg = "0.17"

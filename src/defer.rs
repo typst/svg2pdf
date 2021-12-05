@@ -161,7 +161,7 @@ pub fn write_gradients(
 
         let mut shading = pattern.shading();
         shading.shading_type(pending.shading_type);
-        shading.color_space().device_rgb();
+        shading.color_space().srgb();
         shading.function(func);
         shading.coords(IntoIterator::into_iter(pending.coords).take(
             if pending.shading_type == ShadingType::Axial {
