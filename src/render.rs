@@ -6,7 +6,7 @@ use pdf_writer::types::{
     TilingType,
 };
 use pdf_writer::writers::Shading;
-use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
+use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, Writer};
 use usvg::{
     Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, NodeKind,
     Paint, PathSegment, Pattern, Transform, Units, ViewBox, Visibility,
@@ -23,7 +23,7 @@ use super::{
     apply_clip_path, apply_mask, content_stream, form_xobject, Context, Options,
     RgbaColor, SRGB,
 };
-use crate::convert_tree;
+use crate::convert_tree_into;
 use crate::defer::{PendingGS, PendingGradient};
 use crate::scale::CoordToPdf;
 
@@ -681,30 +681,7 @@ impl Render for usvg::Image {
                         dpi: ctx.c.dpi(),
                     };
 
-                    let bytes = convert_tree(tree, opt);
-                    let byte_len = bytes.len();
-                    let compressed = compress_to_vec_zlib(&bytes, 8);
-
-                    let file_ref = ctx.alloc_ref();
-                    let mut embedded = writer.embedded_file(file_ref, &compressed);
-                    embedded.subtype(Name(b"application/pdf"));
-                    embedded.filter(Filter::FlateDecode);
-                    embedded.params().size(byte_len as i32);
-                    embedded.finish();
-
-                    writer
-                        .form_xobject(image_ref, &[])
-                        .bbox(Rect::new(
-                            0.0,
-                            0.0,
-                            ctx.c.px_to_pt(rect.x() + rect.width()),
-                            ctx.c.px_to_pt(rect.y() + rect.height()),
-                        ))
-                        .reference()
-                        .page_number(0)
-                        .file()
-                        .description(TextStr("Embedded SVG image"))
-                        .embedded_file(file_ref);
+                    ctx.next_id = convert_tree_into(tree, opt, writer, image_ref).get();
                 }
 
                 #[cfg(any(not(feature = "jpeg"), not(feature = "png")))]

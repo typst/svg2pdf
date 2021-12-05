@@ -197,7 +197,7 @@ impl<'a> Context<'a> {
     }
 }
 
-/// Convert an SVG source string to a PDF buffer.
+/// Convert an SVG source string to a standalone PDF buffer.
 ///
 /// Returns an error if the SVG string is malformed.
 pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> {
@@ -210,24 +210,9 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
     Ok(convert_tree(&tree, options))
 }
 
-/// Convert a [`usvg` tree](Tree) to a PDF buffer.
+/// Convert a [`usvg` tree](Tree) to a standalone PDF buffer.
 pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
-    let native_size = tree.svg_node().size;
-    let viewport = if let Some((width, height)) = options.viewport {
-        (width, height)
-    } else {
-        (native_size.width(), native_size.height())
-    };
-
-    let c = CoordToPdf::new(
-        viewport,
-        options.dpi,
-        tree.svg_node().view_box,
-        options.aspect,
-    );
-
-    let bbox = Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1));
-
+    let (c, bbox) = get_sizings(tree, &options);
     let mut ctx = Context::new(&tree, &bbox, c);
 
     let mut writer = PdfWriter::new();
@@ -239,45 +224,12 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     writer.catalog(catalog_id).pages(page_tree_id);
     writer.pages(page_tree_id).count(1).kids([page_id]);
 
-    for element in tree.defs().children() {
-        match *element.borrow() {
-            NodeKind::LinearGradient(ref lg) => {
-                register_functions(&mut writer, &mut ctx, &lg.id, &lg.base.stops);
-            }
-            NodeKind::RadialGradient(ref rg) => {
-                register_functions(&mut writer, &mut ctx, &rg.id, &rg.base.stops);
-            }
-            _ => {}
-        }
-    }
+    preregister(tree, &mut writer, &mut ctx);
 
     ctx.push();
     let content = content_stream(&tree.root(), &mut writer, &mut ctx);
 
-    for (id, gp) in ctx.pending_groups.clone() {
-        let mask_node = tree.defs_by_id(&id).unwrap();
-        let borrowed = mask_node.borrow();
-
-        if let NodeKind::Mask(_) = *borrowed {
-            ctx.push();
-            ctx.initial_mask = gp.initial_mask;
-
-            let content = content_stream(&mask_node, &mut writer, &mut ctx);
-
-            let mut group =
-                form_xobject(&mut writer, gp.reference, &content, gp.bbox, true);
-
-            if let Some(matrix) = gp.matrix {
-                group.matrix(matrix);
-            }
-
-            let mut resources = group.resources();
-            ctx.pop(&mut resources);
-            resources.finish();
-        }
-    }
-
-    ctx.initial_mask = None;
+    write_masks(tree, &mut writer, &mut ctx);
 
     let mut page = writer.page(page_id);
     page.media_box(bbox);
@@ -294,6 +246,81 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     writer.document_info(ctx.alloc_ref()).producer(TextStr("svg2pdf"));
 
     writer.finish()
+}
+
+/// Convert a [`usvg` tree](Tree) into a Form XObject that can be used as part
+/// of a larger document.
+///
+/// This method is intended for use in an existing [`PdfWriter`] workflow.
+///
+/// The resulting object can be used by registering a name and the `id` with a
+/// page's [`/XObject`](pdf_writer::writers::Resources::x_objects) resources
+/// dictionary and then invoking the [`/Do`](pdf_writer::Content::x_object)
+/// operator with the name in the page's content stream.
+///
+/// As the conversion process may need to create multiple indirect objects in
+/// the PDF, this function allocates consecutive IDs starting at `id` for its
+/// objects and returns the next available ID for your future writing.
+pub fn convert_tree_into(
+    tree: &Tree,
+    options: Options,
+    writer: &mut PdfWriter,
+    id: Ref,
+) -> Ref {
+    let (c, bbox) = get_sizings(tree, &options);
+    let mut ctx = Context::new(&tree, &bbox, c);
+
+    ctx.next_id = id.get() + 1;
+
+    preregister(tree, writer, &mut ctx);
+
+    ctx.push();
+    let content = content_stream(&tree.root(), writer, &mut ctx);
+
+    write_masks(tree, writer, &mut ctx);
+
+    let mut xobject = writer.form_xobject(id, &content);
+    xobject.bbox(bbox);
+    let mut resources = xobject.resources();
+    ctx.pop(&mut resources);
+
+    ctx.alloc_ref()
+}
+
+/// Calculates the bounding box and size conversions for an usvg tree.
+fn get_sizings(tree: &Tree, options: &Options) -> (CoordToPdf, Rect) {
+    let native_size = tree.svg_node().size;
+    let viewport = if let Some((width, height)) = options.viewport {
+        (width, height)
+    } else {
+        (native_size.width(), native_size.height())
+    };
+
+    let c = CoordToPdf::new(
+        viewport,
+        options.dpi,
+        tree.svg_node().view_box,
+        options.aspect,
+    );
+
+    (
+        c,
+        Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1)),
+    )
+}
+
+fn preregister(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) {
+    for element in tree.defs().children() {
+        match *element.borrow() {
+            NodeKind::LinearGradient(ref lg) => {
+                register_functions(writer, ctx, &lg.id, &lg.base.stops);
+            }
+            NodeKind::RadialGradient(ref rg) => {
+                register_functions(writer, ctx, &rg.id, &rg.base.stops);
+            }
+            _ => {}
+        }
+    }
 }
 
 /// Write a content stream for a node.

@@ -8,9 +8,10 @@ use std::collections::HashMap;
 
 use pdf_writer::types::{MaskType, ShadingType};
 use pdf_writer::writers::{ExtGraphicsState, Resources, ShadingPattern};
-use pdf_writer::{Name, Rect, Ref};
+use pdf_writer::{Finish, Name, PdfWriter, Rect, Ref};
+use usvg::{NodeKind, Tree};
 
-use super::CoordToPdf;
+use super::{content_stream, form_xobject, Context, CoordToPdf};
 use crate::render::Gradient;
 
 /// A gradient to be written.
@@ -222,4 +223,32 @@ pub fn write_xobjects(pending_xobjects: &[(u32, Ref)], resources: &mut Resources
         let name = format!("xo{}", num);
         xobjects.pair(Name(name.as_bytes()), *ref_id);
     }
+}
+
+/// Write the content streams of the used masks stored in the context to the
+/// file.
+pub(crate) fn write_masks(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) {
+    for (id, gp) in ctx.pending_groups.clone() {
+        let mask_node = tree.defs_by_id(&id).unwrap();
+        let borrowed = mask_node.borrow();
+
+        if let NodeKind::Mask(_) = *borrowed {
+            ctx.push();
+            ctx.initial_mask = gp.initial_mask;
+
+            let content = content_stream(&mask_node, writer, ctx);
+
+            let mut group = form_xobject(writer, gp.reference, &content, gp.bbox, true);
+
+            if let Some(matrix) = gp.matrix {
+                group.matrix(matrix);
+            }
+
+            let mut resources = group.resources();
+            ctx.pop(&mut resources);
+            resources.finish();
+        }
+    }
+
+    ctx.initial_mask = None;
 }
