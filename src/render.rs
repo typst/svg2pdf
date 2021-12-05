@@ -2,7 +2,8 @@
 
 use miniz_oxide::deflate::compress_to_vec_zlib;
 use pdf_writer::types::{
-    ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, ShadingType, TilingType,
+    ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, ProcSet, ShadingType,
+    TilingType,
 };
 use pdf_writer::writers::Shading;
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
@@ -22,9 +23,9 @@ use super::{
     apply_clip_path, apply_mask, content_stream, form_xobject, Context, Options,
     RgbaColor, SRGB,
 };
+use crate::convert_tree;
 use crate::defer::{PendingGS, PendingGradient};
 use crate::scale::CoordToPdf;
-use crate::SvgConversion;
 
 /// Write the appropriate instructions for a node into the content stream.
 ///
@@ -55,7 +56,8 @@ impl Render for usvg::Path {
 
         let bbox = node
             .calculate_bbox()
-            .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
+            .and_then(|b| b.to_rect())
+            .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
 
         let (fill_gradient, fill_g_alpha) =
             get_gradient(self.fill.as_ref().map(|fill| &fill.paint), ctx);
@@ -395,10 +397,9 @@ fn prep_shading(
         false,
     );
 
-    smask_form
-        .resources()
-        .shadings()
-        .pair(Name(shading_name.as_bytes()), shading_ref);
+    let mut resources = smask_form.resources();
+    resources.proc_sets([ProcSet::Pdf, ProcSet::ImageGrayscale]);
+    resources.shadings().pair(Name(shading_name.as_bytes()), shading_ref);
 
     smask_form_ref
 }
@@ -517,7 +518,8 @@ impl Render for usvg::Group {
 
         let bbox = node
             .calculate_bbox()
-            .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 0.0, 0.0).unwrap());
+            .and_then(|b| b.to_rect())
+            .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
 
         let pdf_bbox = ctx.c.pdf_rect(bbox);
 
@@ -623,18 +625,18 @@ impl Render for usvg::Image {
 
                     let color = decoded.color();
 
-                    let image_bytes: Vec<u8> =
-                        if (color.bits_per_pixel() / color.channel_count() as u16) > 8 {
-                            decoded
-                                .to_rgb16()
-                                .pixels()
-                                .flat_map(|&Rgb(c)| c)
-                                .flat_map(|x| x.to_be_bytes())
-                                .collect()
-                        } else {
-                            decoded.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
-                        };
-
+                    let bits = color.bits_per_pixel();
+                    let channels = color.channel_count() as u16;
+                    let image_bytes: Vec<u8> = if bits / channels > 8 {
+                        decoded
+                            .to_rgb16()
+                            .pixels()
+                            .flat_map(|&Rgb(c)| c)
+                            .flat_map(|x| x.to_be_bytes())
+                            .collect()
+                    } else {
+                        decoded.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
+                    };
 
                     let compressed = compress_to_vec_zlib(&image_bytes, 8);
 
@@ -649,10 +651,9 @@ impl Render for usvg::Image {
                         image.pair(Name(b"SMask"), mask_id);
                         image.finish();
 
-                        let alpha_bytes: Vec<u8> = if (color.bits_per_pixel()
-                            / color.channel_count() as u16)
-                            > 8
-                        {
+                        let bits = color.bits_per_pixel();
+                        let channels = color.channel_count() as u16;
+                        let alpha_bytes: Vec<u8> = if bits / channels > 8 {
                             decoded
                                 .to_rgba16()
                                 .pixels()
@@ -667,7 +668,6 @@ impl Render for usvg::Image {
                         let mut void = None;
 
                         set_image_props(&mut mask, &mut void, &decoded, true);
-
                         mask.filter(Filter::FlateDecode);
                     }
                 }
@@ -677,12 +677,11 @@ impl Render for usvg::Image {
                     // recursively here.
                     let opt = Options {
                         viewport: Some((rect.width(), rect.height())),
-                        respect_native_size: false,
-                        aspect_ratio: Some(self.view_box.aspect),
+                        aspect: Some(self.view_box.aspect),
                         dpi: ctx.c.dpi(),
                     };
 
-                    let bytes = SvgConversion::from_tree_ref(tree, opt).convert();
+                    let bytes = convert_tree(tree, opt);
                     let byte_len = bytes.len();
                     let compressed = compress_to_vec_zlib(&bytes, 8);
 
@@ -744,7 +743,11 @@ impl Render for usvg::Image {
                 let external_ref = ctx.alloc_ref();
 
                 let mut xobject = writer.form_xobject(external_ref, &content);
-                xobject.resources().x_objects().pair(xobj_name, image_ref);
+                let mut resources = xobject.resources();
+                resources.proc_sets([ProcSet::ImageColor, ProcSet::ImageGrayscale]);
+                resources.x_objects().pair(xobj_name, image_ref);
+                resources.finish();
+
                 xobject.bbox(Rect::new(
                     0.0,
                     0.0,
