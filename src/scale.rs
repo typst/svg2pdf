@@ -98,16 +98,6 @@ impl CoordToPdf {
         }
     }
 
-    /// Convert from x SVG source coordinates to PDF coordinates.
-    pub fn x(&self, x: f64) -> f32 {
-        self.px_to_pt(self.apply_x(x) * self.factor_x + self.offset_x)
-    }
-
-    /// Convert from y SVG source coordinates to PDF coordinates.
-    pub fn y(&self, y: f64) -> f32 {
-        self.px_to_pt(self.height_y - (self.apply_y(y) * self.factor_y + self.offset_y))
-    }
-
     /// Convert from SVG source coordinates to PDF coordinates.
     pub fn point(&self, point: (f64, f64)) -> (f32, f32) {
         let (x, y) = self.apply(point);
@@ -117,26 +107,10 @@ impl CoordToPdf {
         )
     }
 
-    /// Convert from x PDF coordinates to SVG source coordinates.
-    pub fn svg_x(&self, x: f32) -> f64 {
-        (self.pt_to_px(x) - self.offset_x) / self.factor_x
-    }
-
-    /// Convert from y PDF coordinates to SVG source coordinates.
-    pub fn svg_y(&self, y: f32) -> f64 {
-        (self.pt_to_px(y) - self.offset_y) / self.factor_y
-    }
-
     /// Convert from pixels to PDF points, disregarding any offsets or
     /// axis-specific scales.
     pub fn px_to_pt(&self, px: f64) -> f32 {
         (px * 72.0 / self.dpi) as f32
-    }
-
-    /// Convert from PDF points to pixels, disregarding any offsets or
-    /// axis-specific scales.
-    pub fn pt_to_px(&self, pt: f32) -> f64 {
-        pt as f64 * self.dpi / 72.0
     }
 
     /// Get the offset from the X axis.
@@ -162,19 +136,6 @@ impl CoordToPdf {
     /// Get the Dots Per Inch.
     pub fn dpi(&self) -> f64 {
         self.dpi
-    }
-
-    /// Get the transformation matrix for this converter.
-    pub fn matrix(&self) -> [f32; 6] {
-        let correct = (self.dpi / 72.0) as f32;
-        [
-            self.factor_x as f32 * correct,
-            0.0,
-            0.0,
-            -self.factor_y as f32 * correct,
-            self.offset_x as f32 * correct,
-            (self.offset_y + self.height_y) as f32 * correct,
-        ]
     }
 
     /// Get the transformation matrix for this converter but without accounting
@@ -204,18 +165,6 @@ impl CoordToPdf {
             point.0 * self.matrix[0] + point.1 * self.matrix[1] + self.matrix[4],
             point.0 * self.matrix[2] + point.1 * self.matrix[3] + self.matrix[5],
         )
-    }
-
-    /// Apply a transformation matrix to a point, this is okay for diagonal
-    /// transformations.
-    fn apply_x(&self, x: f64) -> f64 {
-        x * self.matrix[0] + self.matrix[4]
-    }
-
-    /// Apply a transformation matrix to a point, this is okay for diagonal
-    /// transformations.
-    fn apply_y(&self, y: f64) -> f64 {
-        y * self.matrix[3] + self.matrix[5]
     }
 
     /// Set a pre-transformation, overriding the old one.
