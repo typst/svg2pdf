@@ -13,6 +13,6 @@ system-fonts = ["usvg/system-fonts", "usvg/memmap-fonts"]
 
 [dependencies]
 image = { version = "0.23", default-features = false, optional = true }
-miniz_oxide = "0.4"
+miniz_oxide = "0.5"
 pdf-writer = { git = "https://github.com/typst/pdf-writer", rev = "e1ec200" }
 usvg = { version = "0.19", default-features = false }
