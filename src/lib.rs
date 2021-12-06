@@ -251,7 +251,10 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// Convert a [`usvg` tree](Tree) into a Form XObject that can be used as part
 /// of a larger document.
 ///
-/// This method is intended for use in an existing [`PdfWriter`] workflow.
+/// This method is intended for use in an existing [`PdfWriter`] workflow. It
+/// will always return an XObject with the width and height of one printer's
+/// point, just like an [`ImageXObject`](pdf_writer::writers::ImageXObject)
+/// would.
 ///
 /// The resulting object can be used by registering a name and the `id` with a
 /// page's [`/XObject`](pdf_writer::writers::Resources::x_objects) resources
@@ -281,6 +284,15 @@ pub fn convert_tree_into(
 
     let mut xobject = writer.form_xobject(id, &content);
     xobject.bbox(bbox);
+    xobject.matrix([
+        1.0 / (bbox.x2 - bbox.x1),
+        0.0,
+        0.0,
+        1.0 / (bbox.y2 - bbox.y1),
+        0.0,
+        0.0,
+    ]);
+
     let mut resources = xobject.resources();
     ctx.pop(&mut resources);
 
