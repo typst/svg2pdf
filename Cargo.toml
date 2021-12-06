@@ -1,8 +1,14 @@
 [package]
 name = "svg2pdf"
 version = "0.1.0"
+authors = ["Martin Haug <mhaug@live.de>"]
 edition = "2018"
+description = "Convert SVG files to PDFs."
+repository = "https://github.com/typst/svg2pdf"
+readme = "README.md"
 license = "MIT OR Apache-2.0"
+categories = ["encoding", "graphics", "multimedia"]
+keywords = ["svg", "pdf", "vector-graphics", "conversion"]
 
 [features]
 default = ["png", "jpeg", "text", "system-fonts"]
@@ -14,5 +20,5 @@ system-fonts = ["usvg/system-fonts", "usvg/memmap-fonts"]
 [dependencies]
 image = { version = "0.23", default-features = false, optional = true }
 miniz_oxide = "0.4"
-pdf-writer = { git = "https://github.com/typst/pdf-writer", rev = "e1ec200" }
+pdf-writer = "0.4.1"
 usvg = { version = "0.19", default-features = false }
