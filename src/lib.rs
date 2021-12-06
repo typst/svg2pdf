@@ -1,4 +1,39 @@
-//! Convert SVG files to PDFs.
+/*! Convert SVG files to PDFs.
+
+This crate allows to convert static (i.e. non-interactive) SVG files to
+either standalone PDF files or Form XObjects that can be embedded in another
+PDF file and used just like images.
+
+The conversion will translate the SVG content to PDF without rasterizing it,
+so no quality is lost.
+
+## Example
+This example reads an SVG file and writes the corresponding PDF back to the disk.
+
+```rust
+let svg = std::fs::read_to_string("tests/example.svg").unwrap();
+
+// This can only fail if the SVG is malformed. This one is not.
+let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default()).unwrap();
+
+// ... and now you have a Vec<u8> which you could write to a file or
+// transmit over the network!
+std::fs::write("target/example.pdf", pdf).unwrap();
+```
+
+## Supported features
+- Path drawing with fills and strokes
+- Gradients
+- Patterns
+- Clip paths
+- Masks
+- Transformation matrices
+- Respecting the `keepAspectRatio` attribute
+- Raster images and nested SVGs
+
+Filters are not currently supported and embedded raster images are not color
+managed. Instead, they use PDF's `DeviceRGB` color space.
+*/
 
 use std::collections::HashMap;
 
@@ -258,12 +293,82 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 ///
 /// The resulting object can be used by registering a name and the `id` with a
 /// page's [`/XObject`](pdf_writer::writers::Resources::x_objects) resources
-/// dictionary and then invoking the [`/Do`](pdf_writer::Content::x_object)
+/// dictionary and then invoking the [`Do`](pdf_writer::Content::x_object)
 /// operator with the name in the page's content stream.
 ///
 /// As the conversion process may need to create multiple indirect objects in
 /// the PDF, this function allocates consecutive IDs starting at `id` for its
 /// objects and returns the next available ID for your future writing.
+///
+/// ## Example
+/// Write a PDF file with some text and an SVG graphic.
+///
+/// ```rust
+/// use svg2pdf;
+/// use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, Str};
+///
+/// // Allocate the indirect reference IDs and names.
+/// let catalog_id = Ref::new(1);
+/// let page_tree_id = Ref::new(2);
+/// let page_id = Ref::new(3);
+/// let font_id = Ref::new(4);
+/// let content_id = Ref::new(5);
+/// let svg_id = Ref::new(6);
+/// let font_name = Name(b"F1");
+/// let svg_name = Name(b"S1");
+///
+/// // Start writing a PDF.
+/// let mut writer = PdfWriter::new();
+/// writer.catalog(catalog_id).pages(page_tree_id);
+/// writer.pages(page_tree_id).kids([page_id]).count(1);
+///
+/// // Set up a simple A4 page.
+/// let mut page = writer.page(page_id);
+/// page.media_box(Rect::new(0.0, 0.0, 595.0, 842.0));
+/// page.parent(page_tree_id);
+/// page.contents(content_id);
+///
+/// // Add the font and, more importantly, the SVG to the resource dictionary
+/// // so that it can be referenced in the content stream.
+/// let mut resources = page.resources();
+/// resources.x_objects().pair(svg_name, svg_id);
+/// resources.fonts().pair(font_name, font_id);
+/// resources.finish();
+/// page.finish();
+///
+/// // Set a predefined font, so we do not have to load anything extra.
+/// writer.type1_font(font_id).base_font(Name(b"Helvetica"));
+///
+/// // Let's add an SVG graphic to this file.
+/// // We need to load its source first and manually parse it into a usvg Tree.
+/// let svg = std::fs::read_to_string("tests/example.svg").unwrap();
+/// let tree = usvg::Tree::from_str(&svg, &usvg::Options::default().to_ref()).unwrap();
+///
+/// // Then, we will write it to the page as the 6th indirect object.
+/// //
+/// // This call allocates some indirect object reference IDs for itself. If we
+/// // wanted to write some more indirect objects afterwards, we could use the
+/// // return value as the next unused reference ID.
+/// svg2pdf::convert_tree_into(&tree, svg2pdf::Options::default(), &mut writer, svg_id);
+///
+/// // Write a content stream with some text and our SVG.
+/// let mut content = Content::new();
+/// content
+///     .begin_text()
+///     .set_font(font_name, 16.0)
+///     .next_line(108.0, 734.0)
+///     .show(Str(b"Look at my wonderful vector graphic!"))
+///     .end_text();
+///
+/// // Add our graphic.
+/// content
+///     .transform([300.0, 0.0, 0.0, 300.0, 147.5, 385.0])
+///     .x_object(svg_name);
+///
+/// // Write the file to the disk.
+/// writer.stream(content_id, &content.finish());
+/// std::fs::write("target/embedded.pdf", writer.finish()).unwrap();
+/// ```
 pub fn convert_tree_into(
     tree: &Tree,
     options: Options,
