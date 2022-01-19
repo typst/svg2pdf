@@ -14,6 +14,7 @@ The conversion will translate the SVG content to PDF without rasterizing it,
 so no quality is lost.
 
 ## Example
+
 This example reads an SVG file and writes the corresponding PDF back to the disk.
 
 ```rust
@@ -27,7 +28,22 @@ let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default()).unwrap();
 std::fs::write("target/example.pdf", pdf).unwrap();
 ```
 
+## CLI
+
+This crate also contains a command line interface. Install it by running the command below:
+
+```bash
+cargo install svg2pdf --features cli
+```
+
+You can then convert SVGs to PDFs by running commands like these:
+
+```bash
+svg2pdf your.svg
+```
+
 ## Supported features
+
 - Path drawing with fills and strokes
 - Gradients
 - Patterns
@@ -41,6 +57,7 @@ Filters are not currently supported and embedded raster images are not color
 managed. Instead, they use PDF's `DeviceRGB` color space.
 
 ## Contributing
+
 We are looking forward to receiving your bugs and feature requests in the Issues
 tab. We would also be very happy to accept PRs for bug fixes, features, or
 refactorings!
@@ -56,6 +73,7 @@ Thanks to each and every prospective contributor for the effort you (plan to)
 invest in this project and for adopting it!
 
 ## License
+
 svg2pdf is licensed under a MIT / Apache 2.0 dual license.
 
 Users and consumers of the library may choose which of those licenses they want
