@@ -164,7 +164,7 @@ pub fn write_gradients(
         shading.shading_type(pending.shading_type);
         shading.color_space().srgb();
         shading.function(func);
-        shading.coords(IntoIterator::into_iter(pending.coords).take(
+        shading.coords(pending.coords.into_iter().take(
             if pending.shading_type == ShadingType::Axial {
                 4
             } else {

@@ -40,7 +40,7 @@ use std::collections::HashMap;
 use pdf_writer::types::ProcSet;
 use pdf_writer::writers::{ColorSpace, ExponentialFunction, FormXObject, Resources};
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
-use usvg::{NodeExt, NodeKind, Stop, Tree};
+use usvg::{NodeExt, NodeKind, Opacity, Stop, Tree};
 
 mod defer;
 mod render;
@@ -233,6 +233,11 @@ impl<'a> Context<'a> {
 }
 
 /// Convert an SVG source string to a standalone PDF buffer.
+///
+/// Does not load any fonts and consequently cannot convert `text` elements. To
+/// convert text, you should convert your source string to a usvg [`Tree`]
+/// manually (providing a [font database](usvg::Options::fontdb)) and then use
+/// [`convert_tree`].
 ///
 /// Returns an error if the SVG string is malformed.
 pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> {
@@ -545,31 +550,24 @@ fn apply_mask(
 
 /// A color helper function that stores colors with values between 0.0 and 1.0.
 #[derive(Debug, Clone, Copy)]
-struct RgbaColor {
+struct RgbColor {
     /// Red.
     r: f32,
     /// Green.
     g: f32,
     /// Blue.
     b: f32,
-    /// Alpha.
-    a: f32,
 }
 
-impl RgbaColor {
+impl RgbColor {
     /// Create a new color.
-    fn new(r: f32, g: f32, b: f32, a: f32) -> RgbaColor {
-        RgbaColor { r, g, b, a }
+    fn new(r: f32, g: f32, b: f32) -> RgbColor {
+        RgbColor { r, g, b }
     }
 
     /// Create a new color from u8 color components between 0.0 and 255.0.
-    fn from_u8(r: u8, g: u8, b: u8, a: u8) -> RgbaColor {
-        RgbaColor::new(
-            r as f32 / 255.0,
-            g as f32 / 255.0,
-            b as f32 / 255.0,
-            a as f32 / 255.0,
-        )
+    fn from_u8(r: u8, g: u8, b: u8) -> RgbColor {
+        RgbColor::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
     }
 
     /// Create a RGB array for use in PDF.
@@ -578,9 +576,9 @@ impl RgbaColor {
     }
 }
 
-impl From<usvg::Color> for RgbaColor {
+impl From<usvg::Color> for RgbColor {
     fn from(color: usvg::Color) -> Self {
-        Self::from_u8(color.red, color.green, color.blue, color.alpha)
+        Self::from_u8(color.red, color.green, color.blue)
     }
 }
 
@@ -595,22 +593,9 @@ fn register_functions(
     let func_ref = ctx.alloc_ref();
     stops_to_function(writer, func_ref, stops, false);
 
-    let alpha_ref = if stops
-        .iter()
-        .any(|stop| stop.opacity.value() < 1.0 || stop.color.alpha < 255)
-    {
-        let stops = stops
-            .iter()
-            .cloned()
-            .map(|mut stop| {
-                stop.color.alpha = (stop.color.alpha as f64 * stop.opacity.value()) as u8;
-                stop
-            })
-            .collect::<Vec<_>>();
-
+    let alpha_ref = if stops.iter().any(|stop| stop.opacity.value() < 1.0) {
         let alpha_ref = ctx.alloc_ref();
         stops_to_function(writer, alpha_ref, &stops, true);
-
         Some(alpha_ref)
     } else {
         None
@@ -626,20 +611,18 @@ fn stops_to_function(
     stops: &[Stop],
     alpha: bool,
 ) -> bool {
-    let range =
-        IntoIterator::into_iter([0.0f32, 1.0f32])
-            .cycle()
-            .take(if alpha { 2 } else { 6 });
+    let range = [0.0f32, 1.0f32].into_iter().cycle().take(if alpha { 2 } else { 6 });
 
-    let set_colors =
-        |exp: &mut ExponentialFunction, a_color: RgbaColor, b_color: RgbaColor| {
-            if alpha {
-                exp.c0([a_color.a]);
-                exp.c1([b_color.a]);
-            } else {
-                exp.c0(a_color.to_array());
-                exp.c1(b_color.to_array());
-            }
+    let set_alphas =
+        |exp: &mut ExponentialFunction, a_alpha: Opacity, b_alpha: Opacity| {
+            exp.c0([a_alpha.value() as f32]);
+            exp.c1([b_alpha.value() as f32]);
+        };
+
+    let set_rgbs =
+        |exp: &mut ExponentialFunction, a_color: RgbColor, b_color: RgbColor| {
+            exp.c0(a_color.to_array());
+            exp.c1(b_color.to_array());
         };
 
     if stops.is_empty() {
@@ -647,11 +630,15 @@ fn stops_to_function(
     } else if stops.len() == 1 {
         let mut exp = writer.exponential_function(id);
         let stop = stops[0];
-        let color = RgbaColor::from(stop.color);
+        let color = RgbColor::from(stop.color);
 
         exp.domain([0.0, 1.0]);
         exp.range(range);
-        set_colors(&mut exp, color, color);
+        if alpha {
+            set_alphas(&mut exp, stop.opacity, stop.opacity)
+        } else {
+            set_rgbs(&mut exp, color, color);
+        }
 
         exp.n(1.0);
         return true;
@@ -678,12 +665,16 @@ fn stops_to_function(
 
     for window in stops.windows(2) {
         let (a, b) = (window[0], window[1]);
-        let (a_color, b_color) = (RgbaColor::from(a.color), RgbaColor::from(b.color));
+        let (a_color, b_color) = (RgbColor::from(a.color), RgbColor::from(b.color));
         bounds.push(b.offset.value() as f32);
         let mut exp = ExponentialFunction::start(func_array.push());
         exp.domain([0.0, 1.0]);
         exp.range(range.clone());
-        set_colors(&mut exp, a_color, b_color);
+        if alpha {
+            set_alphas(&mut exp, a.opacity, b.opacity);
+        } else {
+            set_rgbs(&mut exp, a_color, b_color);
+        }
 
         exp.n(1.0);
 

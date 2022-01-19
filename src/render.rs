@@ -21,7 +21,7 @@ use {
 
 use super::{
     apply_clip_path, apply_mask, content_stream, form_xobject, Context, Options,
-    RgbaColor, SRGB,
+    RgbColor, SRGB,
 };
 use crate::convert_tree_into;
 use crate::defer::{PendingGS, PendingGradient};
@@ -165,22 +165,8 @@ fn render_path_partial(
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
-    // Combine alpha and opacity values.
-    let stroke_opacity = path.stroke.as_ref().map(|s| {
-        let mut res = s.opacity.value() as f32;
-        if let Paint::Color(c) = s.paint {
-            res *= c.alpha as f32 / 255.0;
-        }
-        res
-    });
-
-    let fill_opacity = path.fill.as_ref().map(|f| {
-        let mut res = f.opacity.value() as f32;
-        if let Paint::Color(c) = f.paint {
-            res *= c.alpha as f32 / 255.0;
-        }
-        res
-    });
+    let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.value() as f32);
+    let fill_opacity = path.fill.as_ref().map(|f| f.opacity.value() as f32);
 
     // Write a graphics state for stroke and fill opacity.
     if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
@@ -219,7 +205,7 @@ fn render_path_partial(
 
             match &stroke.paint {
                 Paint::Color(c) => {
-                    content.set_stroke_color(RgbaColor::from(*c).to_array());
+                    content.set_stroke_color(RgbColor::from(*c).to_array());
                 }
                 Paint::Link(id) => {
                     let item = ctx.tree.defs_by_id(id).unwrap();
@@ -250,7 +236,7 @@ fn render_path_partial(
     if fill {
         match path.fill.as_ref().map(|fill| &fill.paint) {
             Some(Paint::Color(c)) => {
-                content.set_fill_color(RgbaColor::from(*c).to_array());
+                content.set_fill_color(RgbColor::from(*c).to_array());
             }
             Some(Paint::Link(id)) => {
                 let item = ctx.tree.defs_by_id(id).unwrap();
@@ -375,15 +361,13 @@ fn prep_shading(
     shading.shading_type(gradient.shading_type);
     shading.color_space().srgb_gray();
     shading.function(alpha_func);
-    shading.coords(
-        IntoIterator::into_iter(gradient.transformed_coords(&ctx.c, bbox)).take(
-            if gradient.shading_type == ShadingType::Axial {
-                4
-            } else {
-                6
-            },
-        ),
-    );
+    shading.coords(gradient.transformed_coords(&ctx.c, bbox).into_iter().take(
+        if gradient.shading_type == ShadingType::Axial {
+            4
+        } else {
+            6
+        },
+    ));
     shading.extend([true, true]);
     shading.finish();
 
