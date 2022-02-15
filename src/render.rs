@@ -15,7 +15,7 @@ use usvg::{
 #[cfg(any(feature = "png", feature = "jpeg"))]
 use {
     image::io::Reader as ImageReader,
-    image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba},
+    image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba, Luma},
     pdf_writer::writers::ImageXObject,
 };
 
@@ -611,17 +611,27 @@ impl Render for usvg::Image {
 
                     let bits = color.bits_per_pixel();
                     let channels = color.channel_count() as u16;
-                    let image_bytes: Vec<u8> = if bits / channels > 8 {
-                        decoded
+                    let image_bytes: Vec<u8> = match (channels, bits / channels > 8) {
+                        (1, false) => {
+                            decoded.to_luma8().pixels().flat_map(|&Luma(c)| c).collect()
+                        }
+                        (1, true) => decoded
+                            .to_luma16()
+                            .pixels()
+                            .flat_map(|&Luma(x)| x)
+                            .flat_map(|x| x.to_be_bytes())
+                            .collect(),
+                        (3 | 4, false) => {
+                            decoded.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
+                        }
+                        (3 | 4, true) => decoded
                             .to_rgb16()
                             .pixels()
                             .flat_map(|&Rgb(c)| c)
                             .flat_map(|x| x.to_be_bytes())
-                            .collect()
-                    } else {
-                        decoded.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
+                            .collect(),
+                        _ => panic!("unknown number of channels={channels}"),
                     };
-
                     let compressed = compress_to_vec_zlib(&image_bytes, 8);
 
                     let mut image = writer.image_xobject(image_ref, &compressed);
