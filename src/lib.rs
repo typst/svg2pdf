@@ -42,6 +42,7 @@ use pdf_writer::writers::{ColorSpace, ExponentialFunction, FormXObject, Resource
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
 use usvg::{NodeExt, NodeKind, Opacity, Stop, Tree};
 
+mod color;
 mod defer;
 mod render;
 mod scale;
@@ -49,8 +50,6 @@ mod scale;
 use defer::*;
 use render::*;
 use scale::*;
-
-const SRGB: Name = Name(b"srgb");
 
 /// Set size and scaling preferences for the conversion.
 #[derive(Debug, Clone)]
@@ -175,7 +174,11 @@ impl<'a> Context<'a> {
     /// Pop a context frame and write all pending objects onto an `Resources`
     /// dictionary.
     fn pop(&mut self, resources: &mut Resources) {
-        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
+        resources
+            .color_spaces()
+            .insert(color::SRGB)
+            .start::<ColorSpace>()
+            .srgb();
         resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
 
         let [gradients, patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
@@ -548,40 +551,6 @@ fn apply_mask(
     }
 }
 
-/// A color helper function that stores colors with values between 0.0 and 1.0.
-#[derive(Debug, Clone, Copy)]
-struct RgbColor {
-    /// Red.
-    r: f32,
-    /// Green.
-    g: f32,
-    /// Blue.
-    b: f32,
-}
-
-impl RgbColor {
-    /// Create a new color.
-    fn new(r: f32, g: f32, b: f32) -> RgbColor {
-        RgbColor { r, g, b }
-    }
-
-    /// Create a new color from u8 color components between 0.0 and 255.0.
-    fn from_u8(r: u8, g: u8, b: u8) -> RgbColor {
-        RgbColor::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
-    }
-
-    /// Create a RGB array for use in PDF.
-    fn to_array(&self) -> [f32; 3] {
-        [self.r, self.g, self.b]
-    }
-}
-
-impl From<usvg::Color> for RgbColor {
-    fn from(color: usvg::Color) -> Self {
-        Self::from_u8(color.red, color.green, color.blue)
-    }
-}
-
 /// Write the functions for a gradient with its stops. Also registers them with
 /// the context and can create an alpha gradient function.
 fn register_functions(
@@ -611,6 +580,8 @@ fn stops_to_function(
     stops: &[Stop],
     alpha: bool,
 ) -> bool {
+    use color::RgbColor;
+
     let range = [0.0f32, 1.0f32].into_iter().cycle().take(if alpha { 2 } else { 6 });
 
     let set_alphas =

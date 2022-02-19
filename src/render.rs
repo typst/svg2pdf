@@ -20,8 +20,9 @@ use {
 };
 
 use super::{
-    apply_clip_path, apply_mask, content_stream, form_xobject, Context, Options,
-    RgbColor, SRGB,
+    apply_clip_path, apply_mask,
+    color::{RgbColor, SRGB},
+    content_stream, form_xobject, Context, Options,
 };
 use crate::convert_tree_into;
 use crate::defer::{PendingGS, PendingGradient};
