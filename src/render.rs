@@ -15,7 +15,7 @@ use usvg::{
 #[cfg(any(feature = "png", feature = "jpeg"))]
 use {
     image::io::Reader as ImageReader,
-    image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba, Luma},
+    image::{DynamicImage, GenericImageView, ImageFormat, Luma, Rgb, Rgba},
     pdf_writer::writers::ImageXObject,
 };
 
@@ -554,12 +554,10 @@ impl Render for usvg::Image {
             let image_ref = ctx.alloc_ref();
 
             #[cfg(any(feature = "png", feature = "jpeg"))]
-            let set_image_props = |
-                image: &mut ImageXObject,
-                raster_size: &mut Option<(u32, u32)>,
-                decoded: &DynamicImage,
-                grey: bool,
-            | {
+            let set_image_props = |image: &mut ImageXObject,
+                                   raster_size: &mut Option<(u32, u32)>,
+                                   decoded: &DynamicImage,
+                                   grey: bool| {
                 let color = decoded.color();
                 *raster_size = Some((decoded.width(), decoded.height()));
                 image.width(decoded.width() as i32);

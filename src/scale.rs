@@ -33,7 +33,11 @@ impl CoordToPdf {
         let viewport_ratio = viewport.0 / viewport.1;
 
         let aspect = if let Some(aspect) = aspect_ratio {
-            if aspect.defer { viewbox.aspect } else { aspect }
+            if aspect.defer {
+                viewbox.aspect
+            } else {
+                aspect
+            }
         } else {
             viewbox.aspect
         };
