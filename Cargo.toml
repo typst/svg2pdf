@@ -19,7 +19,7 @@ cli = ["clap", "termcolor", "usvg/text", "fontdb"]
 [dependencies]
 miniz_oxide = "0.4"
 pdf-writer = "0.4.1"
-usvg = { version = "0.20", default-features = false }
+usvg = { version = "0.22", default-features = false }
 clap = { version = "3", features = ["derive"], optional = true }
 fontdb = { version = "0.7", optional = true }
 image = { version = "0.23", default-features = false, optional = true }
