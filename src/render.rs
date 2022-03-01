@@ -15,7 +15,7 @@ use usvg::{
 #[cfg(any(feature = "png", feature = "jpeg"))]
 use {
     image::io::Reader as ImageReader,
-    image::{DynamicImage, GenericImageView, ImageFormat, Rgb, Rgba, Luma},
+    image::{DynamicImage, ImageFormat, Luma, Rgb, Rgba},
     pdf_writer::writers::ImageXObject,
 };
 
@@ -553,7 +553,7 @@ impl Render for usvg::Image {
 
             let image_ref = ctx.alloc_ref();
 
-            #[cfg(any(feature = "png", feature = "jpeg"))]
+            #[cfg(any(feature = "png", feature = "jpeg", feature = "gif"))]
             let set_image_props = |
                 image: &mut ImageXObject,
                 raster_size: &mut Option<(u32, u32)>,
@@ -576,14 +576,75 @@ impl Render for usvg::Image {
                 }
             };
 
-            #[cfg(any(feature = "png", feature = "jpeg"))]
+            #[cfg(any(feature = "png", feature = "jpeg", feature = "gif"))]
             let mut raster_size: Option<(u32, u32)> = None;
             let rect = self.view_box.rect;
+
+            #[cfg(any(feature = "png", feature = "gif"))]
+            let mut apply_transparent = |decoded: DynamicImage| {
+                let color = decoded.color();
+
+                let bits = color.bits_per_pixel();
+                let channels = color.channel_count() as u16;
+                let image_bytes: Vec<u8> = match (channels, bits / channels > 8) {
+                    (1, false) => {
+                        decoded.to_luma8().pixels().flat_map(|&Luma(c)| c).collect()
+                    }
+                    (1, true) => decoded
+                        .to_luma16()
+                        .pixels()
+                        .flat_map(|&Luma(x)| x)
+                        .flat_map(|x| x.to_be_bytes())
+                        .collect(),
+                    (3 | 4, false) => {
+                        decoded.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
+                    }
+                    (3 | 4, true) => decoded
+                        .to_rgb16()
+                        .pixels()
+                        .flat_map(|&Rgb(c)| c)
+                        .flat_map(|x| x.to_be_bytes())
+                        .collect(),
+                    _ => panic!("unknown number of channels={channels}"),
+                };
+                let compressed = compress_to_vec_zlib(&image_bytes, 8);
+
+                let mut image = writer.image_xobject(image_ref, &compressed);
+                set_image_props(&mut image, &mut raster_size, &decoded, false);
+                image.filter(Filter::FlateDecode);
+
+                // The alpha channel has to be written separately, as a Soft
+                // Mask.
+                if color.has_alpha() {
+                    let mask_id = ctx.alloc_ref();
+                    image.pair(Name(b"SMask"), mask_id);
+                    image.finish();
+
+                    let bits = color.bits_per_pixel();
+                    let channels = color.channel_count() as u16;
+                    let alpha_bytes: Vec<u8> = if bits / channels > 8 {
+                        decoded
+                            .to_rgba16()
+                            .pixels()
+                            .flat_map(|&Rgba([.., a])| a.to_be_bytes())
+                            .collect()
+                    } else {
+                        decoded.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect()
+                    };
+
+                    let compressed = compress_to_vec_zlib(&alpha_bytes, 8);
+                    let mut mask = writer.image_xobject(mask_id, &compressed);
+                    let mut void = None;
+
+                    set_image_props(&mut mask, &mut void, &decoded, true);
+                    mask.filter(Filter::FlateDecode);
+                }
+            };
 
             match &self.kind {
                 #[cfg(feature = "jpeg")]
                 ImageKind::JPEG(buf) => {
-                    let cursor = std::io::Cursor::new(buf);
+                    let cursor = std::io::Cursor::new(buf.as_ref());
                     let decoded = if let Ok(decoded) =
                         ImageReader::with_format(cursor, ImageFormat::Jpeg).decode()
                     {
@@ -598,72 +659,29 @@ impl Render for usvg::Image {
                 }
                 #[cfg(feature = "png")]
                 ImageKind::PNG(buf) => {
-                    let cursor = std::io::Cursor::new(buf);
-                    let decoded = if let Ok(decoded) =
-                        ImageReader::with_format(cursor, ImageFormat::Png).decode()
-                    {
-                        decoded
-                    } else {
-                        return;
-                    };
-
-                    let color = decoded.color();
-
-                    let bits = color.bits_per_pixel();
-                    let channels = color.channel_count() as u16;
-                    let image_bytes: Vec<u8> = match (channels, bits / channels > 8) {
-                        (1, false) => {
-                            decoded.to_luma8().pixels().flat_map(|&Luma(c)| c).collect()
-                        }
-                        (1, true) => decoded
-                            .to_luma16()
-                            .pixels()
-                            .flat_map(|&Luma(x)| x)
-                            .flat_map(|x| x.to_be_bytes())
-                            .collect(),
-                        (3 | 4, false) => {
-                            decoded.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
-                        }
-                        (3 | 4, true) => decoded
-                            .to_rgb16()
-                            .pixels()
-                            .flat_map(|&Rgb(c)| c)
-                            .flat_map(|x| x.to_be_bytes())
-                            .collect(),
-                        _ => panic!("unknown number of channels={channels}"),
-                    };
-                    let compressed = compress_to_vec_zlib(&image_bytes, 8);
-
-                    let mut image = writer.image_xobject(image_ref, &compressed);
-                    set_image_props(&mut image, &mut raster_size, &decoded, false);
-                    image.filter(Filter::FlateDecode);
-
-                    // The alpha channel has to be written separately, as a Soft
-                    // Mask.
-                    if color.has_alpha() {
-                        let mask_id = ctx.alloc_ref();
-                        image.pair(Name(b"SMask"), mask_id);
-                        image.finish();
-
-                        let bits = color.bits_per_pixel();
-                        let channels = color.channel_count() as u16;
-                        let alpha_bytes: Vec<u8> = if bits / channels > 8 {
+                    let cursor = std::io::Cursor::new(buf.as_ref());
+                    apply_transparent(
+                        if let Ok(decoded) =
+                            ImageReader::with_format(cursor, ImageFormat::Png).decode()
+                        {
                             decoded
-                                .to_rgba16()
-                                .pixels()
-                                .flat_map(|&Rgba([.., a])| a.to_be_bytes())
-                                .collect()
                         } else {
-                            decoded.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect()
-                        };
-
-                        let compressed = compress_to_vec_zlib(&alpha_bytes, 8);
-                        let mut mask = writer.image_xobject(mask_id, &compressed);
-                        let mut void = None;
-
-                        set_image_props(&mut mask, &mut void, &decoded, true);
-                        mask.filter(Filter::FlateDecode);
-                    }
+                            return;
+                        },
+                    );
+                }
+                #[cfg(feature = "gif")]
+                ImageKind::GIF(buf) => {
+                    let cursor = std::io::Cursor::new(buf.as_ref());
+                    apply_transparent(
+                        if let Ok(decoded) =
+                            ImageReader::with_format(cursor, ImageFormat::Gif).decode()
+                        {
+                            decoded
+                        } else {
+                            return;
+                        },
+                    );
                 }
                 ImageKind::SVG(tree) => {
                     // An SVG image means that the file gets embedded in a
@@ -677,13 +695,16 @@ impl Render for usvg::Image {
 
                     ctx.next_id = convert_tree_into(tree, opt, writer, image_ref).get();
                 }
-
-                #[cfg(any(not(feature = "jpeg"), not(feature = "png")))]
+                #[cfg(any(
+                    not(feature = "jpeg"),
+                    not(feature = "png"),
+                    not(feature = "gif")
+                ))]
                 _ => {}
             }
 
             // Common operations for raster image formats.
-            #[cfg(any(feature = "png", feature = "jpeg"))]
+            #[cfg(any(feature = "png", feature = "jpeg", feature = "gif"))]
             let image_ref = if let Some((width, height)) = raster_size {
                 let mut content = Content::new();
                 let xobj_name = Name(b"EmbRaster");
