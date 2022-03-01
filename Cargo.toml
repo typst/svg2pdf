@@ -1,6 +1,6 @@
 [package]
 name = "svg2pdf"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Martin Haug <mhaug@live.de>"]
 edition = "2021"
 description = "Convert SVG files to PDFs."
