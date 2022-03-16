@@ -238,7 +238,8 @@ pub(crate) fn write_masks(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context
 
             let content = content_stream(&mask_node, writer, ctx);
 
-            let mut group = form_xobject(writer, gp.reference, &content, gp.bbox, true);
+            let mut group =
+                form_xobject(writer, gp.reference, &content, gp.bbox, ctx.compress, true);
 
             if let Some(matrix) = gp.matrix {
                 group.matrix(matrix);

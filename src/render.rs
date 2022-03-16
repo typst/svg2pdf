@@ -23,9 +23,9 @@ use super::{
     apply_clip_path, apply_mask, content_stream, form_xobject, Context, Options,
     RgbColor, SRGB,
 };
-use crate::convert_tree_into;
 use crate::defer::{PendingGS, PendingGradient};
 use crate::scale::CoordToPdf;
+use crate::{convert_tree_into, deflate};
 
 /// Write the appropriate instructions for a node into the content stream.
 ///
@@ -291,8 +291,14 @@ fn render_path_partial(
     // Write the Form XObject if there was a gradient with alpha values.
     if let Some((xobj_content, path_no)) = xobj_content {
         let path_ref = ctx.alloc_ref();
-        let data = xobj_content.finish();
-        let mut form = form_xobject(writer, path_ref, &data, pdf_bbox, true);
+        let data = if ctx.compress {
+            deflate(&xobj_content.finish())
+        } else {
+            xobj_content.finish()
+        };
+
+        let mut form =
+            form_xobject(writer, path_ref, &data, pdf_bbox, ctx.compress, true);
         let mut resources = form.resources();
         ctx.pop(&mut resources);
         ctx.pending_xobjects.push((path_no, path_ref));
@@ -378,6 +384,7 @@ fn prep_shading(
         smask_form_ref,
         &shading_content,
         ctx.c.pdf_rect(bbox),
+        false,
         false,
     );
 
@@ -479,6 +486,10 @@ fn prep_pattern(
         .x_step(pdf_rect.x2 - pdf_rect.x1)
         .y_step(pdf_rect.y2 - pdf_rect.y1);
 
+    if ctx.compress {
+        pdf_pattern.filter(Filter::FlateDecode);
+    }
+
     let mut resources = pdf_pattern.resources();
     ctx.pop(&mut resources);
     resources.finish();
@@ -509,7 +520,14 @@ impl Render for usvg::Group {
 
         // Every group is an isolated transparency group, it needs to be painted
         // onto its own canvas.
-        let mut form = form_xobject(writer, group_ref, &child_content, pdf_bbox, true);
+        let mut form = form_xobject(
+            writer,
+            group_ref,
+            &child_content,
+            pdf_bbox,
+            ctx.compress,
+            true,
+        );
         let mut resources = form.resources();
         ctx.pop(&mut resources);
 
@@ -691,6 +709,7 @@ impl Render for usvg::Image {
                         viewport: Some((rect.width(), rect.height())),
                         aspect: Some(self.view_box.aspect),
                         dpi: ctx.c.dpi(),
+                        compress: ctx.compress,
                     };
 
                     ctx.next_id = convert_tree_into(tree, opt, writer, image_ref).get();
