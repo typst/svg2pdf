@@ -19,7 +19,7 @@ cli = ["clap", "termcolor", "usvg/text", "fontdb"]
 
 [dependencies]
 miniz_oxide = "0.4"
-pdf-writer = "0.4.1"
+pdf-writer = { git = "https://github.com/typst/pdf-writer" }
 usvg = { version = "0.22", default-features = false }
 clap = { version = "3", features = ["derive"], optional = true }
 fontdb = { version = "0.9", optional = true }

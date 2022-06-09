@@ -741,7 +741,7 @@ fn form_xobject<'a>(
     if has_color {
         space.srgb();
     } else {
-        space.srgb_gray();
+        space.d65_gray();
     }
 
     group.finish();

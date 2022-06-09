@@ -365,7 +365,7 @@ fn prep_shading(
     let mut shading = Shading::start(writer.indirect(shading_ref));
 
     shading.shading_type(gradient.shading_type);
-    shading.color_space().srgb_gray();
+    shading.color_space().d65_gray();
     shading.function(alpha_func);
     shading.coords(gradient.transformed_coords(&ctx.c, bbox).into_iter().take(
         if gradient.shading_type == ShadingType::Axial {
