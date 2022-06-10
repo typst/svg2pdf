@@ -739,13 +739,14 @@ impl Render for usvg::Image {
                 );
 
                 content.save_state();
+                let (x, y) = converter.point((rect.x(), rect.y()));
                 content.transform([
                     (width as f64 * converter.factor_x()) as f32,
                     0.0,
                     0.0,
                     (height as f64 * converter.factor_y()) as f32,
-                    converter.offset_x() as f32,
-                    converter.offset_y() as f32,
+                    converter.offset_x() as f32 + x,
+                    converter.offset_y() as f32 + y,
                 ]);
                 content.x_object(xobj_name);
                 content.restore_state();
@@ -759,12 +760,7 @@ impl Render for usvg::Image {
                 resources.x_objects().pair(xobj_name, image_ref);
                 resources.finish();
 
-                xobject.bbox(Rect::new(
-                    0.0,
-                    0.0,
-                    (rect.x() + rect.width()) as f32,
-                    (rect.y() + rect.height()) as f32,
-                ));
+                xobject.bbox(ctx.c.pdf_rect(rect));
 
                 let scaling = 72.0 / ctx.c.dpi();
                 let mut transform = self.transform.clone();
