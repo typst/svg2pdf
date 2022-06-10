@@ -168,12 +168,9 @@ impl CoordToPdf {
     }
 
     /// Set a pre-transformation, overriding the old one.
-    pub fn transform(&mut self, matrix: [f64; 6]) {
-        self.matrix = matrix
-    }
-
-    /// Set the identity transform
-    pub fn identity(&mut self) {
-        self.matrix = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0];
+    pub fn transform(&mut self, matrix: [f64; 6]) -> [f64; 6] {
+        let old = self.matrix;
+        self.matrix = matrix;
+        old
     }
 }

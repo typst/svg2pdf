@@ -470,10 +470,10 @@ fn prep_pattern(
     inner_matrix[4] += rect.x();
     inner_matrix[5] += rect.y();
 
-    ctx.c.transform(inner_matrix);
+    let old = ctx.c.transform(inner_matrix);
 
     let pattern_stream = content_stream(node, writer, ctx);
-    ctx.c.identity();
+    ctx.c.transform(old);
 
     let pattern_ref = ctx.alloc_ref();
     let mut pdf_pattern = writer.tiling_pattern(pattern_ref, &pattern_stream);
@@ -517,6 +517,14 @@ impl Render for usvg::Group {
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
 
         let pdf_bbox = ctx.c.pdf_rect(bbox);
+        let old = ctx.c.transform([
+            self.transform.a,
+            self.transform.b,
+            self.transform.c,
+            self.transform.d,
+            self.transform.e,
+            self.transform.f,
+        ]);
 
         // Every group is an isolated transparency group, it needs to be painted
         // onto its own canvas.
@@ -528,6 +536,7 @@ impl Render for usvg::Group {
             ctx.compress,
             true,
         );
+
         let mut resources = form.resources();
         ctx.pop(&mut resources);
 
@@ -536,6 +545,7 @@ impl Render for usvg::Group {
         content.save_state();
 
         apply_clip_path(self.clip_path.as_ref(), content, ctx);
+        ctx.c.transform(old);
 
         if let Some(reference) = apply_mask(self.mask.as_ref(), bbox, pdf_bbox, ctx) {
             let num = ctx.alloc_gs();
@@ -739,14 +749,13 @@ impl Render for usvg::Image {
                 );
 
                 content.save_state();
-                let (x, y) = converter.point((rect.x(), rect.y()));
                 content.transform([
                     (width as f64 * converter.factor_x()) as f32,
                     0.0,
                     0.0,
                     (height as f64 * converter.factor_y()) as f32,
-                    converter.offset_x() as f32 + x,
-                    converter.offset_y() as f32 + y,
+                    converter.offset_x() as f32,
+                    converter.offset_y() as f32,
                 ]);
                 content.x_object(xobj_name);
                 content.restore_state();
@@ -760,7 +769,12 @@ impl Render for usvg::Image {
                 resources.x_objects().pair(xobj_name, image_ref);
                 resources.finish();
 
-                xobject.bbox(ctx.c.pdf_rect(rect));
+                xobject.bbox(Rect::new(
+                    0.0,
+                    0.0,
+                    rect.width() as f32,
+                    rect.height() as f32,
+                ));
 
                 let scaling = 72.0 / ctx.c.dpi();
                 let mut transform = self.transform.clone();
@@ -783,8 +797,8 @@ impl Render for usvg::Image {
             ctx.pending_xobjects.push((num, image_ref));
             let name = format!("xo{}", num);
 
-            let (x, y) = ctx.c.point((rect.x(), rect.y()));
-            content.move_to(x, y);
+            let (x, y) = ctx.c.point((rect.x(), rect.y() + rect.height()));
+            content.transform([1.0, 0.0, 0.0, 1.0, x, y]);
             content.x_object(Name(name.as_bytes()));
         }
     }
