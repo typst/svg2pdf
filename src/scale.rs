@@ -1,6 +1,6 @@
 //! Provide transformations between PDF and SVG coordinate systems.
 
-use usvg::{Align, AspectRatio, ViewBox};
+use usvg::{Align, AspectRatio, ViewBox, Transform};
 
 /// Convert point data between two coordinate systems.
 #[derive(Debug, Copy, Clone)]
@@ -11,7 +11,7 @@ pub struct CoordToPdf {
     offset_y: f64,
     height_y: f64,
     dpi: f64,
-    matrix: [f64; 6],
+    transform: Transform,
 }
 
 impl CoordToPdf {
@@ -94,7 +94,7 @@ impl CoordToPdf {
             offset_y,
             height_y: viewport.1,
             dpi,
-            matrix: [1.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            transform: Transform::new(1.0, 0.0, 0.0, 1.0, 0.0, 0.0),
         }
     }
 
@@ -138,18 +138,18 @@ impl CoordToPdf {
         self.dpi
     }
 
-    /// Get the transformation matrix for this converter but without accounting
+    /// Get the transformation for this converter but without accounting
     /// for either DPI or that the PDF coordinate system is flipped. This is
     /// useful for converting between two SVG coordinate systems.
-    pub fn uncorrected_matrix(&self) -> [f64; 6] {
-        [
+    pub fn uncorrected_transformation(&self) -> Transform {
+        Transform::new(
             self.factor_x,
             0.0,
             0.0,
             self.factor_y,
             self.offset_x,
             self.offset_y,
-        ]
+        )
     }
 
     /// Transform a rectangle from SVG to PDF formats.
@@ -159,18 +159,19 @@ impl CoordToPdf {
         pdf_writer::Rect::new(x1, y1, x2, y2)
     }
 
-    /// Apply a transformation matrix to a point.
+    /// Apply a transformation to a point.
     fn apply(&self, point: (f64, f64)) -> (f64, f64) {
-        (
-            point.0 * self.matrix[0] + point.1 * self.matrix[1] + self.matrix[4],
-            point.0 * self.matrix[2] + point.1 * self.matrix[3] + self.matrix[5],
-        )
+        self.transform.apply(point.0, point.1)
     }
 
     /// Set a pre-transformation, overriding the old one.
-    pub fn transform(&mut self, matrix: [f64; 6]) -> [f64; 6] {
-        let old = self.matrix;
-        self.matrix = matrix;
+    pub fn concat_transform(&mut self, add_transform: Transform) -> Transform {
+        let old = self.transform.clone();
+        self.transform.append(&add_transform);
         old
+    }
+
+    pub fn set_transform(&mut self, transform: Transform) {
+        self.transform = transform;
     }
 }
