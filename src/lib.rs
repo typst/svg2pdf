@@ -519,6 +519,8 @@ fn apply_clip_path(path_id: Option<&String>, content: &mut Content, ctx: &mut Co
         if let NodeKind::ClipPath(ref path) = *clip_path.borrow() {
             apply_clip_path(path.clip_path.as_ref(), content, ctx);
 
+            let old = ctx.c.concat_transform(path.transform);
+
             for child in clip_path.children() {
                 match *child.borrow() {
                     NodeKind::Path(ref path) => {
@@ -530,6 +532,8 @@ fn apply_clip_path(path_id: Option<&String>, content: &mut Content, ctx: &mut Co
                     _ => unreachable!(),
                 }
             }
+
+            ctx.c.set_transform(old);
         } else {
             unreachable!();
         }

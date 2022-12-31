@@ -446,9 +446,9 @@ fn prep_pattern(
     let matrix = transform_to_matrix(pattern.transform);
     let pdf_rect = ctx.c.pdf_rect(rect);
 
-    let mut inner_matrix = if let Some(viewbox) = pattern.view_box {
+    let mut inner_transform = if let Some(viewbox) = pattern.view_box {
         CoordToPdf::new((rect.width(), rect.height()), ctx.c.dpi(), viewbox, None)
-            .uncorrected_matrix()
+            .uncorrected_transformation()
     } else if pattern.content_units == Units::ObjectBoundingBox {
         let viewbox = ViewBox {
             rect: usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap(),
@@ -460,20 +460,20 @@ fn prep_pattern(
         };
 
         CoordToPdf::new((bbox.width(), bbox.height()), ctx.c.dpi(), viewbox, None)
-            .uncorrected_matrix()
+            .uncorrected_transformation()
     } else {
-        [1.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+        Transform::new(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
     };
 
     ctx.push();
 
-    inner_matrix[4] += rect.x();
-    inner_matrix[5] += rect.y();
+    inner_transform.e += rect.x();
+    inner_transform.f += rect.y();
 
-    let old = ctx.c.transform(inner_matrix);
+    let old = ctx.c.concat_transform(inner_transform);
 
     let pattern_stream = content_stream(node, writer, ctx);
-    ctx.c.transform(old);
+    ctx.c.set_transform(old);
 
     let pattern_ref = ctx.alloc_ref();
     let mut pdf_pattern = writer.tiling_pattern(pattern_ref, &pattern_stream);
@@ -509,7 +509,6 @@ impl Render for usvg::Group {
         ctx.push();
 
         let group_ref = ctx.alloc_ref();
-        let child_content = content_stream(&node, writer, ctx);
 
         let bbox = node
             .calculate_bbox()
@@ -517,14 +516,9 @@ impl Render for usvg::Group {
             .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
 
         let pdf_bbox = ctx.c.pdf_rect(bbox);
-        let old = ctx.c.transform([
-            self.transform.a,
-            self.transform.b,
-            self.transform.c,
-            self.transform.d,
-            self.transform.e,
-            self.transform.f,
-        ]);
+        let old = ctx.c.concat_transform(self.transform);
+
+        let child_content = content_stream(&node, writer, ctx);
 
         // Every group is an isolated transparency group, it needs to be painted
         // onto its own canvas.
@@ -545,7 +539,7 @@ impl Render for usvg::Group {
         content.save_state();
 
         apply_clip_path(self.clip_path.as_ref(), content, ctx);
-        ctx.c.transform(old);
+        ctx.c.set_transform(old);
 
         if let Some(reference) = apply_mask(self.mask.as_ref(), bbox, pdf_bbox, ctx) {
             let num = ctx.alloc_gs();
