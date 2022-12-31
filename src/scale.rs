@@ -1,6 +1,6 @@
 //! Provide transformations between PDF and SVG coordinate systems.
 
-use usvg::{Align, AspectRatio, ViewBox, Transform};
+use usvg::{Align, AspectRatio, Transform, ViewBox};
 
 /// Convert point data between two coordinate systems.
 #[derive(Debug, Copy, Clone)]

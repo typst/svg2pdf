@@ -510,7 +510,6 @@ impl Render for usvg::Group {
 
         let group_ref = ctx.alloc_ref();
 
-
         let bbox = node
             .calculate_bbox()
             .and_then(|b| b.to_rect())
