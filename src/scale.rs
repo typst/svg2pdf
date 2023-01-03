@@ -171,7 +171,13 @@ impl CoordToPdf {
         old
     }
 
-    pub fn set_transform(&mut self, transform: Transform) {
+    pub fn set_transform(&mut self, transform: Transform) -> Transform {
+        let old = self.transform;
         self.transform = transform;
+        old
+    }
+
+    pub fn get_transform(&self) -> Transform {
+        self.transform
     }
 }

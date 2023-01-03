@@ -563,12 +563,18 @@ fn apply_mask(
 
             apply_mask(mask.mask.as_ref(), mask.rect, pdf_bbox, ctx);
 
-            ctx.pending_groups.insert(mask.id.clone(), PendingGroup {
-                reference,
-                bbox,
-                matrix,
-                initial_mask: mask.mask.clone(),
-            });
+            let context_transform = ctx.c.get_transform();
+
+            ctx.pending_groups.insert(
+                mask.id.clone(),
+                PendingGroup {
+                    reference,
+                    bbox,
+                    matrix,
+                    transform: context_transform,
+                    initial_mask: mask.mask.clone(),
+                },
+            );
 
             Some(reference)
         } else {

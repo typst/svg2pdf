@@ -539,7 +539,6 @@ impl Render for usvg::Group {
         content.save_state();
 
         apply_clip_path(self.clip_path.as_ref(), content, ctx);
-        ctx.c.set_transform(old);
 
         if let Some(reference) = apply_mask(self.mask.as_ref(), bbox, pdf_bbox, ctx) {
             let num = ctx.alloc_gs();
@@ -553,6 +552,8 @@ impl Render for usvg::Group {
             ctx.pending_graphics
                 .push(PendingGS::fill_opacity(self.opacity.value() as f32, num));
         }
+
+        ctx.c.set_transform(old);
 
         content.x_object(Name(name.as_bytes()));
         content.restore_state();

@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use pdf_writer::types::{MaskType, ShadingType};
 use pdf_writer::writers::{ExtGraphicsState, Resources, ShadingPattern};
 use pdf_writer::{Finish, Name, PdfWriter, Rect, Ref};
-use usvg::{NodeKind, Tree};
+use usvg::{NodeKind, Transform, Tree};
 
 use super::{content_stream, form_xobject, Context, CoordToPdf};
 use crate::render::Gradient;
@@ -130,6 +130,9 @@ pub struct PendingGroup {
     /// A transformation matrix to allow for a different coordinate system use
     /// in the object.
     pub matrix: Option<[f32; 6]>,
+    // Contains the transform of the context where the pending group
+    // was in the tree
+    pub transform: Transform,
     /// An SVG ID to a mask that should be applied at the start of the content
     /// stream.
     pub initial_mask: Option<String>,
@@ -236,6 +239,9 @@ pub(crate) fn write_masks(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context
             ctx.push();
             ctx.initial_mask = gp.initial_mask;
 
+            // Get the context of where the pending group was originally in the tree
+            let old = ctx.c.set_transform(gp.transform);
+
             let content = content_stream(&mask_node, writer, ctx);
 
             let mut group =
@@ -244,6 +250,8 @@ pub(crate) fn write_masks(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context
             if let Some(matrix) = gp.matrix {
                 group.matrix(matrix);
             }
+
+            ctx.c.set_transform(old);
 
             let mut resources = group.resources();
             ctx.pop(&mut resources);
