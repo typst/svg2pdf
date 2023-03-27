@@ -443,17 +443,10 @@ fn get_sizings(tree: &Tree, options: &Options) -> (CoordToPdf, Rect) {
         (native_size.width(), native_size.height())
     };
 
-    let c = CoordToPdf::new(
-        viewport,
-        options.dpi,
-        tree.svg_node().view_box,
-        options.aspect,
-    );
+    let c =
+        CoordToPdf::new(viewport, options.dpi, tree.svg_node().view_box, options.aspect);
 
-    (
-        c,
-        Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1)),
-    )
+    (c, Rect::new(0.0, 0.0, c.px_to_pt(viewport.0), c.px_to_pt(viewport.1)))
 }
 
 fn preregister(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) {
@@ -510,7 +503,11 @@ fn content_stream<'a>(
 
     let res = content.finish();
 
-    if ctx.compress { deflate(&res) } else { res }
+    if ctx.compress {
+        deflate(&res)
+    } else {
+        res
+    }
 }
 
 /// Draw a clipping path into a content stream.
@@ -784,7 +781,7 @@ mod tests {
             let buf = convert_str(&doc, options).unwrap();
 
             let len = base_name.len();
-            let file_name = format!("{}.pdf", &base_name[0 .. len - 4]);
+            let file_name = format!("{}.pdf", &base_name[0..len - 4]);
 
             std::fs::write(format!("target/{}", file_name), buf).unwrap();
         }

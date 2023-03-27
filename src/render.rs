@@ -130,13 +130,8 @@ fn render_path_partial(
     // Soft Mask. Because we want the masks to intersect instead, we wrap
     // the path in a transparency group instead.
     let mut xobj_content = if let Some(alpha_func) = fill_g_alpha {
-        let smask_form_ref = prep_shading(
-            alpha_func,
-            fill_gradient.as_ref().unwrap(),
-            bbox,
-            writer,
-            ctx,
-        );
+        let smask_form_ref =
+            prep_shading(alpha_func, fill_gradient.as_ref().unwrap(), bbox, writer, ctx);
 
         Some(start_wrap(smask_form_ref, content, ctx))
     } else if let Some(alpha_func) = stroke_g_alpha {
@@ -267,11 +262,7 @@ fn render_path_partial(
 
     draw_path(&path.data.0, path.transform, content, &ctx.c);
 
-    match (
-        path.fill.as_ref().map(|f| f.rule),
-        fill,
-        path.stroke.is_some() && stroke,
-    ) {
+    match (path.fill.as_ref().map(|f| f.rule), fill, path.stroke.is_some() && stroke) {
         (Some(FillRule::NonZero), true, true) => content.fill_nonzero_and_stroke(),
         (Some(FillRule::EvenOdd), true, true) => content.fill_even_odd_and_stroke(),
         (Some(FillRule::NonZero), true, false) => content.fill_nonzero(),
@@ -367,13 +358,12 @@ fn prep_shading(
     shading.shading_type(gradient.shading_type);
     shading.color_space().d65_gray();
     shading.function(alpha_func);
-    shading.coords(gradient.transformed_coords(&ctx.c, bbox).into_iter().take(
-        if gradient.shading_type == ShadingType::Axial {
-            4
-        } else {
-            6
-        },
-    ));
+    shading.coords(
+        gradient
+            .transformed_coords(&ctx.c, bbox)
+            .into_iter()
+            .take(if gradient.shading_type == ShadingType::Axial { 4 } else { 6 }),
+    );
     shading.extend([true, true]);
     shading.finish();
 
@@ -452,11 +442,7 @@ fn prep_pattern(
     } else if pattern.content_units == Units::ObjectBoundingBox {
         let viewbox = ViewBox {
             rect: usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap(),
-            aspect: AspectRatio {
-                defer: false,
-                align: Align::None,
-                slice: false,
-            },
+            aspect: AspectRatio { defer: false, align: Align::None, slice: false },
         };
 
         CoordToPdf::new((bbox.width(), bbox.height()), ctx.c.dpi(), viewbox, None)
@@ -522,14 +508,8 @@ impl Render for usvg::Group {
 
         // Every group is an isolated transparency group, it needs to be painted
         // onto its own canvas.
-        let mut form = form_xobject(
-            writer,
-            group_ref,
-            &child_content,
-            pdf_bbox,
-            ctx.compress,
-            true,
-        );
+        let mut form =
+            form_xobject(writer, group_ref, &child_content, pdf_bbox, ctx.compress, true);
 
         let mut resources = form.resources();
         ctx.pop(&mut resources);
@@ -577,12 +557,10 @@ impl Render for usvg::Image {
             let image_ref = ctx.alloc_ref();
 
             #[cfg(any(feature = "png", feature = "jpeg", feature = "gif"))]
-            let set_image_props = |
-                image: &mut ImageXObject,
-                raster_size: &mut Option<(u32, u32)>,
-                decoded: &DynamicImage,
-                grey: bool,
-            | {
+            let set_image_props = |image: &mut ImageXObject,
+                                   raster_size: &mut Option<(u32, u32)>,
+                                   decoded: &DynamicImage,
+                                   grey: bool| {
                 let color = decoded.color();
                 *raster_size = Some((decoded.width(), decoded.height()));
                 image.width(decoded.width() as i32);
@@ -871,11 +849,7 @@ impl Gradient {
         c: &CoordToPdf,
         bbox: usvg::Rect,
     ) -> [f32; 6] {
-        let max = if bbox.width() > bbox.height() {
-            bbox.width()
-        } else {
-            bbox.height()
-        };
+        let max = if bbox.width() > bbox.height() { bbox.width() } else { bbox.height() };
 
         let coords = if self.transform_coords {
             let (x1, y1) = c.point((
@@ -897,22 +871,13 @@ impl Gradient {
         } else {
             let (x1, y1) = c.point((self.coords[0], self.coords[1]));
             let (x2, y2) = c.point((self.coords[2], self.coords[3]));
-            [
-                x1,
-                y1,
-                x2,
-                y2,
-                c.px_to_pt(self.coords[4]),
-                c.px_to_pt(self.coords[5]),
-            ]
+            [x1, y1, x2, y2, c.px_to_pt(self.coords[4]), c.px_to_pt(self.coords[5])]
         };
 
         if self.shading_type == ShadingType::Axial {
             [coords[0], coords[1], coords[2], coords[3], 0.0, 0.0]
         } else {
-            [
-                coords[0], coords[1], coords[4], coords[2], coords[3], coords[5],
-            ]
+            [coords[0], coords[1], coords[4], coords[2], coords[3], coords[5]]
         }
     }
 }

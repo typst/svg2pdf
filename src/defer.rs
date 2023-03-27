@@ -167,13 +167,12 @@ pub fn write_gradients(
         shading.shading_type(pending.shading_type);
         shading.color_space().srgb();
         shading.function(func);
-        shading.coords(pending.coords.into_iter().take(
-            if pending.shading_type == ShadingType::Axial {
-                4
-            } else {
-                6
-            },
-        ));
+        shading.coords(
+            pending
+                .coords
+                .into_iter()
+                .take(if pending.shading_type == ShadingType::Axial { 4 } else { 6 }),
+        );
         shading.extend([true, true]);
     }
 
