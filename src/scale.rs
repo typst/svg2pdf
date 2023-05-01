@@ -1,5 +1,6 @@
 //! Provide transformations between PDF and SVG coordinate systems.
 
+use pdf_writer::Rect;
 use usvg::{Align, AspectRatio, Transform, ViewBox};
 
 /// Convert point data between two coordinate systems.
@@ -9,7 +10,7 @@ pub struct CoordToPdf {
     factor_y: f64,
     offset_x: f64,
     offset_y: f64,
-    height_y: f64,
+    viewport: (f64, f64),
     dpi: f64,
     transform: Transform,
 }
@@ -90,13 +91,15 @@ impl CoordToPdf {
 
         offset_x -= viewbox.rect.x() * factor_x;
         offset_y -= viewbox.rect.y() * factor_y;
+        println!("{}", &offset_x);
+        println!("{}", &offset_y);
 
         CoordToPdf {
             factor_x,
             factor_y,
             offset_x,
             offset_y,
-            height_y: viewport.1,
+            viewport,
             dpi,
             transform: Transform::new(1.0, 0.0, 0.0, 1.0, 0.0, 0.0),
         }
@@ -104,10 +107,25 @@ impl CoordToPdf {
 
     /// Convert from SVG source coordinates to PDF coordinates.
     pub fn point(&self, point: (f64, f64)) -> (f32, f32) {
-        let (x, y) = self.apply(point);
+        self.point_raw(self.apply(point))
+    }
+
+    /// Convert from SVG source coordinates to PDF coordinates, disregarding transforms.
+    pub fn point_raw(&self, point: (f64, f64)) -> (f32, f32) {
+        let (x, y) = point;
         (
             self.px_to_pt(x * self.factor_x + self.offset_x),
-            self.px_to_pt(self.height_y - (y * self.factor_y + self.offset_y)),
+            self.px_to_pt(self.viewport.1 - (y * self.factor_y + self.offset_y)),
+        )
+    }
+
+    /// Get the PDF bounding box for the SVG file.
+    pub fn bbox(&self) -> Rect {
+        Rect::new(
+            0.0,
+            0.0,
+            self.px_to_pt(self.viewport.0),
+            self.px_to_pt(self.viewport.1),
         )
     }
 
@@ -160,6 +178,13 @@ impl CoordToPdf {
     pub fn pdf_rect(&self, rect: usvg::Rect) -> pdf_writer::Rect {
         let (x1, y1) = self.point((rect.x(), rect.y() + rect.height()));
         let (x2, y2) = self.point((rect.x() + rect.width(), rect.y()));
+        pdf_writer::Rect::new(x1, y1, x2, y2)
+    }
+
+    /// Transform a rectangle from SVG to PDF formats, disregarding transforms.
+    pub fn pdf_rect_raw(&self, rect: usvg::Rect) -> pdf_writer::Rect {
+        let (x1, y1) = self.point_raw((rect.x(), rect.y() + rect.height()));
+        let (x2, y2) = self.point_raw((rect.x() + rect.width(), rect.y()));
         pdf_writer::Rect::new(x1, y1, x2, y2)
     }
 

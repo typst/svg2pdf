@@ -5,11 +5,12 @@
 //! and functions to ultimately populate them to the file.
 
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use pdf_writer::types::{MaskType, ShadingType};
 use pdf_writer::writers::{ExtGraphicsState, Resources, ShadingPattern};
 use pdf_writer::{Finish, Name, PdfWriter, Rect, Ref};
-use usvg::{NodeKind, Transform, Tree};
+use usvg::{Transform, Tree};
 
 use super::{content_stream, form_xobject, Context, CoordToPdf};
 use crate::render::Gradient;
@@ -230,32 +231,38 @@ pub fn write_xobjects(pending_xobjects: &[(u32, Ref)], resources: &mut Resources
 /// Write the content streams of the used masks stored in the context to the
 /// file.
 pub(crate) fn write_masks(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) {
-    for (id, gp) in ctx.pending_groups.clone() {
-        let mask_node = tree.defs_by_id(&id).unwrap();
-        let borrowed = mask_node.borrow();
-
-        if let NodeKind::Mask(_) = *borrowed {
-            ctx.push();
-            ctx.initial_mask = gp.initial_mask;
-
-            // Get the context of where the pending group was originally in the tree
-            let old = ctx.c.set_transform(gp.transform);
-
-            let content = content_stream(&mask_node, writer, ctx);
-
-            let mut group =
-                form_xobject(writer, gp.reference, &content, gp.bbox, ctx.compress, true);
-
-            if let Some(matrix) = gp.matrix {
-                group.matrix(matrix);
-            }
-
-            ctx.c.set_transform(old);
-
-            let mut resources = group.resources();
-            ctx.pop(&mut resources);
-            resources.finish();
+    let mut masks: Vec<Rc<usvg::Mask>> = Vec::new();
+    tree.masks(|mask| {
+        if masks.iter().find(|m| m.id == mask.id).is_some() {
+            return;
         }
+
+        masks.push(mask);
+    });
+
+    for (id, gp) in ctx.pending_groups.clone() {
+        let mask_node = masks.iter().find(|m| m.id == id).unwrap();
+
+        ctx.push();
+        ctx.initial_mask = gp.initial_mask;
+
+        // Get the context of where the pending group was originally in the tree
+        let old = ctx.c.set_transform(gp.transform);
+
+        let content = content_stream(&mask_node.root, writer, ctx);
+
+        let mut group =
+            form_xobject(writer, gp.reference, &content, gp.bbox, ctx.compress, true);
+
+        if let Some(matrix) = gp.matrix {
+            group.matrix(matrix);
+        }
+
+        ctx.c.set_transform(old);
+
+        let mut resources = group.resources();
+        ctx.pop(&mut resources);
+        resources.finish();
     }
 
     ctx.initial_mask = None;
