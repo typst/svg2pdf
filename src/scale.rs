@@ -91,8 +91,6 @@ impl CoordToPdf {
 
         offset_x -= viewbox.rect.x() * factor_x;
         offset_y -= viewbox.rect.y() * factor_y;
-        println!("{}", &offset_x);
-        println!("{}", &offset_y);
 
         CoordToPdf {
             factor_x,

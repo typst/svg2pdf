@@ -107,7 +107,7 @@ impl Default for Options {
             viewport: None,
             aspect: None,
             dpi: 72.0,
-            compress: false,
+            compress: true,
         }
     }
 }
