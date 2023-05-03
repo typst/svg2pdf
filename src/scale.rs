@@ -179,13 +179,6 @@ impl CoordToPdf {
         pdf_writer::Rect::new(x1, y1, x2, y2)
     }
 
-    /// Transform a rectangle from SVG to PDF formats, disregarding transforms.
-    pub fn pdf_rect_raw(&self, rect: usvg::Rect) -> pdf_writer::Rect {
-        let (x1, y1) = self.point_raw((rect.x(), rect.y() + rect.height()));
-        let (x2, y2) = self.point_raw((rect.x() + rect.width(), rect.y()));
-        pdf_writer::Rect::new(x1, y1, x2, y2)
-    }
-
     /// Apply a transformation to a point.
     fn apply(&self, point: (f64, f64)) -> (f64, f64) {
         self.transform.apply(point.0, point.1)

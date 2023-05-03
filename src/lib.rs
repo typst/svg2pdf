@@ -506,6 +506,7 @@ fn content_stream(
 fn apply_clip_path(
     path: Option<Rc<usvg::ClipPath>>,
     content: &mut Content,
+    writer: &mut PdfWriter,
     ctx: &mut Context,
 ) {
     let path = match path {
@@ -513,7 +514,7 @@ fn apply_clip_path(
         None => return,
     };
 
-    apply_clip_path(path.clip_path.clone(), content, ctx);
+    apply_clip_path(path.clip_path.clone(), content, writer, ctx);
 
     let old = ctx.c.concat_transform(path.transform);
 
@@ -523,6 +524,9 @@ fn apply_clip_path(
                 draw_path(path.data.segments(), path.transform, content, &ctx.c);
                 content.clip_nonzero();
                 content.end_path();
+            }
+            NodeKind::Group(ref group) => {
+                group.render(&child, writer, content, ctx);
             }
             _ => unreachable!(),
         }

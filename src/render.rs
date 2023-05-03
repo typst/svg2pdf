@@ -522,8 +522,10 @@ impl Render for usvg::Group {
         let num = ctx.alloc_xobject();
         let name = format!("xo{}", num);
         content.save_state();
+        resources.finish();
+        form.finish();
 
-        apply_clip_path(self.clip_path.clone(), content, ctx);
+        apply_clip_path(self.clip_path.clone(), content, writer, ctx);
 
         if let Some(reference) = apply_mask(self.mask.clone(), bbox, pdf_bbox, ctx) {
             let num = ctx.alloc_gs();
