@@ -4,6 +4,7 @@ use std::process;
 
 use clap::Parser;
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
+use usvg::{TreeParsing, TreeTextToPath};
 
 #[derive(Debug, Parser)]
 #[clap(about, version)]
@@ -37,11 +38,12 @@ fn run() -> Result<(), String> {
         std::fs::read_to_string(&args.input).map_err(|_| "Failed to load SVG file")?;
 
     // Convert string to SVG.
-    let mut options = usvg::Options::default();
-    options.fontdb = fontdb::Database::new();
-    options.fontdb.load_system_fonts();
-    let tree =
-        usvg::Tree::from_str(&svg, &options.to_ref()).map_err(|err| err.to_string())?;
+    let options = usvg::Options::default();
+    let mut fontdb = fontdb::Database::new();
+    fontdb.load_system_fonts();
+
+    let mut tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
+    tree.convert_text(&fontdb);
 
     // Convert SVG to PDF.
     let mut options = svg2pdf::Options::default();
