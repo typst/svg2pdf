@@ -1,7 +1,0 @@
-<svg height="500" width="500" xmlns="http://www.w3.org/2000/svg">
-    <rect width="200" height="200" />
-    <clipPath id="a" transform="translate(100, 100)">
-        <path d="m 0 0 h 100 v 100 h -100 z"/>
-    </clipPath>
-    <rect width="200" height="200" clip-path="url(#a)" fill="green" />
-</svg>
