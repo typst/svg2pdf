@@ -184,6 +184,22 @@ impl CoordToPdf {
         self.transform.apply(point.0, point.1)
     }
 
+    /// Compute the scale (e.g. to adapt the stroke width).
+    pub fn compute_scale(&self) -> f64 {
+        let mut complete_transform = Transform::new_scale(self.factor_x, self.factor_y);
+        complete_transform.append(&self.transform);
+        let (x_scale, y_scale) = complete_transform.get_scale();
+
+        if x_scale.is_finite() && y_scale.is_finite() {
+            let scale = x_scale.max(y_scale);
+            if scale > 0.0 {
+                return scale;
+            }
+        }
+
+        1.0
+    }
+
     /// Set a pre-transformation, overriding the old one.
     pub fn concat_transform(&mut self, add_transform: Transform) -> Transform {
         let old = self.transform.clone();
