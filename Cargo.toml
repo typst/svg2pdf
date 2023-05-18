@@ -1,31 +1,39 @@
-[package]
-name = "svg2pdf"
+[workspace]
+members = ["tests"]
+
+[workspace.package]
 version = "0.5.0"
-authors = ["Martin Haug <mhaug@live.de>"]
+authors = ["Martin Haug <mhaug@live.de>", "Laurenz Stampfl <laurenz.stampfl@gmail.com>"]
 edition = "2021"
-description = "Convert SVG files to PDFs."
 repository = "https://github.com/typst/svg2pdf"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
+
+[package]
+name = "svg2pdf"
+description = "Convert SVG files to PDFs."
 categories = ["encoding", "graphics", "multimedia"]
 keywords = ["svg", "pdf", "vector-graphics", "conversion"]
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [features]
-default = ["png", "jpeg", "gif"]
-png = ["image/png"]
-jpeg = ["image/jpeg"]
-gif = ["image/gif"]
-cli = ["clap", "termcolor", "usvg/text", "fontdb"]
+default = ["image"]
+image = ["dep:image"]
+cli = ["dep:clap", "dep:termcolor", "usvg/text", "dep:fontdb"]
+
+[[bin]]
+name = "svg2pdf"
+path = "src/main.rs"
 
 [dependencies]
 miniz_oxide = "0.7"
 pdf-writer = "0.7"
-usvg = { version = "0.32", default-features = false }
+usvg = {version = "0.32", default-features = false}
+image = {version = "0.24", features=["jpeg", "png", "gif"], optional = true}
+termcolor = {version = "1", optional = true}
 clap = { version = "3", features = ["derive"], optional = true }
-fontdb = { version = "0.13", optional = true }
-image = { version = "0.24", default-features = false, optional = true }
-termcolor = { version = "1", optional = true }
-
-[[bin]]
-name = "svg2pdf"
-required-features = ["cli"]
+fontdb = { version = "0.13", optional= true }

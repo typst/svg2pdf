@@ -4,8 +4,40 @@ on: [push, pull_request]
 jobs:
   ci:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Get Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Get Rust cache
+        uses: Swatinem/rust-cache@v2
+      - name: Get pdfium
+        run: |
+          curl -LO https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F5880/pdfium-linux-x64.tgz
+          mkdir pdfium-linux-x64
+          tar -xvzf ./pdfium-linux-x64.tgz -C pdfium-linux-x64
+          mv ./pdfium-linux-x64/lib/libpdfium.so ./pdfium_lib
+      - name: Build svg2pdf-tests
+        run: cargo build --release
+      - name: Run tests
+        id: tests
+        run: cargo run --release
+      - name: Upload artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./tests/diffs
+
+  checks:
+    name: Check clippy, formatting, and documentation
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo build
-      - run: cargo test
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-targets --features cli
+      - run: cargo fmt --check --all
