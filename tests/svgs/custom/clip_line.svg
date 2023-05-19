@@ -1,0 +1,9 @@
+<svg height="500" viewBox="0 0 400 500" width="400" xmlns="http://www.w3.org/2000/svg">
+    <clipPath id="a">
+        <path d="m 0 0 h 200 v 200 h -200 z"/>
+    </clipPath>
+    <g clip-path="url(#a)" transform="translate(130 80)">
+        <path d="m -10 -10 400 400" stroke="#000" stroke-width="3"/>
+    </g>
+    <path d="m 130 80 h 200 v 200 h -200 z" fill="none" stroke="#f00"/>
+</svg>

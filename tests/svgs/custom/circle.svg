@@ -1,0 +1,10 @@
+<svg version="1.1" height="106" width="106" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g transform="translate(53, 53)">
+        <g id="circle" mask="url(#rect_mask)">
+            <circle r="43" fill="none" stroke="black" stroke-width="9"/>
+        </g>
+        <mask id="rect_mask">
+            <rect x="-60" y="-60" width="120" height="120" fill="white" />
+        </mask>
+    </g>
+</svg>
