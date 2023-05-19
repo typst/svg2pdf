@@ -110,11 +110,15 @@ function replaceExtension(replacePath: string, extension: string) {
 }
 
 function clearPDFs() {
-    fs.rmSync(pdfsFolderPath, { recursive: true});
+    if (existsSync(pdfsFolderPath)) {
+        fs.rmSync(pdfsFolderPath, { recursive: true});
+    }
 }
 
 function clearDiffs() {
-    fs.rmSync(diffsFolderPath, { recursive: true});
+    if (existsSync(diffsFolderPath)) {
+        fs.rmSync(diffsFolderPath, { recursive: true});
+    }
 }
 
 export {

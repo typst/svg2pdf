@@ -5,14 +5,23 @@ import {
     buildBinary, clearPDFs,
     generateAndWritePDF,
     generateAndWritePNG, generatePDFPath, generateReferencePath, generateSVGPath,
-    optimize,
+    optimize, referencesFolderPath, replaceExtension,
     svgFolderPath
 } from "./util";
 
-async function generateReferenceImages(subdirectory: string = "") {
+async function generateReferenceImages(subdirectory: string = "", update: boolean = true) {
     // Allows us to regenerate only a subdirectory of files
     let svgParentDirectory = path.join(svgFolderPath, subdirectory);
-    let svgFilePaths = (await glob('**/*.svg', {cwd: svgParentDirectory}));
+    let existingReferencesForSVGs = (await glob('**/*.png', {cwd: referencesFolderPath}))
+        .map(imagePath => replaceExtension(imagePath, "svg"));
+
+    let svgFilePaths = (await glob('**/*.svg', {cwd: svgParentDirectory})).filter(svgPath => {
+        if (update) {
+            return existingReferencesForSVGs.includes(svgPath);
+        } else {
+            return true;
+        }
+    });
 
     clearPDFs();
 
