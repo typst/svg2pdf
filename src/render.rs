@@ -173,7 +173,9 @@ fn render_path_partial(
 
     if stroke {
         if let Some(stroke) = &path.stroke {
-            content.set_line_width(ctx.c.px_to_pt(stroke.width.get()));
+            content.set_line_width(
+                ctx.c.px_to_pt(stroke.width.get() * ctx.c.compute_scale()),
+            );
 
             match stroke.linecap {
                 LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
