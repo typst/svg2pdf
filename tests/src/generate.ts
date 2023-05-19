@@ -2,24 +2,19 @@ import {glob} from "glob";
 import path from "path";
 import cliProgress from "cli-progress"
 import {
-    buildBinary,
+    buildBinary, clearPDFs,
     generateAndWritePDF,
-    generateAndWritePNG,
+    generateAndWritePNG, generatePDFPath, generateReferencePath, generateSVGPath,
     optimize,
-    pdfPath,
-    referencesPath, replaceExtension,
-    SKIPPED_FILES,
-    svgPath
+    svgFolderPath
 } from "./util";
-import * as fs from "fs";
 
 async function generateReferenceImages(subdirectory: string = "") {
     // Allows us to regenerate only a subdirectory of files
-    let svgParentDirectory = path.join(svgPath, subdirectory);
-    let pdfParentDirectory = path.join(pdfPath, subdirectory);
-    let pngParentDirectory = path.join(referencesPath, subdirectory);
-    let svgFilePaths = (await glob('**/*.svg', {cwd: svgParentDirectory}))
-        .filter(el => !SKIPPED_FILES.includes(el));
+    let svgParentDirectory = path.join(svgFolderPath, subdirectory);
+    let svgFilePaths = (await glob('**/*.svg', {cwd: svgParentDirectory}));
+
+    clearPDFs();
 
     console.log("Building svg2pdf...");
     await buildBinary();
@@ -33,22 +28,21 @@ async function generateReferenceImages(subdirectory: string = "") {
     for (let i = 0; i < svgFilePaths.length; i++) {
         progressBar.update(i);
         let svgFilePath = svgFilePaths[i];
-        let svgInputPath = path.join(svgParentDirectory, svgFilePath);
-        let pdfOutputPath = path.join(pdfParentDirectory, replaceExtension(svgFilePath, "pdf"));
+        let svgFullPath = generateSVGPath(svgFilePath);
+        let pdfFullPath = generatePDFPath(svgFilePath);
 
-        await generateAndWritePDF(svgInputPath, pdfOutputPath);
+        await generateAndWritePDF(svgFullPath, pdfFullPath);
 
-        let pdfInputPath = pdfOutputPath;
-        let imageOutputPath = path.join(pngParentDirectory, replaceExtension(svgFilePath, "png"));
+        let referenceImageFullPath = generateReferencePath(svgFilePath);
 
-        await generateAndWritePNG(pdfInputPath, imageOutputPath);
-        await optimize(imageOutputPath);
+        await generateAndWritePNG(pdfFullPath, referenceImageFullPath);
+        await optimize(referenceImageFullPath);
     }
 
     progressBar.stop();
     console.log("Reference images were created successfully!");
 
-    fs.rmSync(pdfPath, { recursive: true});
+    clearPDFs();
 }
 
 (async function () {

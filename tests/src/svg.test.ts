@@ -1,51 +1,57 @@
 import {glob} from "glob";
 import {
-    buildBinary,
-    generateAndWritePDF,
-    generatePNG,
-    pdfPath,
-    referencesPath,
+    buildBinary, clearDiffs, clearPDFs,
+    generateAndWritePDF, generatePDFPath,
+    generatePNG, generateReferencePath, generateSVGPath,
+    pdfsFolderPath,
+    referencesFolderPath,
     replaceExtension,
-    svgPath
+    svgFolderPath
 } from "./util";
 import {assert} from "chai";
 import path from "path";
 import {readFileSync} from "fs";
 import looksSame from "looks-same";
-//
-// let svgFilePaths = await glob('**/*.svg', {cwd: svgPath});
-// let referenceImageFilePaths = await glob('**/*.png', {cwd: referencesPath});
+import {fail} from "assert";
 
 const getPaths = async () => {
-    let svgFilePaths = await glob('**/*.svg', {cwd: svgPath});
-    let referenceImageFilePaths = await glob('**/*.png', {cwd: referencesPath});
-    return {svgFilePaths, referenceImageFilePaths};
+    let svgFilesPaths = await glob('**/*.svg', {cwd: svgFolderPath});
+    let referenceImageFilesPaths = await glob('**/*.png', {cwd: referencesFolderPath});
+    return {svgFilePaths: svgFilesPaths, referenceImageFilesPaths: referenceImageFilesPaths};
+};
+
+const prepare = async () => {
+    clearPDFs();
+    clearDiffs();
 };
 
 (async function () {
-    let {svgFilePaths, referenceImageFilePaths} = await getPaths();
+    //await prepare();
+    let {svgFilePaths, referenceImageFilesPaths} = await getPaths();
     console.log("Building pdf2svg...");
     await buildBinary();
     console.log("Build complete.")
 
     svgFilePaths.forEach(svgFilePath => {
         it('svg file ' + svgFilePath, async function() {
+
             // We skip svg files where there are no existing reference images
-            let correspondingImagePath = replaceExtension(svgFilePath, "png");
-            if (!referenceImageFilePaths.includes(correspondingImagePath)) {
+            let referenceImagePath = replaceExtension(svgFilePath, "png");
+            if (!referenceImageFilesPaths.includes(referenceImagePath)) {
                 this.skip();
             }
+            let svgFullPath = generateSVGPath(svgFilePath);
+            let referenceImageFullPath = generateReferencePath(svgFilePath);
+            let pdfFullPath = generatePDFPath(svgFilePath);
+            await generateAndWritePDF(svgFullPath, pdfFullPath);
 
-            let svgInputPath = path.join(svgPath, svgFilePath);
-            let pdfOutputPath = path.join(pdfPath, replaceExtension(svgFilePath, "pdf"));
-            await generateAndWritePDF(svgInputPath, pdfOutputPath);
-
-            let pdfInputPath = pdfOutputPath;
-            let resultingImage = Buffer.from(await generatePNG(pdfInputPath));
-            let referenceImage = await readFileSync(path.join(referencesPath, replaceExtension(svgFilePath, "png")))
+            let resultingImage = Buffer.from(await generatePNG(pdfFullPath));
+            let referenceImage = await readFileSync(referenceImageFullPath);
 
             const {equal} = await looksSame(resultingImage, referenceImage, {strict: true});
-            assert(equal);
+            if (!equal) {
+                fail("images don't match");
+            }
         })
     })
 
