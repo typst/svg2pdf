@@ -6,16 +6,16 @@ import {
     generatePDF,
     generatePNG,
     optimize,
-    pdfFilesPath,
+    pdfPath,
     referencesPath,
     SKIPPED_FILES,
-    svgFilesPath
+    svgPath
 } from "./util";
 
 async function generateReferenceImages(subdirectory: string = "") {
     // Allows us to regenerate only a subdirectory of files
-    let svgParentDirectory = path.join(svgFilesPath, subdirectory);
-    let pdfParentDirectory = path.join(pdfFilesPath, subdirectory);
+    let svgParentDirectory = path.join(svgPath, subdirectory);
+    let pdfParentDirectory = path.join(pdfPath, subdirectory);
     let pngParentDirectory = path.join(referencesPath, subdirectory);
     let svgFilePaths = (await glob('**/*.svg', {cwd: svgParentDirectory}))
         .filter(el => !SKIPPED_FILES.includes(el));

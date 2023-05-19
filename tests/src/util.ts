@@ -3,10 +3,10 @@ import * as pdf2img from "pdf-img-convert";
 import {existsSync, mkdirSync, writeFile} from "fs";
 import {promisify} from "util";
 
-const svgFilesPath = "svgs";
+const svgPath = "svgs";
 const referencesPath = "references";
-const pdfFilesPath = "pdfs";
-const actualFilesPath = "actual";
+const pdfPath = "pdfs";
+const actualPath = "actual";
 const pdf2svgBinaryPath = path.join("..", "target", "release", "svg2pdf");
 const exec = promisify(require('child_process').exec);
 
@@ -68,7 +68,7 @@ async function optimize(filePath: string) {
 }
 
 export {
-    svgFilesPath, referencesPath, pdfFilesPath,
-    actualFilesPath, pdf2svgBinaryPath, generatePNG, SKIPPED_FILES,
+    svgPath, referencesPath, pdfPath,
+    actualPath, pdf2svgBinaryPath, generatePNG, SKIPPED_FILES,
     buildBinary, generatePDF, optimize
 }
