@@ -1,11 +1,13 @@
 import {glob} from 'glob';
 import path from "path";
-import {existsSync, mkdirSync} from "fs";
+import * as pdf2img from 'pdf-img-convert'
+import {existsSync, mkdirSync, writeFile} from "fs";
 import {promisify} from "util";
 
 const exec = promisify(require('child_process').exec);
 const svgFilesPath = path.parse("files");
 const pdfFilesPath = path.parse("pdfs");
+const actualFilesPath = path.parse("actual");
 const pdf2svgBinaryPath = path.join("..", "target", "release", "svg2pdf");
 
 const SKIPPED_FILES = [
@@ -24,21 +26,46 @@ async function buildBinary(): Promise<void> {
     }
 }
 
-async function buildPDFs() {
+async function generatePDF(filename: string) {
+    let inputPath = path.join(svgFilesPath.name, filename);
+    let outputFolderPath = path.join(pdfFilesPath.name, path.dirname(filename));
+    let outputPath = path.join(outputFolderPath, path.parse(path.basename(filename)).name + ".pdf");
+    let command = pdf2svgBinaryPath + ' ' + inputPath + ' ' + outputPath;
+
+    if (!existsSync(outputFolderPath)) {
+        mkdirSync(outputFolderPath, {recursive: true});
+    }
+
+    await exec(command);
+}
+
+async function generatePNG(filename: string) {
+    let inputPath = path.join(pdfFilesPath.name, path.dirname(filename),
+        path.parse(path.basename(filename)).name + ".pdf");
+    let pdfImage = await pdf2img.convert(inputPath, {scale: 2.5, page_numbers: [1]});
+
+    let outputFolderPath = path.join(actualFilesPath.name, path.dirname(filename));
+    let outputPath = path.join(outputFolderPath, path.parse(path.basename(filename)).name + ".png");
+
+    if (!existsSync(outputFolderPath)) {
+        mkdirSync(outputFolderPath, {recursive: true});
+    }
+
+    await writeFile(outputPath, pdfImage[0], function (error) {
+        if (error) { console.error("Error: " + error); }
+    });
+
+    await exec("oxipng " + outputPath);
+
+}
+
+async function generate() {
     let svgFiles = await glob('**/*.svg', {cwd: svgFilesPath.name});
     svgFiles = svgFiles.filter(el => !SKIPPED_FILES.includes(el));
 
     for (let filename of svgFiles) {
-        let input = path.join(svgFilesPath.name, filename);
-        let outputFolder = path.join(pdfFilesPath.name, path.dirname(filename));
-        let output = path.join(outputFolder, path.parse(path.basename(filename)).name + ".pdf");
-        let command = pdf2svgBinaryPath + ' ' + input + ' ' + output;
-
-        if (!existsSync(outputFolder)) {
-            mkdirSync(outputFolder, {recursive: true});
-        }
-
-        await exec(command);
+        await generatePDF(filename);
+        await generatePNG(filename);
     }
 }
 
@@ -47,7 +74,7 @@ async function buildPDFs() {
 
     try {
         await buildBinary();
-        await buildPDFs();
+        await generate();
     } catch (e: any) {
         console.error("Testing was unsuccessful. Error: " + e.message)
     }
