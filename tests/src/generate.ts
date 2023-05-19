@@ -51,5 +51,5 @@ async function generateReferenceImages(subdirectory: string = "") {
 }
 
 (async function () {
-    await generateReferenceImages("filters");
+    await generateReferenceImages();
 })();

@@ -19,8 +19,8 @@ const SKIPPED_FILES = [
 async function buildBinary() {
     try {
         await exec("cargo build --release --features cli");
-    } catch (e) {
-        throw new Error("unable to build pdf2svg");
+    } catch (e: any) {
+        throw new Error("unable to build pdf2svg: " + e.message);
     }
 }
 
@@ -34,8 +34,8 @@ async function generatePDF(inputFilePath: string, outputFilePath: string) {
 
     try {
         await exec(command);
-    } catch (e) {
-        throw new Error("error while generating the pdf");
+    } catch (e: any) {
+        throw new Error("error while generating the pdf: " + e.message);
     }
 }
 
@@ -54,7 +54,7 @@ async function generatePNG(inputFilePath: string, outputFilePath: string) {
 
     await writeFile(outputFilePath, pdfImage[0], function (error) {
         if (error) {
-            throw new Error("unable to write image to file system")
+            throw new Error("unable to write image to file system: " + error)
         }
     });
 }
@@ -62,8 +62,8 @@ async function generatePNG(inputFilePath: string, outputFilePath: string) {
 async function optimize(filePath: string) {
     try {
         await exec("oxipng " + filePath);
-    }   catch (e) {
-        throw new Error("unable to optimize image");
+    }   catch (e: any) {
+        throw new Error("unable to optimize image: " + e.message);
     }
 }
 
