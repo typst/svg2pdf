@@ -3,14 +3,15 @@ import path from "path";
 import cliProgress from "cli-progress"
 import {
     buildBinary,
-    generatePDF,
-    generatePNG,
+    generateAndWritePDF,
+    generateAndWritePNG,
     optimize,
     pdfPath,
-    referencesPath,
+    referencesPath, replaceExtension,
     SKIPPED_FILES,
     svgPath
 } from "./util";
+import * as fs from "fs";
 
 async function generateReferenceImages(subdirectory: string = "") {
     // Allows us to regenerate only a subdirectory of files
@@ -33,21 +34,21 @@ async function generateReferenceImages(subdirectory: string = "") {
         progressBar.update(i);
         let svgFilePath = svgFilePaths[i];
         let svgInputPath = path.join(svgParentDirectory, svgFilePath);
-        let pdfOutputPath = path.join(pdfParentDirectory, path.dirname(svgFilePath),
-            path.basename(svgFilePath, path.extname(svgFilePath)) + ".pdf");
+        let pdfOutputPath = path.join(pdfParentDirectory, replaceExtension(svgFilePath, "pdf"));
 
-        await generatePDF(svgInputPath, pdfOutputPath);
+        await generateAndWritePDF(svgInputPath, pdfOutputPath);
 
         let pdfInputPath = pdfOutputPath;
-        let imageOutputPath = path.join(pngParentDirectory, path.dirname(svgFilePath),
-            path.basename(svgFilePath, path.extname(svgFilePath)) + ".png");
+        let imageOutputPath = path.join(pngParentDirectory, replaceExtension(svgFilePath, "png"));
 
-        await generatePNG(pdfInputPath, imageOutputPath);
+        await generateAndWritePNG(pdfInputPath, imageOutputPath);
         await optimize(imageOutputPath);
     }
 
     progressBar.stop();
     console.log("Reference images were created successfully!");
+
+    fs.rmSync(pdfPath, { recursive: true});
 }
 
 (async function () {

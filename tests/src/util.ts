@@ -6,7 +6,6 @@ import {promisify} from "util";
 const svgPath = "svgs";
 const referencesPath = "references";
 const pdfPath = "pdfs";
-const actualPath = "actual";
 const pdf2svgBinaryPath = path.join("..", "target", "release", "svg2pdf");
 const exec = promisify(require('child_process').exec);
 
@@ -24,7 +23,7 @@ async function buildBinary() {
     }
 }
 
-async function generatePDF(inputFilePath: string, outputFilePath: string) {
+async function generateAndWritePDF(inputFilePath: string, outputFilePath: string) {
     let outputFolderPath = path.dirname(outputFilePath);
     let command = pdf2svgBinaryPath + ' ' + inputFilePath + ' ' + outputFilePath;
 
@@ -39,12 +38,18 @@ async function generatePDF(inputFilePath: string, outputFilePath: string) {
     }
 }
 
-async function generatePNG(inputFilePath: string, outputFilePath: string) {
+async function generatePNG(inputFilePath: string) {
     let pdfImage = await pdf2img.convert(inputFilePath, {scale: 2.5, page_numbers: [1]});
 
     if (pdfImage.length !== 1) {
         throw new Error("expected pdf of length 1, found pdf of length " + pdfImage.length);
     }
+
+    return pdfImage[0];
+}
+
+async function generateAndWritePNG(inputFilePath: string, outputFilePath: string) {
+    let pdfImage = await generatePNG(inputFilePath);
 
     let outputFolderPath = path.dirname(outputFilePath);
 
@@ -52,7 +57,7 @@ async function generatePNG(inputFilePath: string, outputFilePath: string) {
         mkdirSync(outputFolderPath, {recursive: true});
     }
 
-    await writeFile(outputFilePath, pdfImage[0], function (error) {
+    await writeFile(outputFilePath, pdfImage, function (error) {
         if (error) {
             throw new Error("unable to write image to file system: " + error)
         }
@@ -67,8 +72,12 @@ async function optimize(filePath: string) {
     }
 }
 
+function replaceExtension(replacePath: string, extension: string) {
+    return path.join(path.dirname(replacePath),
+    path.basename(replacePath, path.extname(replacePath)) + "." + extension);
+}
+
 export {
-    svgPath, referencesPath, pdfPath,
-    actualPath, pdf2svgBinaryPath, generatePNG, SKIPPED_FILES,
-    buildBinary, generatePDF, optimize
+    svgPath, referencesPath, pdfPath, pdf2svgBinaryPath, generateAndWritePNG, SKIPPED_FILES,
+    buildBinary, generateAndWritePDF, optimize, replaceExtension, generatePNG
 }

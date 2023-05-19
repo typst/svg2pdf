@@ -1,21 +1,53 @@
 import {glob} from "glob";
-import {referencesPath, svgPath} from "./util";
+import {
+    buildBinary,
+    generateAndWritePDF,
+    generatePNG,
+    pdfPath,
+    referencesPath,
+    replaceExtension,
+    svgPath
+} from "./util";
+import {assert} from "chai";
+import path from "path";
+import {readFileSync} from "fs";
+import looksSame from "looks-same";
+//
+// let svgFilePaths = await glob('**/*.svg', {cwd: svgPath});
+// let referenceImageFilePaths = await glob('**/*.png', {cwd: referencesPath});
 
-let svgFilePaths: string[] = [];
-let referenceImageFilePaths: string[] = [];
+const getPaths = async () => {
+    let svgFilePaths = await glob('**/*.svg', {cwd: svgPath});
+    let referenceImageFilePaths = await glob('**/*.png', {cwd: referencesPath});
+    return {svgFilePaths, referenceImageFilePaths};
+};
 
-beforeAll(async () => {
-    svgFilePaths = await glob('**/*.svg', {cwd: svgPath});
-    referenceImageFilePaths = await glob('**/*.png', {cwd: referencesPath});
-})
+(async function () {
+    let {svgFilePaths, referenceImageFilePaths} = await getPaths();
+    console.log("Building pdf2svg...");
+    await buildBinary();
+    console.log("Build complete.")
 
-// describe block that will contain each test
-describe('Converting .svg files', () => {
-    // beforeEach hook if you need to set up anything before each test
+    svgFilePaths.forEach(svgFilePath => {
+        it('svg file ' + svgFilePath, async function() {
+            // We skip svg files where there are no existing reference images
+            let correspondingImagePath = replaceExtension(svgFilePath, "png");
+            if (!referenceImageFilePaths.includes(correspondingImagePath)) {
+                this.skip();
+            }
 
-    test.each(svgFilePaths)('should convert SVG to PDF correctly', (svgFile) => {
-        expect(0).toBe(0);
-    });
+            let svgInputPath = path.join(svgPath, svgFilePath);
+            let pdfOutputPath = path.join(pdfPath, replaceExtension(svgFilePath, "pdf"));
+            await generateAndWritePDF(svgInputPath, pdfOutputPath);
 
-    // add more tests as needed...
-});
+            let pdfInputPath = pdfOutputPath;
+            let resultingImage = Buffer.from(await generatePNG(pdfInputPath));
+            let referenceImage = await readFileSync(path.join(referencesPath, replaceExtension(svgFilePath, "png")))
+
+            const {equal} = await looksSame(resultingImage, referenceImage, {strict: true});
+            assert(equal);
+        })
+    })
+
+    run();
+})();
