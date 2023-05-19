@@ -9,13 +9,12 @@ import {
     svgFolderPath
 } from "./util";
 
-async function generateReferenceImages(subdirectory: string = "", update: boolean = true) {
+async function generateReferenceImages(subdirectory: string = "shapes", update: boolean = false) {
     // Allows us to regenerate only a subdirectory of files
-    let svgParentDirectory = path.join(svgFolderPath, subdirectory);
-    let existingReferencesForSVGs = (await glob('**/*.png', {cwd: referencesFolderPath}))
+    let existingReferencesForSVGs = (await glob(path.join(subdirectory, '**/*.png'), {cwd: referencesFolderPath}))
         .map(imagePath => replaceExtension(imagePath, "svg"));
 
-    let svgFilePaths = (await glob('**/*.svg', {cwd: svgParentDirectory})).filter(svgPath => {
+    let svgFilePaths = (await glob(path.join(subdirectory, '**/*.svg'), {cwd: svgFolderPath})).filter(svgPath => {
         if (update) {
             return existingReferencesForSVGs.includes(svgPath);
         } else {
@@ -27,7 +26,9 @@ async function generateReferenceImages(subdirectory: string = "", update: boolea
 
     console.log("Building svg2pdf...");
     await buildBinary();
+
     console.log("Starting with the generation...");
+    let svgParentDirectory = path.join(svgFolderPath, subdirectory);
     console.log("Target directory: " + path.resolve(svgParentDirectory));
     console.log("Creating " + svgFilePaths.length + " images in total.");
 
