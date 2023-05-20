@@ -27,7 +27,7 @@
     "glob": "^10.2.5",
     "looks-same": "^8.1.0",
     "npm": "^9.6.7",
-    "pdf-img-convert": "^1.2.1",
+    "pdf-img-convert": "git://git@github.com:LaurenzV/pdf-img-convert.js.git#6995601",
     "ts-jest": "^29.1.0"
   }
 }
