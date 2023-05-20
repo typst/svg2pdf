@@ -17,3 +17,5 @@ the remaining directories are all from the
   - [x] polyline: 5/5
   - [ ] rect: 35/40 (ch-values.svg, q-values.svg, rem-values.svg, vmin-and-vmax-values.svg,
     vw-and-vh-values.svg)
+
+TODO: Decide whether to store references as .pdf or .svg
