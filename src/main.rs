@@ -4,7 +4,7 @@ use std::process;
 
 use clap::Parser;
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
-use usvg::{TreeParsing, TreeTextToPath};
+use usvg::{Node, TreeParsing, TreeTextToPath};
 
 #[derive(Debug, Parser)]
 #[clap(about, version)]
@@ -45,15 +45,24 @@ fn run() -> Result<(), String> {
     let mut tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
     tree.convert_text(&fontdb);
 
+    //TODO: hide b
+    println!("Size: {:?}\nView Box: {:?}", tree.size, tree.view_box);
+    print_tree(&tree.root, 0);
+
     // Convert SVG to PDF.
-    let mut options = svg2pdf::Options::default();
-    options.dpi = args.dpi;
-    let pdf = svg2pdf::convert_tree(&tree, options);
+    let pdf = svg2pdf::convert_tree(&tree);
 
     // Write output file.
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 
     Ok(())
+}
+
+fn print_tree(node: &Node, level: u32) {
+    for child in node.children() {
+        println!("Level {}: {:#?}", level, child);
+        print_tree(&child, level + 1);
+    }
 }
 
 fn print_error(msg: &str) -> io::Result<()> {

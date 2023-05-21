@@ -9,7 +9,13 @@ import {
     svgFolderPath
 } from "./util";
 
-async function generateReferenceImages(subdirectory: string = "", update: boolean = true) {
+const SKIPPED_FILES = [
+    'structure/svg/zero-size.svg',
+    'structure/svg/not-UTF-8-encoding.svg',
+    'structure/svg/negative-size.svg',
+]
+
+async function generateReferenceImages(subdirectory: string = "", update: boolean = false) {
     // Allows us to regenerate only a subdirectory of files
     let existingReferencesForSVGs = (await glob(path.join(subdirectory, '**/*.png'), {cwd: referencesFolderPath}))
         .map(imagePath => replaceExtension(imagePath, "svg"));
@@ -20,7 +26,7 @@ async function generateReferenceImages(subdirectory: string = "", update: boolea
         } else {
             return true;
         }
-    });
+    }).filter(el => !SKIPPED_FILES.includes(el));
 
     clearPDFs();
 
@@ -46,7 +52,7 @@ async function generateReferenceImages(subdirectory: string = "", update: boolea
         let referenceImageFullPath = generateReferencePath(svgFilePath);
 
         await generateAndWritePNG(pdfFullPath, referenceImageFullPath);
-        await optimize(referenceImageFullPath);
+        //await optimize(referenceImageFullPath);
     }
 
     progressBar.stop();
