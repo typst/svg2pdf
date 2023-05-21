@@ -21,6 +21,7 @@ impl Render for usvg::Path {
         content.save_state();
         content.transform(self.transform.get_transform());
 
+        //TODO: Change to SRGB
         content.set_fill_color_space(ColorSpaceOperand::DeviceRgb);
         content.set_stroke_color_space(ColorSpaceOperand::DeviceRgb);
 
