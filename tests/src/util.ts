@@ -66,6 +66,20 @@ async function generateAndWritePNG(inputFilePath: string, outputFilePath: string
     });
 }
 
+async function writeDiffImage(diffImage: Buffer, outputPath: string) {
+    let outputFolderPath = path.dirname(outputPath);
+
+    if (!existsSync(outputFolderPath)) {
+        mkdirSync(outputFolderPath, {recursive: true});
+    }
+
+    await writeFile(outputPath, diffImage, function (error) {
+        if (error) {
+            throw new Error("unable to write diff image to file system: " + error)
+        }
+    });
+}
+
 // Optimizes an image using oxipng
 async function optimize(filePath: string) {
     try {
@@ -124,5 +138,5 @@ function clearDiffs() {
 export {
     svgFolderPath, referencesFolderPath, pdfsFolderPath, pdf2svgBinaryPath, generateAndWritePNG,
     buildBinary, generateAndWritePDF, optimize, replaceExtension, generatePNG, generateSVGPath,
-    generatePDFPath, generateReferencePath, generateDiffsPath, clearPDFs, clearDiffs
+    generatePDFPath, generateReferencePath, generateDiffsPath, clearPDFs, clearDiffs, writeDiffImage
 }

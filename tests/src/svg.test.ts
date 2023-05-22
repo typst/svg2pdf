@@ -1,12 +1,12 @@
 import {glob} from "glob";
 import {
     buildBinary, clearDiffs, clearPDFs,
-    generateAndWritePDF, generatePDFPath,
+    generateAndWritePDF, generateDiffsPath, generatePDFPath,
     generatePNG, generateReferencePath, generateSVGPath,
     pdfsFolderPath,
     referencesFolderPath,
     replaceExtension,
-    svgFolderPath
+    svgFolderPath, writeDiffImage
 } from "./util";
 import {assert} from "chai";
 import path from "path";
@@ -26,7 +26,7 @@ const prepare = async () => {
 };
 
 (async function () {
-    //await prepare();
+    await prepare();
     let {svgFilePaths, referenceImageFilesPaths} = await getPaths();
     console.log("Building pdf2svg...");
     await buildBinary();
@@ -50,6 +50,15 @@ const prepare = async () => {
 
             const {equal} = await looksSame(resultingImage, referenceImage, {strict: true});
             if (!equal) {
+                const diffImage = await looksSame.createDiff({
+                    reference: referenceImage,
+                    current: resultingImage,
+                    highlightColor: '#ff00ff',
+                    strict: true
+                });
+
+                await writeDiffImage(diffImage, generateDiffsPath(svgFilePath));
+
                 fail("images don't match");
             }
         })
