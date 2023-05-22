@@ -45,7 +45,7 @@ fn run() -> Result<(), String> {
     let mut tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
     tree.convert_text(&fontdb);
 
-    //TODO: hide b
+    //TODO: hide behind debug flag
     println!("Size: {:?}\nView Box: {:?}", tree.size, tree.view_box);
     print_tree(&tree.root, 0);
 

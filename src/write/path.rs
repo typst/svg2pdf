@@ -1,10 +1,12 @@
-use crate::context::Context;
-use crate::transform::TransformExt;
+use crate::util::Context;
+use crate::util::TransformExt;
 use crate::write::render::Render;
 use pdf_writer::types::{LineCapStyle, LineJoinStyle, ColorSpaceOperand};
 use pdf_writer::{Content, PdfWriter};
+use usvg::Fill;
+use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Node, Paint, PathSegment, Visibility};
-use crate::{RgbColor};
+use crate::util::RgbColor;
 
 impl Render for usvg::Path {
     fn render(
@@ -26,57 +28,15 @@ impl Render for usvg::Path {
         content.set_stroke_color_space(ColorSpaceOperand::DeviceRgb);
 
         if let Some(stroke) = &self.stroke {
-            content.set_line_width(stroke.width.get() as f32);
-            content.set_miter_limit(stroke.miterlimit.get() as f32);
-
-            match stroke.linecap {
-                LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
-                LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
-                LineCap::Square => {
-                    content.set_line_cap(LineCapStyle::ProjectingSquareCap)
-                }
-            };
-
-            match stroke.linejoin {
-                LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
-                LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
-                LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
-            };
-
-            if let Some(dasharray) = &stroke.dasharray {
-                content.set_dash_pattern(
-                    dasharray.iter().map(|&x| x as f32),
-                    stroke.dashoffset,
-                );
-            }
-
-            match &stroke.paint {
-                Paint::Color(c) => {
-                    content.set_stroke_color(RgbColor::from(*c).to_array());
-                }
-                _ => todo!(),
-            }
+            set_stroke(stroke, content);
         }
 
-        let paint = self.fill.as_ref().map(|fill| &fill.paint);
-
-        match paint {
-            Some(Paint::Color(c)) => {
-                content.set_fill_color(RgbColor::from(*c).to_array());
-            }
-            _ => {}
+        if let Some(fill) = &self.fill {
+            set_fill(fill, content);
         }
 
         draw_path(self.data.segments(), content);
-
-        match (self.fill.as_ref().map(|f| f.rule), self.stroke.is_some()) {
-            (Some(FillRule::NonZero), true) => content.fill_nonzero_and_stroke(),
-            (Some(FillRule::EvenOdd), true) => content.fill_even_odd_and_stroke(),
-            (Some(FillRule::NonZero), false) => content.fill_nonzero(),
-            (Some(FillRule::EvenOdd), false) => content.fill_even_odd(),
-            (_, true) => content.stroke(),
-            (_, false) => content.end_path(),
-        };
+        finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
 
         content.restore_state();
     }
@@ -91,5 +51,60 @@ fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content
                 .cubic_to(x1 as f32, y1 as f32, x2 as f32, y2 as f32, x as f32, y as f32),
             PathSegment::ClosePath => content.close_path(),
         };
+    }
+}
+
+fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
+    match (stroke, fill.map(|f| f.rule)) {
+        (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
+        (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
+        (None, Some(FillRule::NonZero)) => content.fill_nonzero(),
+        (None, Some(FillRule::EvenOdd)) => content.fill_even_odd(),
+        (Some(_), _) => content.stroke(),
+        (None, _) => content.end_path(),
+    };
+}
+
+fn set_stroke(stroke: &Stroke, content: &mut Content) {
+    content.set_line_width(stroke.width.get() as f32);
+    content.set_miter_limit(stroke.miterlimit.get() as f32);
+
+    match stroke.linecap {
+        LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
+        LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
+        LineCap::Square => {
+            content.set_line_cap(LineCapStyle::ProjectingSquareCap)
+        }
+    };
+
+    match stroke.linejoin {
+        LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
+        LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
+        LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
+    };
+
+    if let Some(dasharray) = &stroke.dasharray {
+        content.set_dash_pattern(
+            dasharray.iter().map(|&x| x as f32),
+            stroke.dashoffset,
+        );
+    }
+
+    match &stroke.paint {
+        Paint::Color(c) => {
+            content.set_stroke_color(RgbColor::from(*c).to_array());
+        }
+        _ => todo!(),
+    }
+}
+
+fn set_fill(fill: &Fill, content: &mut Content) {
+    let paint = &fill.paint;
+
+    match paint {
+        Paint::Color(c) => {
+            content.set_fill_color(RgbColor::from(*c).to_array());
+        }
+        _ => {}
     }
 }
