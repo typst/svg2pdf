@@ -79,13 +79,18 @@ impl From<usvg::Color> for RgbColor {
 
 pub struct Context {
     next_id: i32,
+    dpi: f32,
     pub viewport: Viewport,
 }
 
 impl Context {
     /// Create a new context.
     pub fn new(viewport: Viewport) -> Self {
-        Self { next_id: 1, viewport }
+        Self { next_id: 1, dpi: 72.0, viewport }
+    }
+
+    pub fn dpi_factor(&self) -> f32 {
+        72.0 / self.dpi
     }
 
     /// Allocate a new indirect reference id.

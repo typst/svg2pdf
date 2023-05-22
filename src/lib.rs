@@ -25,7 +25,7 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
     writer.pages(page_tree_id).count(1).kids([page_id]);
 
     let mut page = writer.page(page_id);
-    page.media_box(Rect::new(0.0, 0.0, ctx.viewport.width(), ctx.viewport.height()));
+    page.media_box(Rect::new(0.0, 0.0, ctx.viewport.width()*ctx.dpi_factor(), ctx.viewport.height()*ctx.dpi_factor()));
     page.parent(page_tree_id);
     page.contents(content_id);
     page.finish();
