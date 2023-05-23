@@ -8,14 +8,13 @@ pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) ->
     content.save_state();
     // Apply the base transformation to convert the svg coordinate system into
     // the PDF coordinate system.
+    
     // Apply the scaling to account for dpi
     content.transform([ctx.dpi_factor(), 0.0, 0.0, ctx.dpi_factor(), 0.0, 0.0]);
     // Align the origin of the cordinate system.
-    content.transform([1.0, 0.0, 0.0, 1.0, 0.0, ctx.viewport.height()]);
+    content.transform([1.0, 0.0, 0.0, 1.0, 0.0, ctx.size.height()]);
     // Invert the direction of the y axis.
     content.transform([1.0, 0.0, 0.0, -1.0, 0.0, 0.0]);
-    // Apply the x and y of the view box.
-    content.transform([1.0, 0.0, 0.0, 1.0, -ctx.viewport.x(), -ctx.viewport.y()]);
 
     node_to_stream(&tree.root, writer, ctx, &mut content);
 

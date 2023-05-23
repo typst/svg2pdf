@@ -1,4 +1,5 @@
-use pdf_writer::Ref;
+use pdf_writer::{Ref, Rect};
+use usvg::Tree;
 
 pub trait TransformExt {
     fn get_transform(&self) -> [f32; 6];
@@ -43,6 +44,24 @@ impl Viewport {
     }
 }
 
+/// Just a wrapper struct so we don't need to always cast f64 to f32.
+#[derive(Copy, Clone)]
+pub struct Size((f32, f32));
+
+impl Size {
+    pub fn new(width: f32, height: f32) -> Self {
+        Size((width, height))
+    }
+
+    pub fn width(&self) -> f32 {
+        self.0.0
+    }
+
+    pub fn height(&self) -> f32 {
+        self.0.1
+    }
+}
+
 /// A color helper function that stores colors with values between 0.0 and 1.0.
 #[derive(Debug, Clone, Copy)]
 pub struct RgbColor {
@@ -81,16 +100,35 @@ pub struct Context {
     next_id: i32,
     dpi: f32,
     pub viewport: Viewport,
+    pub size: Size
 }
 
 impl Context {
     /// Create a new context.
-    pub fn new(viewport: Viewport) -> Self {
-        Self { next_id: 1, dpi: 72.0, viewport }
+    pub fn new(tree: &Tree) -> Self {
+        Self { 
+            next_id: 1, 
+            dpi: 72.0, 
+            viewport: Viewport::new(
+                tree.view_box.rect.x() as f32,
+                tree.view_box.rect.y() as f32,
+                tree.view_box.rect.width() as f32,
+                tree.view_box.rect.height() as f32,
+            ),
+            size: Size::new(
+                tree.size.width() as f32,
+                tree.size.height() as f32
+            )
+        }
     }
 
     pub fn dpi_factor(&self) -> f32 {
         72.0 / self.dpi
+    }
+
+    pub fn get_rect(&self) -> Rect {
+        Rect::new(0.0, 0.0, self.size.width() * self.dpi_factor(), 
+        self.size.height() * self.dpi_factor())
     }
 
     /// Allocate a new indirect reference id.

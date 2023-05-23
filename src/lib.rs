@@ -8,12 +8,7 @@ use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref, TextStr};
 use usvg::Tree;
 
 pub fn convert_tree(tree: &Tree) -> Vec<u8> {
-    let mut ctx = Context::new(Viewport::new(
-        tree.view_box.rect.x() as f32,
-        tree.view_box.rect.y() as f32,
-        tree.view_box.rect.width() as f32,
-        tree.view_box.rect.height() as f32,
-    ));
+    let mut ctx = Context::new(tree);
 
     let mut writer = PdfWriter::new();
     let catalog_id = ctx.alloc_ref();
@@ -25,7 +20,7 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
     writer.pages(page_tree_id).count(1).kids([page_id]);
 
     let mut page = writer.page(page_id);
-    page.media_box(Rect::new(0.0, 0.0, ctx.viewport.width()*ctx.dpi_factor(), ctx.viewport.height()*ctx.dpi_factor()));
+    page.media_box(ctx.get_rect());
     page.parent(page_tree_id);
     page.contents(content_id);
     page.finish();
