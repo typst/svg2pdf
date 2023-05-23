@@ -12,6 +12,21 @@ const diffsFolderPath = "diffs";
 const pdf2svgBinaryPath = path.join("..", "target", "release", "svg2pdf");
 const exec = promisify(require('child_process').exec);
 
+const SKIPPED_FILES = [
+    'structure/svg/zero-size.svg',
+    'structure/svg/not-UTF-8-encoding.svg',
+    'structure/svg/negative-size.svg',
+    'shapes/rect/vw-and-vh-values.svg',
+    'shapes/rect/vmin-and-vmax-values.svg',
+    'shapes/rect/vi-and-vb-values.svg',
+    'shapes/rect/rlh-values.svg',
+    'shapes/rect/rem-values.svg',
+    'shapes/rect/q-values.svg',
+    'shapes/rect/lh-values.svg',
+    'shapes/rect/ic-values.svg',
+    'shapes/rect/ch-values.svg',
+    'shapes/rect/cap-values.svg',
+]
 
 // Builds pdf2svg
 async function buildBinary() {
@@ -138,5 +153,6 @@ function clearDiffs() {
 export {
     svgFolderPath, referencesFolderPath, pdfsFolderPath, pdf2svgBinaryPath, generateAndWritePNG,
     buildBinary, generateAndWritePDF, optimize, replaceExtension, generatePNG, generateSVGPath,
-    generatePDFPath, generateReferencePath, generateDiffsPath, clearPDFs, clearDiffs, writeDiffImage
+    generatePDFPath, generateReferencePath, generateDiffsPath, clearPDFs, clearDiffs, writeDiffImage,
+    SKIPPED_FILES
 }

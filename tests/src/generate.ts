@@ -6,14 +6,8 @@ import {
     generateAndWritePDF,
     generateAndWritePNG, generatePDFPath, generateReferencePath, generateSVGPath,
     optimize, referencesFolderPath, replaceExtension,
-    svgFolderPath
+    svgFolderPath, SKIPPED_FILES
 } from "./util";
-
-const SKIPPED_FILES = [
-    'structure/svg/zero-size.svg',
-    'structure/svg/not-UTF-8-encoding.svg',
-    'structure/svg/negative-size.svg',
-]
 
 async function generateReferenceImages(subdirectory: string = "", update: boolean = false) {
     // Allows us to regenerate only a subdirectory of files
