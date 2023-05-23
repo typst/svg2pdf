@@ -9,7 +9,7 @@ import {
     svgFolderPath, SKIPPED_FILES
 } from "./util";
 
-async function generateReferenceImages(subdirectory: string = "", update: boolean = false) {
+async function generateReferenceImages(subdirectory: string = "structure", update: boolean = false) {
     // Allows us to regenerate only a subdirectory of files
     let existingReferencesForSVGs = (await glob(path.join(subdirectory, '**/*.png'), {cwd: referencesFolderPath}))
         .map(imagePath => replaceExtension(imagePath, "svg"));

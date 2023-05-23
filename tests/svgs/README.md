@@ -9,13 +9,15 @@ the remaining directories are all from the
 = Progress
 
 - shapes
-  - [ ] line: 9/10 (with-transform.svg)
+  - [x] line: 10/10 (with-transform.svg)
   - [x] circle: 6/6
   - [x] ellipse: 12/12
   - [x] path: 55/55
   - [x] polygon: 5/5
   - [x] polyline: 5/5
-  - [ ] rect: 35/40 (ch-values.svg, q-values.svg, rem-values.svg, vmin-and-vmax-values.svg,
-    vw-and-vh-values.svg)
+  - [ ] rect: 30/40 
+- structure
+  - svg
+    
 
 TODO: Decide whether to store references as .pdf or .svg
