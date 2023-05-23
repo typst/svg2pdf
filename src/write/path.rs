@@ -1,12 +1,12 @@
 use crate::util::Context;
+use crate::util::RgbColor;
 use crate::util::TransformExt;
 use crate::write::render::Render;
-use pdf_writer::types::{LineCapStyle, LineJoinStyle, ColorSpaceOperand};
+use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
 use pdf_writer::{Content, PdfWriter};
 use usvg::Fill;
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Node, Paint, PathSegment, Visibility};
-use crate::util::RgbColor;
 
 impl Render for usvg::Path {
     fn render(
@@ -72,9 +72,7 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
     match stroke.linecap {
         LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
         LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
-        LineCap::Square => {
-            content.set_line_cap(LineCapStyle::ProjectingSquareCap)
-        }
+        LineCap::Square => content.set_line_cap(LineCapStyle::ProjectingSquareCap),
     };
 
     match stroke.linejoin {
@@ -84,10 +82,7 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
     };
 
     if let Some(dasharray) = &stroke.dasharray {
-        content.set_dash_pattern(
-            dasharray.iter().map(|&x| x as f32),
-            stroke.dashoffset,
-        );
+        content.set_dash_pattern(dasharray.iter().map(|&x| x as f32), stroke.dashoffset);
     }
 
     match &stroke.paint {

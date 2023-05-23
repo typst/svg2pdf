@@ -15,7 +15,7 @@ const SKIPPED_FILES = [
     'structure/svg/negative-size.svg',
 ]
 
-async function generateReferenceImages(subdirectory: string = "", update: boolean = true) {
+async function generateReferenceImages(subdirectory: string = "", update: boolean = false) {
     // Allows us to regenerate only a subdirectory of files
     let existingReferencesForSVGs = (await glob(path.join(subdirectory, '**/*.png'), {cwd: referencesFolderPath}))
         .map(imagePath => replaceExtension(imagePath, "svg"));
