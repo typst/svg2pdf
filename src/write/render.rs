@@ -6,7 +6,7 @@ use usvg::utils::view_box_to_transform;
 pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) -> Vec<u8> {
     let mut content = Content::new();
     content.save_state();
-    // Apply the base transformation to convert the svg coordinate system into
+    // Apply the base transformation to convert the svg viewport + viewbox into
     // the PDF coordinate system.
     apply_dpi_transform(ctx, &mut content);
     apply_viewport_transforms(ctx, &mut content);
@@ -43,6 +43,7 @@ fn apply_viewport_transforms(ctx: &Context, content: &mut Content) {
 }
 
 fn apply_viewbox_transforms(ctx: &Context, content: &mut Content) {
+    // Delegate to usvg function
     content.transform(view_box_to_transform(ctx.viewbox.rect, ctx.viewbox.aspect, ctx.size).get_transform());
 }
 

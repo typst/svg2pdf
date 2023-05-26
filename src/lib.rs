@@ -1,10 +1,12 @@
 mod util;
 mod write;
+mod color;
 
 use util::*;
 use write::*;
+use color::*;
 
-use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref, TextStr};
+use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref, TextStr, Name, writers::ColorSpace};
 use usvg::Tree;
 
 pub fn convert_tree(tree: &Tree) -> Vec<u8> {
@@ -18,8 +20,9 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
 
     writer.catalog(catalog_id).pages(page_tree_id);
     writer.pages(page_tree_id).count(1).kids([page_id]);
-
+    
     let mut page = writer.page(page_id);
+    page.resources().color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
     page.media_box(ctx.get_media_box());
     page.parent(page_tree_id);
     page.contents(content_id);

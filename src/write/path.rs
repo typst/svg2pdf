@@ -1,5 +1,5 @@
 use crate::util::Context;
-use crate::util::RgbColor;
+use crate::color::{RgbColor, SRGB};
 use crate::util::TransformExt;
 use crate::write::render::Render;
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
@@ -24,8 +24,8 @@ impl Render for usvg::Path {
         content.transform(self.transform.get_transform());
 
         //TODO: Change to SRGB
-        content.set_fill_color_space(ColorSpaceOperand::DeviceRgb);
-        content.set_stroke_color_space(ColorSpaceOperand::DeviceRgb);
+        content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+        content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
         if let Some(stroke) = &self.stroke {
             set_stroke(stroke, content);
