@@ -15,9 +15,13 @@ the remaining directories are all from the
   - [x] path: 55/55
   - [x] polygon: 5/5
   - [x] polyline: 5/5
-  - [ ] rect: 30/40 
+  - [x] rect: 30/40 (10 are not supported/undefined according to resvg test suite)
+- painting
+
 - structure
   - svg
+
+
     
 
 TODO: Decide whether to store references as .pdf or .svg

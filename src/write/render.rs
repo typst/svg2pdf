@@ -1,4 +1,6 @@
+use crate::color::SRGB;
 use crate::util::{Context, TransformExt};
+use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::{Content, PdfWriter};
 use usvg::{Node, NodeKind, Tree};
 use usvg::utils::view_box_to_transform;
@@ -24,6 +26,9 @@ pub fn node_to_stream(
     ctx: &mut Context,
     content: &mut Content,
 ) {
+    content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+    content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+    
     for element in node.children() {
         match *element.borrow() {
             NodeKind::Path(ref path) => path.render(&element, writer, content, ctx),

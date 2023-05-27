@@ -21,6 +21,7 @@ impl TransformExt for usvg::Transform {
 pub struct Context {
     next_id: i32,
     dpi: f32,
+    clip_path_counter: i32,
     pub viewbox: ViewBox,
     pub size: Size,
 }
@@ -31,9 +32,22 @@ impl Context {
         Self {
             next_id: 1,
             dpi: 72.0,
+            clip_path_counter: 0,
             viewbox: tree.view_box,
             size: tree.size,
         }
+    }
+
+    pub fn register_clip_path(&mut self) {
+        self.clip_path_counter+= 1;
+    }
+
+    pub fn unregister_clip_path(&mut self) {
+        self.clip_path_counter -= 1;
+    }
+
+    pub fn is_clip_path(&self) -> bool {
+        self.clip_path_counter > 0
     }
 
     pub fn dpi_factor(&self) -> f32 {

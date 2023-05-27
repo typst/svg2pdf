@@ -23,10 +23,6 @@ impl Render for usvg::Path {
         content.save_state();
         content.transform(self.transform.get_transform());
 
-        //TODO: Change to SRGB
-        content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
-        content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
-
         if let Some(stroke) = &self.stroke {
             set_stroke(stroke, content);
         }
@@ -36,13 +32,16 @@ impl Render for usvg::Path {
         }
 
         draw_path(self.data.segments(), content);
-        finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
+
+        if !ctx.is_clip_path() {
+            finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
+        }
 
         content.restore_state();
     }
 }
 
-fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
+pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
     for operation in path_data {
         match operation {
             PathSegment::MoveTo { x, y } => content.move_to(x as f32, y as f32),
