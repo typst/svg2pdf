@@ -37,9 +37,6 @@ impl Render for usvg::Path {
 
         if !ctx.is_clip_path() {
             finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
-        }   else {
-            content.clip_nonzero();
-            content.end_path();
         }
 
         if !self.transform.is_default() {

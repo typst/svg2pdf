@@ -9,7 +9,7 @@ import {
     svgFolderPath, SKIPPED_FILES
 } from "./util";
 
-async function generateReferenceImages(subdirectory: string = "masking", update: boolean = false) {
+async function generateReferenceImages(subdirectory: string = "masking", update: boolean = true) {
     // Allows us to regenerate only a subdirectory of files
     let existingReferencesForSVGs = (await glob(path.join(subdirectory, '**/*.png'), {cwd: referencesFolderPath}))
         .map(imagePath => replaceExtension(imagePath, "svg"));
@@ -22,7 +22,7 @@ async function generateReferenceImages(subdirectory: string = "masking", update:
         }
     }).filter(el => !SKIPPED_FILES.includes(el));
 
-    clearPDFs();
+    //clearPDFs();
 
     console.log("Building svg2pdf...");
     await buildBinary();
@@ -52,7 +52,7 @@ async function generateReferenceImages(subdirectory: string = "masking", update:
     progressBar.stop();
     console.log("Reference images were created successfully!");
 
-    clearPDFs();
+    //clearPDFs();
 }
 
 (async function () {

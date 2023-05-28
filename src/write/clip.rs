@@ -29,7 +29,4 @@ pub fn apply_clip_path(
             _ => unreachable!(),
         }
     }
-
-    content.clip_nonzero();
-    content.end_path();
 }
