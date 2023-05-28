@@ -20,8 +20,10 @@ impl Render for usvg::Path {
             return;
         }
 
-        content.save_state();
-        content.transform(self.transform.get_transform());
+        if !self.transform.is_default() {
+            content.save_state();
+            content.transform(self.transform.get_transform());
+        }
 
         if let Some(stroke) = &self.stroke {
             set_stroke(stroke, content);
@@ -35,9 +37,14 @@ impl Render for usvg::Path {
 
         if !ctx.is_clip_path() {
             finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
+        }   else {
+            content.clip_nonzero();
+            content.end_path();
         }
 
-        content.restore_state();
+        if !self.transform.is_default() {
+            content.restore_state();
+        }
     }
 }
 

@@ -14,8 +14,6 @@ pub fn apply_clip_path(
     ctx: &mut Context
 ) {
 
-    ctx.register_clip_path();
-
     if let Some(path) = path.clip_path.clone() {
         apply_clip_path(path, writer, content, ctx);
     }
@@ -34,5 +32,4 @@ pub fn apply_clip_path(
 
     content.clip_nonzero();
     content.end_path();
-    ctx.unregister_clip_path();
 }
