@@ -7,6 +7,10 @@ use usvg::utils::view_box_to_transform;
 
 pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) -> Vec<u8> {
     let mut content = Content::new();
+
+    content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+    content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+
     content.save_state();
     // Apply the base transformation to convert the svg viewport + viewbox into
     // the PDF coordinate system.
@@ -26,9 +30,6 @@ pub fn node_to_stream(
     ctx: &mut Context,
     content: &mut Content,
 ) {
-    content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
-    content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
-    
     for element in node.children() {
         match *element.borrow() {
             NodeKind::Path(ref path) => path.render(&element, writer, content, ctx),
