@@ -8,3 +8,6 @@ test_1.svg
 /target
 Cargo.lock
 .DS_Store
+
+.idea
+.vscode
