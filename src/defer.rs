@@ -38,7 +38,7 @@ impl PendingGradient {
     /// Create a new instance from a pattern property struct.
     pub(crate) fn from_gradient(
         pattern: Gradient,
-        bbox: usvg::Rect,
+        bbox: usvg::NonZeroRect,
         num: u32,
         c: &CoordToPdf,
     ) -> Self {

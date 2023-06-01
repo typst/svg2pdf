@@ -9,7 +9,7 @@ use pdf_writer::writers::Shading;
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, Writer};
 use usvg::{
     Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, Paint,
-    PathSegment, Pattern, Transform, Units, ViewBox, Visibility,
+    tiny_skia_path::{PathSegment, Point}, Pattern, Transform, Units, ViewBox, Visibility,
 };
 
 #[cfg(any(feature = "png", feature = "jpeg"))]
@@ -26,6 +26,7 @@ use super::{
 use crate::defer::{PendingGS, PendingGradient};
 use crate::scale::CoordToPdf;
 use crate::{convert_tree_into, deflate};
+
 
 /// Write the appropriate instructions for a node into the content stream.
 ///
@@ -56,8 +57,8 @@ impl Render for usvg::Path {
 
         let bbox = node
             .calculate_bbox()
-            .and_then(|b| b.to_rect())
-            .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
+            .and_then(|b| b.to_non_zero_rect())
+            .unwrap_or_else(|| usvg::NonZeroRect::from_ltrb(0.0, 0.0, 1.0, 1.0).unwrap());
 
         let (fill_gradient, fill_g_alpha) =
             get_gradient(self.fill.as_ref().map(|fill| &fill.paint), ctx);
@@ -112,7 +113,7 @@ impl Render for usvg::Path {
 
 fn render_path_partial(
     path: &usvg::Path,
-    bbox: usvg::Rect,
+    bbox: usvg::NonZeroRect,
     fill: bool,
     stroke: bool,
     fill_gradient: Option<Gradient>,
@@ -160,8 +161,8 @@ fn render_path_partial(
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
-    let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get() as f32);
-    let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get() as f32);
+    let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get());
+    let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get());
 
     // Write a graphics state for stroke and fill opacity.
     if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
@@ -191,11 +192,11 @@ fn render_path_partial(
                 LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
             };
 
-            content.set_miter_limit(stroke.miterlimit.get() as f32);
+            content.set_miter_limit(stroke.miterlimit.get());
 
             if let Some(dasharray) = &stroke.dasharray {
                 content.set_dash_pattern(
-                    dasharray.iter().map(|&x| x as f32),
+                    dasharray.iter().cloned(),
                     stroke.dashoffset,
                 );
             }
@@ -306,12 +307,12 @@ fn render_path_partial(
 /// Convert usvg's transforms to PDF matrices.
 fn transform_to_matrix(transform: Transform) -> [f32; 6] {
     [
-        transform.a as f32,
-        transform.b as f32,
-        transform.c as f32,
-        transform.d as f32,
-        transform.e as f32,
-        transform.f as f32,
+        transform.sx,
+        transform.ky,
+        transform.kx,
+        transform.sy,
+        transform.tx,
+        transform.ty,
     ]
 }
 
@@ -342,7 +343,7 @@ fn get_gradient(paint: Option<&Paint>, ctx: &Context) -> (Option<Gradient>, Opti
 fn prep_shading(
     alpha_func: Ref,
     gradient: &Gradient,
-    bbox: usvg::Rect,
+    bbox: usvg::NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> Ref {
@@ -425,13 +426,13 @@ fn start_wrap(
 fn prep_pattern(
     pattern: &Pattern,
     num: u32,
-    bbox: usvg::Rect,
+    bbox: usvg::NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) {
     let rect = match pattern.units {
         Units::UserSpaceOnUse => pattern.rect,
-        Units::ObjectBoundingBox => usvg::Rect::new(
+        Units::ObjectBoundingBox => usvg::NonZeroRect::from_ltrb(
             pattern.rect.x() * bbox.width() + bbox.x(),
             pattern.rect.y() * bbox.height() + bbox.y(),
             pattern.rect.width() * bbox.width(),
@@ -448,20 +449,20 @@ fn prep_pattern(
             .uncorrected_transformation()
     } else if pattern.content_units == Units::ObjectBoundingBox {
         let viewbox = ViewBox {
-            rect: usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap(),
+            rect: usvg::NonZeroRect::from_ltrb(0.0, 0.0, 1.0, 1.0).unwrap(),
             aspect: AspectRatio { defer: false, align: Align::None, slice: false },
         };
 
         CoordToPdf::new((bbox.width(), bbox.height()), ctx.c.dpi(), viewbox, None)
             .uncorrected_transformation()
     } else {
-        Transform::new(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+        Transform::identity()
     };
 
     ctx.push();
 
-    inner_transform.e += rect.x();
-    inner_transform.f += rect.y();
+    inner_transform.tx += rect.x();
+    inner_transform.ty += rect.y();
 
     let old = ctx.c.concat_transform(inner_transform);
 
@@ -505,8 +506,8 @@ impl Render for usvg::Group {
 
         let bbox = node
             .calculate_bbox()
-            .and_then(|b| b.to_rect())
-            .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
+            .and_then(|b| b.to_non_zero_rect())
+            .unwrap_or_else(|| usvg::NonZeroRect::from_ltrb(0.0, 0.0, 1.0, 1.0).unwrap());
 
         let pdf_bbox = ctx.c.bbox();
         let old = ctx.c.concat_transform(self.transform);
@@ -539,7 +540,7 @@ impl Render for usvg::Group {
             let num = ctx.alloc_gs();
             content.set_parameters(Name(format!("gs{}", num).as_bytes()));
             ctx.pending_graphics
-                .push(PendingGS::fill_opacity(self.opacity.get() as f32, num));
+                .push(PendingGS::fill_opacity(self.opacity.get(), num));
         }
 
         ctx.c.set_transform(old);
@@ -723,7 +724,7 @@ impl Render for usvg::Image {
                     (rect.width(), rect.height()),
                     ctx.c.dpi(),
                     ViewBox {
-                        rect: usvg::Rect::new(0.0, 0.0, width as f64, height as f64)
+                        rect: usvg::NonZeroRect::from_ltrb(0.0, 0.0, width as f32, height as f32)
                             .unwrap(),
                         aspect: AspectRatio::default(),
                     },
@@ -732,12 +733,12 @@ impl Render for usvg::Image {
 
                 content.save_state();
                 content.transform([
-                    (width as f64 * converter.factor_x()) as f32,
+                    width as f32 * converter.factor_x(),
                     0.0,
                     0.0,
-                    (height as f64 * converter.factor_y()) as f32,
-                    converter.offset_x() as f32,
-                    converter.offset_y() as f32,
+                    height as f32 * converter.factor_y(),
+                    converter.offset_x(),
+                    converter.offset_y(),
                 ]);
                 content.x_object(xobj_name);
                 content.restore_state();
@@ -754,21 +755,13 @@ impl Render for usvg::Image {
                 xobject.bbox(Rect::new(
                     0.0,
                     0.0,
-                    rect.width() as f32,
-                    rect.height() as f32,
+                    rect.width(),
+                    rect.height(),
                 ));
 
                 let scaling = 72.0 / ctx.c.dpi();
-                let mut transform = self.transform.clone();
-                transform.scale(scaling, scaling);
-                xobject.matrix([
-                    transform.a as f32,
-                    transform.b as f32,
-                    transform.c as f32,
-                    transform.d as f32,
-                    transform.e as f32,
-                    transform.f as f32,
-                ]);
+                let transform = self.transform.pre_scale(scaling, scaling);
+                xobject.matrix(transform_to_matrix(transform));
 
                 external_ref
             } else {
@@ -796,21 +789,26 @@ pub fn draw_path(
 ) {
     for operation in path_data {
         match operation {
-            PathSegment::MoveTo { x, y } => {
-                let (x, y) = c.point(transform.apply(x, y));
+            PathSegment::MoveTo (point) => {
+                let (x, y) = c.point(apply(&transform, point));
                 content.move_to(x, y);
             }
-            PathSegment::LineTo { x, y } => {
-                let (x, y) = c.point(transform.apply(x, y));
+            PathSegment::LineTo(point)  => {
+                let (x, y) = c.point(apply(&transform, point));
                 content.line_to(x, y);
             }
-            PathSegment::CurveTo { x1, y1, x2, y2, x, y } => {
-                let (x1, y1) = c.point(transform.apply(x1, y1));
-                let (x2, y2) = c.point(transform.apply(x2, y2));
-                let (x, y) = c.point(transform.apply(x, y));
-                content.cubic_to(x1, y1, x2, y2, x, y);
+            PathSegment::QuadTo(p1, p2) => {
+                let (x1, y1) = c.point(apply(&transform, p1));
+                let (x3, y3) = c.point(apply(&transform, p2));
+                content.cubic_to_final(x1, y1, x3, y3);
             }
-            PathSegment::ClosePath => {
+            PathSegment::CubicTo(p1, p2, p3) => {
+                let (x1, y1) = c.point(apply(&transform, p1));
+                let (x2, y2) = c.point(apply(&transform, p2));
+                let (x3, y3) = c.point(apply(&transform, p3));
+                content.cubic_to(x1, y1, x2, y2, x3, y3);
+            }
+            PathSegment::Close => {
                 content.close_path();
             }
         }
@@ -826,7 +824,7 @@ pub(crate) struct Gradient {
     /// The type of gradient.
     pub(crate) shading_type: ShadingType,
     /// The coordinates of the gradient.
-    pub(crate) coords: [f64; 6],
+    pub(crate) coords: [f32; 6],
     /// Whether to transform the coords to the bounding box of the element or
     /// keep them in the page coordinate system.
     pub(crate) transform_coords: bool,
@@ -856,7 +854,7 @@ impl Gradient {
     pub(crate) fn transformed_coords(
         &self,
         c: &CoordToPdf,
-        bbox: usvg::Rect,
+        bbox: usvg::NonZeroRect,
     ) -> [f32; 6] {
         let max = if bbox.width() > bbox.height() { bbox.width() } else { bbox.height() };
 
@@ -889,4 +887,13 @@ impl Gradient {
             [coords[0], coords[1], coords[4], coords[2], coords[3], coords[5]]
         }
     }
+}
+
+// Applies transform to selected coordinates.
+#[inline]
+pub(crate) fn apply(tr: &Transform, p: impl Into<Point>) -> (f32, f32) {
+    let Point{ x, y} = p.into();
+    let new_x = tr.sx * x + tr.kx * y + tr.tx;
+    let new_y = tr.sy * y + tr.ky * x + tr.ty;
+    (new_x, new_y)
 }

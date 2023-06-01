@@ -15,7 +15,7 @@ struct Args {
     output: Option<PathBuf>,
     /// The number of SVG pixels per PDF points.
     #[clap(long, default_value = "72.0")]
-    dpi: f64,
+    dpi: f32,
 }
 
 fn main() {
