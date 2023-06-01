@@ -148,16 +148,37 @@ async function generateAndWritePNG(inputFilePath: string, outputFilePath: string
     });
 }
 
-async function writeDiffImage(diffImage: Buffer, outputPath: string) {
+async function writeDiffImage(diffImage: Buffer, actualImage: Buffer, referenceImage: Buffer, outputPath: string) {
     let outputFolderPath = path.dirname(outputPath);
 
     if (!existsSync(outputFolderPath)) {
         mkdirSync(outputFolderPath, {recursive: true});
     }
 
-    await writeFile(outputPath, diffImage, function (error) {
+    let generateOutputPath = (nameExtension: string): string => {
+        return path.join(path.dirname(outputPath),
+            path.basename(outputPath, path.extname(outputPath)) + "-" + nameExtension + path.extname(outputPath));
+    }
+
+    const diffOutputPath = generateOutputPath("diff");
+    const actualOutputPath = generateOutputPath("actual");
+    const referenceOutputPath = generateOutputPath("reference");
+
+    await writeFile(diffOutputPath, diffImage, function (error) {
         if (error) {
             throw new Error("unable to write diff image to file system: " + error)
+        }
+    });
+
+    await writeFile(actualOutputPath, actualImage, function (error) {
+        if (error) {
+            throw new Error("unable to write actual image to file system: " + error)
+        }
+    });
+
+    await writeFile(referenceOutputPath, referenceImage, function (error) {
+        if (error) {
+            throw new Error("unable to write reference image to file system: " + error)
         }
     });
 }

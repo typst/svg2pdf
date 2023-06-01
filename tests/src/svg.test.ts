@@ -42,19 +42,19 @@ const prepare = async () => {
             let pdfFullPath = generatePDFPath(svgFilePath);
             await generateAndWritePDF(svgFullPath, pdfFullPath);
 
-            let resultingImage = Buffer.from(await generatePNG(pdfFullPath));
+            let actualImage = Buffer.from(await generatePNG(pdfFullPath));
             let referenceImage = await readFileSync(referenceImageFullPath);
 
-            const {equal} = await looksSame(resultingImage, referenceImage, {strict: true});
+            const {equal} = await looksSame(actualImage, referenceImage, {strict: true});
             if (!equal) {
                 const diffImage = await looksSame.createDiff({
                     reference: referenceImage,
-                    current: resultingImage,
+                    current: actualImage,
                     highlightColor: '#ff0000',
                     strict: true
                 });
 
-                await writeDiffImage(diffImage, generateDiffsPath(svgFilePath));
+                await writeDiffImage(diffImage, actualImage, referenceImage, generateDiffsPath(svgFilePath));
 
                 fail("images don't match");
             }
