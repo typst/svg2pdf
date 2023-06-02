@@ -81,6 +81,9 @@ only be passing and pending tests in the end.
 If a test fails, there will be a diff image created in the `diffs` folder which can be used
 to analyze how the resulting image differes from the reference image.
 
+You can also run tests for a specific subdirectory only, for example by running 
+`npm test -- --subdirectory resvg/shapes`.
+
 ### Generating
 If you made some other changes that require you to generate new reference images or 
 regenerate existing ones (because the old ones were wrong or because you implemented 
