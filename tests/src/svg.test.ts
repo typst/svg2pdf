@@ -3,20 +3,21 @@ import {
     clearDiffs, clearPDFs,
     generateAndWritePDF, generateDiffsPath, generatePDFPath,
     generatePNG, generateReferencePath, generateSVGPath,
-    pdfsFolderPath,
     referencesFolderPath,
     replaceExtension, SKIPPED_FILES,
     svgFolderPath, writeDiffImage
 } from "./util";
-import {assert} from "chai";
 import path from "path";
 import {readFileSync} from "fs";
 import looksSame from "looks-same";
 import {fail} from "assert";
 
+var argv = require('minimist')(process.argv.slice(2));
+let subdirectory: string = argv["subdirectory"] || "";
+
 const getPaths = async () => {
-    let svgFilesPaths = (await glob('**/*.svg', {cwd: svgFolderPath})).filter(el => !SKIPPED_FILES.includes(el));
-    let referenceImageFilesPaths = await glob('**/*.png', {cwd: referencesFolderPath});
+    let svgFilesPaths = (await glob(path.join(subdirectory, '**/*.svg'), {cwd: svgFolderPath})).filter(el => !SKIPPED_FILES.includes(el));
+    let referenceImageFilesPaths = await glob(path.join(subdirectory, '**/*.png'), {cwd: referencesFolderPath});
     return {svgFilePaths: svgFilesPaths, referenceImageFilesPaths: referenceImageFilesPaths};
 };
 
