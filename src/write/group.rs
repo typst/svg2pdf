@@ -14,15 +14,11 @@ impl Render for usvg::Group {
         ctx: &mut Context,
     ) {
 
-        if !self.transform.is_default() {
-            content.save_state();
-            content.transform(self.transform.get_transform());
-        }
+        content.save_state();
+        content.transform(self.transform.get_transform());
 
         node_to_stream(node, writer, ctx, content);
 
-        if !self.transform.is_default() {
-            content.restore_state();
-        }
+        content.restore_state();
     }
 }

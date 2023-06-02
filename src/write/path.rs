@@ -20,10 +20,11 @@ impl Render for usvg::Path {
             return;
         }
 
-        if !self.transform.is_default() {
-            content.save_state();
-            content.transform(self.transform.get_transform());
-        }
+        content.save_state();
+        content.transform(self.transform.get_transform());
+
+        content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+        content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
         if let Some(stroke) = &self.stroke {
             set_stroke(stroke, content);
@@ -36,9 +37,7 @@ impl Render for usvg::Path {
         draw_path(self.data.segments(), content);
         finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
 
-        if !self.transform.is_default() {
-            content.restore_state();
-        }
+        content.restore_state();
     }
 }
 
