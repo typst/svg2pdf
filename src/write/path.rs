@@ -11,10 +11,10 @@ use usvg::{FillRule, LineCap, LineJoin, Node, Paint, PathSegment, Visibility};
 impl Render for usvg::Path {
     fn render(
         &self,
-        node: &Node,
-        writer: &mut PdfWriter,
+        _: &Node,
+        _: &mut PdfWriter,
         content: &mut Content,
-        ctx: &mut Context,
+        _: &mut Context,
     ) {
         if self.visibility != Visibility::Visible {
             return;
@@ -34,10 +34,7 @@ impl Render for usvg::Path {
         }
 
         draw_path(self.data.segments(), content);
-
-        if !ctx.is_clip_path() {
-            finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
-        }
+        finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
 
         if !self.transform.is_default() {
             content.restore_state();
