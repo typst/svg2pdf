@@ -1,31 +1,30 @@
 use crate::color::SRGB;
 use crate::util::{Context, TransformExt};
 use pdf_writer::types::ColorSpaceOperand;
-use pdf_writer::{Content, PdfWriter};
+use pdf_writer::{Content, Finish, Name, PdfWriter, Ref};
+use pdf_writer::writers::FormXObject;
 use usvg::{Node, NodeKind, Tree};
 use usvg::utils::view_box_to_transform;
 
-pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) -> Vec<u8> {
-    let mut content = Content::new();
+pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context, content: &mut Content) {
 
     content.save_state();
     // Apply the base transformation to convert the svg viewport + viewbox into
     // the PDF coordinate system.
-    apply_dpi_transform(ctx, &mut content);
-    apply_viewport_transforms(ctx, &mut content);
-    apply_viewbox_transforms(ctx, &mut content);
+    apply_dpi_transform(ctx, content);
+    apply_viewport_transforms(ctx, content);
+    apply_viewbox_transforms(ctx, content);
 
-    node_to_stream(&tree.root, writer, ctx, &mut content);
+    node_to_stream(&tree.root, writer, ctx, content);
 
     content.restore_state();
-    content.finish()
 }
 
 pub fn node_to_stream(
     node: &Node,
     writer: &mut PdfWriter,
     ctx: &mut Context,
-    content: &mut Content,
+    content: &mut Content
 ) {
     for element in node.children() {
         match *element.borrow() {

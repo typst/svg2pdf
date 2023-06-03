@@ -14,6 +14,7 @@ import {fail} from "assert";
 
 var argv = require('minimist')(process.argv.slice(2));
 let subdirectory: string = argv["subdirectory"] || "";
+let write_diffs: string = argv["write-diffs"] || false;
 
 const getPaths = async () => {
     let svgFilesPaths = (await glob(path.join(subdirectory, '**/*.svg'), {cwd: svgFolderPath})).filter(el => !SKIPPED_FILES.includes(el));
@@ -48,14 +49,16 @@ const prepare = async () => {
 
             const {equal} = await looksSame(actualImage, referenceImage, {strict: true});
             if (!equal) {
-                const diffImage = await looksSame.createDiff({
-                    reference: referenceImage,
-                    current: actualImage,
-                    highlightColor: '#ff0000',
-                    strict: true
-                });
+                if (write_diffs) {
+                    const diffImage = await looksSame.createDiff({
+                        reference: referenceImage,
+                        current: actualImage,
+                        highlightColor: '#ff0000',
+                        strict: true
+                    });
 
-                await writeDiffImage(diffImage, actualImage, referenceImage, generateDiffsPath(svgFilePath));
+                    await writeDiffImage(diffImage, actualImage, referenceImage, generateDiffsPath(svgFilePath));
+                }
 
                 fail("images don't match");
             }
