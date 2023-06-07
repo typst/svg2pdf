@@ -51,7 +51,6 @@ use defer::*;
 use render::*;
 use scale::*;
 
-
 const SRGB: Name = Name(b"srgb");
 
 /// Set size and scaling preferences for the conversion.
@@ -519,7 +518,7 @@ fn apply_clip_path(
 
     let old = ctx.c.concat_transform(path.transform);
 
-    for child in (*path).root.children() {
+    for child in path.root.children() {
         match *child.borrow() {
             NodeKind::Path(ref path) => {
                 draw_path(path.data.segments(), path.transform, content, &ctx.c);
@@ -600,7 +599,7 @@ impl RgbColor {
     }
 
     /// Create a RGB array for use in PDF.
-    fn to_array(&self) -> [f32; 3] {
+    fn to_array(self) -> [f32; 3] {
         [self.r, self.g, self.b]
     }
 }

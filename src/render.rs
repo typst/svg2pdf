@@ -8,8 +8,9 @@ use pdf_writer::types::{
 use pdf_writer::writers::Shading;
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, Writer};
 use usvg::{
+    tiny_skia_path::{PathSegment, Point},
     Align, AspectRatio, FillRule, ImageKind, LineCap, LineJoin, Node, NodeExt, Paint,
-    tiny_skia_path::{PathSegment, Point}, Pattern, Transform, Units, ViewBox, Visibility,
+    Pattern, Transform, Units, ViewBox, Visibility,
 };
 
 #[cfg(any(feature = "png", feature = "jpeg"))]
@@ -26,7 +27,6 @@ use super::{
 use crate::defer::{PendingGS, PendingGradient};
 use crate::scale::CoordToPdf;
 use crate::{convert_tree_into, deflate};
-
 
 /// Write the appropriate instructions for a node into the content stream.
 ///
@@ -195,10 +195,7 @@ fn render_path_partial(
             content.set_miter_limit(stroke.miterlimit.get());
 
             if let Some(dasharray) = &stroke.dasharray {
-                content.set_dash_pattern(
-                    dasharray.iter().cloned(),
-                    stroke.dashoffset,
-                );
+                content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
             }
 
             match &stroke.paint {
@@ -306,14 +303,7 @@ fn render_path_partial(
 
 /// Convert usvg's transforms to PDF matrices.
 fn transform_to_matrix(transform: Transform) -> [f32; 6] {
-    [
-        transform.sx,
-        transform.ky,
-        transform.kx,
-        transform.sy,
-        transform.tx,
-        transform.ty,
-    ]
+    [transform.sx, transform.ky, transform.kx, transform.sy, transform.tx, transform.ty]
 }
 
 /// Retrieve the pattern and alpha values for a paint.
@@ -512,7 +502,7 @@ impl Render for usvg::Group {
         let pdf_bbox = ctx.c.bbox();
         let old = ctx.c.concat_transform(self.transform);
 
-        let child_content = content_stream(&node, writer, ctx);
+        let child_content = content_stream(node, writer, ctx);
 
         // Every group is an isolated transparency group, it needs to be painted
         // onto its own canvas.
@@ -724,8 +714,13 @@ impl Render for usvg::Image {
                     (rect.width(), rect.height()),
                     ctx.c.dpi(),
                     ViewBox {
-                        rect: usvg::NonZeroRect::from_ltrb(0.0, 0.0, width as f32, height as f32)
-                            .unwrap(),
+                        rect: usvg::NonZeroRect::from_ltrb(
+                            0.0,
+                            0.0,
+                            width as f32,
+                            height as f32,
+                        )
+                        .unwrap(),
                         aspect: AspectRatio::default(),
                     },
                     Some(self.view_box.aspect),
@@ -752,12 +747,7 @@ impl Render for usvg::Image {
                 resources.x_objects().pair(xobj_name, image_ref);
                 resources.finish();
 
-                xobject.bbox(Rect::new(
-                    0.0,
-                    0.0,
-                    rect.width(),
-                    rect.height(),
-                ));
+                xobject.bbox(Rect::new(0.0, 0.0, rect.width(), rect.height()));
 
                 let scaling = 72.0 / ctx.c.dpi();
                 let transform = self.transform.pre_scale(scaling, scaling);
@@ -789,11 +779,11 @@ pub fn draw_path(
 ) {
     for operation in path_data {
         match operation {
-            PathSegment::MoveTo (point) => {
+            PathSegment::MoveTo(point) => {
                 let (x, y) = c.point(apply(&transform, point));
                 content.move_to(x, y);
             }
-            PathSegment::LineTo(point)  => {
+            PathSegment::LineTo(point) => {
                 let (x, y) = c.point(apply(&transform, point));
                 content.line_to(x, y);
             }
@@ -892,7 +882,7 @@ impl Gradient {
 // Applies transform to selected coordinates.
 #[inline]
 pub(crate) fn apply(tr: &Transform, p: impl Into<Point>) -> (f32, f32) {
-    let Point{ x, y} = p.into();
+    let Point { x, y } = p.into();
     let new_x = tr.sx * x + tr.kx * y + tr.tx;
     let new_y = tr.sy * y + tr.ky * x + tr.ty;
     (new_x, new_y)

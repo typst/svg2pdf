@@ -233,7 +233,7 @@ pub fn write_xobjects(pending_xobjects: &[(u32, Ref)], resources: &mut Resources
 pub(crate) fn write_masks(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) {
     let mut masks: Vec<Rc<usvg::Mask>> = Vec::new();
     tree.masks(|mask| {
-        if masks.iter().find(|m| m.id == mask.id).is_some() {
+        if masks.iter().any(|m| *m.id == mask.id) {
             return;
         }
 

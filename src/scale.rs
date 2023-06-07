@@ -1,8 +1,8 @@
 //! Provide transformations between PDF and SVG coordinate systems.
 
+use crate::render::apply;
 use pdf_writer::Rect;
 use usvg::{Align, AspectRatio, NonZeroRect, Transform, ViewBox};
-use crate::render::apply;
 
 /// Convert point data between two coordinate systems.
 #[derive(Debug, Copy, Clone)]
@@ -187,8 +187,9 @@ impl CoordToPdf {
 
     /// Compute the scale (e.g. to adapt the stroke width).
     pub fn compute_scale(&self) -> f32 {
-        let complete_transform = self.transform.post_concat(
-            Transform::from_scale(self.factor_x, self.factor_y));
+        let complete_transform = self
+            .transform
+            .post_concat(Transform::from_scale(self.factor_x, self.factor_y));
 
         let (x_scale, y_scale) = complete_transform.get_scale();
 
