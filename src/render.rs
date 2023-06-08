@@ -422,7 +422,7 @@ fn prep_pattern(
 ) {
     let rect = match pattern.units {
         Units::UserSpaceOnUse => pattern.rect,
-        Units::ObjectBoundingBox => usvg::NonZeroRect::from_ltrb(
+        Units::ObjectBoundingBox => usvg::NonZeroRect::from_xywh(
             pattern.rect.x() * bbox.width() + bbox.x(),
             pattern.rect.y() * bbox.height() + bbox.y(),
             pattern.rect.width() * bbox.width(),
