@@ -5,6 +5,7 @@ use pdf_writer::{Content, Finish, Name, PdfWriter, Ref};
 use pdf_writer::writers::FormXObject;
 use usvg::{Node, NodeKind, Tree};
 use usvg::utils::view_box_to_transform;
+use crate::write::{group, path};
 
 pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context, content: &mut Content) {
 
@@ -27,11 +28,7 @@ pub fn node_to_stream(
     content: &mut Content
 ) {
     for element in node.children() {
-        match *element.borrow() {
-            NodeKind::Path(ref path) => path.render(&element, writer, content, ctx),
-            NodeKind::Group(ref group) => group.render(&element, writer, content, ctx),
-            _ => {}
-        }
+        element.render(writer, content, ctx);
     }
 }
 
@@ -52,9 +49,18 @@ fn apply_viewbox_transforms(ctx: &Context, content: &mut Content) {
 pub trait Render {
     fn render(
         &self,
-        node: &Node,
         writer: &mut PdfWriter,
         content: &mut Content,
         ctx: &mut Context,
     );
+}
+
+impl Render for Node {
+    fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context) {
+        match *self.borrow() {
+            NodeKind::Path(ref path) => path::render(path, content),
+            NodeKind::Group(ref group) => group::render(group, &self, writer, content, ctx),
+            _ => unimplemented!()
+        }
+    }
 }

@@ -8,37 +8,32 @@ use usvg::Fill;
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Node, Paint, PathSegment, Visibility};
 
-impl Render for usvg::Path {
-    fn render(
-        &self,
-        _: &Node,
-        _: &mut PdfWriter,
-        content: &mut Content,
-        _: &mut Context,
-    ) {
-        if self.visibility != Visibility::Visible {
-            return;
-        }
-
-        content.save_state();
-        content.transform(self.transform.get_transform());
-
-        content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
-        content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
-
-        if let Some(stroke) = &self.stroke {
-            set_stroke(stroke, content);
-        }
-
-        if let Some(fill) = &self.fill {
-            set_fill(fill, content);
-        }
-
-        draw_path(self.data.segments(), content);
-        finish_path(self.stroke.as_ref(), self.fill.as_ref(), content);
-
-        content.restore_state();
+pub(crate) fn render(
+    path: &usvg::Path,
+    content: &mut Content,
+) {
+    if path.visibility != Visibility::Visible {
+        return;
     }
+
+    content.save_state();
+    content.transform(path.transform.get_transform());
+
+    content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+    content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+
+    if let Some(stroke) = &path.stroke {
+        set_stroke(stroke, content);
+    }
+
+    if let Some(fill) = &path.fill {
+        set_fill(fill, content);
+    }
+
+    draw_path(path.data.segments(), content);
+    finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
+
+    content.restore_state();
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
