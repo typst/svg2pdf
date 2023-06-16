@@ -1,6 +1,6 @@
-use pdf_writer::{Name, Rect, Ref};
-use pdf_writer::types::ProcSet;
-use pdf_writer::writers::{ColorSpace, Resources};
+use pdf_writer::{Finish, Name, Rect, Ref};
+use pdf_writer::types::{MaskType, ProcSet};
+use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Reference, Resources};
 use usvg::{Tree, ViewBox, Size, Node, Transform, PathBbox, NodeKind, PathData, NodeExt, FuzzyEq};
 use crate::color::SRGB;
 
@@ -21,13 +21,121 @@ impl TransformExt for usvg::Transform {
     }
 }
 
+pub struct Allocator {
+    /// The next id for indirect object references
+    next_ref_id: i32,
+    /// The next number that will be used for the name of an XObject in a resource
+    /// dictionary, e.g. "xo1"
+    next_x_object_num: i32,
+    /// The next number that will be used for the name of a graphics state in a resource
+    /// dictionary, e.g. "gs1"
+    next_graphics_state_num: i32
+}
+
+pub struct PendingXObject {
+    pub name: String,
+    pub reference: Ref
+}
+
+pub struct PendingGraphicsState {
+    pub name: String,
+    pub mask_type: MaskType,
+    pub group: Ref
+}
+
+impl Allocator {
+    pub fn new() -> Self {
+        Self {
+            next_ref_id: 1,
+            next_x_object_num: 0,
+            next_graphics_state_num: 0
+        }
+    }
+
+    pub fn alloc_ref(&mut self) -> Ref {
+        let reference = Ref::new(self.next_ref_id);
+        self.next_ref_id += 1;
+        reference
+    }
+
+    pub fn alloc_x_object_name(&mut self) -> String {
+        let num = self.next_x_object_num;
+        self.next_x_object_num += 1;
+        format!("xo{}", num)
+    }
+
+    pub fn alloc_graphics_state_name(&mut self) -> String {
+        let num = self.next_x_object_num;
+        self.next_x_object_num += 1;
+        format!("gs{}", num)
+    }
+}
+
+pub struct Deferrer {
+    pending_x_objects: Vec<Vec<PendingXObject>>,
+    pending_graphics_states: Vec<Vec<PendingGraphicsState>>
+}
+
+impl Deferrer {
+    pub fn new() -> Self {
+        Deferrer {
+            pending_x_objects: Vec::new(),
+            pending_graphics_states: Vec::new()
+        }
+    }
+
+    pub fn push_context(&mut self) {
+        self.pending_x_objects.push(Vec::new());
+        self.pending_graphics_states.push(Vec::new());
+    }
+
+    pub fn pop_context(&mut self, resources: &mut Resources) {
+        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
+        resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
+
+        self.write_pending_x_objects(resources);
+        self.write_pending_graphics_states(resources);
+    }
+
+    pub fn add_x_object(&mut self, name: String, reference: Ref) {
+        self.pending_x_objects.last_mut().unwrap().push(PendingXObject {name, reference});
+    }
+
+    fn write_pending_x_objects(&mut self, resources: &mut Resources) {
+        let pending_x_objects = self.pending_x_objects.pop().unwrap();
+
+        if !pending_x_objects.is_empty() {
+            let mut x_objects = resources.x_objects();
+            for x_object in pending_x_objects {
+                x_objects.pair(Name(x_object.name.as_bytes()), x_object.reference);
+            }
+            x_objects.finish();
+        }
+    }
+
+    fn write_pending_graphics_states(&mut self, resources: &mut Resources) {
+        let pending_graphics_states = self.pending_graphics_states.pop().unwrap();
+
+        if !pending_graphics_states.is_empty() {
+            let mut graphics = resources.ext_g_states();
+            for pending_graphics_state in pending_graphics_states {
+                let mut state = graphics.insert(Name(pending_graphics_state.name.as_bytes())).start::<ExtGraphicsState>();
+                state.soft_mask().subtype(MaskType::Alpha).group(pending_graphics_state.group);
+                state.finish();
+            }
+            graphics.finish();
+        }
+    }
+}
+
 pub struct Context {
     next_id: i32,
     next_xobject: i32,
     dpi: f32,
     pub viewbox: ViewBox,
     pub size: Size,
-    pub pending_xobjects: Vec<Vec<(String, Ref)>>
+    allocator: Allocator,
+    deferrer: Deferrer
 }
 
 impl Context {
@@ -39,7 +147,8 @@ impl Context {
             dpi: 72.0,
             viewbox: tree.view_box,
             size: tree.size,
-            pending_xobjects: Vec::new()
+            allocator: Allocator::new(),
+            deferrer: Deferrer::new()
         }
     }
 
@@ -56,46 +165,24 @@ impl Context {
         )
     }
 
-    /// Allocate a new indirect reference id.
-    pub fn alloc_ref(&mut self) -> Ref {
-        let reference = Ref::new(self.next_id);
-        self.next_id += 1;
-        reference
-    }
-
-    fn alloc_xobject_num(&mut self) -> i32 {
-        let xobject_num = self.next_xobject;
-        self.next_xobject += 1;
-        xobject_num
-    }
-
     pub fn push_context(&mut self) {
-        self.pending_xobjects.push(Vec::new());
+        self.deferrer.push_context();
     }
 
     pub fn pop_context(&mut self, resources: &mut Resources) {
-        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
-        resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
-
-        let pending_xobjects = self.pending_xobjects.pop().unwrap();
-
-        if !pending_xobjects.is_empty() {
-            let mut xobjects = resources.x_objects();
-            for (name, ref_id) in pending_xobjects {
-                xobjects.pair(Name(name.as_bytes()), ref_id);
-            }
-        }
+        self.deferrer.pop_context(resources);
     }
 
-    pub fn alloc_xobject(&mut self) -> (String, Ref) {
-        let object_ref = self.alloc_ref();
-        let xobject_number = self.alloc_xobject_num();
+    pub fn alloc_ref(&mut self) -> Ref {
+        self.allocator.alloc_ref()
+    }
 
-        let name = format!("xo{}", xobject_number);
-        let result =  (name, object_ref);
+    pub fn alloc_named_x_object(&mut self) -> (String, Ref) {
+        let reference = self.alloc_ref();
+        let name = self.allocator.alloc_x_object_name();
 
-        self.pending_xobjects.last_mut().unwrap().push(result.clone());
-        result
+        self.deferrer.add_x_object(name.clone(), reference);
+        (name, reference)
     }
 }
 

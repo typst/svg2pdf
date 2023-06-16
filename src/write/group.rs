@@ -13,7 +13,7 @@ pub(crate) fn render(
     ctx: &mut Context,
 ) {
 
-    let (name, xobject_id) = ctx.alloc_xobject();
+    let (name, reference) = ctx.alloc_named_x_object();
 
     content.save_state();
     content.transform(group.transform.get_transform());
@@ -26,7 +26,7 @@ pub(crate) fn render(
     node_to_stream(node, writer, ctx, &mut child_content);
     let mut child_content_stream = child_content.finish();
 
-    let mut xobject = writer.form_xobject(xobject_id, &child_content_stream);
+    let mut xobject = writer.form_xobject(reference, &child_content_stream);
     ctx.pop_context(&mut xobject.resources());
 
     // TODO: Figure out a more elegant way to calculate the bbox?
