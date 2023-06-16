@@ -1,17 +1,12 @@
-use crate::util::Context;
 use crate::color::{RgbColor, SRGB};
 use crate::util::TransformExt;
-use crate::write::render::Render;
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
-use pdf_writer::{Content, PdfWriter};
+use pdf_writer::Content;
 use usvg::Fill;
 use usvg::Stroke;
-use usvg::{FillRule, LineCap, LineJoin, Node, Paint, PathSegment, Visibility};
+use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 
-pub(crate) fn render(
-    path: &usvg::Path,
-    content: &mut Content,
-) {
+pub(crate) fn render(path: &usvg::Path, content: &mut Content) {
     if path.visibility != Visibility::Visible {
         return;
     }
@@ -83,7 +78,8 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
         Paint::Color(c) => {
             content.set_stroke_color(RgbColor::from(*c).to_array());
         }
-        _ => todo!(),
+        _ => {}
+        //_ => todo!(),
     }
 }
 

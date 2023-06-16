@@ -1,8 +1,10 @@
-use pdf_writer::{Finish, Name, Rect, Ref};
-use pdf_writer::types::{MaskType, ProcSet};
-use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Reference, Resources};
-use usvg::{Tree, ViewBox, Size, Node, Transform, PathBbox, NodeKind, PathData, NodeExt, FuzzyEq};
 use crate::color::SRGB;
+use pdf_writer::types::{MaskType, ProcSet};
+use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
+use pdf_writer::{Finish, Name, Rect, Ref};
+use usvg::{
+    FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform, Tree, ViewBox,
+};
 
 pub trait TransformExt {
     fn get_transform(&self) -> [f32; 6];
@@ -29,18 +31,18 @@ pub struct Allocator {
     next_x_object_num: i32,
     /// The next number that will be used for the name of a graphics state in a resource
     /// dictionary, e.g. "gs1"
-    next_graphics_state_num: i32
+    next_graphics_state_num: i32,
 }
 
 pub struct PendingXObject {
     pub name: String,
-    pub reference: Ref
+    pub reference: Ref,
 }
 
 pub struct PendingGraphicsState {
     pub name: String,
     pub mask_type: MaskType,
-    pub group: Ref
+    pub group: Ref,
 }
 
 impl Allocator {
@@ -48,7 +50,7 @@ impl Allocator {
         Self {
             next_ref_id: 1,
             next_x_object_num: 0,
-            next_graphics_state_num: 0
+            next_graphics_state_num: 0,
         }
     }
 
@@ -73,14 +75,14 @@ impl Allocator {
 
 pub struct Deferrer {
     pending_x_objects: Vec<Vec<PendingXObject>>,
-    pending_graphics_states: Vec<Vec<PendingGraphicsState>>
+    pending_graphics_states: Vec<Vec<PendingGraphicsState>>,
 }
 
 impl Deferrer {
     pub fn new() -> Self {
         Deferrer {
             pending_x_objects: Vec::new(),
-            pending_graphics_states: Vec::new()
+            pending_graphics_states: Vec::new(),
         }
     }
 
@@ -98,11 +100,17 @@ impl Deferrer {
     }
 
     pub fn add_x_object(&mut self, name: String, reference: Ref) {
-        self.pending_x_objects.last_mut().unwrap().push(PendingXObject {name, reference});
+        self.pending_x_objects
+            .last_mut()
+            .unwrap()
+            .push(PendingXObject { name, reference });
     }
 
     pub fn add_soft_mask(&mut self, name: String, group: Ref) {
-        self.pending_graphics_states.last_mut().unwrap().push(PendingGraphicsState {name, mask_type: MaskType::Alpha, group});
+        self.pending_graphics_states
+            .last_mut()
+            .unwrap()
+            .push(PendingGraphicsState { name, mask_type: MaskType::Alpha, group });
     }
 
     fn write_pending_x_objects(&mut self, resources: &mut Resources) {
@@ -123,8 +131,13 @@ impl Deferrer {
         if !pending_graphics_states.is_empty() {
             let mut graphics = resources.ext_g_states();
             for pending_graphics_state in pending_graphics_states {
-                let mut state = graphics.insert(Name(pending_graphics_state.name.as_bytes())).start::<ExtGraphicsState>();
-                state.soft_mask().subtype(MaskType::Alpha).group(pending_graphics_state.group);
+                let mut state = graphics
+                    .insert(Name(pending_graphics_state.name.as_bytes()))
+                    .start::<ExtGraphicsState>();
+                state
+                    .soft_mask()
+                    .subtype(MaskType::Alpha)
+                    .group(pending_graphics_state.group);
                 state.finish();
             }
             graphics.finish();
@@ -133,26 +146,22 @@ impl Deferrer {
 }
 
 pub struct Context {
-    next_id: i32,
-    next_xobject: i32,
     dpi: f32,
     pub viewbox: ViewBox,
     pub size: Size,
     allocator: Allocator,
-    deferrer: Deferrer
+    deferrer: Deferrer,
 }
 
 impl Context {
     /// Create a new context.
     pub fn new(tree: &Tree) -> Self {
         Self {
-            next_id: 1,
-            next_xobject: 0,
             dpi: 72.0,
             viewbox: tree.view_box,
             size: tree.size,
             allocator: Allocator::new(),
-            deferrer: Deferrer::new()
+            deferrer: Deferrer::new(),
         }
     }
 
@@ -197,11 +206,12 @@ impl Context {
     }
 }
 
-
 // Taken from resvg
 pub fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
     match *node.borrow() {
-        NodeKind::Path(ref path) => path.data.bbox_with_transform(ts, path.stroke.as_ref()),
+        NodeKind::Path(ref path) => {
+            path.data.bbox_with_transform(ts, path.stroke.as_ref())
+        }
         NodeKind::Image(ref img) => {
             let path = PathData::from_rect(img.view_box.rect);
             path.bbox_with_transform(ts, None)

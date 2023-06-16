@@ -1,12 +1,11 @@
+mod color;
 mod util;
 mod write;
-mod color;
 
 use util::*;
 use write::*;
-use color::*;
 
-use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref, TextStr, Name, writers::ColorSpace};
+use pdf_writer::{Content, Finish, PdfWriter, TextStr};
 use usvg::Tree;
 
 pub fn convert_tree(tree: &Tree) -> Vec<u8> {
@@ -27,7 +26,7 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
     render::tree_to_stream(&tree, &mut writer, &mut ctx, &mut content);
 
     let content_stream = content.finish();
-    let mut stream = writer.stream(content_id, &content_stream);
+    let stream = writer.stream(content_id, &content_stream);
     stream.finish();
 
     let mut page = writer.page(page_id);

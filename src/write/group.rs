@@ -1,8 +1,8 @@
 use crate::util::{calc_node_bbox, Context, TransformExt};
+use crate::write::clip::alloc_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
-use usvg::{Node, NodeExt, Transform};
-use crate::write::clip::alloc_clip_path;
+use usvg::Node;
 
 pub(crate) fn render(
     group: &usvg::Group,
@@ -21,7 +21,6 @@ pub(crate) fn create_x_object(
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> (String, Ref) {
-
     let (name, reference) = ctx.alloc_named_x_object();
 
     ctx.push_context();
@@ -42,7 +41,7 @@ pub(crate) fn create_x_object(
 
     child_content.restore_state();
 
-    let mut child_content_stream = child_content.finish();
+    let child_content_stream = child_content.finish();
 
     let mut x_object = writer.form_xobject(reference, &child_content_stream);
     ctx.pop_context(&mut x_object.resources());
@@ -50,14 +49,23 @@ pub(crate) fn create_x_object(
     // TODO: Figure out a more elegant way to calculate the bbox?
     let bbox = calc_node_bbox(&node, group.transform)
         .and_then(|b| b.to_rect())
-        .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());;
+        .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
 
     let mut group = x_object.group();
-    group.transparency().isolated(true).knockout(false).color_space().srgb();
+    group
+        .transparency()
+        .isolated(true)
+        .knockout(false)
+        .color_space()
+        .srgb();
     group.finish();
 
-    x_object.bbox(Rect::new(bbox.x() as f32, bbox.y() as f32,
-                            (bbox.x() + bbox.width()) as f32, (bbox.y() + bbox.height()) as f32));
+    x_object.bbox(Rect::new(
+        bbox.x() as f32,
+        bbox.y() as f32,
+        (bbox.x() + bbox.width()) as f32,
+        (bbox.y() + bbox.height()) as f32,
+    ));
     x_object.finish();
     (name, reference)
 }

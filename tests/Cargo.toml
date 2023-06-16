@@ -1,0 +1,29 @@
+[package]
+name = "svg2pdf-tests"
+description = "The tests crate for svg2pdf."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "test"
+path = "src/test.rs"
+
+[[bin]]
+name = "generate"
+path = "src/generate.rs"
+
+[dependencies]
+fontdb = "0.13"
+svg2pdf = { path = ".." }
+usvg = "0.32"
+pdfium-render = "0.8.5"
+walkdir = "2.3.3"
+lazy_static = "1.4.0"
+pdf-writer = "0.7"
+image = "0.24"
+indicatif = "0.17.5"
+clap = { version = "4.3.4", features = ["derive"] }
+termcolor = "1.2.0"

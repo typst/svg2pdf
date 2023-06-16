@@ -1,14 +1,15 @@
-use crate::color::SRGB;
 use crate::util::{Context, TransformExt};
-use pdf_writer::types::ColorSpaceOperand;
-use pdf_writer::{Content, Finish, Name, PdfWriter, Ref};
-use pdf_writer::writers::FormXObject;
-use usvg::{Node, NodeKind, Tree};
-use usvg::utils::view_box_to_transform;
 use crate::write::{group, path};
+use pdf_writer::{Content, PdfWriter};
+use usvg::utils::view_box_to_transform;
+use usvg::{Node, NodeKind, Tree};
 
-pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context, content: &mut Content) {
-
+pub fn tree_to_stream(
+    tree: &Tree,
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+    content: &mut Content,
+) {
     content.save_state();
     // Apply the base transformation to convert the svg viewport + viewbox into
     // the PDF coordinate system.
@@ -16,7 +17,7 @@ pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context, co
     apply_viewport_transforms(ctx, content);
     apply_viewbox_transforms(ctx, content);
 
-    &tree.root.render(writer, content, ctx);
+    let _ = &tree.root.render(writer, content, ctx);
 
     content.restore_state();
 }
@@ -32,24 +33,24 @@ fn apply_viewport_transforms(ctx: &Context, content: &mut Content) {
 
 fn apply_viewbox_transforms(ctx: &Context, content: &mut Content) {
     // Delegate to usvg function
-    content.transform(view_box_to_transform(ctx.viewbox.rect, ctx.viewbox.aspect, ctx.size).get_transform());
+    content.transform(
+        view_box_to_transform(ctx.viewbox.rect, ctx.viewbox.aspect, ctx.size)
+            .get_transform(),
+    );
 }
 
 pub trait Render {
-    fn render(
-        &self,
-        writer: &mut PdfWriter,
-        content: &mut Content,
-        ctx: &mut Context,
-    );
+    fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context);
 }
 
 impl Render for Node {
     fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context) {
         match *self.borrow() {
             NodeKind::Path(ref path) => path::render(path, content),
-            NodeKind::Group(ref group) => group::render(group, &self, writer, content, ctx),
-            _ => unimplemented!()
+            NodeKind::Group(ref group) => {
+                group::render(group, &self, writer, content, ctx)
+            }
+            _ => {} // _ => unimplemented!()
         }
     }
 }

@@ -1,0 +1,19 @@
+[package]
+name = "svg2pdf-cli"
+description = "The command line interface for svg2pdf."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "svg2pdf"
+path = "src/main.rs"
+
+[dependencies]
+termcolor = "1"
+clap = { version = "3", features = ["derive"] }
+fontdb = "0.13"
+svg2pdf = { path = ".." }
+usvg = "0.32"

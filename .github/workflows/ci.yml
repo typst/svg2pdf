@@ -10,10 +10,5 @@ jobs:
         working-directory: ./tests
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo build --release --features cli
-      - run: npm ci
-      - run: npm test
+      - run: cargo run --package svg2pdf-tests  --bin test --release
