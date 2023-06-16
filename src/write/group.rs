@@ -3,8 +3,6 @@ use crate::write::render::Render;
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect};
 use usvg::{Node, NodeExt, Transform};
 
-use super::render::node_to_stream;
-
 pub(crate) fn render(
     group: &usvg::Group,
     node: &Node,
@@ -23,7 +21,11 @@ pub(crate) fn render(
     ctx.push_context();
 
     let mut child_content = Content::new();
-    node_to_stream(node, writer, ctx, &mut child_content);
+
+    for child in node.children() {
+        child.render(writer, &mut child_content, ctx);
+    }
+
     let mut child_content_stream = child_content.finish();
 
     let mut xobject = writer.form_xobject(reference, &child_content_stream);

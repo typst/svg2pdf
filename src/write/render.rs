@@ -16,20 +16,9 @@ pub fn tree_to_stream(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context, co
     apply_viewport_transforms(ctx, content);
     apply_viewbox_transforms(ctx, content);
 
-    node_to_stream(&tree.root, writer, ctx, content);
+    &tree.root.render(writer, content, ctx);
 
     content.restore_state();
-}
-
-pub fn node_to_stream(
-    node: &Node,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-    content: &mut Content
-) {
-    for element in node.children() {
-        element.render(writer, content, ctx);
-    }
 }
 
 fn apply_dpi_transform(ctx: &Context, content: &mut Content) {

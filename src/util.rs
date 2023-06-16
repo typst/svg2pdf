@@ -101,6 +101,10 @@ impl Deferrer {
         self.pending_x_objects.last_mut().unwrap().push(PendingXObject {name, reference});
     }
 
+    pub fn add_soft_mask(&mut self, name: String, group: Ref) {
+        self.pending_graphics_states.last_mut().unwrap().push(PendingGraphicsState {name, mask_type: MaskType::Alpha, group});
+    }
+
     fn write_pending_x_objects(&mut self, resources: &mut Resources) {
         let pending_x_objects = self.pending_x_objects.pop().unwrap();
 
@@ -183,6 +187,13 @@ impl Context {
 
         self.deferrer.add_x_object(name.clone(), reference);
         (name, reference)
+    }
+
+    pub fn alloc_soft_mask(&mut self, group: Ref) -> String {
+        let name = self.allocator.alloc_graphics_state_name();
+
+        self.deferrer.add_soft_mask(name.clone(), group);
+        name.clone()
     }
 }
 
