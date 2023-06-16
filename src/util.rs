@@ -65,8 +65,8 @@ impl Allocator {
     }
 
     pub fn alloc_graphics_state_name(&mut self) -> String {
-        let num = self.next_x_object_num;
-        self.next_x_object_num += 1;
+        let num = self.next_graphics_state_num;
+        self.next_graphics_state_num += 1;
         format!("gs{}", num)
     }
 }
