@@ -19,17 +19,27 @@ fn main() {
 
     println!("{:?}", args.subset);
 
+    let filter_replace = |f: &TestFile| *&args.subset.as_ref().map_or(true, |r| r.is_match(f.as_raw_path().as_path().to_str().unwrap()));
+
     let svg_files: Vec<TestFile> = if !args.replace {
         // Get all svg files
-        (&*SVG_FILES).iter().map(|f| TestFile::new(f)).collect()
+        (&*SVG_FILES)
+            .iter()
+            .map(|f| TestFile::new(f))
+            .filter(filter_replace)
+            .collect()
     } else {
         // Only get svg files with existing references
         let existing_svg_references: Vec<TestFile> =
-            (&*REF_FILES).iter().map(|f| TestFile::new(f)).collect();
+            (&*REF_FILES)
+                .iter()
+                .map(|f| TestFile::new(f))
+                .collect();
         (&*SVG_FILES)
             .iter()
             .map(|f| TestFile::new(f))
             .filter(|f| existing_svg_references.contains(f))
+            .filter(filter_replace)
             .collect()
     };
 
