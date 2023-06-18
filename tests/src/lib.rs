@@ -177,7 +177,9 @@ impl TestRunner {
 pub fn read_svg(svg_string: &str) -> Tree {
     let options = usvg::Options::default();
     let mut fontdb = fontdb::Database::new();
-    fontdb.load_system_fonts();
+    fontdb.load_font_file("fonts/NotoSans-Regular.ttf").unwrap();
+    fontdb.load_font_file("fonts/NotoSans-Bold.ttf").unwrap();
+    fontdb.load_font_file("fonts/NotoSans-Italic.ttf").unwrap();
 
     let mut tree = Tree::from_str(svg_string, &options).unwrap();
     tree.convert_text(&fontdb);

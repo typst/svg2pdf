@@ -46,8 +46,8 @@ fn run() -> Result<(), String> {
     tree.convert_text(&fontdb);
 
     //TODO: hide behind debug flag
-    println!("Size: {:?}\nView Box: {:?}", tree.size, tree.view_box);
-    print_tree(&tree.root, 0);
+    //println!("Size: {:?}\nView Box: {:?}", tree.size, tree.view_box);
+    //print_tree(&tree.root, 0);
 
     // Convert SVG to PDF.
     let pdf = svg2pdf::convert_tree(&tree);
