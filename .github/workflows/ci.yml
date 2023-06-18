@@ -11,4 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo run --package svg2pdf-tests  --bin test --release
+      - run: cargo build --package svg2pdf-tests --bin test --release
+      - run: cargo run --package svg2pdf-tests --bin test --release
