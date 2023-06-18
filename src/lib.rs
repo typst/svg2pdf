@@ -15,6 +15,7 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
     let mut writer = PdfWriter::new();
     let catalog_id = ctx.alloc_ref();
     let page_tree_id = ctx.alloc_ref();
+
     let page_id = ctx.alloc_ref();
     let content_id = ctx.alloc_ref();
 
