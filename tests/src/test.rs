@@ -91,7 +91,12 @@ fn main() -> ExitCode {
                 .unwrap();
 
             if args.replace {
-                actual_image.save_with_format(svg_file.as_references_path(), image::ImageFormat::Png).unwrap();
+                actual_image
+                    .save_with_format(
+                        svg_file.as_references_path(),
+                        image::ImageFormat::Png,
+                    )
+                    .unwrap();
             }
         } else {
             successful_tests.push(svg_file);

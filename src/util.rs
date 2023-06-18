@@ -41,22 +41,22 @@ pub struct PendingXObject {
 
 pub struct PendingGraphicsState {
     name: String,
-    state_type: PendingGraphicsStateType
+    state_type: PendingGraphicsStateType,
 }
 
 enum PendingGraphicsStateType {
     Opacity(Opacity),
-    SoftMask(SoftMask)
+    SoftMask(SoftMask),
 }
 
 struct Opacity {
-     stroke_opacity: f32,
-     fill_opacity: f32
+    stroke_opacity: f32,
+    fill_opacity: f32,
 }
 
 struct SoftMask {
-     mask_type: MaskType,
-     group: Ref,
+    mask_type: MaskType,
+    group: Ref,
 }
 
 impl Allocator {
@@ -121,25 +121,31 @@ impl Deferrer {
     }
 
     pub fn add_soft_mask(&mut self, name: String, group: Ref) {
-        let state_type = PendingGraphicsStateType::SoftMask(SoftMask {mask_type: MaskType::Alpha, group});
+        let state_type = PendingGraphicsStateType::SoftMask(SoftMask {
+            mask_type: MaskType::Alpha,
+            group,
+        });
         self.pending_graphics_states
             .last_mut()
             .unwrap()
-            .push(PendingGraphicsState {name, state_type});
+            .push(PendingGraphicsState { name, state_type });
     }
 
-    pub fn add_opacity(&mut self, name: String, stroke_opacity: Option<f32>, fill_opacity: Option<f32>) {
-
-        let state_type = PendingGraphicsStateType::Opacity(
-            Opacity {
-                stroke_opacity: stroke_opacity.unwrap_or(1.0),
-                fill_opacity: fill_opacity.unwrap_or(1.0)}
-        );
+    pub fn add_opacity(
+        &mut self,
+        name: String,
+        stroke_opacity: Option<f32>,
+        fill_opacity: Option<f32>,
+    ) {
+        let state_type = PendingGraphicsStateType::Opacity(Opacity {
+            stroke_opacity: stroke_opacity.unwrap_or(1.0),
+            fill_opacity: fill_opacity.unwrap_or(1.0),
+        });
 
         self.pending_graphics_states
             .last_mut()
             .unwrap()
-            .push(PendingGraphicsState {name, state_type});
+            .push(PendingGraphicsState { name, state_type });
     }
 
     fn write_pending_x_objects(&mut self, resources: &mut Resources) {
@@ -245,7 +251,11 @@ impl Context {
         name.clone()
     }
 
-    pub fn alloc_opacity(&mut self, stroke_opacity: Option<f32>, fill_opacity: Option<f32>) -> String {
+    pub fn alloc_opacity(
+        &mut self,
+        stroke_opacity: Option<f32>,
+        fill_opacity: Option<f32>,
+    ) -> String {
         let name = self.allocator.alloc_graphics_state_name();
 
         self.deferrer.add_opacity(name.clone(), stroke_opacity, fill_opacity);

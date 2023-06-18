@@ -21,10 +21,7 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
     let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get() as f32);
 
     if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
-        let name = ctx.alloc_opacity(
-            stroke_opacity,
-            fill_opacity,
-        );
+        let name = ctx.alloc_opacity(stroke_opacity, fill_opacity);
         content.set_parameters(Name(name.as_bytes()));
     }
 
@@ -55,7 +52,6 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
 }
 
 fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
-
     match (stroke, fill.map(|f| f.rule)) {
         (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
         (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
@@ -90,8 +86,7 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
         Paint::Color(c) => {
             content.set_stroke_color(RgbColor::from(*c).to_array());
         }
-        _ => {}
-        //_ => todo!(),
+        _ => {} //_ => todo!(),
     }
 }
 
