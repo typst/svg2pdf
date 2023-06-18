@@ -1,12 +1,12 @@
 use crate::color::{RgbColor, SRGB};
-use crate::util::TransformExt;
+use crate::util::{Context, TransformExt};
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
-use pdf_writer::Content;
+use pdf_writer::{Content, Name};
 use usvg::Fill;
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 
-pub(crate) fn render(path: &usvg::Path, content: &mut Content) {
+pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context) {
     if path.visibility != Visibility::Visible {
         return;
     }
@@ -16,6 +16,13 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content) {
 
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+
+    let name = ctx.alloc_opacity(
+        path.stroke.as_ref().map(|s| s.opacity.get() as f32),
+        path.fill.as_ref().map(|f| f.opacity.get() as f32)
+    );
+
+    content.set_parameters(Name(name.as_bytes()));
 
     if let Some(stroke) = &path.stroke {
         set_stroke(stroke, content);
@@ -44,6 +51,7 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
 }
 
 fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
+
     match (stroke, fill.map(|f| f.rule)) {
         (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
         (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),

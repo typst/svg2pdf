@@ -1,3 +1,4 @@
+use clap::Parser;
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
 use std::fmt::Formatter;
@@ -6,6 +7,13 @@ use std::process::ExitCode;
 use std::{fmt, fs, io};
 use svg2pdf_tests::*;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+
+#[derive(Parser, Debug)]
+#[clap(about, version)]
+struct Args {
+    #[clap(short, long)]
+    replace: bool,
+}
 
 enum TestStatus {
     SUCCESS,
@@ -24,6 +32,8 @@ impl fmt::Display for TestStatus {
 }
 
 fn main() -> ExitCode {
+    let args = Args::parse();
+
     let references: Vec<TestFile> =
         (&*REF_FILES).iter().map(|f| TestFile::new(f)).collect();
     let svg_files: Vec<TestFile> =
@@ -79,6 +89,10 @@ fn main() -> ExitCode {
             diff_image
                 .save_with_format(svg_file.as_diffs_path(), image::ImageFormat::Png)
                 .unwrap();
+
+            if args.replace {
+                actual_image.save_with_format(svg_file.as_references_path(), image::ImageFormat::Png).unwrap();
+            }
         } else {
             successful_tests.push(svg_file);
             let _ = print_test_case_result(TestStatus::SUCCESS, svg_file);

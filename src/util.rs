@@ -40,9 +40,23 @@ pub struct PendingXObject {
 }
 
 pub struct PendingGraphicsState {
-    pub name: String,
-    pub mask_type: MaskType,
-    pub group: Ref,
+    name: String,
+    state_type: PendingGraphicsStateType
+}
+
+enum PendingGraphicsStateType {
+    Opacity(Opacity),
+    SoftMask(SoftMask)
+}
+
+struct Opacity {
+     stroke_opacity: f32,
+     fill_opacity: f32
+}
+
+struct SoftMask {
+     mask_type: MaskType,
+     group: Ref,
 }
 
 impl Allocator {
@@ -107,10 +121,25 @@ impl Deferrer {
     }
 
     pub fn add_soft_mask(&mut self, name: String, group: Ref) {
+        let state_type = PendingGraphicsStateType::SoftMask(SoftMask {mask_type: MaskType::Alpha, group});
         self.pending_graphics_states
             .last_mut()
             .unwrap()
-            .push(PendingGraphicsState { name, mask_type: MaskType::Alpha, group });
+            .push(PendingGraphicsState {name, state_type});
+    }
+
+    pub fn add_opacity(&mut self, name: String, stroke_opacity: Option<f32>, fill_opacity: Option<f32>) {
+
+        let state_type = PendingGraphicsStateType::Opacity(
+            Opacity {
+                stroke_opacity: stroke_opacity.unwrap_or(1.0),
+                fill_opacity: fill_opacity.unwrap_or(1.0)}
+        );
+
+        self.pending_graphics_states
+            .last_mut()
+            .unwrap()
+            .push(PendingGraphicsState {name, state_type});
     }
 
     fn write_pending_x_objects(&mut self, resources: &mut Resources) {
@@ -134,11 +163,22 @@ impl Deferrer {
                 let mut state = graphics
                     .insert(Name(pending_graphics_state.name.as_bytes()))
                     .start::<ExtGraphicsState>();
-                state
-                    .soft_mask()
-                    .subtype(MaskType::Alpha)
-                    .group(pending_graphics_state.group);
-                state.finish();
+
+                match &pending_graphics_state.state_type {
+                    PendingGraphicsStateType::SoftMask(soft_mask) => {
+                        state
+                            .soft_mask()
+                            .subtype(soft_mask.mask_type)
+                            .group(soft_mask.group)
+                            .finish();
+                    }
+                    PendingGraphicsStateType::Opacity(opacity) => {
+                        state
+                            .non_stroking_alpha(opacity.fill_opacity)
+                            .stroking_alpha(opacity.stroke_opacity)
+                            .finish();
+                    }
+                }
             }
             graphics.finish();
         }
@@ -203,6 +243,13 @@ impl Context {
 
         self.deferrer.add_soft_mask(name.clone(), group);
         name.clone()
+    }
+
+    pub fn alloc_opacity(&mut self, stroke_opacity: Option<f32>, fill_opacity: Option<f32>) -> String {
+        let name = self.allocator.alloc_graphics_state_name();
+
+        self.deferrer.add_opacity(name.clone(), stroke_opacity, fill_opacity);
+        name
     }
 }
 
