@@ -69,7 +69,7 @@ pub const SKIPPED_FILES: [&str; 56] = [
     "svgs/resvg/paint-servers/radialGradient/fr=0.7.svg",
     "svgs/resvg/paint-servers/radialGradient/invalid-gradientTransform.svg",
     "svgs/resvg/paint-servers/radialGradient/invalid-gradientUnits.svg",
-    "svgs/resvg/paint-servers/radialGradient/negative-r.svg"
+    "svgs/resvg/paint-servers/radialGradient/negative-r.svg",
 ];
 
 lazy_static! {
@@ -85,7 +85,6 @@ lazy_static! {
             .map(|e| e.into_path())
             .collect()
     };
-
     pub static ref REF_FILES: Vec<PathBuf> = {
         WalkDir::new(REF_DIR)
             .into_iter()
@@ -101,7 +100,7 @@ lazy_static! {
 
 #[derive(Eq, PartialEq)]
 pub struct TestFile {
-    raw_path: PathBuf
+    raw_path: PathBuf,
 }
 
 impl TestFile {
@@ -110,20 +109,14 @@ impl TestFile {
 
         if stripped_path.starts_with(SVG_DIR) {
             stripped_path = PathBuf::from(stripped_path.strip_prefix(SVG_DIR).unwrap());
-        }   else if stripped_path.starts_with(REF_DIR) {
+        } else if stripped_path.starts_with(REF_DIR) {
             stripped_path = PathBuf::from(stripped_path.strip_prefix(REF_DIR).unwrap());
         }
 
-        TestFile {
-            raw_path: stripped_path
-        }
+        TestFile { raw_path: stripped_path }
     }
 
-    fn convert_path(
-        &self,
-        prefix: &Path,
-        extension: &str,
-    ) -> PathBuf {
+    fn convert_path(&self, prefix: &Path, extension: &str) -> PathBuf {
         let mut path_buf = PathBuf::new();
         path_buf.push(prefix);
         path_buf.push(self.raw_path.as_path());
@@ -159,7 +152,7 @@ impl TestRunner {
                 Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
                     "./pdfium_lib/",
                 ))
-                    .unwrap(),
+                .unwrap(),
             ),
         }
     }
@@ -199,17 +192,26 @@ pub fn svg_to_image(svg_string: &str, test_runner: &TestRunner) -> RgbaImage {
 
 #[cfg(test)]
 mod tests {
-    use std::path::{Path, PathBuf};
     use crate::TestFile;
+    use std::path::{Path, PathBuf};
 
     #[test]
     fn file_path_from_svg_works_correctly() {
         let path = Path::new("svgs/resvg/structure/svg/zero-size.svg");
         let file_path = TestFile::new(path);
 
-        assert_eq!(file_path.as_raw_path(), PathBuf::from("resvg/structure/svg/zero-size.svg"));
-        assert_eq!(file_path.as_svg_path(), PathBuf::from("svgs/resvg/structure/svg/zero-size.svg"));
-        assert_eq!(file_path.as_references_path(), PathBuf::from("references/resvg/structure/svg/zero-size.png"));
+        assert_eq!(
+            file_path.as_raw_path(),
+            PathBuf::from("resvg/structure/svg/zero-size.svg")
+        );
+        assert_eq!(
+            file_path.as_svg_path(),
+            PathBuf::from("svgs/resvg/structure/svg/zero-size.svg")
+        );
+        assert_eq!(
+            file_path.as_references_path(),
+            PathBuf::from("references/resvg/structure/svg/zero-size.png")
+        );
     }
 
     #[test]
@@ -217,9 +219,18 @@ mod tests {
         let path = Path::new("resvg/structure/svg/zero-size.svg");
         let file_path = TestFile::new(path);
 
-        assert_eq!(file_path.as_raw_path(), PathBuf::from("resvg/structure/svg/zero-size.svg"));
-        assert_eq!(file_path.as_svg_path(), PathBuf::from("svgs/resvg/structure/svg/zero-size.svg"));
-        assert_eq!(file_path.as_references_path(), PathBuf::from("references/resvg/structure/svg/zero-size.png"));
+        assert_eq!(
+            file_path.as_raw_path(),
+            PathBuf::from("resvg/structure/svg/zero-size.svg")
+        );
+        assert_eq!(
+            file_path.as_svg_path(),
+            PathBuf::from("svgs/resvg/structure/svg/zero-size.svg")
+        );
+        assert_eq!(
+            file_path.as_references_path(),
+            PathBuf::from("references/resvg/structure/svg/zero-size.png")
+        );
     }
 
     #[test]
@@ -227,8 +238,17 @@ mod tests {
         let path = Path::new("references/resvg/structure/svg/zero-size.png");
         let file_path = TestFile::new(path);
 
-        assert_eq!(file_path.as_raw_path(), PathBuf::from("resvg/structure/svg/zero-size.svg"));
-        assert_eq!(file_path.as_svg_path(), PathBuf::from("svgs/resvg/structure/svg/zero-size.svg"));
-        assert_eq!(file_path.as_references_path(), PathBuf::from("references/resvg/structure/svg/zero-size.png"));
+        assert_eq!(
+            file_path.as_raw_path(),
+            PathBuf::from("resvg/structure/svg/zero-size.svg")
+        );
+        assert_eq!(
+            file_path.as_svg_path(),
+            PathBuf::from("svgs/resvg/structure/svg/zero-size.svg")
+        );
+        assert_eq!(
+            file_path.as_references_path(),
+            PathBuf::from("references/resvg/structure/svg/zero-size.png")
+        );
     }
 }
