@@ -17,12 +17,16 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
-    let name = ctx.alloc_opacity(
-        path.stroke.as_ref().map(|s| s.opacity.get() as f32),
-        path.fill.as_ref().map(|f| f.opacity.get() as f32)
-    );
+    let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get() as f32);
+    let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get() as f32);
 
-    content.set_parameters(Name(name.as_bytes()));
+    if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
+        let name = ctx.alloc_opacity(
+            stroke_opacity,
+            fill_opacity,
+        );
+        content.set_parameters(Name(name.as_bytes()));
+    }
 
     if let Some(stroke) = &path.stroke {
         set_stroke(stroke, content);

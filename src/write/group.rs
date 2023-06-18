@@ -35,6 +35,14 @@ pub(crate) fn create_x_object(
         child_content.set_parameters(Name(name.as_bytes()));
     }
 
+    if group.opacity.get() != 1.0 {
+        let name = ctx.alloc_opacity(
+            None,
+            Some(group.opacity.get() as f32)
+        );
+        child_content.set_parameters(Name(name.as_bytes()));
+    }
+
     for child in node.children() {
         child.render(writer, &mut child_content, ctx);
     }
