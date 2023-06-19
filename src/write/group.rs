@@ -1,8 +1,8 @@
-use crate::util::{calc_node_bbox, Context, TransformExt};
+use crate::util::{calc_node_bbox, Context, Units};
 use crate::write::clip::alloc_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
-use usvg::{Node, NodeExt};
+use usvg::{Node, Transform};
 
 pub(crate) fn render(
     group: &usvg::Group,
@@ -35,6 +35,11 @@ pub(crate) fn create_x_object(
         .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
 
     if let Some(clip_path) = &group.clip_path {
+        match clip_path.units {
+            usvg::Units::ObjectBoundingBox => ctx.context_frame.set_units(Units::ObjectBoundingBox(Transform::from_bbox(bbox))),
+            usvg::Units::UserSpaceOnUse => ctx.context_frame.set_units(Units::UserSpaceOnUse)
+        }
+
         let name = alloc_clip_path(clip_path.clone(), writer, ctx);
         child_content.set_parameters(Name(name.as_bytes()));
     }

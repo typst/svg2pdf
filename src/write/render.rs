@@ -1,7 +1,6 @@
-use crate::util::{Context, TransformExt};
+use crate::util::Context;
 use crate::write::{group, path};
 use pdf_writer::{Content, PdfWriter};
-use usvg::utils::view_box_to_transform;
 use usvg::{Node, NodeKind, Tree};
 
 pub fn tree_to_stream(
