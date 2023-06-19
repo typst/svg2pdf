@@ -11,8 +11,10 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
         return;
     }
 
-    content.save_state();
-    content.transform(path.transform.get_transform());
+    ctx.context_frame.push(content);
+    ctx.context_frame.append_transform(&path.transform);
+
+    content.transform(ctx.context_frame.transform().get_transform());
 
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
@@ -36,7 +38,7 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
     draw_path(path.data.segments(), content);
     finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
 
-    content.restore_state();
+    ctx.context_frame.pop(content);
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {

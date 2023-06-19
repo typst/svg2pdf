@@ -1,10 +1,11 @@
 use crate::color::SRGB;
 use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
-use pdf_writer::{Finish, Name, Rect, Ref};
+use pdf_writer::{Content, Finish, Name, Rect, Ref};
 use usvg::{
     FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform, Tree, ViewBox,
 };
+use usvg::utils::view_box_to_transform;
 
 pub trait TransformExt {
     fn get_transform(&self) -> [f32; 6];
@@ -191,12 +192,88 @@ impl Deferrer {
     }
 }
 
+#[derive(Clone)]
+pub enum RenderContext {
+    SVG,
+    Image
+}
+
+#[derive(Clone)]
+struct Frame {
+    render_context: RenderContext,
+    current_transform: Transform
+}
+
+impl Default for Frame {
+    fn default() -> Self {
+        Self {
+            render_context: RenderContext::SVG,
+            current_transform: Transform::default()
+        }
+    }
+}
+
+pub struct ContextFrame {
+    frames: Vec<Frame>,
+    pub svg_base_transform: Transform
+}
+
+impl ContextFrame {
+    pub fn new(dpi: f64, size: &Size, viewbox: &ViewBox) -> Self {
+        let dpi_transform = Transform::new(72.0 / dpi, 0.0, 0.0, 72.0 / dpi, 0.0, 0.0);
+        let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, size.height());
+        let viewbox_transform = view_box_to_transform(viewbox.rect, viewbox.aspect, *size);
+
+        let mut base_transform = dpi_transform;
+        base_transform.append(&viewport_transform);
+        base_transform.append(&viewbox_transform);
+
+        Self {
+            frames: vec![Frame::default()],
+            svg_base_transform: base_transform
+        }
+    }
+
+    fn current_frame(&self) -> &Frame {
+        self.frames.last().unwrap()
+    }
+
+    fn current_frame_as_mut(&mut self) -> &mut Frame {
+        self.frames.last_mut().unwrap()
+    }
+
+    pub fn transform(&self) -> Transform {
+        let mut base_transform = match self.current_frame().render_context {
+            RenderContext::Image => Transform::default(),
+            RenderContext::SVG => self.svg_base_transform
+        };
+
+        base_transform.append(&self.current_frame().current_transform);
+        base_transform
+    }
+
+    pub fn push(&mut self, content: &mut Content) {
+        content.save_state();
+        self.frames.push(self.current_frame().clone());
+    }
+
+    pub fn pop(&mut self, content: &mut Content) {
+        content.restore_state();
+        self.frames.pop();
+    }
+
+    pub fn append_transform(&mut self, transform: &Transform) {
+        self.current_frame_as_mut().current_transform.append(transform);
+    }
+}
+
 pub struct Context {
     dpi: f32,
     pub viewbox: ViewBox,
     pub size: Size,
     allocator: Allocator,
     deferrer: Deferrer,
+    pub context_frame: ContextFrame
 }
 
 impl Context {
@@ -208,6 +285,7 @@ impl Context {
             size: tree.size,
             allocator: Allocator::new(),
             deferrer: Deferrer::new(),
+            context_frame: ContextFrame::new(72.0, &tree.size, &tree.view_box)
         }
     }
 

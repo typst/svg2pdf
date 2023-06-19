@@ -27,8 +27,8 @@ pub(crate) fn create_x_object(
 
     let mut child_content = Content::new();
 
-    child_content.save_state();
-    child_content.transform(group.transform.get_transform());
+    ctx.context_frame.push(&mut child_content);
+    ctx.context_frame.append_transform(&group.transform);
 
     if let Some(clip_path) = &group.clip_path {
         let name = alloc_clip_path(clip_path.clone(), writer, ctx);
@@ -47,7 +47,7 @@ pub(crate) fn create_x_object(
         child.render(writer, &mut child_content, ctx);
     }
 
-    child_content.restore_state();
+    ctx.context_frame.pop(&mut child_content);
 
     let child_content_stream = child_content.finish();
 
@@ -55,9 +55,7 @@ pub(crate) fn create_x_object(
     ctx.pop_context(&mut x_object.resources());
 
     // TODO: Figure out a more elegant way to calculate the bbox?
-    let bbox = calc_node_bbox(&node, group.transform)
-        .and_then(|b| b.to_rect())
-        .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
+    let bbox = usvg::Rect::new(0.0, 0.0, 1000.0, 1000.0).unwrap();
 
     let mut group = x_object.group();
     group
