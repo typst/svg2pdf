@@ -1,7 +1,7 @@
 use crate::color::{RgbColor, SRGB};
-use crate::util::{Context, TransformExt};
+use crate::util::{Context, NameExt, TransformExt};
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
-use pdf_writer::{Content, Name};
+use pdf_writer::Content;
 use usvg::Fill;
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
@@ -24,7 +24,7 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
 
     if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
         let name = ctx.alloc_opacity(stroke_opacity, fill_opacity);
-        content.set_parameters(Name(name.as_bytes()));
+        content.set_parameters(name.as_name());
     }
 
     if let Some(stroke) = &path.stroke {

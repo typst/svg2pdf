@@ -24,6 +24,16 @@ impl TransformExt for usvg::Transform {
     }
 }
 
+pub trait NameExt {
+    fn as_name(&self) -> Name;
+}
+
+impl NameExt for String {
+    fn as_name(&self) -> Name {
+        Name(self.as_bytes())
+    }
+}
+
 pub struct Allocator {
     /// The next id for indirect object references
     next_ref_id: i32,
@@ -155,7 +165,7 @@ impl Deferrer {
         if !pending_x_objects.is_empty() {
             let mut x_objects = resources.x_objects();
             for x_object in pending_x_objects {
-                x_objects.pair(Name(x_object.name.as_bytes()), x_object.reference);
+                x_objects.pair(x_object.name.as_name(), x_object.reference);
             }
             x_objects.finish();
         }
@@ -168,7 +178,7 @@ impl Deferrer {
             let mut graphics = resources.ext_g_states();
             for pending_graphics_state in pending_graphics_states {
                 let mut state = graphics
-                    .insert(Name(pending_graphics_state.name.as_bytes()))
+                    .insert(pending_graphics_state.name.as_name())
                     .start::<ExtGraphicsState>();
 
                 match &pending_graphics_state.state_type {

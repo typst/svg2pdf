@@ -1,7 +1,7 @@
-use crate::util::{calc_node_bbox_to_rect, Context, Units};
+use crate::util::{calc_node_bbox_to_rect, Context, NameExt, Units};
 use crate::write::clip::alloc_clip_path;
 use crate::write::render::Render;
-use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
+use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref};
 use usvg::{Node, Transform};
 
 pub(crate) fn render(
@@ -12,7 +12,7 @@ pub(crate) fn render(
     ctx: &mut Context,
 ) {
     let (name, _) = create_x_object(group, node, writer, ctx);
-    content.x_object(Name(name.as_bytes()));
+    content.x_object(name.as_name());
 }
 
 pub(crate) fn create_x_object(
@@ -40,7 +40,7 @@ pub(crate) fn create_x_object(
         }
 
         let name = alloc_clip_path(clip_path.clone(), writer, ctx);
-        child_content.set_parameters(Name(name.as_bytes()));
+        child_content.set_parameters(name.as_name());
     }
 
     if group.opacity.get() != 1.0 {
@@ -48,7 +48,7 @@ pub(crate) fn create_x_object(
             None,
             Some(group.opacity.get() as f32)
         );
-        child_content.set_parameters(Name(name.as_bytes()));
+        child_content.set_parameters(name.as_name());
     }
 
     for child in node.children() {
