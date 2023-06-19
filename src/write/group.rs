@@ -1,4 +1,4 @@
-use crate::util::{calc_node_bbox, Context, Units};
+use crate::util::{calc_node_bbox, calc_node_bbox_to_rect, Context, Units};
 use crate::write::clip::alloc_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
@@ -30,13 +30,12 @@ pub(crate) fn create_x_object(
     ctx.context_frame.push(&mut child_content);
     ctx.context_frame.append_transform(&group.transform);
 
-    let bbox = calc_node_bbox(&node, ctx.context_frame.transform())
-        .and_then(|b| b.to_rect())
-        .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
+    let pdf_bbox = calc_node_bbox_to_rect(&node, ctx.context_frame.transform());
 
     if let Some(clip_path) = &group.clip_path {
+        let svg_bbox = calc_node_bbox_to_rect(&node, Transform::default());
         match clip_path.units {
-            usvg::Units::ObjectBoundingBox => ctx.context_frame.set_units(Units::ObjectBoundingBox(Transform::from_bbox(bbox))),
+            usvg::Units::ObjectBoundingBox => ctx.context_frame.set_units(Units::ObjectBoundingBox(Transform::from_bbox(svg_bbox))),
             usvg::Units::UserSpaceOnUse => ctx.context_frame.set_units(Units::UserSpaceOnUse)
         }
 
@@ -73,10 +72,10 @@ pub(crate) fn create_x_object(
     group.finish();
 
     x_object.bbox(Rect::new(
-        bbox.x() as f32,
-        bbox.y() as f32,
-        (bbox.x() + bbox.width()) as f32,
-        (bbox.y() + bbox.height()) as f32,
+        pdf_bbox.x() as f32,
+        pdf_bbox.y() as f32,
+        (pdf_bbox.x() + pdf_bbox.width()) as f32,
+        (pdf_bbox.y() + pdf_bbox.height()) as f32,
     ));
     x_object.finish();
     (name, reference)

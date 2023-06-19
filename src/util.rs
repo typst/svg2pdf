@@ -250,6 +250,10 @@ impl ContextFrame {
         self.frames.last_mut().unwrap()
     }
 
+    pub fn raw_transform(&self) -> Transform {
+        self.current_frame().current_transform
+    }
+
     pub fn transform(&self) -> Transform {
         let mut base_transform = match self.current_frame().render_context {
             RenderContext::Image => Transform::default(),
@@ -356,6 +360,12 @@ impl Context {
         self.deferrer.add_opacity(name.clone(), stroke_opacity, fill_opacity);
         name
     }
+}
+
+pub fn calc_node_bbox_to_rect(node: &Node, ts: Transform) -> usvg::Rect {
+    calc_node_bbox(node, ts)
+        .and_then(|b| b.to_rect())
+        .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap())
 }
 
 // Taken from resvg
