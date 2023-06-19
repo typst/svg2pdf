@@ -2,7 +2,7 @@ use crate::util::{calc_node_bbox, Context, TransformExt};
 use crate::write::clip::alloc_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
-use usvg::Node;
+use usvg::{Node, NodeExt};
 
 pub(crate) fn render(
     group: &usvg::Group,
@@ -30,6 +30,10 @@ pub(crate) fn create_x_object(
     ctx.context_frame.push(&mut child_content);
     ctx.context_frame.append_transform(&group.transform);
 
+    let bbox = calc_node_bbox(&node, ctx.context_frame.transform())
+        .and_then(|b| b.to_rect())
+        .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap());
+
     if let Some(clip_path) = &group.clip_path {
         let name = alloc_clip_path(clip_path.clone(), writer, ctx);
         child_content.set_parameters(Name(name.as_bytes()));
@@ -53,9 +57,6 @@ pub(crate) fn create_x_object(
 
     let mut x_object = writer.form_xobject(reference, &child_content_stream);
     ctx.pop_context(&mut x_object.resources());
-
-    // TODO: Figure out a more elegant way to calculate the bbox?
-    let bbox = usvg::Rect::new(0.0, 0.0, 1000.0, 1000.0).unwrap();
 
     let mut group = x_object.group();
     group
