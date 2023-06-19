@@ -194,8 +194,7 @@ impl Deferrer {
 
 #[derive(Clone)]
 pub enum RenderContext {
-    SVG,
-    Image
+    SVG
 }
 
 #[derive(Clone)]
@@ -250,13 +249,8 @@ impl ContextFrame {
         self.frames.last_mut().unwrap()
     }
 
-    pub fn raw_transform(&self) -> Transform {
-        self.current_frame().current_transform
-    }
-
     pub fn transform(&self) -> Transform {
         let mut base_transform = match self.current_frame().render_context {
-            RenderContext::Image => Transform::default(),
             RenderContext::SVG => self.svg_base_transform
         };
 

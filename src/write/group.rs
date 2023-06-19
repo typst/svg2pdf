@@ -1,4 +1,4 @@
-use crate::util::{calc_node_bbox, calc_node_bbox_to_rect, Context, Units};
+use crate::util::{calc_node_bbox_to_rect, Context, Units};
 use crate::write::clip::alloc_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref};
