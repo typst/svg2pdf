@@ -123,6 +123,7 @@ pub const SKIPPED_FILES: [&str; 104] = [
 lazy_static! {
     pub static ref SVG_FILES: Vec<PathBuf> = {
         WalkDir::new(SVG_DIR)
+            .sort_by_file_name()
             .into_iter()
             .filter_map(|e| e.ok())
             .filter(|e| e.file_type().is_file())
@@ -135,6 +136,7 @@ lazy_static! {
     };
     pub static ref REF_FILES: Vec<PathBuf> = {
         WalkDir::new(REF_DIR)
+            .sort_by_file_name()
             .into_iter()
             .filter_map(|e| e.ok())
             .filter(|e| e.file_type().is_file())
