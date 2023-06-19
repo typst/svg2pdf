@@ -19,7 +19,7 @@ path = "src/generate.rs"
 fontdb = "0.13"
 svg2pdf = { path = ".." }
 usvg = "0.32"
-pdfium-render = "0.8.5"
+pdfium-render = {git = "https://github.com/ajrcarey/pdfium-render#ade57a6"}
 walkdir = "2.3.3"
 lazy_static = "1.4.0"
 pdf-writer = "0.7"

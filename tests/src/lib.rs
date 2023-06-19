@@ -1,7 +1,7 @@
 use image::RgbaImage;
 use lazy_static::lazy_static;
 use pdfium_render::pdfium::Pdfium;
-use pdfium_render::prelude::PdfRenderConfig;
+use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
 use std::path::{Path, PathBuf};
 use usvg::{Tree, TreeParsing, TreeTextToPath};
 use walkdir::WalkDir;
@@ -208,7 +208,10 @@ impl TestRunner {
     pub fn render_pdf(&self, pdf: &[u8]) -> RgbaImage {
         let document = self.pdfium.load_pdf_from_byte_slice(pdf, None);
 
-        let render_config = PdfRenderConfig::new().scale_page_by_factor(2.5);
+        let render_config = PdfRenderConfig::new()
+            .scale_page_by_factor(2.5)
+            .clear_before_rendering(true)
+            .set_clear_color(PdfColor::new(255, 255, 255, 0));
 
         document
             .unwrap()
