@@ -1,5 +1,5 @@
 use crate::util::{calc_node_bbox_to_rect, Context, NameExt, Units};
-use crate::write::clip::alloc_clip_path;
+use crate::write::clip::create_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref};
 use usvg::{Node, Transform};
@@ -33,13 +33,7 @@ pub(crate) fn create_x_object(
     let pdf_bbox = calc_node_bbox_to_rect(&node, ctx.context_frame.transform());
 
     if let Some(clip_path) = &group.clip_path {
-        let svg_bbox = calc_node_bbox_to_rect(&node, Transform::default());
-        match clip_path.units {
-            usvg::Units::ObjectBoundingBox => ctx.context_frame.set_units(Units::ObjectBoundingBox(Transform::from_bbox(svg_bbox))),
-            usvg::Units::UserSpaceOnUse => ctx.context_frame.set_units(Units::UserSpaceOnUse)
-        }
-
-        let name = alloc_clip_path(clip_path.clone(), writer, ctx);
+        let name = create_clip_path(clip_path.clone(), node, writer, ctx);
         child_content.set_parameters(name.as_name());
     }
 
