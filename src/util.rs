@@ -38,11 +38,14 @@ pub struct Allocator {
     /// The next id for indirect object references
     next_ref_id: i32,
     /// The next number that will be used for the name of an XObject in a resource
-    /// dictionary, e.g. "xo1"
+    /// dictionary, e.g. "xo0"
     next_x_object_num: i32,
     /// The next number that will be used for the name of a graphics state in a resource
-    /// dictionary, e.g. "gs1"
+    /// dictionary, e.g. "gs0"
     next_graphics_state_num: i32,
+    /// The next number that will be used for the name of a pattern in a resource
+    /// dictionary, e.g. "po0"
+    next_patterns_num: i32,
 }
 
 pub struct PendingXObject {
@@ -50,12 +53,17 @@ pub struct PendingXObject {
     pub reference: Ref,
 }
 
-pub struct PendingGraphicsState {
-    name: String,
-    state_type: PendingGraphicsStateType,
+pub struct PendingPattern {
+    pub name: String,
+    pub reference: Ref,
 }
 
-enum PendingGraphicsStateType {
+pub struct PendingGraphicsState {
+    name: String,
+    state_type: GraphicsStateType,
+}
+
+enum GraphicsStateType {
     Opacity(Opacity),
     SoftMask(SoftMask),
 }
@@ -76,6 +84,7 @@ impl Allocator {
             next_ref_id: 1,
             next_x_object_num: 0,
             next_graphics_state_num: 0,
+            next_patterns_num: 0
         }
     }
 
@@ -96,10 +105,17 @@ impl Allocator {
         self.next_graphics_state_num += 1;
         format!("gs{}", num)
     }
+
+    pub fn alloc_patterns_name(&mut self) -> String {
+        let num = self.next_patterns_num;
+        self.next_patterns_num += 1;
+        format!("po{}", num)
+    }
 }
 
 pub struct Deferrer {
     pending_x_objects: Vec<Vec<PendingXObject>>,
+    pending_patterns: Vec<Vec<PendingPattern>>,
     pending_graphics_states: Vec<Vec<PendingGraphicsState>>,
 }
 
@@ -108,11 +124,13 @@ impl Deferrer {
         Deferrer {
             pending_x_objects: Vec::new(),
             pending_graphics_states: Vec::new(),
+            pending_patterns: Vec::new()
         }
     }
 
     pub fn push_context(&mut self) {
         self.pending_x_objects.push(Vec::new());
+        self.pending_patterns.push(Vec::new());
         self.pending_graphics_states.push(Vec::new());
     }
 
@@ -122,6 +140,7 @@ impl Deferrer {
 
         self.write_pending_x_objects(resources);
         self.write_pending_graphics_states(resources);
+        self.write_pending_patterns(resources);
     }
 
     pub fn add_x_object(&mut self, name: String, reference: Ref) {
@@ -131,8 +150,15 @@ impl Deferrer {
             .push(PendingXObject { name, reference });
     }
 
+    pub fn add_pattern(&mut self, name: String, reference: Ref) {
+        self.pending_patterns
+            .last_mut()
+            .unwrap()
+            .push(PendingPattern { name, reference });
+    }
+
     pub fn add_soft_mask(&mut self, name: String, group: Ref) {
-        let state_type = PendingGraphicsStateType::SoftMask(SoftMask {
+        let state_type = GraphicsStateType::SoftMask(SoftMask {
             mask_type: MaskType::Alpha,
             group,
         });
@@ -148,7 +174,7 @@ impl Deferrer {
         stroke_opacity: Option<f32>,
         fill_opacity: Option<f32>,
     ) {
-        let state_type = PendingGraphicsStateType::Opacity(Opacity {
+        let state_type = GraphicsStateType::Opacity(Opacity {
             stroke_opacity: stroke_opacity.unwrap_or(1.0),
             fill_opacity: fill_opacity.unwrap_or(1.0),
         });
@@ -171,6 +197,18 @@ impl Deferrer {
         }
     }
 
+    fn write_pending_patterns(&mut self, resources: &mut Resources) {
+        let pending_patterns = self.pending_patterns.pop().unwrap();
+
+        if !pending_patterns.is_empty() {
+            let mut patterns = resources.patterns();
+            for pattern in pending_patterns {
+                patterns.pair(pattern.name.as_name(), pattern.reference);
+            }
+            patterns.finish();
+        }
+    }
+
     fn write_pending_graphics_states(&mut self, resources: &mut Resources) {
         let pending_graphics_states = self.pending_graphics_states.pop().unwrap();
 
@@ -182,14 +220,14 @@ impl Deferrer {
                     .start::<ExtGraphicsState>();
 
                 match &pending_graphics_state.state_type {
-                    PendingGraphicsStateType::SoftMask(soft_mask) => {
+                    GraphicsStateType::SoftMask(soft_mask) => {
                         state
                             .soft_mask()
                             .subtype(soft_mask.mask_type)
                             .group(soft_mask.group)
                             .finish();
                     }
-                    PendingGraphicsStateType::Opacity(opacity) => {
+                    GraphicsStateType::Opacity(opacity) => {
                         state
                             .non_stroking_alpha(opacity.fill_opacity)
                             .stroking_alpha(opacity.stroke_opacity)
@@ -344,6 +382,14 @@ impl Context {
         let name = self.allocator.alloc_x_object_name();
 
         self.deferrer.add_x_object(name.clone(), reference);
+        (name, reference)
+    }
+
+    pub fn alloc_named_pattern(&mut self) -> (String, Ref) {
+        let reference = self.alloc_ref();
+        let name = self.allocator.alloc_patterns_name();
+
+        self.deferrer.add_soft_mask(name.clone(), reference);
         (name, reference)
     }
 

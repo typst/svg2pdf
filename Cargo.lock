@@ -970,7 +970,7 @@ dependencies = [
 [[package]]
 name = "pdfium-render"
 version = "0.8.6"
-source = "git+https://github.com/ajrcarey/pdfium-render#ade57a6#ade57a6476f56201a4155c27458c328b4a8f612b"
+source = "git+https://github.com/ajrcarey/pdfium-render#ade57a6#171abb429e419c57826203d1b4e376a954bbae46"
 dependencies = [
  "bindgen",
  "bitflags 2.3.2",
