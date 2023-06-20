@@ -11,7 +11,9 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
         return;
     }
 
-    ctx.context_frame.push(content);
+    content.save_state();
+
+    ctx.context_frame.push();
     ctx.context_frame.append_transform(&path.transform);
 
     content.transform(ctx.context_frame.transform().get_transform());
@@ -38,7 +40,8 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
     draw_path(path.data.segments(), content);
     finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
 
-    ctx.context_frame.pop(content);
+    ctx.context_frame.pop();
+    content.restore_state();
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {

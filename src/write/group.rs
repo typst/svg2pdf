@@ -27,13 +27,15 @@ pub(crate) fn create_x_object(
 
     let mut child_content = Content::new();
 
-    ctx.context_frame.push(&mut child_content);
+    child_content.save_state();
+
+    ctx.context_frame.push();
     ctx.context_frame.append_transform(&group.transform);
 
     let pdf_bbox = calc_node_bbox_to_rect(&node, ctx.context_frame.transform());
 
     if let Some(clip_path) = &group.clip_path {
-        let name = create_clip_path(clip_path.clone(),  &mut child_content,node, writer, ctx);
+        let name = create_clip_path(clip_path.clone(),  node, writer, ctx);
         child_content.set_parameters(name.as_name());
     }
 
@@ -49,7 +51,8 @@ pub(crate) fn create_x_object(
         child.render(writer, &mut child_content, ctx);
     }
 
-    ctx.context_frame.pop(&mut child_content);
+    ctx.context_frame.pop();
+    child_content.restore_state();
 
     let child_content_stream = child_content.finish();
 

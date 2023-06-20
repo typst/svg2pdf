@@ -7,12 +7,11 @@ use usvg::NodeKind::Group;
 
 pub fn create_clip_path(
     clip_path: Rc<usvg::ClipPath>,
-    content: &mut Content,
     parent: &Node,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
-    ctx.context_frame.push(content);
+    ctx.context_frame.push();
     ctx.context_frame.append_transform(&clip_path.transform);
 
     let parent_bbox = calc_node_bbox_to_rect(&parent, Transform::default());
@@ -45,6 +44,6 @@ pub fn create_clip_path(
         _ => unreachable!(),
     };
 
-    ctx.context_frame.pop(content);
+    ctx.context_frame.pop();
     name
 }

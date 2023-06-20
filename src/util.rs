@@ -311,13 +311,11 @@ impl ContextFrame {
         base_transform
     }
 
-    pub fn push(&mut self, content: &mut Content) {
-        content.save_state();
+    pub fn push(&mut self) {
         self.frames.push(self.current_frame().clone());
     }
 
-    pub fn pop(&mut self, content: &mut Content) {
-        content.restore_state();
+    pub fn pop(&mut self) {
         self.frames.pop();
     }
 

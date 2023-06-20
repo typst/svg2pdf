@@ -112,9 +112,9 @@ checksum = "604178f6c5c21f02dc555784810edfb88d34ac2c73b2eae109655649ee73ce3d"
 
 [[package]]
 name = "bindgen"
-version = "0.66.0"
+version = "0.66.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79b8b0b1a751b3cb21f8a485561988881f744d9040bae7bfa29269dcb9a1949f"
+checksum = "f2b84e06fc203107bfbad243f4aba2af864eb7db3b1cf46ea0a023b0b433d2a7"
 dependencies = [
  "bitflags 2.3.2",
  "cexpr",
@@ -241,9 +241,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.3.4"
+version = "4.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80672091db20273a15cf9fdd4e47ed43b5091ec9841bf4c6145c9dfbbcae09ed"
+checksum = "2686c4115cb0810d9a984776e197823d08ec94f176549a89a9efded477c456dc"
 dependencies = [
  "clap_builder",
  "clap_derive 4.3.2",
@@ -252,9 +252,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.3.4"
+version = "4.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1458a1df40e1e2afebb7ab60ce55c1fa8f431146205aa5f4887e0b111c27636"
+checksum = "2e53afce1efce6ed1f633cf0e57612fe51db54a1ee4fd8f8503d078fe02d69ae"
 dependencies = [
  "anstream",
  "anstyle",
@@ -970,7 +970,7 @@ dependencies = [
 [[package]]
 name = "pdfium-render"
 version = "0.8.6"
-source = "git+https://github.com/ajrcarey/pdfium-render#ade57a6#171abb429e419c57826203d1b4e376a954bbae46"
+source = "git+https://github.com/ajrcarey/pdfium-render#171abb429e419c57826203d1b4e376a954bbae46"
 dependencies = [
  "bindgen",
  "bitflags 2.3.2",
@@ -1052,9 +1052,9 @@ checksum = "767eb9f07d4a5ebcb39bbf2d452058a93c011373abf6832e24194a1c3f004794"
 
 [[package]]
 name = "prettyplease"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43ded2b5b204571f065ab8540367d738dfe1b3606ab9eb669dcfb5e7a3a07501"
+checksum = "f2b0377b720bde721213a46cda1289b2f34abf0a436907cad91578c20de0454d"
 dependencies = [
  "proc-macro2",
  "syn 2.0.18",
@@ -1326,7 +1326,7 @@ dependencies = [
 name = "svg2pdf-tests"
 version = "0.4.1"
 dependencies = [
- "clap 4.3.4",
+ "clap 4.3.5",
  "fontdb",
  "image",
  "indicatif",
