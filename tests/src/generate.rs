@@ -2,7 +2,7 @@ use clap::Parser;
 use indicatif::{ProgressBar, ProgressStyle};
 use regex::Regex;
 use std::fs;
-use std::path::Path;
+
 use svg2pdf_tests::*;
 
 #[derive(Parser, Debug)]

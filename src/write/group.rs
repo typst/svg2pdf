@@ -1,8 +1,8 @@
-use crate::util::{calc_node_bbox_to_rect, Context, NameExt, Units};
+use crate::util::{calc_node_bbox_to_rect, Context, NameExt};
 use crate::write::clip::create_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref};
-use usvg::{Node, Transform};
+use usvg::{Node};
 
 pub(crate) fn render(
     group: &usvg::Group,

@@ -1,7 +1,7 @@
 use crate::color::SRGB;
 use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
-use pdf_writer::{Content, Finish, Name, Rect, Ref};
+use pdf_writer::{Finish, Name, Rect, Ref};
 use usvg::{
     FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform, Tree, ViewBox,
 };
