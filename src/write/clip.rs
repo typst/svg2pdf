@@ -3,6 +3,7 @@ use crate::write::group;
 use pdf_writer::PdfWriter;
 use std::rc::Rc;
 use usvg::{Node, NodeKind, Transform};
+use usvg::NodeKind::Group;
 
 pub fn create_clip_path(
     clip_path: Rc<usvg::ClipPath>,
@@ -20,10 +21,24 @@ pub fn create_clip_path(
 
     match *(*clip_path).root.borrow() {
         NodeKind::Group(ref group) => {
-            let (_, group_ref) =
-                group::create_x_object(group, &(*clip_path).root, writer, ctx);
-            let name = ctx.alloc_soft_mask(group_ref);
-            name
+
+            if let Some(recursive_clip_path) = &(*clip_path).clip_path {
+                let mut new_group = usvg::Group::default();
+                new_group.clip_path = Some(recursive_clip_path.clone());
+
+                let mut new_node = Node::new(NodeKind::Group(new_group.clone()));
+                new_node.append((*clip_path).root.make_deep_copy());
+
+                let (_, group_ref) =
+                    group::create_x_object(&new_group.clone(), &new_node, writer, ctx);
+                let name = ctx.alloc_soft_mask(group_ref);
+                name
+            } else {
+                let (_, group_ref) =
+                    group::create_x_object(group, &(*clip_path).root, writer, ctx);
+                let name = ctx.alloc_soft_mask(group_ref);
+                name
+            }
         }
         _ => unreachable!(),
     }
