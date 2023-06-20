@@ -9,7 +9,10 @@ pub fn tree_to_stream(
     ctx: &mut Context,
     content: &mut Content,
 ) {
-    let _ = &tree.root.render(writer, content, ctx);
+    // Root of tree is always a group, so we can just directly iterate over all of the children
+    for el in tree.root.children() {
+        el.render(writer, content, ctx);
+    }
 }
 
 pub trait Render {
