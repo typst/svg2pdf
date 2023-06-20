@@ -33,7 +33,7 @@ pub(crate) fn create_x_object(
     let pdf_bbox = calc_node_bbox_to_rect(&node, ctx.context_frame.transform());
 
     if let Some(clip_path) = &group.clip_path {
-        let name = create_clip_path(clip_path.clone(), node, writer, ctx);
+        let name = create_clip_path(clip_path.clone(),  &mut child_content,node, writer, ctx);
         child_content.set_parameters(name.as_name());
     }
 

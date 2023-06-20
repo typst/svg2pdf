@@ -1,16 +1,18 @@
 use crate::util::{calc_node_bbox_to_rect, Context, Units};
 use crate::write::group;
-use pdf_writer::PdfWriter;
+use pdf_writer::{Content, PdfWriter};
 use std::rc::Rc;
 use usvg::{Node, NodeKind, Transform};
 use usvg::NodeKind::Group;
 
 pub fn create_clip_path(
     clip_path: Rc<usvg::ClipPath>,
+    content: &mut Content,
     parent: &Node,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
+    ctx.context_frame.push(content);
     ctx.context_frame.append_transform(&clip_path.transform);
 
     let parent_bbox = calc_node_bbox_to_rect(&parent, Transform::default());
@@ -19,9 +21,9 @@ pub fn create_clip_path(
         usvg::Units::UserSpaceOnUse => ctx.context_frame.set_units(Units::UserSpaceOnUse)
     }
 
-    match *(*clip_path).root.borrow() {
+    let name = match *(*clip_path).root.borrow() {
         NodeKind::Group(ref group) => {
-
+            // TODO: Find a better way to do this
             if let Some(recursive_clip_path) = &(*clip_path).clip_path {
                 let mut new_group = usvg::Group::default();
                 new_group.clip_path = Some(recursive_clip_path.clone());
@@ -41,5 +43,8 @@ pub fn create_clip_path(
             }
         }
         _ => unreachable!(),
-    }
+    };
+
+    ctx.context_frame.pop(content);
+    name
 }
