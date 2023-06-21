@@ -121,6 +121,8 @@ fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut 
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&pattern.transform);
 
+    let pdf_bbox = ctx.pdf_bbox_from_rect(Some(&pattern.rect.transform(&ctx.context_frame.raw_transform()).unwrap()));
+
     if let Some(viewbox) = pattern.view_box {
         ctx.context_frame.append_transform(&view_box_to_transform(viewbox.rect, viewbox.aspect, pattern.rect.size()));
     }
@@ -141,7 +143,6 @@ fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut 
             ctx.pop_context(&mut resources);
             resources.finish();
 
-            let pdf_bbox = ctx.pdf_bbox_from_rect(Some(&pattern.rect));
 
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)
