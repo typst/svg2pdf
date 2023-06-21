@@ -1,12 +1,16 @@
+use std::ptr::write;
+use std::rc::Rc;
 use crate::color::{RgbColor, SRGB};
 use crate::util::{Context, NameExt, TransformExt};
-use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
-use pdf_writer::Content;
-use usvg::Fill;
+use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType};
+use pdf_writer::{Content, Finish, PdfWriter, Rect};
+use pdf_writer::types::ColorSpaceOperand::Pattern;
+use usvg::{Fill, NodeKind};
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
+use crate::write::group::create_x_object;
 
-pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context) {
+pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context, writer: &mut PdfWriter) {
     if path.visibility != Visibility::Visible {
         return;
     }
@@ -34,7 +38,7 @@ pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context
     }
 
     if let Some(fill) = &path.fill {
-        set_fill(fill, content);
+        set_fill(fill, content, writer, ctx);
     }
 
     draw_path(path.data.segments(), content);
@@ -95,13 +99,53 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
     }
 }
 
-fn set_fill(fill: &Fill, content: &mut Content) {
+fn set_fill(fill: &Fill, content: &mut Content, writer: &mut PdfWriter, ctx: &mut Context) {
     let paint = &fill.paint;
 
     match paint {
         Paint::Color(c) => {
             content.set_fill_color(RgbColor::from(*c).to_array());
         }
+        Paint::Pattern(p) => {
+            let pattern_name = create_pattern(p.clone(), writer, ctx);
+            content.set_fill_color_space(Pattern);
+            content.set_fill_pattern(None, pattern_name.as_name());
+        }
         _ => {}
     }
+}
+
+fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut Context) -> String {
+    let (pattern_name, pattern_id) = ctx.alloc_named_pattern();
+    ctx.context_frame.push();
+    ctx.context_frame.append_transform(&pattern.transform);
+
+    ctx.push_context();
+
+    let (pattern_content_x_object_name, _) = match *(*pattern).root.borrow() {
+        NodeKind::Group(ref group) => {
+            create_x_object(group, &(*pattern).root, writer, ctx)
+        }
+        _ => unreachable!(),
+    };
+
+    let mut pattern_content = Content::new();
+    pattern_content.x_object(pattern_content_x_object_name.as_name());
+    let pattern_content_stream = pattern_content.finish();
+
+    let mut pattern = writer.tiling_pattern(pattern_id, &pattern_content_stream);
+
+    let mut resources = pattern.resources();
+    ctx.pop_context(&mut resources);
+    resources.finish();
+
+    pattern
+        .tiling_type(TilingType::ConstantSpacing)
+        .paint_type(PaintType::Colored)
+        .bbox(Rect::new(0.0, 0.0, 20.0, 20.0))
+        .x_step(20.0)
+        .y_step(20.0);
+
+    ctx.context_frame.pop();
+    pattern_name
 }

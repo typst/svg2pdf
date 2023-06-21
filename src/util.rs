@@ -364,7 +364,7 @@ impl Context {
         let reference = self.alloc_ref();
         let name = self.allocator.alloc_patterns_name();
 
-        self.deferrer.add_soft_mask(name.clone(), reference);
+        self.deferrer.add_pattern(name.clone(), reference);
         (name, reference)
     }
 

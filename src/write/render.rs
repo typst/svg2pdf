@@ -22,7 +22,7 @@ pub trait Render {
 impl Render for Node {
     fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context) {
         match *self.borrow() {
-            NodeKind::Path(ref path) => path::render(path, content, ctx),
+            NodeKind::Path(ref path) => path::render(path, content, ctx, writer),
             NodeKind::Group(ref group) => {
                 group::render(group, &self, writer, content, ctx)
             }
