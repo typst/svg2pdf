@@ -8,6 +8,7 @@ use pdf_writer::types::ColorSpaceOperand::Pattern;
 use usvg::{Fill, NodeKind};
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
+use usvg::utils::view_box_to_transform;
 use crate::write::group::create_x_object;
 
 pub(crate) fn render(path: &usvg::Path, content: &mut Content, ctx: &mut Context, writer: &mut PdfWriter) {
@@ -120,32 +121,38 @@ fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut 
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&pattern.transform);
 
+    if let Some(viewbox) = pattern.view_box {
+        ctx.context_frame.append_transform(&view_box_to_transform(viewbox.rect, viewbox.aspect, pattern.rect.size()));
+    }
+
     ctx.push_context();
 
-    let (pattern_content_x_object_name, _) = match *(*pattern).root.borrow() {
+
+
+    match *(*pattern).root.borrow() {
         NodeKind::Group(ref group) => {
-            create_x_object(group, &(*pattern).root, writer, ctx)
+            let (x_object_name, _) = create_x_object(group, &(*pattern).root, writer, ctx);
+
+            let mut pattern_content = Content::new();
+            pattern_content.x_object(x_object_name.as_name());
+            let pattern_content_stream = pattern_content.finish();
+
+            let mut tiling_pattern = writer.tiling_pattern(pattern_id, &pattern_content_stream);
+
+            let mut resources = tiling_pattern.resources();
+            ctx.pop_context(&mut resources);
+            resources.finish();
+
+            tiling_pattern
+                .tiling_type(TilingType::ConstantSpacing)
+                .paint_type(PaintType::Colored)
+                .bbox(ctx.pdf_bbox(&(*pattern).root))
+                .x_step(20.0)
+                .y_step(20.0);
+
+            ctx.context_frame.pop();
+            pattern_name
         }
         _ => unreachable!(),
-    };
-
-    let mut pattern_content = Content::new();
-    pattern_content.x_object(pattern_content_x_object_name.as_name());
-    let pattern_content_stream = pattern_content.finish();
-
-    let mut pattern = writer.tiling_pattern(pattern_id, &pattern_content_stream);
-
-    let mut resources = pattern.resources();
-    ctx.pop_context(&mut resources);
-    resources.finish();
-
-    pattern
-        .tiling_type(TilingType::ConstantSpacing)
-        .paint_type(PaintType::Colored)
-        .bbox(Rect::new(0.0, 0.0, 20.0, 20.0))
-        .x_step(20.0)
-        .y_step(20.0);
-
-    ctx.context_frame.pop();
-    pattern_name
+    }
 }
