@@ -246,16 +246,9 @@ pub enum RenderContext {
 }
 
 #[derive(Clone)]
-pub enum Units {
-    UserSpaceOnUse,
-    ObjectBoundingBox(Transform)
-}
-
-#[derive(Clone)]
 struct Frame {
     render_context: RenderContext,
-    current_transform: Transform,
-    units: Units
+    current_transform: Transform
 }
 
 impl Default for Frame {
@@ -263,7 +256,6 @@ impl Default for Frame {
         Self {
             render_context: RenderContext::SVG,
             current_transform: Transform::default(),
-            units: Units::UserSpaceOnUse
         }
     }
 }
@@ -301,11 +293,6 @@ impl ContextFrame {
         };
 
         base_transform.append(&self.current_frame().current_transform);
-
-        if let Units::ObjectBoundingBox(ref bbox_transform ) = self.current_frame().units {
-            base_transform.append(bbox_transform);
-        }
-
         base_transform
     }
 
@@ -319,10 +306,6 @@ impl ContextFrame {
 
     pub fn append_transform(&mut self, transform: &Transform) {
         self.current_frame_as_mut().current_transform.append(transform);
-    }
-
-    pub fn set_units(&mut self, units: Units) {
-        self.current_frame_as_mut().units = units;
     }
 }
 
