@@ -386,19 +386,22 @@ impl Context {
         name
     }
 
-    pub fn pdf_bbox(&self, node: &Node) -> Rect {
-        calc_node_bbox(node, self.context_frame.raw_transform())
-            .and_then(|b| b.to_rect())
-            .map(|rect| {
-                let mut top_left = Point { x: rect.x(), y: rect.y() };
-                let mut bottom_right = Point { x: rect.x() + rect.width(), y: rect.y() + rect.height() };
-                self.context_frame.svg_base_transform.apply_to(&mut top_left.x, &mut top_left.y);
-                self.context_frame.svg_base_transform.apply_to(&mut bottom_right.x, &mut bottom_right.y);
+    pub fn pdf_bbox_from_rect(&self, rect: Option<&usvg::Rect>) -> Rect {
+        rect.map(|rect| {
+            let mut top_left = Point { x: rect.x(), y: rect.y() };
+            let mut bottom_right = Point { x: rect.x() + rect.width(), y: rect.y() + rect.height() };
+            self.context_frame.svg_base_transform.apply_to(&mut top_left.x, &mut top_left.y);
+            self.context_frame.svg_base_transform.apply_to(&mut bottom_right.x, &mut bottom_right.y);
 
-                //left, bottom, right, top
-                Rect {x1: top_left.x as f32, y1: bottom_right.y as f32, x2: bottom_right.x as f32, y2: top_left.y as f32 }
-            })
-            .unwrap_or(self.get_media_box())
+            //left, bottom, right, top
+            Rect {x1: top_left.x as f32, y1: bottom_right.y as f32, x2: bottom_right.x as f32, y2: top_left.y as f32 }
+        }).unwrap_or(self.get_media_box())
+    }
+
+    pub fn pdf_bbox(&self, node: &Node) -> Rect {
+        let opt_rect = calc_node_bbox(node, self.context_frame.raw_transform())
+            .and_then(|b| b.to_rect());
+        self.pdf_bbox_from_rect(opt_rect.as_ref())
     }
 }
 

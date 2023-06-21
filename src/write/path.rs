@@ -127,8 +127,6 @@ fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut 
 
     ctx.push_context();
 
-
-
     match *(*pattern).root.borrow() {
         NodeKind::Group(ref group) => {
             let (x_object_name, _) = create_x_object(group, &(*pattern).root, writer, ctx);
@@ -143,12 +141,14 @@ fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut 
             ctx.pop_context(&mut resources);
             resources.finish();
 
+            let pdf_bbox = ctx.pdf_bbox_from_rect(Some(&pattern.rect));
+
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)
                 .paint_type(PaintType::Colored)
-                .bbox(ctx.pdf_bbox(&(*pattern).root))
-                .x_step(20.0)
-                .y_step(20.0);
+                .bbox(pdf_bbox)
+                .x_step(pdf_bbox.x2 - pdf_bbox.x1)
+                .y_step(pdf_bbox.y2 - pdf_bbox.y1);
 
             ctx.context_frame.pop();
             pattern_name
