@@ -1,4 +1,4 @@
-use crate::util::{calc_node_bbox_to_rect, Context, NameExt};
+use crate::util::{Context, NameExt};
 use crate::write::clip::create_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref};
@@ -32,7 +32,7 @@ pub(crate) fn create_x_object(
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&group.transform);
 
-    let pdf_bbox = calc_node_bbox_to_rect(&node, ctx.context_frame.transform());
+    let pdf_bbox = ctx.pdf_bbox(&node);
 
     if let Some(clip_path) = &group.clip_path {
         let name = create_clip_path(clip_path.clone(),  node, writer, ctx);
@@ -68,12 +68,7 @@ pub(crate) fn create_x_object(
         .srgb();
     group.finish();
 
-    x_object.bbox(Rect::new(
-        pdf_bbox.x() as f32,
-        pdf_bbox.y() as f32,
-        (pdf_bbox.x() + pdf_bbox.width()) as f32,
-        (pdf_bbox.y() + pdf_bbox.height()) as f32,
-    ));
+    x_object.bbox(pdf_bbox);
     x_object.finish();
     (name, reference)
 }

@@ -2,9 +2,7 @@ use crate::color::SRGB;
 use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
 use pdf_writer::{Finish, Name, Rect, Ref};
-use usvg::{
-    FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform, Tree, ViewBox,
-};
+use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree, ViewBox};
 use usvg::utils::view_box_to_transform;
 
 pub trait TransformExt {
@@ -292,8 +290,12 @@ impl ContextFrame {
             RenderContext::SVG => self.svg_base_transform
         };
 
-        base_transform.append(&self.current_frame().current_transform);
+        base_transform.append(&self.raw_transform());
         base_transform
+    }
+
+    pub fn raw_transform(&self) -> Transform {
+        self.current_frame().current_transform
     }
 
     pub fn push(&mut self) {
@@ -383,15 +385,23 @@ impl Context {
         self.deferrer.add_opacity(name.clone(), stroke_opacity, fill_opacity);
         name
     }
+
+    pub fn pdf_bbox(&self, node: &Node) -> Rect {
+        calc_node_bbox(node, self.context_frame.raw_transform())
+            .and_then(|b| b.to_rect())
+            .map(|rect| {
+                let mut top_left = Point { x: rect.x(), y: rect.y() };
+                let mut bottom_right = Point { x: rect.x() + rect.width(), y: rect.y() + rect.height() };
+                self.context_frame.svg_base_transform.apply_to(&mut top_left.x, &mut top_left.y);
+                self.context_frame.svg_base_transform.apply_to(&mut bottom_right.x, &mut bottom_right.y);
+
+                //left, bottom, right, top
+                Rect {x1: top_left.x as f32, y1: bottom_right.y as f32, x2: bottom_right.x as f32, y2: top_left.y as f32 }
+            })
+            .unwrap_or(self.get_media_box())
+    }
 }
 
-pub fn calc_node_bbox_to_rect(node: &Node, ts: Transform) -> usvg::Rect {
-    calc_node_bbox(node, ts)
-        .and_then(|b| b.to_rect())
-        .unwrap_or_else(|| usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap())
-}
-
-// Taken from resvg
 pub fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
     match *node.borrow() {
         NodeKind::Path(ref path) => {

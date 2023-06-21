@@ -1,8 +1,8 @@
-use crate::util::{calc_node_bbox_to_rect, Context};
+use crate::util::{calc_node_bbox, Context};
 use crate::write::group;
 use pdf_writer::{PdfWriter};
 use std::rc::Rc;
-use usvg::{Node, NodeKind, Transform, Units};
+use usvg::{Node, NodeExt, NodeKind, Transform, Units};
 
 
 pub fn create_clip_path(
@@ -29,7 +29,7 @@ pub fn create_clip_path(
                 let name = ctx.alloc_soft_mask(group_ref);
                 name
             } else {
-                let parent_bbox = calc_node_bbox_to_rect(&parent, Transform::default());
+                let parent_bbox = calc_node_bbox(&parent, Transform::default()).unwrap().to_rect().unwrap();
                 ctx.context_frame.push();
 
                 if clip_path.units == Units::ObjectBoundingBox {
