@@ -274,13 +274,11 @@ pub struct ContextFrame {
 }
 
 impl ContextFrame {
-    pub fn new(dpi: f64, size: &Size, viewbox: &ViewBox) -> Self {
-        let dpi_transform = Transform::new(72.0 / dpi, 0.0, 0.0, 72.0 / dpi, 0.0, 0.0);
+    pub fn new(size: &Size, viewbox: &ViewBox) -> Self {
         let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, size.height());
         let viewbox_transform = view_box_to_transform(viewbox.rect, viewbox.aspect, *size);
 
-        let mut base_transform = dpi_transform;
-        base_transform.append(&viewport_transform);
+        let mut base_transform = viewport_transform;
         base_transform.append(&viewbox_transform);
 
         Self {
@@ -329,7 +327,6 @@ impl ContextFrame {
 }
 
 pub struct Context {
-    dpi: f32,
     pub viewbox: ViewBox,
     pub size: Size,
     allocator: Allocator,
@@ -341,25 +338,20 @@ impl Context {
     /// Create a new context.
     pub fn new(tree: &Tree) -> Self {
         Self {
-            dpi: 72.0,
             viewbox: tree.view_box,
             size: tree.size,
             allocator: Allocator::new(),
             deferrer: Deferrer::new(),
-            context_frame: ContextFrame::new(72.0, &tree.size, &tree.view_box)
+            context_frame: ContextFrame::new(&tree.size, &tree.view_box)
         }
-    }
-
-    pub fn dpi_factor(&self) -> f32 {
-        72.0 / self.dpi
     }
 
     pub fn get_media_box(&self) -> Rect {
         Rect::new(
             0.0,
             0.0,
-            self.size.width() as f32 * self.dpi_factor(),
-            self.size.height() as f32 * self.dpi_factor(),
+            self.size.width() as f32,
+            self.size.height() as f32,
         )
     }
 
