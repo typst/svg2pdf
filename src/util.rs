@@ -4,6 +4,7 @@ use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
 use pdf_writer::{Finish, Name, Rect, Ref};
 use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree, ViewBox};
 use usvg::utils::view_box_to_transform;
+use crate::write::render::Render;
 
 pub trait TransformExt {
     fn get_transform(&self) -> [f32; 6];
@@ -240,7 +241,8 @@ impl Deferrer {
 
 #[derive(Clone)]
 pub enum RenderContext {
-    SVG
+    Normal,
+    Pattern,
 }
 
 #[derive(Clone)]
@@ -252,7 +254,7 @@ struct Frame {
 impl Default for Frame {
     fn default() -> Self {
         Self {
-            render_context: RenderContext::SVG,
+            render_context: RenderContext::Normal,
             current_transform: Transform::default(),
         }
     }
@@ -281,13 +283,22 @@ impl ContextFrame {
         self.frames.last().unwrap()
     }
 
+    pub fn set_render_context(&mut self, render_context: RenderContext) {
+        self.current_frame_as_mut().render_context = render_context;
+    }
+
+    pub fn set_transform(&mut self, transform: Transform) {
+        self.current_frame_as_mut().current_transform = transform;
+    }
+
     fn current_frame_as_mut(&mut self) -> &mut Frame {
         self.frames.last_mut().unwrap()
     }
 
     pub fn transform(&self) -> Transform {
         let mut base_transform = match self.current_frame().render_context {
-            RenderContext::SVG => self.svg_base_transform
+            RenderContext::Normal => self.svg_base_transform,
+            RenderContext::Pattern => Transform::default()
         };
 
         base_transform.append(&self.raw_transform());
@@ -399,9 +410,30 @@ impl Context {
     }
 
     pub fn pdf_bbox(&self, node: &Node) -> Rect {
-        let opt_rect = calc_node_bbox(node, self.context_frame.raw_transform())
-            .and_then(|b| b.to_rect());
-        self.pdf_bbox_from_rect(opt_rect.as_ref())
+        match self.context_frame.current_frame().render_context {
+            RenderContext::Normal => {
+                let opt_rect = calc_node_bbox(node, self.context_frame.raw_transform())
+                    .and_then(|b| b.to_rect());
+                self.pdf_bbox_from_rect(opt_rect.as_ref())
+            }
+            RenderContext::Pattern => {
+                let opt_rect = calc_node_bbox(node, self.context_frame.transform())
+                    .and_then(|b| b.to_rect()).unwrap();
+                Rect::new(opt_rect.x() as f32,
+                          opt_rect.y() as f32,
+                          (opt_rect.x() + opt_rect.width()) as f32,
+                          (opt_rect.y() + opt_rect.height()) as f32)
+            }
+        }
+
+    }
+
+    pub fn usvg_rect_to_pdf_rect(&self, rect: &usvg::Rect) -> Rect {
+        let transformed = rect.transform(&self.context_frame.transform()).unwrap();
+        Rect::new(transformed.x() as f32,
+                  transformed.y() as f32,
+                  (transformed.x() + transformed.width()) as f32,
+                  (transformed.y() + transformed.height()) as f32)
     }
 }
 

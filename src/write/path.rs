@@ -1,11 +1,11 @@
 use std::ptr::write;
 use std::rc::Rc;
 use crate::color::{RgbColor, SRGB};
-use crate::util::{Context, NameExt, TransformExt};
+use crate::util::{calc_node_bbox, Context, NameExt, RenderContext, TransformExt};
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType};
 use pdf_writer::{Content, Finish, PdfWriter, Rect};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
-use usvg::{Fill, NodeKind};
+use usvg::{Fill, NodeKind, Transform};
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 use usvg::utils::view_box_to_transform;
@@ -118,14 +118,13 @@ fn set_fill(fill: &Fill, content: &mut Content, writer: &mut PdfWriter, ctx: &mu
 
 fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut Context) -> String {
     let (pattern_name, pattern_id) = ctx.alloc_named_pattern();
+    let old_transform = ctx.context_frame.transform();
     ctx.context_frame.push();
+    ctx.context_frame.push();
+    ctx.context_frame.set_transform(Transform::default());
     ctx.context_frame.append_transform(&pattern.transform);
+    ctx.context_frame.set_render_context(RenderContext::Pattern);
 
-    let pdf_bbox = ctx.pdf_bbox_from_rect(Some(&pattern.rect.transform(&ctx.context_frame.raw_transform()).unwrap()));
-
-    if let Some(viewbox) = pattern.view_box {
-        ctx.context_frame.append_transform(&view_box_to_transform(viewbox.rect, viewbox.aspect, pattern.rect.size()));
-    }
 
     ctx.push_context();
 
@@ -142,15 +141,18 @@ fn create_pattern(pattern: Rc<usvg::Pattern>, writer: &mut PdfWriter, ctx: &mut 
             let mut resources = tiling_pattern.resources();
             ctx.pop_context(&mut resources);
             resources.finish();
+            let final_bbox = ctx.usvg_rect_to_pdf_rect(&pattern.rect);
 
 
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)
                 .paint_type(PaintType::Colored)
-                .bbox(pdf_bbox)
-                .x_step(pdf_bbox.x2 - pdf_bbox.x1)
-                .y_step(pdf_bbox.y2 - pdf_bbox.y1);
+                .bbox(final_bbox)
+                .matrix(old_transform.get_transform())
+                .x_step(final_bbox.x2 - final_bbox.x1)
+                .y_step(final_bbox.y2 - final_bbox.y1);
 
+            ctx.context_frame.pop();
             ctx.context_frame.pop();
             pattern_name
         }
