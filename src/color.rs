@@ -24,7 +24,7 @@ impl RgbColor {
         RgbColor::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
     }
 
-    /// Create a RGB array for use in PDF.
+    /// Create a RGB array to use in PDF.
     pub fn as_array(&self) -> [f32; 3] {
         [self.r, self.g, self.b]
     }
