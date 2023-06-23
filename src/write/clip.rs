@@ -2,7 +2,7 @@ use crate::util::{calc_node_bbox, Context};
 use crate::write::group;
 use pdf_writer::PdfWriter;
 use std::rc::Rc;
-use usvg::{Node, NodeExt, NodeKind, Transform, Units};
+use usvg::{Node, NodeKind, Transform, Units};
 
 pub fn create_clip_path(
     clip_path: Rc<usvg::ClipPath>,
@@ -17,8 +17,7 @@ pub fn create_clip_path(
         NodeKind::Group(ref group) => {
             // TODO: Find a better way to do this
             if let Some(recursive_clip_path) = &clip_path.clip_path {
-                let mut new_group = usvg::Group::default();
-                new_group.clip_path = Some(recursive_clip_path.clone());
+                let new_group = usvg::Group { clip_path: Some(recursive_clip_path.clone()), ..Default::default() };
 
                 let new_node = Node::new(NodeKind::Group(new_group.clone()));
                 new_node.append(clip_path.root.make_deep_copy());

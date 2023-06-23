@@ -25,7 +25,7 @@ impl RgbColor {
     }
 
     /// Create a RGB array for use in PDF.
-    pub fn to_array(&self) -> [f32; 3] {
+    pub fn as_array(&self) -> [f32; 3] {
         [self.r, self.g, self.b]
     }
 }

@@ -101,8 +101,9 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
 
     match &stroke.paint {
         Paint::Color(c) => {
-            content.set_stroke_color(RgbColor::from(*c).to_array());
+            content.set_stroke_color(RgbColor::from(*c).as_array());
         }
+        Paint::Pattern(_) => todo!(),
         _ => {} //_ => todo!(),
     }
 }
@@ -117,7 +118,7 @@ fn set_fill(
 
     match paint {
         Paint::Color(c) => {
-            content.set_fill_color(RgbColor::from(*c).to_array());
+            content.set_fill_color(RgbColor::from(*c).as_array());
         }
         Paint::Pattern(p) => {
             let pattern_name = create_pattern(p.clone(), writer, ctx);
