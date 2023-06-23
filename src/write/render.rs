@@ -24,7 +24,7 @@ impl Render for Node {
         match *self.borrow() {
             NodeKind::Path(ref path) => path::render(path, content, ctx, writer),
             NodeKind::Group(ref group) => {
-                group::render(group, &self, writer, content, ctx)
+                group::render(group, self, writer, content, ctx)
             }
             _ => {} // _ => unimplemented!()
         }

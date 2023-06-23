@@ -1,7 +1,7 @@
 use crate::util::{Context, NameExt};
 use crate::write::clip::create_clip_path;
 use crate::write::render::Render;
-use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref};
+use pdf_writer::{Content, Finish, PdfWriter, Ref};
 use usvg::Node;
 
 pub(crate) fn render(
@@ -32,7 +32,7 @@ pub(crate) fn create_x_object(
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&group.transform);
 
-    let pdf_bbox = ctx.pdf_bbox(&node);
+    let pdf_bbox = ctx.pdf_bbox(node);
 
     if let Some(clip_path) = &group.clip_path {
         let name = create_clip_path(clip_path.clone(), node, writer, ctx);

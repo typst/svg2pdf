@@ -1,5 +1,5 @@
 use crate::color::SRGB;
-use crate::write::render::Render;
+
 use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
 use pdf_writer::{Finish, Name, Rect, Ref};
@@ -380,7 +380,7 @@ impl Context {
         let name = self.allocator.alloc_graphics_state_name();
 
         self.deferrer.add_soft_mask(name.clone(), group);
-        name.clone()
+        name
     }
 
     pub fn alloc_opacity(

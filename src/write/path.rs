@@ -1,14 +1,14 @@
 use crate::color::{RgbColor, SRGB};
-use crate::util::{calc_node_bbox, Context, NameExt, RenderContext, TransformExt};
+use crate::util::{Context, NameExt, RenderContext, TransformExt};
 use crate::write::group::create_x_object;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{
     ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType,
 };
-use pdf_writer::{Content, Finish, PdfWriter, Rect};
-use std::ptr::write;
+use pdf_writer::{Content, Finish, PdfWriter};
+
 use std::rc::Rc;
-use usvg::utils::view_box_to_transform;
+
 use usvg::Stroke;
 use usvg::{Fill, NodeKind, Transform};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
@@ -143,10 +143,10 @@ fn create_pattern(
 
     ctx.push_context();
 
-    match *(*pattern).root.borrow() {
+    match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
             let (x_object_name, _) =
-                create_x_object(group, &(*pattern).root, writer, ctx);
+                create_x_object(group, &pattern.root, writer, ctx);
 
             let mut pattern_content = Content::new();
             pattern_content.x_object(x_object_name.as_name());

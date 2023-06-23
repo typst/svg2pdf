@@ -23,7 +23,7 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
     // Generate main content
     ctx.push_context();
     let mut content = Content::new();
-    render::tree_to_stream(&tree, &mut writer, &mut ctx, &mut content);
+    render::tree_to_stream(tree, &mut writer, &mut ctx, &mut content);
 
     let content_stream = content.finish();
     let stream = writer.stream(content_id, &content_stream);
