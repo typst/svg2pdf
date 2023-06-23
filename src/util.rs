@@ -1,10 +1,13 @@
 use crate::color::SRGB;
+use crate::write::render::Render;
 use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
 use pdf_writer::{Finish, Name, Rect, Ref};
-use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree, ViewBox};
 use usvg::utils::view_box_to_transform;
-use crate::write::render::Render;
+use usvg::{
+    FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree,
+    ViewBox,
+};
 
 pub trait TransformExt {
     fn get_transform(&self) -> [f32; 6];
@@ -83,7 +86,7 @@ impl Allocator {
             next_ref_id: 1,
             next_x_object_num: 0,
             next_graphics_state_num: 0,
-            next_patterns_num: 0
+            next_patterns_num: 0,
         }
     }
 
@@ -123,7 +126,7 @@ impl Deferrer {
         Deferrer {
             pending_x_objects: Vec::new(),
             pending_graphics_states: Vec::new(),
-            pending_patterns: Vec::new()
+            pending_patterns: Vec::new(),
         }
     }
 
@@ -157,10 +160,8 @@ impl Deferrer {
     }
 
     pub fn add_soft_mask(&mut self, name: String, group: Ref) {
-        let state_type = GraphicsStateType::SoftMask(SoftMask {
-            mask_type: MaskType::Alpha,
-            group,
-        });
+        let state_type =
+            GraphicsStateType::SoftMask(SoftMask { mask_type: MaskType::Alpha, group });
         self.pending_graphics_states
             .last_mut()
             .unwrap()
@@ -248,7 +249,7 @@ pub enum RenderContext {
 #[derive(Clone)]
 struct Frame {
     render_context: RenderContext,
-    current_transform: Transform
+    current_transform: Transform,
 }
 
 impl Default for Frame {
@@ -262,20 +263,21 @@ impl Default for Frame {
 
 pub struct ContextFrame {
     frames: Vec<Frame>,
-    pub svg_base_transform: Transform
+    pub svg_base_transform: Transform,
 }
 
 impl ContextFrame {
     pub fn new(size: &Size, viewbox: &ViewBox) -> Self {
         let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, size.height());
-        let viewbox_transform = view_box_to_transform(viewbox.rect, viewbox.aspect, *size);
+        let viewbox_transform =
+            view_box_to_transform(viewbox.rect, viewbox.aspect, *size);
 
         let mut base_transform = viewport_transform;
         base_transform.append(&viewbox_transform);
 
         Self {
             frames: vec![Frame::default()],
-            svg_base_transform: base_transform
+            svg_base_transform: base_transform,
         }
     }
 
@@ -298,7 +300,7 @@ impl ContextFrame {
     pub fn transform(&self) -> Transform {
         let mut base_transform = match self.current_frame().render_context {
             RenderContext::Normal => self.svg_base_transform,
-            RenderContext::Pattern => Transform::default()
+            RenderContext::Pattern => Transform::default(),
         };
 
         base_transform.append(&self.raw_transform());
@@ -327,7 +329,7 @@ pub struct Context {
     pub size: Size,
     allocator: Allocator,
     deferrer: Deferrer,
-    pub context_frame: ContextFrame
+    pub context_frame: ContextFrame,
 }
 
 impl Context {
@@ -338,17 +340,12 @@ impl Context {
             size: tree.size,
             allocator: Allocator::new(),
             deferrer: Deferrer::new(),
-            context_frame: ContextFrame::new(&tree.size, &tree.view_box)
+            context_frame: ContextFrame::new(&tree.size, &tree.view_box),
         }
     }
 
     pub fn get_media_box(&self) -> Rect {
-        Rect::new(
-            0.0,
-            0.0,
-            self.size.width() as f32,
-            self.size.height() as f32,
-        )
+        Rect::new(0.0, 0.0, self.size.width() as f32, self.size.height() as f32)
     }
 
     pub fn push_context(&mut self) {
@@ -400,13 +397,26 @@ impl Context {
     pub fn pdf_bbox_from_rect(&self, rect: Option<&usvg::Rect>) -> Rect {
         rect.map(|rect| {
             let mut top_left = Point { x: rect.x(), y: rect.y() };
-            let mut bottom_right = Point { x: rect.x() + rect.width(), y: rect.y() + rect.height() };
-            self.context_frame.svg_base_transform.apply_to(&mut top_left.x, &mut top_left.y);
-            self.context_frame.svg_base_transform.apply_to(&mut bottom_right.x, &mut bottom_right.y);
+            let mut bottom_right = Point {
+                x: rect.x() + rect.width(),
+                y: rect.y() + rect.height(),
+            };
+            self.context_frame
+                .svg_base_transform
+                .apply_to(&mut top_left.x, &mut top_left.y);
+            self.context_frame
+                .svg_base_transform
+                .apply_to(&mut bottom_right.x, &mut bottom_right.y);
 
             //left, bottom, right, top
-            Rect {x1: top_left.x as f32, y1: bottom_right.y as f32, x2: bottom_right.x as f32, y2: top_left.y as f32 }
-        }).unwrap_or(self.get_media_box())
+            Rect {
+                x1: top_left.x as f32,
+                y1: bottom_right.y as f32,
+                x2: bottom_right.x as f32,
+                y2: top_left.y as f32,
+            }
+        })
+        .unwrap_or(self.get_media_box())
     }
 
     pub fn pdf_bbox(&self, node: &Node) -> Rect {
@@ -418,22 +428,26 @@ impl Context {
             }
             RenderContext::Pattern => {
                 let opt_rect = calc_node_bbox(node, self.context_frame.transform())
-                    .and_then(|b| b.to_rect()).unwrap();
-                Rect::new(opt_rect.x() as f32,
-                          opt_rect.y() as f32,
-                          (opt_rect.x() + opt_rect.width()) as f32,
-                          (opt_rect.y() + opt_rect.height()) as f32)
+                    .and_then(|b| b.to_rect())
+                    .unwrap();
+                Rect::new(
+                    opt_rect.x() as f32,
+                    opt_rect.y() as f32,
+                    (opt_rect.x() + opt_rect.width()) as f32,
+                    (opt_rect.y() + opt_rect.height()) as f32,
+                )
             }
         }
-
     }
 
     pub fn usvg_rect_to_pdf_rect(&self, rect: &usvg::Rect) -> Rect {
         let transformed = rect.transform(&self.context_frame.transform()).unwrap();
-        Rect::new(transformed.x() as f32,
-                  transformed.y() as f32,
-                  (transformed.x() + transformed.width()) as f32,
-                  (transformed.y() + transformed.height()) as f32)
+        Rect::new(
+            transformed.x() as f32,
+            transformed.y() as f32,
+            (transformed.x() + transformed.width()) as f32,
+            (transformed.y() + transformed.height()) as f32,
+        )
     }
 }
 

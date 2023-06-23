@@ -1,11 +1,11 @@
 use clap::Parser;
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
+use pdf_writer::types::StructRole::P;
 use std::fmt::Formatter;
 use std::io::Write;
 use std::process::ExitCode;
 use std::{fmt, fs, io};
-use pdf_writer::types::StructRole::P;
 use svg2pdf_tests::*;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
@@ -121,7 +121,6 @@ fn main() -> ExitCode {
 }
 
 fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
-
     if pixel1.0[3] == 0 && pixel2.0[3] == 0 {
         return false;
     }

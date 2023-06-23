@@ -11,5 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
       - run: cargo build --package svg2pdf-tests --bin test --release
       - run: cargo run --package svg2pdf-tests --bin test --release
+
+  checks:
+    name: Check clippy, formatting, and documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-targets
+      - run: cargo fmt --check --all

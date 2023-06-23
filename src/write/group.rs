@@ -2,7 +2,7 @@ use crate::util::{Context, NameExt};
 use crate::write::clip::create_clip_path;
 use crate::write::render::Render;
 use pdf_writer::{Content, Finish, PdfWriter, Rect, Ref};
-use usvg::{Node};
+use usvg::Node;
 
 pub(crate) fn render(
     group: &usvg::Group,
@@ -35,15 +35,12 @@ pub(crate) fn create_x_object(
     let pdf_bbox = ctx.pdf_bbox(&node);
 
     if let Some(clip_path) = &group.clip_path {
-        let name = create_clip_path(clip_path.clone(),  node, writer, ctx);
+        let name = create_clip_path(clip_path.clone(), node, writer, ctx);
         child_content.set_parameters(name.as_name());
     }
 
     if group.opacity.get() != 1.0 {
-        let name = ctx.alloc_opacity(
-            None,
-            Some(group.opacity.get() as f32)
-        );
+        let name = ctx.alloc_opacity(None, Some(group.opacity.get() as f32));
         child_content.set_parameters(name.as_name());
     }
 

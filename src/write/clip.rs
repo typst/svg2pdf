@@ -1,9 +1,8 @@
 use crate::util::{calc_node_bbox, Context};
 use crate::write::group;
-use pdf_writer::{PdfWriter};
+use pdf_writer::PdfWriter;
 use std::rc::Rc;
 use usvg::{Node, NodeExt, NodeKind, Transform, Units};
-
 
 pub fn create_clip_path(
     clip_path: Rc<usvg::ClipPath>,
@@ -29,11 +28,15 @@ pub fn create_clip_path(
                 let name = ctx.alloc_soft_mask(group_ref);
                 name
             } else {
-                let parent_bbox = calc_node_bbox(&parent, Transform::default()).unwrap().to_rect().unwrap();
+                let parent_bbox = calc_node_bbox(&parent, Transform::default())
+                    .unwrap()
+                    .to_rect()
+                    .unwrap();
                 ctx.context_frame.push();
 
                 if clip_path.units == Units::ObjectBoundingBox {
-                    ctx.context_frame.append_transform(&Transform::from_bbox(parent_bbox));
+                    ctx.context_frame
+                        .append_transform(&Transform::from_bbox(parent_bbox));
                 }
                 let (_, group_ref) =
                     group::create_x_object(group, &(*clip_path).root, writer, ctx);
