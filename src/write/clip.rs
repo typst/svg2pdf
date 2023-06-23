@@ -17,14 +17,17 @@ pub fn create_clip_path(
         NodeKind::Group(ref group) => {
             // TODO: Find a better way to do this
             if let Some(recursive_clip_path) = &clip_path.clip_path {
-                let new_group = usvg::Group { clip_path: Some(recursive_clip_path.clone()), ..Default::default() };
+                let new_group = usvg::Group {
+                    clip_path: Some(recursive_clip_path.clone()),
+                    ..Default::default()
+                };
 
                 let new_node = Node::new(NodeKind::Group(new_group.clone()));
                 new_node.append(clip_path.root.make_deep_copy());
 
                 let (_, group_ref) =
                     group::create_x_object(&new_group, &new_node, writer, ctx);
-                
+
                 ctx.alloc_soft_mask(group_ref)
             } else {
                 let parent_bbox = calc_node_bbox(parent, Transform::default())
