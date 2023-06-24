@@ -41,7 +41,6 @@ pub(crate) fn create_soft_mask(
                 .unwrap()
                 .to_rect()
                 .unwrap();
-            ctx.context_frame.push();
 
             if clip_path.units == Units::ObjectBoundingBox {
                 ctx.context_frame
@@ -50,8 +49,6 @@ pub(crate) fn create_soft_mask(
             let (_, group_ref) =
                 group::create_x_object(&clip_path.root, group, writer, ctx);
             let name = ctx.deferrer.add_soft_mask(group_ref);
-
-            ctx.context_frame.pop();
 
             name
         }
