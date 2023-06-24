@@ -9,12 +9,14 @@ use pdf_writer::{Content, Finish, PdfWriter};
 
 use std::rc::Rc;
 
-use usvg::Stroke;
+use usvg::{Node, Stroke, Units};
 use usvg::{Fill, NodeKind, Transform};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
+use usvg::utils::view_box_to_transform;
 
 pub(crate) fn render(
     path: &usvg::Path,
+    node: &Node,
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
@@ -44,7 +46,7 @@ pub(crate) fn render(
     }
 
     if let Some(fill) = &path.fill {
-        set_fill(fill, content, writer, ctx);
+        set_fill(fill, &node.parent().unwrap(), content, writer, ctx);
     }
 
     draw_path(path.data.segments(), content);
@@ -108,6 +110,7 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
 
 fn set_fill(
     fill: &Fill,
+    parent: &Node,
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,
@@ -119,7 +122,7 @@ fn set_fill(
             content.set_fill_color(c.as_array());
         }
         Paint::Pattern(p) => {
-            let pattern_name = create_pattern(p.clone(), writer, ctx);
+            let pattern_name = create_pattern(p.clone(), parent, writer, ctx);
             content.set_fill_color_space(Pattern);
             content.set_fill_pattern(None, pattern_name.as_name());
         }
@@ -129,6 +132,7 @@ fn set_fill(
 
 fn create_pattern(
     pattern: Rc<usvg::Pattern>,
+    parent: &Node,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
@@ -137,18 +141,21 @@ fn create_pattern(
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
-            let parent_transform = ctx.context_frame.transform();
+            let mut parent_transform = ctx.context_frame.transform();
+            parent_transform.append(&pattern.transform);
             ctx.context_frame.push();
             ctx.context_frame.set_transform(Transform::default());
+
+            if let Some(viewbox) = pattern.view_box {
+                ctx.context_frame.append_transform(&view_box_to_transform(viewbox.rect, viewbox.aspect, pattern.rect.size()))
+            }
+
             ctx.context_frame.set_render_context(RenderContext::Pattern);
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
 
 
             let mut pattern_content = Content::new();
-            pattern_content.save_state();
-            pattern_content.transform(pattern.transform.as_array());
             pattern_content.x_object(x_object_name.as_name());
-            pattern_content.restore_state();
             let pattern_content_stream = pattern_content.finish();
 
             let mut tiling_pattern =
@@ -157,7 +164,7 @@ fn create_pattern(
             let mut resources = tiling_pattern.resources();
             ctx.deferrer.pop(&mut resources);
             resources.finish();
-            let final_bbox = pattern.rect.as_pdf_rect(&pattern.transform);
+            let final_bbox = pattern.rect.as_pdf_rect(&Transform::default());
 
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)
