@@ -16,17 +16,17 @@ struct Args {
 }
 
 enum TestStatus {
-    SUCCESS,
-    FAILURE,
-    SKIPPED,
+    Success,
+    Failure,
+    Skipped,
 }
 
 impl fmt::Display for TestStatus {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            TestStatus::SUCCESS => write!(f, "SUCCESS"),
-            TestStatus::FAILURE => write!(f, "FAILURE"),
-            TestStatus::SKIPPED => write!(f, "SKIPPED"),
+            TestStatus::Success => write!(f, "SUCCESS"),
+            TestStatus::Failure => write!(f, "FAILURE"),
+            TestStatus::Skipped => write!(f, "SKIPPED"),
         }
     }
 }
@@ -35,10 +35,10 @@ fn main() -> ExitCode {
     let args = Args::parse();
 
     let references: Vec<TestFile> =
-        (&*REF_FILES).iter().map(|f| TestFile::new(f)).collect();
+        (*REF_FILES).iter().map(|f| TestFile::new(f)).collect();
     let svg_files: Vec<TestFile> =
-        (&*SVG_FILES).iter().map(|f| TestFile::new(f)).collect();
-    let test_runner = TestRunner::new();
+        (*SVG_FILES).iter().map(|f| TestFile::new(f)).collect();
+    let test_runner = TestRunner::default();
 
     let _ = fs::remove_dir_all(DIFF_DIR);
 
@@ -50,8 +50,8 @@ fn main() -> ExitCode {
 
     for svg_file in &svg_files {
         if !references.contains(svg_file) {
-            let _ = print_test_case_result(TestStatus::SKIPPED, svg_file);
-            skipped_tests.push(&svg_file);
+            let _ = print_test_case_result(TestStatus::Skipped, svg_file);
+            skipped_tests.push(svg_file);
             continue;
         }
 
@@ -83,7 +83,7 @@ fn main() -> ExitCode {
         }
 
         if diff {
-            let _ = print_test_case_result(TestStatus::FAILURE, svg_file);
+            let _ = print_test_case_result(TestStatus::Failure, svg_file);
             failure_tests.push(svg_file);
             fs::create_dir_all(svg_file.as_diffs_path().parent().unwrap()).unwrap();
             diff_image
@@ -100,7 +100,7 @@ fn main() -> ExitCode {
             }
         } else {
             successful_tests.push(svg_file);
-            let _ = print_test_case_result(TestStatus::SUCCESS, svg_file);
+            let _ = print_test_case_result(TestStatus::Success, svg_file);
         }
     }
 
@@ -112,7 +112,7 @@ fn main() -> ExitCode {
     println!("FAILURE - {}", failure_tests.len());
     println!("SKIPPED - {}", skipped_tests.len());
 
-    if failure_tests.len() > 0 {
+    if !failure_tests.is_empty() {
         ExitCode::FAILURE
     } else {
         ExitCode::SUCCESS
@@ -133,13 +133,13 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
 fn print_test_case_result(test_status: TestStatus, file: &TestFile) -> io::Result<()> {
     let mut stdout = StandardStream::stdout(ColorChoice::Always);
     match test_status {
-        TestStatus::SUCCESS => {
+        TestStatus::Success => {
             stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green)))?
         }
-        TestStatus::FAILURE => {
+        TestStatus::Failure => {
             stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red)))?
         }
-        TestStatus::SKIPPED => {
+        TestStatus::Skipped => {
             stdout.set_color(ColorSpec::new().set_fg(Some(Color::White)))?
         }
     }

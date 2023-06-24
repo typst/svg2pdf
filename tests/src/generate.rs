@@ -16,12 +16,12 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    let test_runner = TestRunner::new();
+    let test_runner = TestRunner::default();
 
     println!("{:?}", args.subset);
 
     let filter_replace = |f: &TestFile| {
-        *&args
+        args
             .subset
             .as_ref()
             .map_or(true, |r| r.is_match(f.as_raw_path().as_path().to_str().unwrap()))
@@ -29,7 +29,7 @@ fn main() {
 
     let svg_files: Vec<TestFile> = if !args.replace {
         // Get all svg files
-        (&*SVG_FILES)
+        (*SVG_FILES)
             .iter()
             .map(|f| TestFile::new(f))
             .filter(filter_replace)
@@ -37,8 +37,8 @@ fn main() {
     } else {
         // Only get svg files with existing references
         let existing_svg_references: Vec<TestFile> =
-            (&*REF_FILES).iter().map(|f| TestFile::new(f)).collect();
-        (&*SVG_FILES)
+            (*REF_FILES).iter().map(|f| TestFile::new(f)).collect();
+        (*SVG_FILES)
             .iter()
             .map(|f| TestFile::new(f))
             .filter(|f| existing_svg_references.contains(f))
@@ -46,13 +46,13 @@ fn main() {
             .collect()
     };
 
-    let number_of_svg_files = (&*svg_files).len() as u64;
+    let number_of_svg_files = (*svg_files).len() as u64;
 
     if args.replace {
         println!(
             "Regenerating {} of {} reference images...",
             number_of_svg_files,
-            (&*SVG_FILES).len() as u64
+            (*SVG_FILES).len() as u64
         );
     } else {
         println!("Generating {} reference images...", number_of_svg_files);

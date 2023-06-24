@@ -51,13 +51,13 @@ impl Deferrer {
         }
     }
 
-    pub fn push_context(&mut self) {
+    pub fn push(&mut self) {
         self.pending_x_objects.push(Vec::new());
         self.pending_patterns.push(Vec::new());
         self.pending_graphics_states.push(Vec::new());
     }
 
-    pub fn pop_context(&mut self, resources: &mut Resources) {
+    pub fn pop(&mut self, resources: &mut Resources) {
         resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
         resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
 

@@ -195,18 +195,20 @@ pub struct TestRunner {
     pdfium: Pdfium,
 }
 
-impl TestRunner {
-    pub fn new() -> Self {
+impl Default for TestRunner {
+    fn default() -> Self {
         Self {
             pdfium: Pdfium::new(
                 Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
                     "./pdfium_lib/",
                 ))
-                .unwrap(),
+                    .unwrap(),
             ),
         }
     }
+}
 
+impl TestRunner {
     pub fn render_pdf(&self, pdf: &[u8]) -> RgbaImage {
         let document = self.pdfium.load_pdf_from_byte_slice(pdf, None);
 

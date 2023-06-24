@@ -19,7 +19,7 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
     writer.pages(page_tree_id).count(1).kids([page_id]);
 
     // Generate main content
-    ctx.deferrer.push_context();
+    ctx.deferrer.push();
     let mut content = Content::new();
     render::tree_to_stream(tree, &mut writer, &mut content, &mut ctx);
 
@@ -29,7 +29,7 @@ pub fn convert_tree(tree: &Tree) -> Vec<u8> {
 
     let mut page = writer.page(page_id);
     let mut page_resources = page.resources();
-    ctx.deferrer.pop_context(&mut page_resources);
+    ctx.deferrer.pop(&mut page_resources);
     page_resources.finish();
 
     page.media_box(ctx.get_media_box());

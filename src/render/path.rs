@@ -140,7 +140,7 @@ fn create_pattern(
     ctx.context_frame.append_transform(&pattern.transform);
     ctx.context_frame.set_render_context(RenderContext::Pattern);
 
-    ctx.deferrer.push_context();
+    ctx.deferrer.push();
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
@@ -154,7 +154,7 @@ fn create_pattern(
                 writer.tiling_pattern(pattern_id, &pattern_content_stream);
 
             let mut resources = tiling_pattern.resources();
-            ctx.deferrer.pop_context(&mut resources);
+            ctx.deferrer.pop(&mut resources);
             resources.finish();
             let final_bbox = ctx.usvg_rect_to_pdf_rect(&pattern.rect);
 

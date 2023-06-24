@@ -22,16 +22,15 @@ pub(crate) fn create_x_object(
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> (String, Ref) {
+
     let (name, reference) = ctx.deferrer.add_x_object();
-
-    ctx.deferrer.push_context();
-
-    let mut child_content = Content::new();
-
-    child_content.save_state();
+    ctx.deferrer.push();
 
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&group.transform);
+
+    let mut child_content = Content::new();
+    child_content.save_state();
 
     let pdf_bbox = ctx.pdf_bbox(node);
 
@@ -55,7 +54,7 @@ pub(crate) fn create_x_object(
     let child_content_stream = child_content.finish();
 
     let mut x_object = writer.form_xobject(reference, &child_content_stream);
-    ctx.deferrer.pop_context(&mut x_object.resources());
+    ctx.deferrer.pop(&mut x_object.resources());
 
     let mut group = x_object.group();
     group
