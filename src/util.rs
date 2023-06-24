@@ -4,7 +4,7 @@ use crate::util::helper::SRGB;
 
 use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
-use pdf_writer::{Finish, Name, Rect, Ref};
+use pdf_writer::{Finish, Rect, Ref};
 use usvg::utils::view_box_to_transform;
 use usvg::{
     FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree,

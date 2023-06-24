@@ -15,9 +15,9 @@ use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 
 pub(crate) fn render(
     path: &usvg::Path,
+    writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
-    writer: &mut PdfWriter,
 ) {
     if path.visibility != Visibility::Visible {
         return;

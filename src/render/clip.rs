@@ -4,7 +4,7 @@ use pdf_writer::PdfWriter;
 use std::rc::Rc;
 use usvg::{Node, NodeKind, Transform, Units};
 
-pub fn create_clip_path(
+pub(crate) fn render(
     clip_path: Rc<usvg::ClipPath>,
     parent: &Node,
     writer: &mut PdfWriter,
