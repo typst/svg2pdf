@@ -133,21 +133,22 @@ fn create_pattern(
     ctx: &mut Context,
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
-    let old_transform = ctx.context_frame.transform();
-    ctx.context_frame.push();
-    ctx.context_frame.push();
-    ctx.context_frame.set_transform(Transform::default());
-    ctx.context_frame.append_transform(&pattern.transform);
-    ctx.context_frame.set_render_context(RenderContext::Pattern);
-
     ctx.deferrer.push();
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
+            let parent_transform = ctx.context_frame.transform();
+            ctx.context_frame.push();
+            ctx.context_frame.set_transform(Transform::default());
+            ctx.context_frame.set_render_context(RenderContext::Pattern);
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
 
+
             let mut pattern_content = Content::new();
+            pattern_content.save_state();
+            pattern_content.transform(pattern.transform.as_array());
             pattern_content.x_object(x_object_name.as_name());
+            pattern_content.restore_state();
             let pattern_content_stream = pattern_content.finish();
 
             let mut tiling_pattern =
@@ -156,17 +157,16 @@ fn create_pattern(
             let mut resources = tiling_pattern.resources();
             ctx.deferrer.pop(&mut resources);
             resources.finish();
-            let final_bbox = pattern.rect.as_pdf_rect(&Transform::default());
+            let final_bbox = pattern.rect.as_pdf_rect(&pattern.transform);
 
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)
                 .paint_type(PaintType::Colored)
                 .bbox(final_bbox)
-                .matrix(old_transform.as_array())
+                .matrix(parent_transform.as_array())
                 .x_step(final_bbox.x2 - final_bbox.x1)
                 .y_step(final_bbox.y2 - final_bbox.y1);
 
-            ctx.context_frame.pop();
             ctx.context_frame.pop();
             pattern_name
         }
