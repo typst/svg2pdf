@@ -1,4 +1,6 @@
 pub mod helper;
+mod allocate;
+mod defer;
 
 use crate::util::helper::SRGB;
 
@@ -10,211 +12,9 @@ use usvg::{
     FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree,
     ViewBox,
 };
+use allocate::Allocator;
+use defer::Deferrer;
 use helper::NameExt;
-
-pub struct Allocator {
-    /// The next id for indirect object references
-    next_ref_id: i32,
-    /// The next number that will be used for the name of an XObject in a resource
-    /// dictionary, e.g. "xo0"
-    next_x_object_num: i32,
-    /// The next number that will be used for the name of a graphics state in a resource
-    /// dictionary, e.g. "gs0"
-    next_graphics_state_num: i32,
-    /// The next number that will be used for the name of a pattern in a resource
-    /// dictionary, e.g. "po0"
-    next_patterns_num: i32,
-}
-
-pub struct PendingXObject {
-    pub name: String,
-    pub reference: Ref,
-}
-
-pub struct PendingPattern {
-    pub name: String,
-    pub reference: Ref,
-}
-
-pub struct PendingGraphicsState {
-    name: String,
-    state_type: GraphicsStateType,
-}
-
-enum GraphicsStateType {
-    Opacity(Opacity),
-    SoftMask(SoftMask),
-}
-
-struct Opacity {
-    stroke_opacity: f32,
-    fill_opacity: f32,
-}
-
-struct SoftMask {
-    mask_type: MaskType,
-    group: Ref,
-}
-
-impl Allocator {
-    pub fn new() -> Self {
-        Self {
-            next_ref_id: 1,
-            next_x_object_num: 0,
-            next_graphics_state_num: 0,
-            next_patterns_num: 0,
-        }
-    }
-
-    pub fn alloc_ref(&mut self) -> Ref {
-        let reference = Ref::new(self.next_ref_id);
-        self.next_ref_id += 1;
-        reference
-    }
-
-    pub fn alloc_x_object_name(&mut self) -> String {
-        let num = self.next_x_object_num;
-        self.next_x_object_num += 1;
-        format!("xo{}", num)
-    }
-
-    pub fn alloc_graphics_state_name(&mut self) -> String {
-        let num = self.next_graphics_state_num;
-        self.next_graphics_state_num += 1;
-        format!("gs{}", num)
-    }
-
-    pub fn alloc_patterns_name(&mut self) -> String {
-        let num = self.next_patterns_num;
-        self.next_patterns_num += 1;
-        format!("po{}", num)
-    }
-}
-
-pub struct Deferrer {
-    pending_x_objects: Vec<Vec<PendingXObject>>,
-    pending_patterns: Vec<Vec<PendingPattern>>,
-    pending_graphics_states: Vec<Vec<PendingGraphicsState>>,
-}
-
-impl Deferrer {
-    pub fn new() -> Self {
-        Deferrer {
-            pending_x_objects: Vec::new(),
-            pending_graphics_states: Vec::new(),
-            pending_patterns: Vec::new(),
-        }
-    }
-
-    pub fn push_context(&mut self) {
-        self.pending_x_objects.push(Vec::new());
-        self.pending_patterns.push(Vec::new());
-        self.pending_graphics_states.push(Vec::new());
-    }
-
-    pub fn pop_context(&mut self, resources: &mut Resources) {
-        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
-        resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
-
-        self.write_pending_x_objects(resources);
-        self.write_pending_graphics_states(resources);
-        self.write_pending_patterns(resources);
-    }
-
-    pub fn add_x_object(&mut self, name: String, reference: Ref) {
-        self.pending_x_objects
-            .last_mut()
-            .unwrap()
-            .push(PendingXObject { name, reference });
-    }
-
-    pub fn add_pattern(&mut self, name: String, reference: Ref) {
-        self.pending_patterns
-            .last_mut()
-            .unwrap()
-            .push(PendingPattern { name, reference });
-    }
-
-    pub fn add_soft_mask(&mut self, name: String, group: Ref) {
-        let state_type =
-            GraphicsStateType::SoftMask(SoftMask { mask_type: MaskType::Alpha, group });
-        self.pending_graphics_states
-            .last_mut()
-            .unwrap()
-            .push(PendingGraphicsState { name, state_type });
-    }
-
-    pub fn add_opacity(
-        &mut self,
-        name: String,
-        stroke_opacity: Option<f32>,
-        fill_opacity: Option<f32>,
-    ) {
-        let state_type = GraphicsStateType::Opacity(Opacity {
-            stroke_opacity: stroke_opacity.unwrap_or(1.0),
-            fill_opacity: fill_opacity.unwrap_or(1.0),
-        });
-
-        self.pending_graphics_states
-            .last_mut()
-            .unwrap()
-            .push(PendingGraphicsState { name, state_type });
-    }
-
-    fn write_pending_x_objects(&mut self, resources: &mut Resources) {
-        let pending_x_objects = self.pending_x_objects.pop().unwrap();
-
-        if !pending_x_objects.is_empty() {
-            let mut x_objects = resources.x_objects();
-            for x_object in pending_x_objects {
-                x_objects.pair(x_object.name.as_name(), x_object.reference);
-            }
-            x_objects.finish();
-        }
-    }
-
-    fn write_pending_patterns(&mut self, resources: &mut Resources) {
-        let pending_patterns = self.pending_patterns.pop().unwrap();
-
-        if !pending_patterns.is_empty() {
-            let mut patterns = resources.patterns();
-            for pattern in pending_patterns {
-                patterns.pair(pattern.name.as_name(), pattern.reference);
-            }
-            patterns.finish();
-        }
-    }
-
-    fn write_pending_graphics_states(&mut self, resources: &mut Resources) {
-        let pending_graphics_states = self.pending_graphics_states.pop().unwrap();
-
-        if !pending_graphics_states.is_empty() {
-            let mut graphics = resources.ext_g_states();
-            for pending_graphics_state in pending_graphics_states {
-                let mut state = graphics
-                    .insert(pending_graphics_state.name.as_name())
-                    .start::<ExtGraphicsState>();
-
-                match &pending_graphics_state.state_type {
-                    GraphicsStateType::SoftMask(soft_mask) => {
-                        state
-                            .soft_mask()
-                            .subtype(soft_mask.mask_type)
-                            .group(soft_mask.group)
-                            .finish();
-                    }
-                    GraphicsStateType::Opacity(opacity) => {
-                        state
-                            .non_stroking_alpha(opacity.fill_opacity)
-                            .stroking_alpha(opacity.stroke_opacity)
-                            .finish();
-                    }
-                }
-            }
-            graphics.finish();
-        }
-    }
-}
 
 #[derive(Clone)]
 pub enum RenderContext {
@@ -346,7 +146,7 @@ impl Context {
 
     pub fn alloc_named_pattern(&mut self) -> (String, Ref) {
         let reference = self.alloc_ref();
-        let name = self.allocator.alloc_patterns_name();
+        let name = self.allocator.alloc_pattern_object_name();
 
         self.deferrer.add_pattern(name.clone(), reference);
         (name, reference)

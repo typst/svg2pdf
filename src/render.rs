@@ -22,7 +22,6 @@ pub trait Render {
     fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context);
 }
 
-
 impl Render for Node {
     fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context) {
         match *self.borrow() {
