@@ -35,8 +35,7 @@ pub(crate) fn create_x_object(
     let pdf_bbox = ctx.pdf_bbox(node);
 
     if let Some(clip_path) = &group.clip_path {
-        let name = clip::render(node, clip_path.clone(), writer, ctx);
-        child_content.set_parameters(name.as_name());
+        clip::render(node, clip_path.clone(), writer,  &mut child_content, ctx);
     }
 
     if group.opacity.get() != 1.0 {

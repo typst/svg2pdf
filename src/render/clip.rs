@@ -1,10 +1,22 @@
 use crate::util::{calc_node_bbox, Context};
 use crate::render::group;
-use pdf_writer::PdfWriter;
+use pdf_writer::{Content, PdfWriter};
 use std::rc::Rc;
-use usvg::{Node, NodeKind, Transform, Units};
+use usvg::{ClipPath, Node, NodeKind, Transform, Units};
+use crate::util::helper::NameExt;
 
 pub(crate) fn render(
+    node: &Node,
+    clip_path: Rc<ClipPath>,
+    writer: &mut PdfWriter,
+    content: &mut Content,
+    ctx: &mut Context,
+) {
+    let name = create_soft_mask(node, clip_path, writer, ctx);
+    content.set_parameters(name.as_name());
+}
+
+pub(crate) fn create_soft_mask(
     parent: &Node,
     clip_path: Rc<usvg::ClipPath>,
     writer: &mut PdfWriter,
