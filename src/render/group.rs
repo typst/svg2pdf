@@ -6,19 +6,19 @@ use usvg::Node;
 use crate::util::helper::NameExt;
 
 pub(crate) fn render(
-    group: &usvg::Group,
     node: &Node,
+    group: &usvg::Group,
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
 ) {
-    let (name, _) = create_x_object(group, node, writer, ctx);
+    let (name, _) = create_x_object(node, group, writer, ctx);
     content.x_object(name.as_name());
 }
 
 pub(crate) fn create_x_object(
-    group: &usvg::Group,
     node: &Node,
+    group: &usvg::Group,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> (String, Ref) {
@@ -36,7 +36,7 @@ pub(crate) fn create_x_object(
     let pdf_bbox = ctx.pdf_bbox(node);
 
     if let Some(clip_path) = &group.clip_path {
-        let name = clip::render(clip_path.clone(), node, writer, ctx);
+        let name = clip::render(node, clip_path.clone(), writer, ctx);
         child_content.set_parameters(name.as_name());
     }
 

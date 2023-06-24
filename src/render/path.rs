@@ -146,7 +146,7 @@ fn create_pattern(
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
-            let (x_object_name, _) = create_x_object(group, &pattern.root, writer, ctx);
+            let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
 
             let mut pattern_content = Content::new();
             pattern_content.x_object(x_object_name.as_name());

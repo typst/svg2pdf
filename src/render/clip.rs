@@ -5,8 +5,8 @@ use std::rc::Rc;
 use usvg::{Node, NodeKind, Transform, Units};
 
 pub(crate) fn render(
-    clip_path: Rc<usvg::ClipPath>,
     parent: &Node,
+    clip_path: Rc<usvg::ClipPath>,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
@@ -26,7 +26,7 @@ pub(crate) fn render(
                 new_node.append(clip_path.root.make_deep_copy());
 
                 let (_, group_ref) =
-                    group::create_x_object(&new_group, &new_node, writer, ctx);
+                    group::create_x_object(&new_node, &new_group, writer, ctx);
 
                 ctx.alloc_soft_mask(group_ref)
             } else {
@@ -41,7 +41,7 @@ pub(crate) fn render(
                         .append_transform(&Transform::from_bbox(parent_bbox));
                 }
                 let (_, group_ref) =
-                    group::create_x_object(group, &clip_path.root, writer, ctx);
+                    group::create_x_object(&clip_path.root, group, writer, ctx);
                 let name = ctx.alloc_soft_mask(group_ref);
 
                 ctx.context_frame.pop();
