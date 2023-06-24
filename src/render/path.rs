@@ -1,5 +1,5 @@
 use crate::render::group::create_x_object;
-use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
+use crate::util::helper::{ColorExt, NameExt, RectExt, TransformExt, SRGB};
 use crate::util::{Context, RenderContext};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{
@@ -156,7 +156,7 @@ fn create_pattern(
             let mut resources = tiling_pattern.resources();
             ctx.deferrer.pop(&mut resources);
             resources.finish();
-            let final_bbox = ctx.usvg_rect_to_pdf_rect(&pattern.rect);
+            let final_bbox = pattern.rect.as_pdf_rect(&Transform::default());
 
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)

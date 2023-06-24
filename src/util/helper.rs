@@ -1,4 +1,5 @@
-use pdf_writer::Name;
+use pdf_writer::{Name, Rect};
+use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
 
@@ -16,7 +17,7 @@ pub trait TransformExt {
     fn as_array(&self) -> [f32; 6];
 }
 
-impl TransformExt for usvg::Transform {
+impl TransformExt for Transform {
     fn as_array(&self) -> [f32; 6] {
         [
             self.a as f32,
@@ -36,5 +37,53 @@ pub trait NameExt {
 impl NameExt for String {
     fn as_name(&self) -> Name {
         Name(self.as_bytes())
+    }
+}
+
+pub trait RectExt {
+    fn as_pdf_rect(&self, base_transform: &Transform) -> Rect;
+}
+
+impl RectExt for usvg::Rect {
+    fn as_pdf_rect(&self, base_transform: &Transform) -> Rect {
+        let transformed = self.transform(base_transform).unwrap();
+        Rect::new(
+            transformed.x() as f32,
+            transformed.y() as f32,
+            (transformed.x() + transformed.width()) as f32,
+            (transformed.y() + transformed.height()) as f32,
+        )
+    }
+}
+
+// Taken from resvg
+pub(crate) fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
+    match *node.borrow() {
+        NodeKind::Path(ref path) => {
+            path.data.bbox_with_transform(ts, path.stroke.as_ref())
+        }
+        NodeKind::Image(ref img) => {
+            let path = PathData::from_rect(img.view_box.rect);
+            path.bbox_with_transform(ts, None)
+        }
+        NodeKind::Group(_) => {
+            let mut bbox = PathBbox::new_bbox();
+
+            for child in node.children() {
+                let mut child_transform = ts;
+                child_transform.append(&child.transform());
+                if let Some(c_bbox) = calc_node_bbox(&child, child_transform) {
+                    bbox = bbox.expand(c_bbox);
+                }
+            }
+
+            // Make sure bbox was changed.
+            if bbox.fuzzy_eq(&PathBbox::new_bbox()) {
+                return None;
+            }
+
+            Some(bbox)
+        }
+        NodeKind::Text(_) => None,
     }
 }

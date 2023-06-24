@@ -2,13 +2,11 @@ mod allocate;
 mod defer;
 pub mod helper;
 
+use crate::util::helper::{calc_node_bbox, RectExt};
 use defer::Deferrer;
 use pdf_writer::Rect;
 use usvg::utils::view_box_to_transform;
-use usvg::{
-    FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree,
-    ViewBox,
-};
+use usvg::{Node, Size, Transform, Tree, ViewBox};
 
 #[derive(Clone)]
 pub enum RenderContext {
@@ -116,90 +114,22 @@ impl Context {
         Rect::new(0.0, 0.0, self.size.width() as f32, self.size.height() as f32)
     }
 
-    pub fn pdf_bbox_from_rect(&self, rect: Option<&usvg::Rect>) -> Rect {
-        rect.map(|rect| {
-            let mut top_left = Point { x: rect.x(), y: rect.y() };
-            let mut bottom_right = Point {
-                x: rect.x() + rect.width(),
-                y: rect.y() + rect.height(),
-            };
-            self.context_frame
-                .svg_base_transform
-                .apply_to(&mut top_left.x, &mut top_left.y);
-            self.context_frame
-                .svg_base_transform
-                .apply_to(&mut bottom_right.x, &mut bottom_right.y);
-
-            //left, bottom, right, top
-            Rect {
-                x1: top_left.x as f32,
-                y1: bottom_right.y as f32,
-                x2: bottom_right.x as f32,
-                y2: top_left.y as f32,
-            }
-        })
-        .unwrap_or(self.get_media_box())
-    }
-
     pub fn pdf_bbox(&self, node: &Node) -> Rect {
-        match self.context_frame.current_frame().render_context {
-            RenderContext::Normal => {
-                let opt_rect = calc_node_bbox(node, self.context_frame.raw_transform())
-                    .and_then(|b| b.to_rect());
-                self.pdf_bbox_from_rect(opt_rect.as_ref())
-            }
-            RenderContext::Pattern => {
-                let opt_rect = calc_node_bbox(node, self.context_frame.transform())
-                    .and_then(|b| b.to_rect())
-                    .unwrap();
-                Rect::new(
-                    opt_rect.x() as f32,
-                    opt_rect.y() as f32,
-                    (opt_rect.x() + opt_rect.width()) as f32,
-                    (opt_rect.y() + opt_rect.height()) as f32,
-                )
-            }
-        }
+        self.pdf_bbox_with_transform(node, self.context_frame.raw_transform())
     }
 
-    pub fn usvg_rect_to_pdf_rect(&self, rect: &usvg::Rect) -> Rect {
-        let transformed = rect.transform(&self.context_frame.transform()).unwrap();
-        Rect::new(
-            transformed.x() as f32,
-            transformed.y() as f32,
-            (transformed.x() + transformed.width()) as f32,
-            (transformed.y() + transformed.height()) as f32,
+    pub fn pdf_bbox_with_transform(&self, node: &Node, transform: Transform) -> Rect {
+        self.svg_bbox_with_transform(node, transform)
+            .as_pdf_rect(&self.context_frame.svg_base_transform)
+    }
+
+    pub fn svg_bbox_with_transform(
+        &self,
+        node: &Node,
+        transform: Transform,
+    ) -> usvg::Rect {
+        calc_node_bbox(node, transform).and_then(|b| b.to_rect()).unwrap_or(
+            usvg::Rect::new(0.0, 0.0, self.size.width(), self.size.height()).unwrap(),
         )
-    }
-}
-
-pub fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
-    match *node.borrow() {
-        NodeKind::Path(ref path) => {
-            path.data.bbox_with_transform(ts, path.stroke.as_ref())
-        }
-        NodeKind::Image(ref img) => {
-            let path = PathData::from_rect(img.view_box.rect);
-            path.bbox_with_transform(ts, None)
-        }
-        NodeKind::Group(_) => {
-            let mut bbox = PathBbox::new_bbox();
-
-            for child in node.children() {
-                let mut child_transform = ts;
-                child_transform.append(&child.transform());
-                if let Some(c_bbox) = calc_node_bbox(&child, child_transform) {
-                    bbox = bbox.expand(c_bbox);
-                }
-            }
-
-            // Make sure bbox was changed.
-            if bbox.fuzzy_eq(&PathBbox::new_bbox()) {
-                return None;
-            }
-
-            Some(bbox)
-        }
-        NodeKind::Text(_) => None,
     }
 }
