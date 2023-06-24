@@ -1,9 +1,7 @@
-mod color;
 mod util;
-mod write;
+mod render;
 
 use util::*;
-use write::*;
 
 use pdf_writer::{Content, Finish, PdfWriter, TextStr};
 use usvg::Tree;

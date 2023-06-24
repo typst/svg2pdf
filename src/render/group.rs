@@ -1,8 +1,9 @@
-use crate::util::{Context, NameExt};
-use crate::write::clip::create_clip_path;
-use crate::write::render::Render;
+use crate::util::Context;
+use crate::render::clip::create_clip_path;
+use crate::render::Render;
 use pdf_writer::{Content, Finish, PdfWriter, Ref};
 use usvg::Node;
+use crate::util::helper::NameExt;
 
 pub(crate) fn render(
     group: &usvg::Group,

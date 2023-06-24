@@ -1,7 +1,6 @@
 use clap::Parser;
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
-use pdf_writer::types::StructRole::P;
 use std::fmt::Formatter;
 use std::io::Write;
 use std::process::ExitCode;

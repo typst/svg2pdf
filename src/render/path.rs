@@ -1,6 +1,6 @@
-use crate::color::{RgbColor, SRGB};
-use crate::util::{Context, NameExt, RenderContext, TransformExt};
-use crate::write::group::create_x_object;
+use crate::util::helper::{NameExt, RgbColor, SRGB, TransformExt};
+use crate::util::{Context, RenderContext};
+use crate::render::group::create_x_object;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{
     ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType,
@@ -28,7 +28,7 @@ pub(crate) fn render(
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&path.transform);
 
-    content.transform(ctx.context_frame.transform().get_transform());
+    content.transform(ctx.context_frame.transform().as_array());
 
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
@@ -164,7 +164,7 @@ fn create_pattern(
                 .tiling_type(TilingType::ConstantSpacing)
                 .paint_type(PaintType::Colored)
                 .bbox(final_bbox)
-                .matrix(old_transform.get_transform())
+                .matrix(old_transform.as_array())
                 .x_step(final_bbox.x2 - final_bbox.x1)
                 .y_step(final_bbox.y2 - final_bbox.y1);
 

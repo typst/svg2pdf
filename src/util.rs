@@ -1,4 +1,6 @@
-use crate::color::SRGB;
+pub mod helper;
+
+use crate::util::helper::SRGB;
 
 use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
@@ -8,33 +10,7 @@ use usvg::{
     FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree,
     ViewBox,
 };
-
-pub trait TransformExt {
-    fn get_transform(&self) -> [f32; 6];
-}
-
-impl TransformExt for usvg::Transform {
-    fn get_transform(&self) -> [f32; 6] {
-        [
-            self.a as f32,
-            self.b as f32,
-            self.c as f32,
-            self.d as f32,
-            self.e as f32,
-            self.f as f32,
-        ]
-    }
-}
-
-pub trait NameExt {
-    fn as_name(&self) -> Name;
-}
-
-impl NameExt for String {
-    fn as_name(&self) -> Name {
-        Name(self.as_bytes())
-    }
-}
+use helper::NameExt;
 
 pub struct Allocator {
     /// The next id for indirect object references

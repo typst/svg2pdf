@@ -1,5 +1,8 @@
+pub mod clip;
+pub mod group;
+pub mod path;
+
 use crate::util::Context;
-use crate::write::{group, path};
 use pdf_writer::{Content, PdfWriter};
 use usvg::{Node, NodeKind, Tree};
 

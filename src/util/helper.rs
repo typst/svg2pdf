@@ -35,3 +35,30 @@ impl From<usvg::Color> for RgbColor {
         Self::from_u8(color.red, color.green, color.blue)
     }
 }
+
+pub trait TransformExt {
+    fn as_array(&self) -> [f32; 6];
+}
+
+impl TransformExt for usvg::Transform {
+    fn as_array(&self) -> [f32; 6] {
+        [
+            self.a as f32,
+            self.b as f32,
+            self.c as f32,
+            self.d as f32,
+            self.e as f32,
+            self.f as f32,
+        ]
+    }
+}
+
+pub trait NameExt {
+    fn as_name(&self) -> Name;
+}
+
+impl NameExt for String {
+    fn as_name(&self) -> Name {
+        Name(self.as_bytes())
+    }
+}
