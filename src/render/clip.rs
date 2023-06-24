@@ -18,7 +18,7 @@ pub(crate) fn render(
 
 pub(crate) fn create_soft_mask(
     parent: &Node,
-    clip_path: Rc<usvg::ClipPath>,
+    clip_path: Rc<ClipPath>,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
@@ -66,6 +66,5 @@ pub(crate) fn create_soft_mask(
     x_object.bbox(pdf_bbox);
     x_object.finish();
 
-    let soft_mask_name = ctx.deferrer.add_soft_mask(x_object_reference);
-    soft_mask_name
+    ctx.deferrer.add_soft_mask(x_object_reference)
 }

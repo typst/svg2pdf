@@ -21,8 +21,7 @@ fn main() {
     println!("{:?}", args.subset);
 
     let filter_replace = |f: &TestFile| {
-        args
-            .subset
+        args.subset
             .as_ref()
             .map_or(true, |r| r.is_match(f.as_raw_path().as_path().to_str().unwrap()))
     };
