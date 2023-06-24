@@ -1,6 +1,6 @@
-use crate::util::helper::{ColorExt, NameExt, SRGB, TransformExt};
-use crate::util::{Context, RenderContext};
 use crate::render::group::create_x_object;
+use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
+use crate::util::{Context, RenderContext};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{
     ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType,

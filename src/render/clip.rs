@@ -1,9 +1,9 @@
-use crate::util::{calc_node_bbox, Context};
 use crate::render::group;
+use crate::util::helper::NameExt;
+use crate::util::{calc_node_bbox, Context};
 use pdf_writer::{Content, Finish, PdfWriter};
 use std::rc::Rc;
 use usvg::{ClipPath, Node, NodeKind, Transform, Units};
-use crate::util::helper::NameExt;
 
 pub(crate) fn render(
     node: &Node,

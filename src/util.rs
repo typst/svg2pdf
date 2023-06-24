@@ -1,14 +1,14 @@
-pub mod helper;
 mod allocate;
 mod defer;
+pub mod helper;
 
+use defer::Deferrer;
 use pdf_writer::Rect;
 use usvg::utils::view_box_to_transform;
 use usvg::{
     FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree,
     ViewBox,
 };
-use defer::Deferrer;
 
 #[derive(Clone)]
 pub enum RenderContext {

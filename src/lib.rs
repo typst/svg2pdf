@@ -1,5 +1,5 @@
-mod util;
 mod render;
+mod util;
 
 use util::*;
 

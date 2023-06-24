@@ -1,8 +1,8 @@
-use pdf_writer::{Finish, Ref};
-use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
-use pdf_writer::types::{MaskType, ProcSet};
 use crate::util::allocate::Allocator;
 use crate::util::helper::{NameExt, SRGB};
+use pdf_writer::types::{MaskType, ProcSet};
+use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
+use pdf_writer::{Finish, Ref};
 
 pub struct PendingXObject {
     pub name: String,
