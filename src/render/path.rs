@@ -35,7 +35,7 @@ pub(crate) fn render(
     let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get() as f32);
 
     if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
-        let name = ctx.alloc_opacity(stroke_opacity, fill_opacity);
+        let name = ctx.deferrer.add_opacity(stroke_opacity, fill_opacity);
         content.set_parameters(name.as_name());
     }
 
@@ -132,7 +132,7 @@ fn create_pattern(
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
-    let (pattern_name, pattern_id) = ctx.alloc_named_pattern();
+    let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
     let old_transform = ctx.context_frame.transform();
     ctx.context_frame.push();
     ctx.context_frame.push();
@@ -140,7 +140,7 @@ fn create_pattern(
     ctx.context_frame.append_transform(&pattern.transform);
     ctx.context_frame.set_render_context(RenderContext::Pattern);
 
-    ctx.push_context();
+    ctx.deferrer.push_context();
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
@@ -154,7 +154,7 @@ fn create_pattern(
                 writer.tiling_pattern(pattern_id, &pattern_content_stream);
 
             let mut resources = tiling_pattern.resources();
-            ctx.pop_context(&mut resources);
+            ctx.deferrer.pop_context(&mut resources);
             resources.finish();
             let final_bbox = ctx.usvg_rect_to_pdf_rect(&pattern.rect);
 

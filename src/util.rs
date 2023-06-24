@@ -2,19 +2,13 @@ pub mod helper;
 mod allocate;
 mod defer;
 
-use crate::util::helper::SRGB;
-
-use pdf_writer::types::{MaskType, ProcSet};
-use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
-use pdf_writer::{Finish, Rect, Ref};
+use pdf_writer::Rect;
 use usvg::utils::view_box_to_transform;
 use usvg::{
     FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Point, Size, Transform, Tree,
     ViewBox,
 };
-use allocate::Allocator;
 use defer::Deferrer;
-use helper::NameExt;
 
 #[derive(Clone)]
 pub enum RenderContext {
@@ -103,8 +97,7 @@ impl ContextFrame {
 pub struct Context {
     pub viewbox: ViewBox,
     pub size: Size,
-    allocator: Allocator,
-    deferrer: Deferrer,
+    pub deferrer: Deferrer,
     pub context_frame: ContextFrame,
 }
 
@@ -114,7 +107,6 @@ impl Context {
         Self {
             viewbox: tree.view_box,
             size: tree.size,
-            allocator: Allocator::new(),
             deferrer: Deferrer::new(),
             context_frame: ContextFrame::new(&tree.size, &tree.view_box),
         }
@@ -122,52 +114,6 @@ impl Context {
 
     pub fn get_media_box(&self) -> Rect {
         Rect::new(0.0, 0.0, self.size.width() as f32, self.size.height() as f32)
-    }
-
-    pub fn push_context(&mut self) {
-        self.deferrer.push_context();
-    }
-
-    pub fn pop_context(&mut self, resources: &mut Resources) {
-        self.deferrer.pop_context(resources);
-    }
-
-    pub fn alloc_ref(&mut self) -> Ref {
-        self.allocator.alloc_ref()
-    }
-
-    pub fn alloc_named_x_object(&mut self) -> (String, Ref) {
-        let reference = self.alloc_ref();
-        let name = self.allocator.alloc_x_object_name();
-
-        self.deferrer.add_x_object(name.clone(), reference);
-        (name, reference)
-    }
-
-    pub fn alloc_named_pattern(&mut self) -> (String, Ref) {
-        let reference = self.alloc_ref();
-        let name = self.allocator.alloc_pattern_object_name();
-
-        self.deferrer.add_pattern(name.clone(), reference);
-        (name, reference)
-    }
-
-    pub fn alloc_soft_mask(&mut self, group: Ref) -> String {
-        let name = self.allocator.alloc_graphics_state_name();
-
-        self.deferrer.add_soft_mask(name.clone(), group);
-        name
-    }
-
-    pub fn alloc_opacity(
-        &mut self,
-        stroke_opacity: Option<f32>,
-        fill_opacity: Option<f32>,
-    ) -> String {
-        let name = self.allocator.alloc_graphics_state_name();
-
-        self.deferrer.add_opacity(name.clone(), stroke_opacity, fill_opacity);
-        name
     }
 
     pub fn pdf_bbox_from_rect(&self, rect: Option<&usvg::Rect>) -> Rect {

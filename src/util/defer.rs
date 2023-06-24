@@ -1,6 +1,7 @@
 use pdf_writer::{Finish, Ref};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
 use pdf_writer::types::{MaskType, ProcSet};
+use crate::util::allocate::Allocator;
 use crate::util::helper::{NameExt, SRGB};
 
 pub struct PendingXObject {
@@ -34,6 +35,7 @@ struct SoftMask {
 }
 
 pub struct Deferrer {
+    allocator: Allocator,
     pending_x_objects: Vec<Vec<PendingXObject>>,
     pending_patterns: Vec<Vec<PendingPattern>>,
     pending_graphics_states: Vec<Vec<PendingGraphicsState>>,
@@ -42,6 +44,7 @@ pub struct Deferrer {
 impl Deferrer {
     pub fn new() -> Self {
         Deferrer {
+            allocator: Allocator::new(),
             pending_x_objects: Vec::new(),
             pending_graphics_states: Vec::new(),
             pending_patterns: Vec::new(),
@@ -63,21 +66,59 @@ impl Deferrer {
         self.write_pending_patterns(resources);
     }
 
-    pub fn add_x_object(&mut self, name: String, reference: Ref) {
+    pub fn alloc_ref(&mut self) -> Ref {
+        self.allocator.alloc_ref()
+    }
+
+    pub fn add_x_object(&mut self) -> (String, Ref) {
+        let reference = self.alloc_ref();
+        let name = self.allocator.alloc_x_object_name();
+
+        self.push_x_object(name.clone(), reference);
+        (name, reference)
+    }
+
+    pub fn add_pattern(&mut self) -> (String, Ref) {
+        let reference = self.alloc_ref();
+        let name = self.allocator.alloc_pattern_object_name();
+
+        self.push_pattern(name.clone(), reference);
+        (name, reference)
+    }
+
+    pub fn add_soft_mask(&mut self, group: Ref) -> String {
+        let name = self.allocator.alloc_graphics_state_name();
+
+        self.push_soft_mask(name.clone(), group);
+        name
+    }
+
+    pub fn add_opacity(
+        &mut self,
+        stroke_opacity: Option<f32>,
+        fill_opacity: Option<f32>,
+    ) -> String {
+        let name = self.allocator.alloc_graphics_state_name();
+
+        self.push_opacity(name.clone(), stroke_opacity, fill_opacity);
+        name
+    }
+
+    fn push_x_object(&mut self, name: String, reference: Ref) {
         self.pending_x_objects
             .last_mut()
             .unwrap()
             .push(PendingXObject { name, reference });
     }
 
-    pub fn add_pattern(&mut self, name: String, reference: Ref) {
+    fn push_pattern(&mut self, name: String, reference: Ref) {
         self.pending_patterns
             .last_mut()
             .unwrap()
             .push(PendingPattern { name, reference });
     }
 
-    pub fn add_soft_mask(&mut self, name: String, group: Ref) {
+    fn push_soft_mask(&mut self, name: String, group: Ref) {
         let state_type =
             GraphicsStateType::SoftMask(SoftMask { mask_type: MaskType::Alpha, group });
         self.pending_graphics_states
@@ -86,7 +127,7 @@ impl Deferrer {
             .push(PendingGraphicsState { name, state_type });
     }
 
-    pub fn add_opacity(
+    fn push_opacity(
         &mut self,
         name: String,
         stroke_opacity: Option<f32>,

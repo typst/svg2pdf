@@ -22,9 +22,9 @@ pub(crate) fn create_x_object(
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> (String, Ref) {
-    let (name, reference) = ctx.alloc_named_x_object();
+    let (name, reference) = ctx.deferrer.add_x_object();
 
-    ctx.push_context();
+    ctx.deferrer.push_context();
 
     let mut child_content = Content::new();
 
@@ -41,7 +41,7 @@ pub(crate) fn create_x_object(
     }
 
     if group.opacity.get() != 1.0 {
-        let name = ctx.alloc_opacity(None, Some(group.opacity.get() as f32));
+        let name = ctx.deferrer.add_opacity(None, Some(group.opacity.get() as f32));
         child_content.set_parameters(name.as_name());
     }
 
@@ -55,7 +55,7 @@ pub(crate) fn create_x_object(
     let child_content_stream = child_content.finish();
 
     let mut x_object = writer.form_xobject(reference, &child_content_stream);
-    ctx.pop_context(&mut x_object.resources());
+    ctx.deferrer.pop_context(&mut x_object.resources());
 
     let mut group = x_object.group();
     group

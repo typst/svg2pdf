@@ -37,7 +37,7 @@ pub(crate) fn render(
             }
             let (_, group_ref) =
                 group::create_x_object(&clip_path.root, group, writer, ctx);
-            let name = ctx.alloc_soft_mask(group_ref);
+            let name = ctx.deferrer.add_soft_mask(group_ref);
 
             ctx.context_frame.pop();
 
