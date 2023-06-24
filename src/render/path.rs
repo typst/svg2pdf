@@ -1,4 +1,4 @@
-use crate::util::helper::{NameExt, RgbColor, SRGB, TransformExt};
+use crate::util::helper::{ColorExt, NameExt, SRGB, TransformExt};
 use crate::util::{Context, RenderContext};
 use crate::render::group::create_x_object;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
@@ -23,13 +23,11 @@ pub(crate) fn render(
         return;
     }
 
-    content.save_state();
-
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&path.transform);
 
+    content.save_state();
     content.transform(ctx.context_frame.transform().as_array());
-
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
@@ -52,8 +50,8 @@ pub(crate) fn render(
     draw_path(path.data.segments(), content);
     finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
 
-    ctx.context_frame.pop();
     content.restore_state();
+    ctx.context_frame.pop();
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
@@ -74,8 +72,8 @@ fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Conte
         (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
         (None, Some(FillRule::NonZero)) => content.fill_nonzero(),
         (None, Some(FillRule::EvenOdd)) => content.fill_even_odd(),
-        (Some(_), _) => content.stroke(),
-        (None, _) => content.end_path(),
+        (Some(_), None) => content.stroke(),
+        (None, None) => content.end_path(),
     };
 }
 
@@ -101,7 +99,7 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
 
     match &stroke.paint {
         Paint::Color(c) => {
-            content.set_stroke_color(RgbColor::from(*c).as_array());
+            content.set_stroke_color(c.as_array());
         }
         Paint::Pattern(_) => todo!(),
         _ => {} //_ => todo!(),
@@ -118,7 +116,7 @@ fn set_fill(
 
     match paint {
         Paint::Color(c) => {
-            content.set_fill_color(RgbColor::from(*c).as_array());
+            content.set_fill_color(c.as_array());
         }
         Paint::Pattern(p) => {
             let pattern_name = create_pattern(p.clone(), writer, ctx);
