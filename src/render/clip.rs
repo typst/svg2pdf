@@ -1,6 +1,6 @@
 use crate::util::{calc_node_bbox, Context};
 use crate::render::group;
-use pdf_writer::{Content, PdfWriter};
+use pdf_writer::{Content, Finish, PdfWriter};
 use std::rc::Rc;
 use usvg::{ClipPath, Node, NodeKind, Transform, Units};
 use crate::util::helper::NameExt;
@@ -22,39 +22,50 @@ pub(crate) fn create_soft_mask(
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
+    ctx.deferrer.push();
+    let x_object_reference = ctx.deferrer.alloc_ref();
+
+    let mut content = Content::new();
+    content.save_state();
+
+    if let Some(recursive_clip_path) = &clip_path.clip_path {
+        render(parent, recursive_clip_path.clone(), writer, &mut content, ctx);
+    }
+
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&clip_path.transform);
 
-    // TODO: Think about a more elegant way of solving this
-    match *clip_path.root.borrow_mut() {
-        NodeKind::Group(ref mut group) => {
-            if let Some(recursive_clip_path) = &clip_path.clip_path {
-                group.clip_path = Some(recursive_clip_path.clone());
-            }
-        }
-        _ => unreachable!(),
-    };
+    let pdf_bbox = ctx.pdf_bbox(parent);
 
-    let name = match *clip_path.root.borrow() {
+    match *clip_path.root.borrow() {
         NodeKind::Group(ref group) => {
-            let parent_bbox = calc_node_bbox(parent, Transform::default())
+            let parent_svg_bbox = calc_node_bbox(parent, Transform::default())
                 .unwrap()
                 .to_rect()
                 .unwrap();
 
             if clip_path.units == Units::ObjectBoundingBox {
                 ctx.context_frame
-                    .append_transform(&Transform::from_bbox(parent_bbox));
+                    .append_transform(&Transform::from_bbox(parent_svg_bbox));
             }
-            let (_, group_ref) =
+            let (group_name, _) =
                 group::create_x_object(&clip_path.root, group, writer, ctx);
-            let name = ctx.deferrer.add_soft_mask(group_ref);
-
-            name
+            content.x_object(group_name.as_name());
         }
         _ => unreachable!(),
     };
 
     ctx.context_frame.pop();
-    name
+
+    content.restore_state();
+    let content_stream = content.finish();
+
+    let mut x_object = writer.form_xobject(x_object_reference, &content_stream);
+    ctx.deferrer.pop(&mut x_object.resources());
+
+    x_object.bbox(pdf_bbox);
+    x_object.finish();
+
+    let soft_mask_name = ctx.deferrer.add_soft_mask(x_object_reference);
+    soft_mask_name
 }
