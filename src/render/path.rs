@@ -9,7 +9,7 @@ use pdf_writer::{Content, Finish, PdfWriter};
 
 use std::rc::Rc;
 
-use usvg::{Node, Stroke, Units};
+use usvg::{Node, Stroke};
 use usvg::{Fill, NodeKind, Transform};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 use usvg::utils::view_box_to_transform;
@@ -132,7 +132,7 @@ fn set_fill(
 
 fn create_pattern(
     pattern: Rc<usvg::Pattern>,
-    parent: &Node,
+    _: &Node,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
