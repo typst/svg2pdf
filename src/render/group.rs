@@ -1,7 +1,7 @@
 use crate::render::clip;
 use crate::render::Render;
 use crate::util::helper::NameExt;
-use crate::util::Context;
+use crate::util::context::Context;
 use pdf_writer::{Content, Finish, PdfWriter, Ref};
 use usvg::Node;
 

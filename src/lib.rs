@@ -1,10 +1,9 @@
 mod render;
 mod util;
 
-use util::*;
-
 use pdf_writer::{Content, Finish, PdfWriter, TextStr};
 use usvg::Tree;
+use util::context::Context;
 
 pub fn convert_tree(tree: &Tree) -> Vec<u8> {
     let mut ctx = Context::new(tree);

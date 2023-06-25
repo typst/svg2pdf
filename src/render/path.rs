@@ -1,6 +1,5 @@
 use crate::render::group::create_x_object;
-use crate::util::helper::{ColorExt, NameExt, RectExt, TransformExt, SRGB};
-use crate::util::{Context, RenderContext};
+use crate::util::helper::{ColorExt, NameExt, RectExt, SRGB, TransformExt};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{
     ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType,
@@ -13,6 +12,7 @@ use usvg::utils::view_box_to_transform;
 use usvg::{Fill, NodeKind, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 use usvg::{Node, Stroke};
+use crate::util::context::{Context, RenderContext};
 
 pub(crate) fn render(
     path: &usvg::Path,
