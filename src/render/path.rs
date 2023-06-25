@@ -146,6 +146,8 @@ fn create_pattern(
             ctx.context_frame.push();
             ctx.context_frame.set_transform(Transform::default());
 
+            ctx.context_frame.append_transform(&Transform::new(1.0, 0.0, 0.0, 1.0, pattern.rect.x(), pattern.rect.y()));
+
             if let Some(viewbox) = pattern.view_box {
                 ctx.context_frame.append_transform(&view_box_to_transform(viewbox.rect, viewbox.aspect, pattern.rect.size()))
             }
@@ -160,6 +162,9 @@ fn create_pattern(
 
             let mut tiling_pattern =
                 writer.tiling_pattern(pattern_id, &pattern_content_stream);
+
+            println!("{:?}", pattern.rect);
+            println!("{:?}", pattern.rect.to_path_bbox());
 
             let mut resources = tiling_pattern.resources();
             ctx.deferrer.pop(&mut resources);
