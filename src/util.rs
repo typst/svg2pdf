@@ -116,12 +116,13 @@ impl Context {
 
     pub fn pdf_bbox(&self, node: &Node) -> Rect {
         match self.context_frame.current_frame().render_context {
-            RenderContext::Normal => self.pdf_bbox_with_transform(node, self.context_frame.raw_transform()),
-            RenderContext::Pattern => self.svg_bbox_with_transform(node, self.context_frame.raw_transform())
-                    .as_pdf_rect(&Transform::default())
-
+            RenderContext::Normal => {
+                self.pdf_bbox_with_transform(node, self.context_frame.raw_transform())
+            }
+            RenderContext::Pattern => self
+                .svg_bbox_with_transform(node, self.context_frame.raw_transform())
+                .as_pdf_rect(&Transform::default()),
         }
-
     }
 
     pub fn pdf_bbox_with_transform(&self, node: &Node, transform: Transform) -> Rect {

@@ -9,10 +9,10 @@ use pdf_writer::{Content, Finish, PdfWriter};
 
 use std::rc::Rc;
 
-use usvg::{Node, Stroke};
+use usvg::utils::view_box_to_transform;
 use usvg::{Fill, NodeKind, Transform};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
-use usvg::utils::view_box_to_transform;
+use usvg::{Node, Stroke};
 
 pub(crate) fn render(
     path: &usvg::Path,
@@ -146,15 +146,25 @@ fn create_pattern(
             ctx.context_frame.push();
             ctx.context_frame.set_transform(Transform::default());
 
-            ctx.context_frame.append_transform(&Transform::new(1.0, 0.0, 0.0, 1.0, pattern.rect.x(), pattern.rect.y()));
+            ctx.context_frame.append_transform(&Transform::new(
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                pattern.rect.x(),
+                pattern.rect.y(),
+            ));
 
             if let Some(viewbox) = pattern.view_box {
-                ctx.context_frame.append_transform(&view_box_to_transform(viewbox.rect, viewbox.aspect, pattern.rect.size()))
+                ctx.context_frame.append_transform(&view_box_to_transform(
+                    viewbox.rect,
+                    viewbox.aspect,
+                    pattern.rect.size(),
+                ))
             }
 
             ctx.context_frame.set_render_context(RenderContext::Pattern);
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
-
 
             let mut pattern_content = Content::new();
             pattern_content.x_object(x_object_name.as_name());
