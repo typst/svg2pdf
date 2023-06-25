@@ -10,7 +10,7 @@ use pdf_writer::{Content, Finish, PdfWriter};
 use std::rc::Rc;
 
 use usvg::utils::view_box_to_transform;
-use usvg::{Fill, NodeKind, Transform};
+use usvg::{Fill, NodeKind, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 use usvg::{Node, Stroke};
 
@@ -132,12 +132,26 @@ fn set_fill(
 
 fn create_pattern(
     pattern: Rc<usvg::Pattern>,
-    _: &Node,
+    parent: &Node,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
     ctx.deferrer.push();
+
+    let pattern_rect = if pattern.units == Units::UserSpaceOnUse {
+        pattern.rect
+    }   else {
+        let bbox =
+            ctx.svg_bbox_with_transform(parent, Transform::default());
+
+        usvg::Rect::new(
+            pattern.rect.x() * bbox.width() + bbox.x(),
+            pattern.rect.y() * bbox.height() + bbox.y(),
+            pattern.rect.width() * bbox.width(),
+            pattern.rect.height() * bbox.height(),
+        ).unwrap()
+    };
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
@@ -151,15 +165,15 @@ fn create_pattern(
                 0.0,
                 0.0,
                 1.0,
-                pattern.rect.x(),
-                pattern.rect.y(),
+                pattern_rect.x(),
+                pattern_rect.y(),
             ));
 
             if let Some(viewbox) = pattern.view_box {
                 ctx.context_frame.append_transform(&view_box_to_transform(
                     viewbox.rect,
                     viewbox.aspect,
-                    pattern.rect.size(),
+                    pattern_rect.size(),
                 ))
             }
 
@@ -173,13 +187,10 @@ fn create_pattern(
             let mut tiling_pattern =
                 writer.tiling_pattern(pattern_id, &pattern_content_stream);
 
-            println!("{:?}", pattern.rect);
-            println!("{:?}", pattern.rect.to_path_bbox());
-
             let mut resources = tiling_pattern.resources();
             ctx.deferrer.pop(&mut resources);
             resources.finish();
-            let final_bbox = pattern.rect.as_pdf_rect(&Transform::default());
+            let final_bbox = pattern_rect.as_pdf_rect(&Transform::default());
 
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)
