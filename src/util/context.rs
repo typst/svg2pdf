@@ -7,7 +7,6 @@ use crate::util::helper::{calc_node_bbox, RectExt};
 
 #[derive(Clone)]
 pub struct Frame {
-    render_context: RenderContext,
     base_transform: Transform,
     current_transform: Transform,
 }
@@ -22,10 +21,18 @@ impl Default for Frame {
 }
 
 impl Frame {
-    pub fn transform(&self) -> Transform {
+    pub fn full_transform(&self) -> Transform {
         let mut transform = self.base_transform;
         transform.append(&self.current_transform);
         transform
+    }
+
+    pub fn base_transform(&self) -> Transform {
+        self.base_transform
+    }
+
+    pub fn current_transform(&self) -> Transform {
+        self.current_transform
     }
 }
 
@@ -44,11 +51,7 @@ impl ContextFrame {
         self.frames.last().unwrap()
     }
 
-    pub fn set_render_context(&mut self, render_context: RenderContext) {
-        self.current_frame_as_mut().render_context = render_context;
-    }
-
-    pub fn set_transform(&mut self, transform: Transform) {
+    pub fn set_current_transform(&mut self, transform: Transform) {
         self.current_frame_as_mut().current_transform = transform;
     }
 
@@ -60,16 +63,24 @@ impl ContextFrame {
         self.frames.last_mut().unwrap()
     }
 
-    pub fn transform(&self) -> Transform {
-        self.current_frame().transform()
+    pub fn full_transform(&self) -> Transform {
+        self.current_frame().full_transform()
     }
 
-    pub fn raw_transform(&self) -> Transform {
+    pub fn current_transform(&self) -> Transform {
         self.current_frame().current_transform
+    }
+
+    pub fn base_transform(&self) -> Transform {
+        self.current_frame().base_transform
     }
 
     pub fn push(&mut self) {
         self.frames.push(self.current_frame().clone());
+    }
+
+    pub fn push_new(&mut self) {
+        self.frames.push(Frame::default());
     }
 
     pub fn pop(&mut self) {
@@ -98,9 +109,9 @@ impl Context {
             context_frame: ContextFrame::new(),
         };
 
-        let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, size.height());
+        let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, context.size.height());
         let viewbox_transform =
-            view_box_to_transform(viewbox.rect, viewbox.aspect, *size);
+            view_box_to_transform(context.viewbox.rect, context.viewbox.aspect, context.size);
 
         let mut base_transform = viewport_transform;
         base_transform.append(&viewbox_transform);
@@ -113,28 +124,11 @@ impl Context {
         Rect::new(0.0, 0.0, self.size.width() as f32, self.size.height() as f32)
     }
 
-    pub fn pdf_bbox(&self, node: &Node) -> Rect {
-        match self.context_frame.current_frame().render_context {
-            RenderContext::Normal => {
-                self.pdf_bbox_with_transform(node, self.context_frame.raw_transform())
-            }
-            RenderContext::Pattern => self
-                .svg_bbox_with_transform(node, self.context_frame.raw_transform())
-                .as_pdf_rect(&Transform::default()),
-        }
-    }
-
-    pub fn pdf_bbox_with_transform(&self, node: &Node, transform: Transform) -> Rect {
-        self.svg_bbox_with_transform(node, transform)
-            .as_pdf_rect(&self.context_frame.svg_base_transform)
-    }
-
-    pub fn svg_bbox_with_transform(
+    pub fn plain_bbox(
         &self,
-        node: &Node,
-        transform: Transform,
+        node: &Node
     ) -> usvg::Rect {
-        calc_node_bbox(node, transform).and_then(|b| b.to_rect()).unwrap_or(
+        calc_node_bbox(node, Transform::default()).and_then(|b| b.to_rect()).unwrap_or(
             usvg::Rect::new(0.0, 0.0, self.size.width(), self.size.height()).unwrap(),
         )
     }

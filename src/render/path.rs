@@ -12,7 +12,7 @@ use usvg::utils::view_box_to_transform;
 use usvg::{Fill, NodeKind, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 use usvg::{Node, Stroke};
-use crate::util::context::{Context, RenderContext};
+use crate::util::context::Context;
 
 pub(crate) fn render(
     path: &usvg::Path,
@@ -29,7 +29,7 @@ pub(crate) fn render(
     ctx.context_frame.append_transform(&path.transform);
 
     content.save_state();
-    content.transform(ctx.context_frame.transform().as_array());
+    content.transform(ctx.context_frame.full_transform().as_array());
     content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
@@ -121,88 +121,88 @@ fn set_fill(
         Paint::Color(c) => {
             content.set_fill_color(c.as_array());
         }
-        Paint::Pattern(p) => {
-            let pattern_name = create_pattern(p.clone(), parent, writer, ctx);
-            content.set_fill_color_space(Pattern);
-            content.set_fill_pattern(None, pattern_name.as_name());
-        }
+// as_array        Paint::Pattern(p) => {
+//             let pattern_name = create_pattern(p.clone(), parent, writer, ctx);
+//             content.set_fill_color_space(Pattern);
+//             content.set_fill_pattern(None, pattern_name.as_name());
+//         }
         _ => {}
     }
 }
 
-fn create_pattern(
-    pattern: Rc<usvg::Pattern>,
-    parent: &Node,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-) -> String {
-    let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
-    ctx.deferrer.push();
-
-    let pattern_rect = if pattern.units == Units::UserSpaceOnUse {
-        pattern.rect
-    }   else {
-        let bbox =
-            ctx.svg_bbox_with_transform(parent, Transform::default());
-
-        usvg::Rect::new(
-            pattern.rect.x() * bbox.width() + bbox.x(),
-            pattern.rect.y() * bbox.height() + bbox.y(),
-            pattern.rect.width() * bbox.width(),
-            pattern.rect.height() * bbox.height(),
-        ).unwrap()
-    };
-
-    match *pattern.root.borrow() {
-        NodeKind::Group(ref group) => {
-            let mut parent_transform = ctx.context_frame.transform();
-            parent_transform.append(&pattern.transform);
-            ctx.context_frame.push();
-            ctx.context_frame.set_transform(Transform::default());
-
-            ctx.context_frame.append_transform(&Transform::new(
-                1.0,
-                0.0,
-                0.0,
-                1.0,
-                pattern_rect.x(),
-                pattern_rect.y(),
-            ));
-
-            if let Some(viewbox) = pattern.view_box {
-                ctx.context_frame.append_transform(&view_box_to_transform(
-                    viewbox.rect,
-                    viewbox.aspect,
-                    pattern_rect.size(),
-                ))
-            }
-
-            ctx.context_frame.set_render_context(RenderContext::Pattern);
-            let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
-
-            let mut pattern_content = Content::new();
-            pattern_content.x_object(x_object_name.as_name());
-            let pattern_content_stream = pattern_content.finish();
-
-            let mut tiling_pattern =
-                writer.tiling_pattern(pattern_id, &pattern_content_stream);
-
-            let mut resources = tiling_pattern.resources();
-            ctx.deferrer.pop(&mut resources);
-            resources.finish();
-            let final_bbox = pattern_rect.as_pdf_rect(&Transform::default());
-
-            tiling_pattern
-                .tiling_type(TilingType::ConstantSpacing)
-                .paint_type(PaintType::Colored)
-                .bbox(final_bbox)
-                .matrix(parent_transform.as_array())
-                .x_step(final_bbox.x2 - final_bbox.x1)
-                .y_step(final_bbox.y2 - final_bbox.y1);
-
-            ctx.context_frame.pop();
-            pattern_name
-        }
-        _ => unreachable!(),
-    }
-}
+// fn create_pattern(
+//     pattern: Rc<usvg::Pattern>,
+//     parent: &Node,
+//     writer: &mut PdfWriter,
+//     ctx: &mut Context,
+// ) -> String {
+//     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
+//     ctx.deferrer.push();
+//
+//     let pattern_rect = if pattern.units == Units::UserSpaceOnUse {
+//         pattern.rect
+//     }   else {
+//         let bbox =
+//             ctx.svg_bbox_with_transform(parent, Transform::default());
+//
+//         usvg::Rect::new(
+//             pattern.rect.x() * bbox.width() + bbox.x(),
+//             pattern.rect.y() * bbox.height() + bbox.y(),
+//             pattern.rect.width() * bbox.width(),
+//             pattern.rect.height() * bbox.height(),
+//         ).unwrap()
+//     };
+//
+//     match *pattern.root.borrow() {
+//         NodeKind::Group(ref group) => {
+//             let mut parent_transform = ctx.context_frame.transform();
+//             parent_transform.append(&pattern.transform);
+//             ctx.context_frame.push();
+//             ctx.context_frame.set_transform(Transform::default());
+//
+//             ctx.context_frame.append_transform(&Transform::new(
+//                 1.0,
+//                 0.0,
+//                 0.0,
+//                 1.0,
+//                 pattern_rect.x(),
+//                 pattern_rect.y(),
+//             ));
+//
+//             if let Some(viewbox) = pattern.view_box {
+//                 ctx.context_frame.append_transform(&view_box_to_transform(
+//                     viewbox.rect,
+//                     viewbox.aspect,
+//                     pattern_rect.size(),
+//                 ))
+//             }
+//
+//             ctx.context_frame.set_render_context(RenderContext::Pattern);
+//             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
+//
+//             let mut pattern_content = Content::new();
+//             pattern_content.x_object(x_object_name.as_name());
+//             let pattern_content_stream = pattern_content.finish();
+//
+//             let mut tiling_pattern =
+//                 writer.tiling_pattern(pattern_id, &pattern_content_stream);
+//
+//             let mut resources = tiling_pattern.resources();
+//             ctx.deferrer.pop(&mut resources);
+//             resources.finish();
+//             let final_bbox = pattern_rect.as_pdf_rect(&Transform::default());
+//
+//             tiling_pattern
+//                 .tiling_type(TilingType::ConstantSpacing)
+//                 .paint_type(PaintType::Colored)
+//                 .bbox(final_bbox)
+//                 .matrix(parent_transform.as_array())
+//                 .x_step(final_bbox.x2 - final_bbox.x1)
+//                 .y_step(final_bbox.y2 - final_bbox.y1);
+//
+//             ctx.context_frame.pop();
+//             pattern_name
+//         }
+//         _ => unreachable!(),
+//     }
+// }

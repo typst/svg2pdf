@@ -1,5 +1,5 @@
 <svg id="svg1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <title>Simple case</title>
+    <title>'pattern' with rotate on parent</title>
 
     <pattern id="patt1" patternUnits="userSpaceOnUse" patternTransform="scale(2 2)" width="20" height="20">
         <rect id="rect1" x="0" y="0" width="10" height="10" fill="black"/>
