@@ -1,47 +1,42 @@
 use usvg::{Node, Size, Transform, Tree, ViewBox};
 use pdf_writer::Rect;
 use usvg::utils::view_box_to_transform;
+use crate::util::context;
 use crate::util::defer::Deferrer;
 use crate::util::helper::{calc_node_bbox, RectExt};
 
 #[derive(Clone)]
-pub enum RenderContext {
-    Normal,
-    Pattern,
-}
-
-#[derive(Clone)]
 pub struct Frame {
     render_context: RenderContext,
+    base_transform: Transform,
     current_transform: Transform,
 }
 
 impl Default for Frame {
     fn default() -> Self {
         Self {
-            render_context: RenderContext::Normal,
+            base_transform: Transform::default(),
             current_transform: Transform::default(),
         }
     }
 }
 
+impl Frame {
+    pub fn transform(&self) -> Transform {
+        let mut transform = self.base_transform;
+        transform.append(&self.current_transform);
+        transform
+    }
+}
+
 pub struct ContextFrame {
-    frames: Vec<Frame>,
-    pub svg_base_transform: Transform,
+    frames: Vec<Frame>
 }
 
 impl ContextFrame {
-    pub fn new(size: &Size, viewbox: &ViewBox) -> Self {
-        let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, size.height());
-        let viewbox_transform =
-            view_box_to_transform(viewbox.rect, viewbox.aspect, *size);
-
-        let mut base_transform = viewport_transform;
-        base_transform.append(&viewbox_transform);
-
+    pub fn new() -> Self {
         Self {
-            frames: vec![Frame::default()],
-            svg_base_transform: base_transform,
+            frames: vec![Frame::default()]
         }
     }
 
@@ -57,18 +52,16 @@ impl ContextFrame {
         self.current_frame_as_mut().current_transform = transform;
     }
 
+    pub fn set_base_transform(&mut self, transform: Transform) {
+        self.current_frame_as_mut().base_transform = transform;
+    }
+
     fn current_frame_as_mut(&mut self) -> &mut Frame {
         self.frames.last_mut().unwrap()
     }
 
     pub fn transform(&self) -> Transform {
-        let mut base_transform = match self.current_frame().render_context {
-            RenderContext::Normal => self.svg_base_transform,
-            RenderContext::Pattern => Transform::default(),
-        };
-
-        base_transform.append(&self.raw_transform());
-        base_transform
+        self.current_frame().transform()
     }
 
     pub fn raw_transform(&self) -> Transform {
@@ -98,12 +91,22 @@ pub struct Context {
 impl Context {
     /// Create a new context.
     pub fn new(tree: &Tree) -> Self {
-        Self {
+        let mut context = Self {
             viewbox: tree.view_box,
             size: tree.size,
             deferrer: Deferrer::new(),
-            context_frame: ContextFrame::new(&tree.size, &tree.view_box),
-        }
+            context_frame: ContextFrame::new(),
+        };
+
+        let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, size.height());
+        let viewbox_transform =
+            view_box_to_transform(viewbox.rect, viewbox.aspect, *size);
+
+        let mut base_transform = viewport_transform;
+        base_transform.append(&viewbox_transform);
+
+        context.context_frame.set_base_transform(base_transform);
+        context
     }
 
     pub fn get_media_box(&self) -> Rect {
