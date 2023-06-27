@@ -142,7 +142,6 @@ fn create_pattern(
     let pattern_rect = if pattern.units == Units::UserSpaceOnUse {
         pattern.rect
     }   else {
-        let a = ctx.plain_bbox(parent);
         pattern.rect.bbox_transform(ctx.plain_bbox(parent))
     };
 
@@ -151,6 +150,7 @@ fn create_pattern(
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
             let mut pattern_matrix = ctx.context_frame.full_transform();
+            pattern_matrix.append(&pattern.transform);
             // Make sure that the pattern moves accordingly when a different x/y value is set for the pattern
             pattern_matrix.append(&Transform::new(1.0, 0.0, 0.0, 1.0, pattern_rect.x(), pattern_rect.y()));
             // All transformations up until now will be applied to the pattern by setting the matrix argument of the pattern,
