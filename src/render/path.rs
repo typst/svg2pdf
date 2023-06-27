@@ -46,7 +46,7 @@ pub(crate) fn render(
     }
 
     if let Some(fill) = &path.fill {
-        set_fill(fill, &node.parent().unwrap(), content, writer, ctx);
+        set_fill(fill, &node, content, writer, ctx);
     }
 
     draw_path(path.data.segments(), content);
@@ -139,10 +139,22 @@ fn create_pattern(
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
     ctx.deferrer.push();
 
+    let pattern_rect = if pattern.units == Units::UserSpaceOnUse {
+        pattern.rect
+    }   else {
+        let a = ctx.plain_bbox(parent);
+        pattern.rect.bbox_transform(ctx.plain_bbox(parent))
+    };
+
+    println!("{:?}", pattern_rect);
+
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
             let mut pattern_matrix = ctx.context_frame.full_transform();
-            pattern_matrix.append(&Transform::new(1.0, 0.0, 0.0, 1.0, pattern.rect.x(), pattern.rect.y()));
+            // Make sure that the pattern moves accordingly when a different x/y value is set for the pattern
+            pattern_matrix.append(&Transform::new(1.0, 0.0, 0.0, 1.0, pattern_rect.x(), pattern_rect.y()));
+            // All transformations up until now will be applied to the pattern by setting the matrix argument of the pattern,
+            // so we create a completely new context frame here which doesn't contain any of the transformations up until now
             ctx.context_frame.push_new();
 
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
@@ -159,7 +171,9 @@ fn create_pattern(
             resources.finish();
 
 
-            let final_bbox = pdf_writer::Rect::new(0.0, 0.0, pattern.rect.width() as f32, pattern.rect.height() as f32);
+            // We already account for the x/y of the pattern by appending it to the matrix above, so here we just need to take the height / width
+            // in consideration
+            let final_bbox = pdf_writer::Rect::new(0.0, 0.0, pattern_rect.width() as f32, pattern_rect.height() as f32);
 
             tiling_pattern
                 .tiling_type(TilingType::ConstantSpacing)
