@@ -139,13 +139,13 @@ fn create_pattern(
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
     ctx.deferrer.push();
 
-    let pattern_rect = if pattern.units == Units::UserSpaceOnUse {
-        pattern.rect
-    }   else {
-        pattern.rect.bbox_transform(ctx.plain_bbox(parent))
-    };
+    let parent_bbox = ctx.plain_bbox(parent);
 
-    println!("{:?}", pattern_rect);
+    let pattern_rect = if pattern.units == Units::ObjectBoundingBox || pattern.content_units == Units::ObjectBoundingBox {
+        pattern.rect.bbox_transform(parent_bbox)
+    }   else {
+        pattern.rect
+    };
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
@@ -156,6 +156,12 @@ fn create_pattern(
             // All transformations up until now will be applied to the pattern by setting the matrix argument of the pattern,
             // so we create a completely new context frame here which doesn't contain any of the transformations up until now
             ctx.context_frame.push_new();
+
+            if pattern.content_units == Units::ObjectBoundingBox {
+                // Again, the x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
+                // the x/y would be applied twice.
+                ctx.context_frame.append_transform(&Transform::new_scale(parent_bbox.width(), parent_bbox.height()));
+            }
 
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
 
