@@ -9,7 +9,7 @@ use pdf_writer::{Content, Finish, PdfWriter};
 use std::rc::Rc;
 
 use usvg::utils::view_box_to_transform;
-use usvg::{Fill, NodeKind, Rect, Transform, Units};
+use usvg::{Fill, NodeKind, Rect, Size, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 use usvg::{Node, Stroke};
 use crate::util::context::Context;
@@ -161,6 +161,10 @@ fn create_pattern(
                 // Again, the x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
                 // the x/y would be applied twice.
                 ctx.context_frame.append_transform(&Transform::new_scale(parent_bbox.width(), parent_bbox.height()));
+            }
+
+            if let Some(view_box) = pattern.view_box {
+                ctx.context_frame.append_transform(&view_box_to_transform(view_box.rect, view_box.aspect, Size::new(pattern_rect.width(), pattern_rect.height()).unwrap()));
             }
 
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
