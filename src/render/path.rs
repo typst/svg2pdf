@@ -141,7 +141,10 @@ fn create_pattern(
 
     let parent_bbox = ctx.plain_bbox(parent);
 
-    let pattern_rect = if pattern.units == Units::ObjectBoundingBox || pattern.content_units == Units::ObjectBoundingBox {
+    // Content units object bounding box should only be used if no viewbox is declared.
+    let use_content_units_obb = pattern.content_units == Units::ObjectBoundingBox && pattern.view_box.is_none();
+
+    let pattern_rect = if pattern.units == Units::ObjectBoundingBox || use_content_units_obb {
         pattern.rect.bbox_transform(parent_bbox)
     }   else {
         pattern.rect
@@ -157,7 +160,7 @@ fn create_pattern(
             // so we create a completely new context frame here which doesn't contain any of the transformations up until now
             ctx.context_frame.push_new();
 
-            if pattern.content_units == Units::ObjectBoundingBox {
+            if use_content_units_obb {
                 // Again, the x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
                 // the x/y would be applied twice.
                 ctx.context_frame.append_transform(&Transform::new_scale(parent_bbox.width(), parent_bbox.height()));
