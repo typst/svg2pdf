@@ -1,5 +1,5 @@
 use pdf_writer::{Name, Rect};
-use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Transform};
+use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
 
@@ -85,5 +85,36 @@ pub(crate) fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
             Some(bbox)
         }
         NodeKind::Text(_) => None,
+    }
+}
+
+// Taken from resvg
+/// Calculates an image rect depending on the provided view box.
+pub fn image_rect(
+    view_box: &usvg::ViewBox,
+    img_size: Size,
+) -> usvg::Rect {
+    let new_size = fit_view_box(img_size, view_box);
+    let (x, y) = usvg::utils::aligned_pos(
+        view_box.aspect.align,
+        view_box.rect.x(),
+        view_box.rect.y(),
+        view_box.rect.width() - new_size.width(),
+        view_box.rect.height() - new_size.height(),
+    );
+
+    new_size.to_rect(x, y)
+}
+
+// Taken from resvg
+pub fn fit_view_box(size: Size, vb: &usvg::ViewBox) -> usvg::Size {
+    let s = vb.rect.size();
+
+    if vb.aspect.align == usvg::Align::None {
+        s
+    } else if vb.aspect.slice {
+        size.expand_to(s)
+    } else {
+        size.scale_to(s)
     }
 }

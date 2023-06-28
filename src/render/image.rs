@@ -1,10 +1,10 @@
 use std::io::Cursor;
 use image::io::Reader;
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
 use usvg::{ImageKind, Node, Size, Transform, Visibility};
 use usvg::utils::view_box_to_transform;
 use crate::util::context::Context;
-use crate::util::helper::{NameExt, TransformExt};
+use crate::util::helper::{image_rect, NameExt, TransformExt};
 
 pub(crate) fn render(
     node: &Node,
@@ -43,10 +43,10 @@ pub(crate) fn render(
     image_x_object.finish();
 
     ctx.context_frame.append_transform(&image.transform);
-    let test = view_box_to_transform(image.view_box.rect, image.view_box.aspect,
-                                      Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap());
-    ctx.context_frame.append_transform(&Transform::new_translate(image.view_box.rect.x(), image.view_box.rect.y()));
-    ctx.context_frame.append_transform(&Transform::new_scale(image.view_box.rect.width(), image.view_box.rect.height()));
+    let image_rect = image_rect(&image.view_box, Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap());
+
+    ctx.context_frame.append_transform(&Transform::new_translate(image_rect.x(), image_rect.y()));
+    ctx.context_frame.append_transform(&Transform::new_scale(image_rect.width(), image_rect.height()));
     content.save_state();
     content.transform(ctx.context_frame.full_transform().as_array());
     content.x_object(image_name.as_name());
