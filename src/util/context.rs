@@ -1,23 +1,14 @@
-use crate::util::context;
 use crate::util::defer::Deferrer;
-use crate::util::helper::{calc_node_bbox, RectExt};
+use crate::util::helper::calc_node_bbox;
 use pdf_writer::Rect;
 use usvg::utils::view_box_to_transform;
 use usvg::{Node, Size, Transform, Tree, ViewBox};
 
 #[derive(Clone)]
+#[derive(Default)]
 pub struct Frame {
     base_transform: Transform,
     current_transform: Transform,
-}
-
-impl Default for Frame {
-    fn default() -> Self {
-        Self {
-            base_transform: Transform::default(),
-            current_transform: Transform::default(),
-        }
-    }
 }
 
 impl Frame {
@@ -25,14 +16,6 @@ impl Frame {
         let mut transform = self.base_transform;
         transform.append(&self.current_transform);
         transform
-    }
-
-    pub fn base_transform(&self) -> Transform {
-        self.base_transform
-    }
-
-    pub fn current_transform(&self) -> Transform {
-        self.current_transform
     }
 }
 
@@ -49,10 +32,6 @@ impl ContextFrame {
         self.frames.last().unwrap()
     }
 
-    pub fn set_current_transform(&mut self, transform: Transform) {
-        self.current_frame_as_mut().current_transform = transform;
-    }
-
     pub fn set_base_transform(&mut self, transform: Transform) {
         self.current_frame_as_mut().base_transform = transform;
     }
@@ -63,14 +42,6 @@ impl ContextFrame {
 
     pub fn full_transform(&self) -> Transform {
         self.current_frame().full_transform()
-    }
-
-    pub fn current_transform(&self) -> Transform {
-        self.current_frame().current_transform
-    }
-
-    pub fn base_transform(&self) -> Transform {
-        self.current_frame().base_transform
     }
 
     pub fn push(&mut self) {

@@ -46,7 +46,7 @@ pub trait RectExt {
 
 impl RectExt for usvg::Rect {
     fn as_pdf_rect(&self, transform: &Transform) -> Rect {
-        let transformed = self.transform(&transform).unwrap();
+        let transformed = self.transform(transform).unwrap();
         Rect::new(
             transformed.x() as f32,
             transformed.y() as f32,

@@ -1,15 +1,14 @@
 use crate::render::tree_to_stream;
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
-use image::imageops::FilterType;
-use image::io::Reader;
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
+
+use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use std::io::Cursor;
-use usvg::utils::view_box_to_transform;
+
 use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
 
 pub(crate) fn render(
-    node: &Node,
+    _node: &Node,
     image: &usvg::Image,
     writer: &mut PdfWriter,
     content: &mut Content,

@@ -1,5 +1,5 @@
 use crate::render::group::create_x_object;
-use crate::util::helper::{ColorExt, NameExt, RectExt, TransformExt, SRGB};
+use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{
     ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType,
@@ -10,7 +10,7 @@ use std::rc::Rc;
 
 use crate::util::context::Context;
 use usvg::utils::view_box_to_transform;
-use usvg::{Fill, NodeKind, Rect, Size, Transform, Units};
+use usvg::{Fill, NodeKind, Size, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 use usvg::{Node, Stroke};
 
@@ -46,7 +46,7 @@ pub(crate) fn render(
     }
 
     if let Some(fill) = &path.fill {
-        set_fill(fill, &node, content, writer, ctx);
+        set_fill(fill, node, content, writer, ctx);
     }
 
     draw_path(path.data.segments(), content);
