@@ -1,7 +1,8 @@
 use std::io::Cursor;
+use image::imageops::FilterType;
 use image::io::Reader;
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
-use usvg::{ImageKind, Node, Size, Transform, Visibility};
+use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
 use usvg::utils::view_box_to_transform;
 use crate::render::tree_to_stream;
 use crate::util::context::Context;
@@ -29,14 +30,7 @@ pub(crate) fn render(
             (image, buffer)
         }
         ImageKind::SVG(tree) => {
-            ctx.context_frame.push();
-            ctx.context_frame.append_transform(&image.transform);
-            let image_rect = image_rect(&image.view_box, tree.size);
-            ctx.context_frame.append_transform(&Transform::new_translate(image_rect.x(), image_rect.y()));
-            ctx.context_frame.append_transform(&Transform::new_scale(image_rect.width() / tree.size.width(), image_rect.height() / tree.size.height()));
-            tree_to_stream(tree, writer, content, ctx);
-
-            ctx.context_frame.pop();
+            render_svg(image, tree, writer, content, ctx);
             return;
         }
         _ => unimplemented!()
@@ -66,4 +60,20 @@ pub(crate) fn render(
 
     ctx.context_frame.pop();
 
+}
+
+fn render_svg(image: &usvg::Image,
+              tree: &Tree,
+              writer: &mut PdfWriter,
+              content: &mut Content,
+              ctx: &mut Context) {
+    ctx.context_frame.push();
+    ctx.context_frame.append_transform(&image.transform);
+    let image_rect = image_rect(&image.view_box, tree.size);
+    // Account for the x/y shift of the image
+    ctx.context_frame.append_transform(&Transform::new_translate(image_rect.x(), image_rect.y()));
+    // Apply transformation so that the embedded svg has the same size as the image
+    ctx.context_frame.append_transform(&Transform::new_scale(image_rect.width() / tree.size.width(), image_rect.height() / tree.size.height()));
+    tree_to_stream(tree, writer, content, ctx);
+    ctx.context_frame.pop();
 }
