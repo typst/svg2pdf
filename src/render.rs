@@ -1,7 +1,7 @@
 pub mod clip;
 pub mod group;
-pub mod path;
 pub mod image;
+pub mod path;
 
 use crate::util::context::Context;
 use pdf_writer::{Content, PdfWriter};
@@ -33,7 +33,7 @@ impl Render for Node {
             NodeKind::Image(ref image) => {
                 image::render(self, image, writer, content, ctx)
             }
-            _ => unimplemented!()
+            _ => unimplemented!(),
         }
     }
 }

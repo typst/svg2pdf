@@ -90,10 +90,7 @@ pub(crate) fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
 
 // Taken from resvg
 /// Calculates an image rect depending on the provided view box.
-pub fn image_rect(
-    view_box: &usvg::ViewBox,
-    img_size: Size,
-) -> usvg::Rect {
+pub fn image_rect(view_box: &usvg::ViewBox, img_size: Size) -> usvg::Rect {
     let new_size = fit_view_box(img_size, view_box);
     let (x, y) = usvg::utils::aligned_pos(
         view_box.aspect.align,

@@ -1,6 +1,6 @@
 use crate::render::group;
-use crate::util::helper::{NameExt, RectExt};
 use crate::util::context::Context;
+use crate::util::helper::{NameExt, RectExt};
 use pdf_writer::{Content, Finish, PdfWriter};
 use std::rc::Rc;
 use usvg::{ClipPath, Node, NodeKind, Transform, Units};
@@ -35,12 +35,13 @@ pub(crate) fn create_soft_mask(
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&clip_path.transform);
 
-    let pdf_bbox = ctx.plain_bbox(parent).as_pdf_rect(&ctx.context_frame.full_transform());
+    let pdf_bbox = ctx
+        .plain_bbox(parent)
+        .as_pdf_rect(&ctx.context_frame.full_transform());
 
     match *clip_path.root.borrow() {
         NodeKind::Group(ref group) => {
-            let parent_svg_bbox =
-                ctx.plain_bbox(parent);
+            let parent_svg_bbox = ctx.plain_bbox(parent);
 
             if clip_path.units == Units::ObjectBoundingBox {
                 ctx.context_frame

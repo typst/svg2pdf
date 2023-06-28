@@ -1,9 +1,9 @@
-use usvg::{Node, Size, Transform, Tree, ViewBox};
-use pdf_writer::Rect;
-use usvg::utils::view_box_to_transform;
 use crate::util::context;
 use crate::util::defer::Deferrer;
 use crate::util::helper::{calc_node_bbox, RectExt};
+use pdf_writer::Rect;
+use usvg::utils::view_box_to_transform;
+use usvg::{Node, Size, Transform, Tree, ViewBox};
 
 #[derive(Clone)]
 pub struct Frame {
@@ -37,14 +37,12 @@ impl Frame {
 }
 
 pub struct ContextFrame {
-    frames: Vec<Frame>
+    frames: Vec<Frame>,
 }
 
 impl ContextFrame {
     pub fn new() -> Self {
-        Self {
-            frames: vec![Frame::default()]
-        }
+        Self { frames: vec![Frame::default()] }
     }
 
     fn current_frame(&self) -> &Frame {
@@ -109,9 +107,13 @@ impl Context {
             context_frame: ContextFrame::new(),
         };
 
-        let viewport_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, context.size.height());
-        let viewbox_transform =
-            view_box_to_transform(context.viewbox.rect, context.viewbox.aspect, context.size);
+        let viewport_transform =
+            Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, context.size.height());
+        let viewbox_transform = view_box_to_transform(
+            context.viewbox.rect,
+            context.viewbox.aspect,
+            context.size,
+        );
 
         let mut base_transform = viewport_transform;
         base_transform.append(&viewbox_transform);
@@ -124,12 +126,11 @@ impl Context {
         Rect::new(0.0, 0.0, self.size.width() as f32, self.size.height() as f32)
     }
 
-    pub fn plain_bbox(
-        &self,
-        node: &Node
-    ) -> usvg::Rect {
-        calc_node_bbox(node, Transform::default()).and_then(|b| b.to_rect()).unwrap_or(
-            usvg::Rect::new(0.0, 0.0, self.size.width(), self.size.height()).unwrap(),
-        )
+    pub fn plain_bbox(&self, node: &Node) -> usvg::Rect {
+        calc_node_bbox(node, Transform::default())
+            .and_then(|b| b.to_rect())
+            .unwrap_or(
+                usvg::Rect::new(0.0, 0.0, self.size.width(), self.size.height()).unwrap(),
+            )
     }
 }
