@@ -2,10 +2,10 @@ use crate::render::tree_to_stream;
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
 
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use std::io::Cursor;
 use image::{GenericImageView, ImageFormat, ImageOutputFormat};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
+use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use std::io::Cursor;
 
 use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
 
@@ -24,26 +24,31 @@ pub(crate) fn render(
 
     let (image_size, image_buffer, filter, alpha_mask) = match &image.kind {
         ImageKind::JPEG(content) => {
-            let result = prepare_image(content.as_slice(), ImageFormat::Jpeg, ImageOutputFormat::Jpeg(100));
+            let result = prepare_image(
+                content.as_slice(),
+                ImageFormat::Jpeg,
+                ImageOutputFormat::Jpeg(100),
+            );
             (result.0, result.1, Filter::DctDecode, None)
-        },
+        }
         ImageKind::PNG(content) => {
             // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
             // so we need to undo that
-            let image = image::load_from_memory_with_format(
-                content,
-                ImageFormat::Png,
-            ).unwrap().flipv();
+            let image = image::load_from_memory_with_format(content, ImageFormat::Png)
+                .unwrap()
+                .flipv();
 
             let compression_level = CompressionLevel::DefaultLevel as u8;
-            let encoded_buffer = compress_to_vec_zlib(image.to_rgb8().as_raw(), compression_level);
+            let encoded_buffer =
+                compress_to_vec_zlib(image.to_rgb8().as_raw(), compression_level);
 
             let mask = image.color().has_alpha().then(|| {
                 let alphas: Vec<_> = image.pixels().map(|p| (p.2).0[3]).collect();
                 compress_to_vec_zlib(&alphas, compression_level)
             });
 
-            let image_size = Size::new(image.width() as f64, image.height() as f64).unwrap();
+            let image_size =
+                Size::new(image.width() as f64, image.height() as f64).unwrap();
             (image_size, encoded_buffer, Filter::FlateDecode, mask)
         }
         ImageKind::SVG(tree) => {
@@ -71,7 +76,7 @@ pub(crate) fn render(
     image_x_object.finish();
 
     if let Some(encoded) = &alpha_mask {
-        let mut s_mask = writer.image_xobject(soft_mask_id, &encoded);
+        let mut s_mask = writer.image_xobject(soft_mask_id, encoded);
         s_mask.filter(filter);
         s_mask.width(image_size.width() as i32);
         s_mask.height(image_size.height() as i32);
@@ -80,10 +85,7 @@ pub(crate) fn render(
     }
 
     ctx.context_frame.append_transform(&image.transform);
-    let image_rect = image_rect(
-        &image.view_box,
-        image_size,
-    );
+    let image_rect = image_rect(&image.view_box, image_size);
 
     ctx.context_frame
         .append_transform(&Transform::new_translate(image_rect.x(), image_rect.y()));
@@ -97,20 +99,19 @@ pub(crate) fn render(
     ctx.context_frame.pop();
 }
 
-fn prepare_image(content: &[u8],
-                 input_format: ImageFormat,
-                 output_format: ImageOutputFormat) -> (Size, Vec<u8>) {
+fn prepare_image(
+    content: &[u8],
+    input_format: ImageFormat,
+    output_format: ImageOutputFormat,
+) -> (Size, Vec<u8>) {
     // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
     // so we need to undo that
-    let image = image::load_from_memory_with_format(
-        content,
-        input_format,
-    ).unwrap().flipv();
+    let image = image::load_from_memory_with_format(content, input_format)
+        .unwrap()
+        .flipv();
     let mut buffer: Vec<u8> = Vec::new();
     let mut writer = Cursor::new(&mut buffer);
-    image
-        .write_to(&mut writer, output_format)
-        .unwrap();
+    image.write_to(&mut writer, output_format).unwrap();
 
     let image_size = Size::new(image.width() as f64, image.height() as f64).unwrap();
     (image_size, buffer)
@@ -121,7 +122,7 @@ fn render_svg(
     tree: &Tree,
     writer: &mut PdfWriter,
     content: &mut Content,
-    ctx: &mut Context
+    ctx: &mut Context,
 ) {
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&image.transform);
