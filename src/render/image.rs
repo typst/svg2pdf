@@ -50,7 +50,9 @@ pub(crate) fn render(
             render_svg(image, tree, writer, content, ctx);
             return;
         }
-        _ => unimplemented!(),
+        _ => {
+            return;
+        }
     };
 
     ctx.context_frame.push();

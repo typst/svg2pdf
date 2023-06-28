@@ -10,7 +10,7 @@ pub const SVG_DIR: &str = "svgs";
 pub const REF_DIR: &str = "references";
 pub const DIFF_DIR: &str = "diffs";
 
-pub const SKIPPED_FILES: [&str; 104] = [
+pub const SKIPPED_FILES: [&str; 125] = [
     // These files crash svg2pdf so we always skip them.
     "svgs/resvg/structure/svg/zero-size.svg",
     "svgs/resvg/structure/svg/not-UTF-8-encoding.svg",
@@ -118,6 +118,28 @@ pub const SKIPPED_FILES: [&str; 104] = [
     "svgs/resvg/text/writing-mode/tb-and-punctuation.svg",
     "svgs/resvg/text/writing-mode/tb-with-rotate-and-underline.svg",
     "svgs/resvg/text/writing-mode/tb-with-rotate.svg",
+    //We don't support externally embedded images
+    "svgs/resvg/structure/image/external-gif.svg",
+    "svgs/resvg/structure/image/external-jpeg.svg",
+    "svgs/resvg/structure/image/external-png.svg",
+    "svgs/resvg/structure/image/external-svg.svg",
+    "svgs/resvg/structure/image/external-svg-with-transform.svg",
+    "svgs/resvg/structure/image/external-svgz.svg",
+    "svgs/resvg/structure/image/float-size.svg",
+    "svgs/resvg/structure/image/no-height.svg",
+    "svgs/resvg/structure/image/no-height-on-svg.svg",
+    "svgs/resvg/structure/image/no-width.svg",
+    "svgs/resvg/structure/image/no-width-and-height.svg",
+    "svgs/resvg/structure/image/no-width-and-height-on-svg.svg",
+    "svgs/resvg/structure/image/no-width-on-svg.svg",
+    "svgs/resvg/structure/image/raster-image-and-size-with-odd-numbers.svg",
+    "svgs/resvg/structure/image/recursive-1.svg",
+    "svgs/resvg/structure/image/recursive-2.svg",
+    "svgs/resvg/structure/image/url-to-png.svg",
+    "svgs/resvg/structure/image/url-to-svg.svg",
+    "svgs/resvg/structure/image/width-and-height-set-to-auto.svg",
+    "svgs/resvg/structure/image/zero-height.svg",
+    "svgs/resvg/structure/image/zero-width.svg",
 ];
 
 lazy_static! {
