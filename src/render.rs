@@ -1,4 +1,4 @@
-pub mod clip;
+pub mod clip_path;
 pub mod group;
 pub mod image;
 pub mod path;

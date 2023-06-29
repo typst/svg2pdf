@@ -11,6 +11,7 @@ use std::rc::Rc;
 use usvg::{
     Color, Fill, ImageKind, Node, Paint, PathData, Size, Transform, Tree, Visibility,
 };
+use crate::render::group::make_transparency_group;
 
 pub(crate) fn render(
     _node: &Node,
@@ -152,12 +153,13 @@ fn render_svg(
 fn clip_outer(rect: usvg::Rect, writer: &mut PdfWriter, ctx: &mut Context) -> String {
     let mask_reference = ctx.deferrer.alloc_ref();
 
+    ctx.deferrer.push();
     let pdf_bbox = rect.as_pdf_rect(&ctx.context_frame.full_transform());
 
     let mut content = Content::new();
     content.save_state();
 
-    let fill = Fill::from_paint(Paint::Color(Color::new_rgb(255, 0, 0)));
+    let fill = Fill::from_paint(Paint::Color(Color::new_rgb(0, 0, 0)));
     let path = usvg::Path {
         fill: Some(fill),
         data: Rc::new(PathData::from_rect(rect)),
@@ -176,6 +178,10 @@ fn clip_outer(rect: usvg::Rect, writer: &mut PdfWriter, ctx: &mut Context) -> St
 
     let content_stream = content.finish();
     let mut x_object = writer.form_xobject(mask_reference, &content_stream);
+
+    ctx.deferrer.pop(&mut x_object.resources());
+
+    make_transparency_group(&mut x_object);
 
     x_object.bbox(pdf_bbox);
     x_object.finish();

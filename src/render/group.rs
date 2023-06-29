@@ -1,8 +1,9 @@
-use crate::render::clip;
+use crate::render::clip_path;
 use crate::render::Render;
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, RectExt};
 use pdf_writer::{Content, Finish, PdfWriter, Ref};
+use pdf_writer::writers::FormXObject;
 use usvg::Node;
 
 pub(crate) fn render(
@@ -34,7 +35,7 @@ pub(crate) fn create_x_object(
     let pdf_bbox = ctx.plain_bbox(node).as_pdf_rect(&ctx.context_frame.full_transform());
 
     if let Some(clip_path) = &group.clip_path {
-        clip::render(node, clip_path.clone(), writer, &mut child_content, ctx);
+        clip_path::render(node, clip_path.clone(), writer, &mut child_content, ctx);
     }
 
     if group.opacity.get() != 1.0 {
@@ -54,6 +55,14 @@ pub(crate) fn create_x_object(
     let mut x_object = writer.form_xobject(reference, &child_content_stream);
     ctx.deferrer.pop(&mut x_object.resources());
 
+    make_transparency_group(&mut x_object);
+
+    x_object.bbox(pdf_bbox);
+    x_object.finish();
+    (name, reference)
+}
+
+pub fn make_transparency_group(x_object: &mut FormXObject) {
     let mut group = x_object.group();
     group
         .transparency()
@@ -62,8 +71,4 @@ pub(crate) fn create_x_object(
         .color_space()
         .srgb();
     group.finish();
-
-    x_object.bbox(pdf_bbox);
-    x_object.finish();
-    (name, reference)
 }

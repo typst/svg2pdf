@@ -4,6 +4,7 @@ use crate::util::helper::{NameExt, RectExt};
 use pdf_writer::{Content, Finish, PdfWriter};
 use std::rc::Rc;
 use usvg::{ClipPath, Node, NodeKind, Transform, Units};
+use crate::render::group::make_transparency_group;
 
 pub(crate) fn render(
     node: &Node,
@@ -62,6 +63,8 @@ pub(crate) fn create_soft_mask(
 
     let mut x_object = writer.form_xobject(x_object_reference, &content_stream);
     ctx.deferrer.pop(&mut x_object.resources());
+
+    make_transparency_group(&mut x_object);
 
     x_object.bbox(pdf_bbox);
     x_object.finish();
