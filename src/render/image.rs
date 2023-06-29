@@ -29,7 +29,7 @@ pub(crate) fn render(
                 ImageFormat::Jpeg,
                 ImageOutputFormat::Jpeg(100),
             );
-            (result.0, result.1, None, None)
+            (result.0, result.1, Filter::DctDecode, None)
         }
         ImageKind::PNG(content) => {
             // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
@@ -49,7 +49,7 @@ pub(crate) fn render(
 
             let image_size =
                 Size::new(image.width() as f64, image.height() as f64).unwrap();
-            (image_size, encoded_buffer, Some(Filter::FlateDecode), mask)
+            (image_size, encoded_buffer, Filter::FlateDecode, mask)
         }
         ImageKind::SVG(tree) => {
             render_svg(image, tree, writer, content, ctx);
@@ -65,9 +65,7 @@ pub(crate) fn render(
     let (image_name, image_id) = ctx.deferrer.add_x_object();
 
     let mut image_x_object = writer.image_xobject(image_id, &image_buffer);
-    if let Some(filter) = filter {
-        image_x_object.filter(filter);
-    }
+    image_x_object.filter(filter);
     image_x_object.width(image_size.width() as i32);
     image_x_object.height(image_size.height() as i32);
     image_x_object.color_space().device_rgb();
@@ -79,9 +77,7 @@ pub(crate) fn render(
 
     if let Some(encoded) = &alpha_mask {
         let mut s_mask = writer.image_xobject(soft_mask_id, encoded);
-        if let Some(filter) = filter {
-            s_mask.filter(filter);
-        }
+        s_mask.filter(filter);
         s_mask.width(image_size.width() as i32);
         s_mask.height(image_size.height() as i32);
         s_mask.color_space().device_gray();
@@ -113,9 +109,13 @@ fn prepare_image(
     let image = image::load_from_memory_with_format(content, input_format)
         .unwrap()
         .flipv();
+    let mut buffer: Vec<u8> = Vec::new();
+    let mut writer = Cursor::new(&mut buffer);
+    image.write_to(&mut writer, output_format).unwrap();
+
 
     let image_size = Size::new(image.width() as f64, image.height() as f64).unwrap();
-    (image_size, image.to_rgb8().as_raw().clone())
+    (image_size, buffer)
 }
 
 fn render_svg(
