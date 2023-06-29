@@ -9,15 +9,22 @@ jobs:
         shell: bash
         working-directory: ./tests
     steps:
-      - uses: actions/checkout@v3
-#      - uses: dtolnay/rust-toolchain@stable
-#      - uses: Swatinem/rust-cache@v2
-      - uses: actions/upload-artifact@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Get Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Get Rust cache
+        uses: Swatinem/rust-cache@v2
+      - name: Build svg2pdf
+        run: cargo build --package svg2pdf-tests --bin test --release
+      - name: Run tests
+        id: tests
+        run: cargo run --package svg2pdf-tests --bin test --release
+      - name: Upload artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
         with:
-          path: ./tests/references/resvg/shapes/circle/simple-case.png
-      - run: ls ./references/resvg/shapes/circle
-#      - run: cargo build --package svg2pdf-tests --bin test --release
-#      - run: cargo run --package svg2pdf-tests --bin test --release
+          path: ./tests/diffs
 
 #  checks:
 #    name: Check clippy, formatting, and documentation
