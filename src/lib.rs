@@ -5,8 +5,22 @@ use pdf_writer::{Content, Finish, PdfWriter, TextStr};
 use usvg::Tree;
 use util::context::Context;
 
-pub fn convert_tree(tree: &Tree) -> Vec<u8> {
-    let mut ctx = Context::new(tree);
+#[derive(Copy, Clone)]
+pub struct Options {
+    pub dpi: f32
+}
+
+
+impl Default for Options {
+    fn default() -> Self {
+        Self {
+            dpi: 72.0
+        }
+    }
+}
+
+pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
+    let mut ctx = Context::new(tree, options);
     let mut writer = PdfWriter::new();
 
     let catalog_id = ctx.deferrer.alloc_ref();

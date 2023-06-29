@@ -115,3 +115,7 @@ pub fn fit_view_box(size: Size, vb: &usvg::ViewBox) -> usvg::Size {
         size.scale_to(s)
     }
 }
+
+pub fn dpi_ratio(dpi: f32) -> f32 {
+    dpi / 72.0
+}

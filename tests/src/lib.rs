@@ -5,6 +5,7 @@ use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
 use std::path::{Path, PathBuf};
 use usvg::{Tree, TreeParsing, TreeTextToPath};
 use walkdir::WalkDir;
+use svg2pdf::Options;
 
 pub const SVG_DIR: &str = "svgs";
 pub const REF_DIR: &str = "references";
@@ -243,7 +244,6 @@ impl TestRunner {
         let document = self.pdfium.load_pdf_from_byte_slice(pdf, None);
 
         let render_config = PdfRenderConfig::new()
-            .scale_page_by_factor(2.5)
             .clear_before_rendering(true)
             .set_clear_color(PdfColor::new(255, 255, 255, 0));
 
@@ -273,7 +273,7 @@ pub fn read_svg(svg_string: &str) -> Tree {
 
 pub fn svg_to_image(svg_string: &str, test_runner: &TestRunner) -> RgbaImage {
     let tree = read_svg(svg_string);
-    let pdf = svg2pdf::convert_tree(&tree);
+    let pdf = svg2pdf::convert_tree(&tree, Options {dpi: 72.0 * 2.5});
     test_runner.render_pdf(pdf.as_slice())
 }
 

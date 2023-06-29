@@ -1,8 +1,9 @@
 use crate::util::defer::Deferrer;
-use crate::util::helper::calc_node_bbox;
+use crate::util::helper::{calc_node_bbox, dpi_ratio};
 use pdf_writer::Rect;
 use usvg::utils::view_box_to_transform;
 use usvg::{Node, Size, Transform, Tree, ViewBox};
+use crate::Options;
 
 #[derive(Clone)]
 #[derive(Default)]
@@ -66,18 +67,22 @@ pub struct Context {
     pub size: Size,
     pub deferrer: Deferrer,
     pub context_frame: ContextFrame,
+    pub options: Options
 }
 
 impl Context {
     /// Create a new context.
-    pub fn new(tree: &Tree) -> Self {
+    pub fn new(tree: &Tree, options: Options) -> Self {
+
         let mut context = Self {
             viewbox: tree.view_box,
             size: tree.size,
             deferrer: Deferrer::new(),
             context_frame: ContextFrame::new(),
+            options
         };
 
+        let dpi_transform = Transform::new_scale(dpi_ratio(options.dpi) as f64, dpi_ratio(options.dpi) as f64);
         let viewport_transform =
             Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, context.size.height());
         let viewbox_transform = view_box_to_transform(
@@ -86,7 +91,8 @@ impl Context {
             context.size,
         );
 
-        let mut base_transform = viewport_transform;
+        let mut base_transform = dpi_transform;
+        base_transform.append(&viewport_transform);
         base_transform.append(&viewbox_transform);
 
         context.context_frame.set_base_transform(base_transform);
@@ -94,14 +100,18 @@ impl Context {
     }
 
     pub fn get_media_box(&self) -> Rect {
-        Rect::new(0.0, 0.0, self.size.width() as f32, self.size.height() as f32)
+        Rect::new(0.0, 0.0,
+                  self.size.width() as f32 * dpi_ratio(self.options.dpi),
+                  self.size.height() as f32 * dpi_ratio(self.options.dpi))
     }
 
     pub fn plain_bbox(&self, node: &Node) -> usvg::Rect {
         calc_node_bbox(node, Transform::default())
             .and_then(|b| b.to_rect())
             .unwrap_or(
-                usvg::Rect::new(0.0, 0.0, self.size.width(), self.size.height()).unwrap(),
+                usvg::Rect::new(0.0, 0.0,
+                                (self.size.width() as f32 * dpi_ratio(self.options.dpi)) as f64,
+                                (self.size.height() as f32 * dpi_ratio(self.options.dpi)) as f64).unwrap(),
             )
     }
 }

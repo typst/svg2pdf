@@ -5,6 +5,7 @@ use std::process;
 use clap::Parser;
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
 use usvg::{Node, TreeParsing, TreeTextToPath};
+use svg2pdf::Options;
 
 #[derive(Debug, Parser)]
 #[clap(about, version)]
@@ -50,7 +51,7 @@ fn run() -> Result<(), String> {
     print_tree(&tree.root, 0);
 
     // Convert SVG to PDF.
-    let pdf = svg2pdf::convert_tree(&tree);
+    let pdf = svg2pdf::convert_tree(&tree, Options::default());
 
     // Write output file.
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
