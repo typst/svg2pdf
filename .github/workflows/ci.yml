@@ -12,10 +12,9 @@ jobs:
 #      - uses: actions/checkout@v3
 #      - uses: dtolnay/rust-toolchain@stable
 #      - uses: Swatinem/rust-cache@v2
-      - run: echo hi > world.txt
       - uses: actions/upload-artifact@v3
         with:
-          path: world.txt
+          path: references/resvg/shapes/circle/simple-case.png
 #      - run: cargo build --package svg2pdf-tests --bin test --release
 #      - run: cargo run --package svg2pdf-tests --bin test --release
 #      - run: ls diffs
