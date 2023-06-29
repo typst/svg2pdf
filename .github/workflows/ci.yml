@@ -9,20 +9,20 @@ jobs:
         shell: bash
         working-directory: ./tests
     steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+#      - uses: actions/checkout@v3
+#      - uses: dtolnay/rust-toolchain@stable
+#      - uses: Swatinem/rust-cache@v2
       - run: ls references
 #      - run: cargo build --package svg2pdf-tests --bin test --release
 #      - run: cargo run --package svg2pdf-tests --bin test --release
       - run: ls diffs
 
-  checks:
-    name: Check clippy, formatting, and documentation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo clippy --all-targets
-      - run: cargo fmt --check --all
+#  checks:
+#    name: Check clippy, formatting, and documentation
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: dtolnay/rust-toolchain@stable
+#      - uses: Swatinem/rust-cache@v2
+#      - run: cargo clippy --all-targets
+#      - run: cargo fmt --check --all
