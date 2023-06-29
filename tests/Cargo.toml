@@ -15,6 +15,10 @@ path = "src/test.rs"
 name = "generate"
 path = "src/generate.rs"
 
+[[bin]]
+name = "typst"
+path = "src/typst.rs"
+
 [dependencies]
 fontdb = "0.13"
 svg2pdf = { path = ".." }
