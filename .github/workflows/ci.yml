@@ -14,6 +14,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --package svg2pdf-tests --bin test --release
       - run: cargo run --package svg2pdf-tests --bin test --release
+      - run: ls diffs
 
   checks:
     name: Check clippy, formatting, and documentation
