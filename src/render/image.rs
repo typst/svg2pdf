@@ -1,13 +1,14 @@
-use crate::render::tree_to_stream;
+use crate::render::{path, tree_to_stream};
 use crate::util::context::Context;
-use crate::util::helper::{image_rect, NameExt, TransformExt};
+use crate::util::helper::{image_rect, NameExt, RectExt, TransformExt};
 
 use image::{GenericImageView, ImageFormat, ImageOutputFormat};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use std::io::Cursor;
+use std::rc::Rc;
 
-use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
+use usvg::{Color, Fill, ImageKind, Node, Paint, PathData, Size, Transform, Tree, Visibility};
 
 pub(crate) fn render(
     _node: &Node,
@@ -87,11 +88,15 @@ pub(crate) fn render(
     ctx.context_frame.append_transform(&image.transform);
     let image_rect = image_rect(&image.view_box, image_size);
 
+    let soft_mask = clip_outer(image.view_box.rect, writer, ctx);
+
+
+    content.save_state();
+    content.set_parameters(soft_mask.as_name());
     ctx.context_frame
         .append_transform(&Transform::new_translate(image_rect.x(), image_rect.y()));
     ctx.context_frame
         .append_transform(&Transform::new_scale(image_rect.width(), image_rect.height()));
-    content.save_state();
     content.transform(ctx.context_frame.full_transform().as_array());
     content.x_object(image_name.as_name());
     content.restore_state();
@@ -127,6 +132,9 @@ fn render_svg(
 ) {
     ctx.context_frame.push();
     ctx.context_frame.append_transform(&image.transform);
+    let soft_mask = clip_outer(image.view_box.rect, writer, ctx);
+    content.save_state();
+    content.set_parameters(soft_mask.as_name());
     let image_rect = image_rect(&image.view_box, tree.size);
     // Account for the x/y shift of the image
     ctx.context_frame
@@ -137,5 +145,37 @@ fn render_svg(
         image_rect.height() / tree.size.height(),
     ));
     tree_to_stream(tree, writer, content, ctx);
+    content.restore_state();
     ctx.context_frame.pop();
+}
+
+
+fn clip_outer(rect: usvg::Rect,
+              writer: &mut PdfWriter,
+              ctx: &mut Context) -> String {
+
+    let mask_reference = ctx.deferrer.alloc_ref();
+
+    let pdf_bbox = rect
+        .as_pdf_rect(&ctx.context_frame.full_transform());
+
+    let mut content = Content::new();
+    content.save_state();
+
+    let fill = Fill::from_paint(Paint::Color(Color::new_rgb(255, 0, 0)));
+    let mut path = usvg::Path::default();
+    path.fill = Some(fill);
+    path.data = Rc::new(PathData::from_rect(rect));
+
+    path::render(&path, &usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap(), writer, &mut content, ctx);
+
+    content.restore_state();
+
+    let content_stream = content.finish();
+    let mut x_object = writer.form_xobject(mask_reference, &content_stream);
+
+    x_object.bbox(pdf_bbox);
+    x_object.finish();
+
+    ctx.deferrer.add_soft_mask(mask_reference)
 }
