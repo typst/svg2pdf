@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
