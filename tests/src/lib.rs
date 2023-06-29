@@ -10,7 +10,7 @@ pub const SVG_DIR: &str = "svgs";
 pub const REF_DIR: &str = "references";
 pub const DIFF_DIR: &str = "diffs";
 
-pub const SKIPPED_FILES: [&str; 125] = [
+pub const SKIPPED_FILES: [&str; 128] = [
     // These files crash svg2pdf so we always skip them.
     "svgs/resvg/structure/svg/zero-size.svg",
     "svgs/resvg/structure/svg/not-UTF-8-encoding.svg",
@@ -118,7 +118,7 @@ pub const SKIPPED_FILES: [&str; 125] = [
     "svgs/resvg/text/writing-mode/tb-and-punctuation.svg",
     "svgs/resvg/text/writing-mode/tb-with-rotate-and-underline.svg",
     "svgs/resvg/text/writing-mode/tb-with-rotate.svg",
-    //We don't support externally embedded images
+    // We don't support externally embedded images
     "svgs/resvg/structure/image/external-gif.svg",
     "svgs/resvg/structure/image/external-jpeg.svg",
     "svgs/resvg/structure/image/external-png.svg",
@@ -140,6 +140,14 @@ pub const SKIPPED_FILES: [&str; 125] = [
     "svgs/resvg/structure/image/width-and-height-set-to-auto.svg",
     "svgs/resvg/structure/image/zero-height.svg",
     "svgs/resvg/structure/image/zero-width.svg",
+    // For some reason, jpg images are rendered slightly on the CLI (upon inspection
+    // they look exactly the same though, so this probably is due to some difference
+    // how jpgs are handled on each operating system in pdfium. For this reason, we skip
+    // them. In order to still test whether jpgs generally work, three tests with a solid
+    // color jpg image were added to the custom tests.
+    "svgs/resvg/structure/image/embedded-jpeg-as-image-jpeg.svg",
+    "svgs/resvg/structure/image/embedded-jpeg-as-image-jpg.svg",
+    "svgs/resvg/structure/image/embedded-jpeg-without-mime.svg",
 ];
 
 lazy_static! {
