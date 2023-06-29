@@ -12,11 +12,11 @@ use crate::util::context::Context;
 use usvg::utils::view_box_to_transform;
 use usvg::{Fill, NodeKind, Size, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
-use usvg::{Node, Stroke};
+use usvg::Stroke;
 
 pub(crate) fn render(
     path: &usvg::Path,
-    node: &Node,
+    parent_bbox: &usvg::Rect,
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
@@ -46,7 +46,7 @@ pub(crate) fn render(
     }
 
     if let Some(fill) = &path.fill {
-        set_fill(fill, node, content, writer, ctx);
+        set_fill(fill, parent_bbox, content, writer, ctx);
     }
 
     draw_path(path.data.segments(), content);
@@ -110,7 +110,7 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
 
 fn set_fill(
     fill: &Fill,
-    parent: &Node,
+    parent_bbox: &usvg::Rect,
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,
@@ -122,7 +122,7 @@ fn set_fill(
             content.set_fill_color(c.as_array());
         }
         Paint::Pattern(p) => {
-            let pattern_name = create_pattern(p.clone(), parent, writer, ctx);
+            let pattern_name = create_pattern(p.clone(), parent_bbox, writer, ctx);
             content.set_fill_color_space(Pattern);
             content.set_fill_pattern(None, pattern_name.as_name());
         }
@@ -132,14 +132,12 @@ fn set_fill(
 
 fn create_pattern(
     pattern: Rc<usvg::Pattern>,
-    parent: &Node,
+    parent_bbox: &usvg::Rect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
     ctx.deferrer.push();
-
-    let parent_bbox = ctx.plain_bbox(parent);
 
     // Content units object bounding box should only be used if no viewbox is declared.
     let use_content_units_obb =
@@ -147,7 +145,7 @@ fn create_pattern(
 
     let pattern_rect =
         if pattern.units == Units::ObjectBoundingBox || use_content_units_obb {
-            pattern.rect.bbox_transform(parent_bbox)
+            pattern.rect.bbox_transform(*parent_bbox)
         } else {
             pattern.rect
         };
