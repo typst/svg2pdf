@@ -14,13 +14,23 @@ pub struct Allocator {
     next_patterns_num: i32,
 }
 
-impl Allocator {
-    pub fn new() -> Self {
+impl Default for Allocator {
+    fn default() -> Self {
         Self {
             next_ref_id: 1,
             next_x_object_num: 0,
             next_graphics_state_num: 0,
             next_patterns_num: 0,
+        }
+    }
+}
+
+impl Allocator {
+
+    pub fn new_with_start_ref(start_ref: i32) -> Self {
+        Self {
+            next_ref_id: start_ref,
+            ..Allocator::default()
         }
     }
 

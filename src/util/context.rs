@@ -72,12 +72,11 @@ pub struct Context {
 
 impl Context {
     /// Create a new context.
-    pub fn new(tree: &Tree, options: Options) -> Self {
-
+    pub fn new(tree: &Tree, options: Options, start_ref: Option<i32>) -> Self {
         let mut context = Self {
             viewbox: tree.view_box,
             size: tree.size,
-            deferrer: Deferrer::new(),
+            deferrer: Deferrer::new_with_start_ref(start_ref.unwrap_or(1)),
             context_frame: ContextFrame::new(),
             options
         };

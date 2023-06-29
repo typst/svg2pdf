@@ -41,13 +41,22 @@ pub struct Deferrer {
     pending_graphics_states: Vec<Vec<PendingGraphicsState>>,
 }
 
-impl Deferrer {
-    pub fn new() -> Self {
-        Deferrer {
-            allocator: Allocator::new(),
+impl Default for Deferrer {
+    fn default() -> Self {
+        Self {
+            allocator: Allocator::default(),
             pending_x_objects: Vec::new(),
             pending_graphics_states: Vec::new(),
             pending_patterns: Vec::new(),
+        }
+    }
+}
+
+impl Deferrer {
+    pub fn new_with_start_ref(start_ref: i32) -> Self {
+        Self {
+            allocator: Allocator::new_with_start_ref(start_ref),
+            ..Deferrer::default()
         }
     }
 
