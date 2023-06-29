@@ -8,7 +8,7 @@ jobs:
       run:
         shell: bash
     steps:
-#      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 #      - uses: dtolnay/rust-toolchain@stable
 #      - uses: Swatinem/rust-cache@v2
 #      - uses: actions/upload-artifact@v3
