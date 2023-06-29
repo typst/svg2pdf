@@ -14,7 +14,7 @@ jobs:
 #      - uses: Swatinem/rust-cache@v2
       - uses: actions/upload-artifact@v3
         with:
-          path: ./references/resvg/shapes/circle/simple-case.png
+          path: ./tests/references/resvg/shapes/circle/simple-case.png
       - run: ls ./references/resvg/shapes/circle
 #      - run: cargo build --package svg2pdf-tests --bin test --release
 #      - run: cargo run --package svg2pdf-tests --bin test --release
