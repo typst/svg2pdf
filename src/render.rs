@@ -26,7 +26,9 @@ pub trait Render {
 impl Render for Node {
     fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context) {
         match *self.borrow() {
-            NodeKind::Path(ref path) => path::render(path, &ctx.plain_bbox(&self), writer, content, ctx),
+            NodeKind::Path(ref path) => {
+                path::render(path, &ctx.plain_bbox(self), writer, content, ctx)
+            }
             NodeKind::Group(ref group) => {
                 group::render(self, group, writer, content, ctx)
             }

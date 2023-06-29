@@ -10,9 +10,9 @@ use std::rc::Rc;
 
 use crate::util::context::Context;
 use usvg::utils::view_box_to_transform;
+use usvg::Stroke;
 use usvg::{Fill, NodeKind, Size, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
-use usvg::Stroke;
 
 pub(crate) fn render(
     path: &usvg::Path,

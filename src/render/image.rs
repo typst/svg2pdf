@@ -8,7 +8,9 @@ use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use std::io::Cursor;
 use std::rc::Rc;
 
-use usvg::{Color, Fill, ImageKind, Node, Paint, PathData, Size, Transform, Tree, Visibility};
+use usvg::{
+    Color, Fill, ImageKind, Node, Paint, PathData, Size, Transform, Tree, Visibility,
+};
 
 pub(crate) fn render(
     _node: &Node,
@@ -90,7 +92,6 @@ pub(crate) fn render(
 
     let soft_mask = clip_outer(image.view_box.rect, writer, ctx);
 
-
     content.save_state();
     content.set_parameters(soft_mask.as_name());
     ctx.context_frame
@@ -117,7 +118,6 @@ fn prepare_image(
     let mut buffer: Vec<u8> = Vec::new();
     let mut writer = Cursor::new(&mut buffer);
     image.write_to(&mut writer, output_format).unwrap();
-
 
     let image_size = Size::new(image.width() as f64, image.height() as f64).unwrap();
     (image_size, buffer)
@@ -149,25 +149,28 @@ fn render_svg(
     ctx.context_frame.pop();
 }
 
-
-fn clip_outer(rect: usvg::Rect,
-              writer: &mut PdfWriter,
-              ctx: &mut Context) -> String {
-
+fn clip_outer(rect: usvg::Rect, writer: &mut PdfWriter, ctx: &mut Context) -> String {
     let mask_reference = ctx.deferrer.alloc_ref();
 
-    let pdf_bbox = rect
-        .as_pdf_rect(&ctx.context_frame.full_transform());
+    let pdf_bbox = rect.as_pdf_rect(&ctx.context_frame.full_transform());
 
     let mut content = Content::new();
     content.save_state();
 
     let fill = Fill::from_paint(Paint::Color(Color::new_rgb(255, 0, 0)));
-    let mut path = usvg::Path::default();
-    path.fill = Some(fill);
-    path.data = Rc::new(PathData::from_rect(rect));
+    let path = usvg::Path {
+        fill: Some(fill),
+        data: Rc::new(PathData::from_rect(rect)),
+        ..Default::default()
+    };
 
-    path::render(&path, &usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap(), writer, &mut content, ctx);
+    path::render(
+        &path,
+        &usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap(),
+        writer,
+        &mut content,
+        ctx,
+    );
 
     content.restore_state();
 

@@ -1,10 +1,7 @@
 use clap::Parser;
 use indicatif::{ProgressBar, ProgressStyle};
 use regex::Regex;
-use std::{fs, path};
-use std::path::Path;
-use std::rc::Rc;
-use usvg::{Color, Fill, Paint, PathCommand, PathData};
+use std::fs;
 
 use svg2pdf_tests::*;
 
