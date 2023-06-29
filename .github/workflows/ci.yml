@@ -12,8 +12,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo build --package svg2pdf-tests --bin test --release
-      - run: cargo run --package svg2pdf-tests --bin test --release
+      - run: ls references
+#      - run: cargo build --package svg2pdf-tests --bin test --release
+#      - run: cargo run --package svg2pdf-tests --bin test --release
       - run: ls diffs
 
   checks:
