@@ -7,13 +7,14 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: ./tests
     steps:
       - uses: actions/checkout@v3
 #      - uses: dtolnay/rust-toolchain@stable
 #      - uses: Swatinem/rust-cache@v2
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          path: references/resvg/shapes/circle/simple-case.png
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./references/resvg/shapes/circle/simple-case.png
       - run: ls .
 #      - run: cargo build --package svg2pdf-tests --bin test --release
 #      - run: cargo run --package svg2pdf-tests --bin test --release
