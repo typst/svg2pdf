@@ -42,7 +42,7 @@ pub(crate) fn render(
     }
 
     if let Some(stroke) = &path.stroke {
-        set_stroke(stroke, content);
+        set_stroke(stroke, parent_bbox, content, writer, ctx);
     }
 
     if let Some(fill) = &path.fill {
@@ -79,7 +79,12 @@ fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Conte
     };
 }
 
-fn set_stroke(stroke: &Stroke, content: &mut Content) {
+fn set_stroke(
+    stroke: &Stroke,
+    parent_bbox: &usvg::Rect,
+    content: &mut Content,
+    writer: &mut PdfWriter,
+    ctx: &mut Context) {
     content.set_line_width(stroke.width.get() as f32);
     content.set_miter_limit(stroke.miterlimit.get() as f32);
 
@@ -103,7 +108,11 @@ fn set_stroke(stroke: &Stroke, content: &mut Content) {
         Paint::Color(c) => {
             content.set_stroke_color(c.as_array());
         }
-        Paint::Pattern(_) => todo!(),
+        Paint::Pattern(p) => {
+            let pattern_name = create_pattern(p.clone(), parent_bbox, writer, ctx);
+            content.set_stroke_color_space(Pattern);
+            content.set_stroke_pattern(None, pattern_name.as_name());
+        }
         _ => {} //_ => todo!(),
     }
 }

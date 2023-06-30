@@ -2,7 +2,7 @@ use crate::render::{path, tree_to_stream};
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, RectExt, TransformExt};
 
-use image::{ColorType, DynamicImage, GenericImageView, ImageFormat, ImageOutputFormat, Luma, Rgb, Rgba};
+use image::{ColorType, DynamicImage, ImageFormat, ImageOutputFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use std::io::Cursor;
@@ -40,9 +40,6 @@ pub(crate) fn render(
         }
         ImageKind::SVG(tree) => {
             render_svg(image, tree, writer, content, ctx);
-            return;
-        }
-        _ => {
             return;
         }
     };
