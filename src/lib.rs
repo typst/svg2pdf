@@ -4,25 +4,19 @@ mod util;
 use pdf_writer::{Content, Finish, PdfWriter, Ref, TextStr};
 use usvg::Tree;
 use util::context::Context;
-use crate::render::group::make_transparency_group;
 
 #[derive(Copy, Clone)]
 pub struct Options {
-    pub dpi: f32
+    pub dpi: f32,
 }
-
 
 impl Default for Options {
     fn default() -> Self {
-        Self {
-            dpi: 72.0
-        }
+        Self { dpi: 72.0 }
     }
 }
 
-pub fn convert_tree(
-    tree: &Tree,
-    options: Options) -> Vec<u8> {
+pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     let mut ctx = Context::new(tree, options, None);
     let mut writer = PdfWriter::new();
 

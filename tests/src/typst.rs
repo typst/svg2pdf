@@ -9,7 +9,6 @@ fn main() {
     let existing_svg_references: Vec<TestFile> =
         (*REF_FILES).iter().map(|f| TestFile::new(f)).collect();
 
-
     let result = (*SVG_FILES)
         .iter()
         .map(|f| TestFile::new(f))
@@ -19,5 +18,4 @@ fn main() {
         .join(",\n");
 
     fs::write("typst.typ", result).unwrap();
-
 }

@@ -2,8 +2,8 @@ use crate::render::clip_path;
 use crate::render::Render;
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, RectExt};
-use pdf_writer::{Content, Finish, PdfWriter, Ref};
 use pdf_writer::writers::FormXObject;
+use pdf_writer::{Content, Finish, PdfWriter, Ref};
 use usvg::Node;
 
 pub(crate) fn render(
@@ -43,7 +43,10 @@ pub(crate) fn create_x_object(
     // child will override it. So if there is a group opacity, we will have to wrap everything in
     // another x object.
     if group.opacity.get() != 1.0 {
-        let name = ctx.deferrer.add_opacity(Some(group.opacity.get() as f32), Some(group.opacity.get() as f32));
+        let name = ctx.deferrer.add_opacity(
+            Some(group.opacity.get() as f32),
+            Some(group.opacity.get() as f32),
+        );
         child_content.set_parameters(name.as_name());
     }
 

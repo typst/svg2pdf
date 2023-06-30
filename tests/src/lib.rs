@@ -3,9 +3,9 @@ use lazy_static::lazy_static;
 use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
 use std::path::{Path, PathBuf};
+use svg2pdf::Options;
 use usvg::{Tree, TreeParsing, TreeTextToPath};
 use walkdir::WalkDir;
-use svg2pdf::Options;
 
 pub const SVG_DIR: &str = "svgs";
 pub const REF_DIR: &str = "references";
@@ -273,7 +273,7 @@ pub fn read_svg(svg_string: &str) -> Tree {
 
 pub fn svg_to_image(svg_string: &str, test_runner: &TestRunner) -> RgbaImage {
     let tree = read_svg(svg_string);
-    let pdf = svg2pdf::convert_tree(&tree, Options {dpi: 72.0 * 2.5});
+    let pdf = svg2pdf::convert_tree(&tree, Options { dpi: 72.0 * 2.5 });
     test_runner.render_pdf(pdf.as_slice())
 }
 

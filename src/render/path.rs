@@ -84,7 +84,8 @@ fn set_stroke(
     parent_bbox: &usvg::Rect,
     content: &mut Content,
     writer: &mut PdfWriter,
-    ctx: &mut Context) {
+    ctx: &mut Context,
+) {
     content.set_line_width(stroke.width.get() as f32);
     content.set_miter_limit(stroke.miterlimit.get() as f32);
 

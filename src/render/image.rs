@@ -4,14 +4,14 @@ use crate::util::helper::{image_rect, NameExt, RectExt, TransformExt};
 
 use image::{ColorType, DynamicImage, ImageFormat, ImageOutputFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
+use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use std::io::Cursor;
 use std::rc::Rc;
 
+use crate::render::group::make_transparency_group;
 use usvg::{
     Color, Fill, ImageKind, Node, Paint, PathData, Size, Transform, Tree, Visibility,
 };
-use crate::render::group::make_transparency_group;
 
 pub(crate) fn render(
     _node: &Node,
@@ -47,12 +47,20 @@ pub(crate) fn render(
     ctx.context_frame.push();
 
     ctx.context_frame.append_transform(&image.transform);
-    let image_size = Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap();
+    let image_size =
+        Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap();
     let image_rect = image_rect(&image.view_box, image_size);
 
     let soft_mask = clip_outer(image.view_box.rect, writer, ctx);
 
-    let image_name = create_image_x_object(writer, ctx, &samples, filter, &dynamic_image, alpha_mask.as_deref());
+    let image_name = create_image_x_object(
+        writer,
+        ctx,
+        &samples,
+        filter,
+        &dynamic_image,
+        alpha_mask.as_deref(),
+    );
 
     content.save_state();
     content.set_parameters(soft_mask.as_name());
@@ -67,60 +75,63 @@ pub(crate) fn render(
     ctx.context_frame.pop();
 }
 
-fn handle_transparent_image(image: DynamicImage) -> (DynamicImage, Vec<u8>, Filter, Option<Vec<u8>>) {
+fn handle_transparent_image(
+    image: DynamicImage,
+) -> (DynamicImage, Vec<u8>, Filter, Option<Vec<u8>>) {
     let color = image.color();
     let bits = color.bits_per_pixel();
     let channels = color.channel_count() as u16;
 
     let encoded_image: Vec<u8> = match (channels, bits / channels > 8) {
-        (1 | 2, false) => {
-            image.to_luma8().pixels().flat_map(|&Luma(c)| c).collect()
-        }
+        (1 | 2, false) => image.to_luma8().pixels().flat_map(|&Luma(c)| c).collect(),
         (1 | 2, true) => image
             .to_luma16()
             .pixels()
             .flat_map(|&Luma(x)| x)
             .flat_map(|x| x.to_be_bytes())
             .collect(),
-        (3 | 4, false) => {
-            image.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
-        }
+        (3 | 4, false) => image.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect(),
         (3 | 4, true) => image
             .to_rgb16()
             .pixels()
             .flat_map(|&Rgb(c)| c)
             .flat_map(|x| x.to_be_bytes())
             .collect(),
-        _ => panic!("unknown number of channels={channels}")
+        _ => panic!("unknown number of channels={channels}"),
     };
 
     let encoded_mask: Option<Vec<u8>> = if color.has_alpha() {
         if bits / channels > 8 {
-            Some(image
-                .to_rgba16()
-                .pixels()
-                .flat_map(|&Rgba([.., a])| a.to_be_bytes())
-                .collect())
+            Some(
+                image
+                    .to_rgba16()
+                    .pixels()
+                    .flat_map(|&Rgba([.., a])| a.to_be_bytes())
+                    .collect(),
+            )
         } else {
             Some(image.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect())
         }
-    }   else {
+    } else {
         None
     };
 
     let compression_level = CompressionLevel::DefaultLevel as u8;
     let compressed_image = compress_to_vec_zlib(&encoded_image, compression_level);
-    let compressed_mask = encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
+    let compressed_mask =
+        encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
 
     (image, compressed_image, Filter::FlateDecode, compressed_mask)
 }
 
-fn create_image_x_object(writer: &mut PdfWriter,
-                        ctx: &mut Context,
-                        samples: &[u8],
-                         filter: Filter,
-                         dynamic_image: &DynamicImage,
-                         alpha_mask: Option<&[u8]>) -> String {
+fn create_image_x_object(
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+    samples: &[u8],
+    filter: Filter,
+    dynamic_image: &DynamicImage,
+    alpha_mask: Option<&[u8]>,
+) -> String {
     let color = dynamic_image.color();
     let alpha_mask = alpha_mask.map(|mask_bytes| {
         let soft_mask_id = ctx.deferrer.alloc_ref();
@@ -135,15 +146,15 @@ fn create_image_x_object(writer: &mut PdfWriter,
 
     let (image_name, image_id) = ctx.deferrer.add_x_object();
 
-    let mut image_x_object = writer.image_xobject(image_id, &samples);
+    let mut image_x_object = writer.image_xobject(image_id, samples);
     image_x_object.filter(filter);
     image_x_object.width(dynamic_image.width() as i32);
     image_x_object.height(dynamic_image.height() as i32);
 
-    let color_space =image_x_object.color_space();
+    let color_space = image_x_object.color_space();
     if color.has_color() {
         color_space.device_rgb();
-    }   else {
+    } else {
         color_space.device_gray();
     }
 
@@ -166,10 +177,7 @@ fn image_to_samples(image: &DynamicImage, output_format: ImageOutputFormat) -> V
     buffer
 }
 
-fn prepare_image(
-    content: &[u8],
-    input_format: ImageFormat
-) -> DynamicImage {
+fn prepare_image(content: &[u8], input_format: ImageFormat) -> DynamicImage {
     // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
     // so we need to undo that
     image::load_from_memory_with_format(content, input_format)

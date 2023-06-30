@@ -34,22 +34,12 @@ struct SoftMask {
     group: Ref,
 }
 
+#[derive(Default)]
 pub struct Deferrer {
     allocator: Allocator,
     pending_x_objects: Vec<Vec<PendingXObject>>,
     pending_patterns: Vec<Vec<PendingPattern>>,
     pending_graphics_states: Vec<Vec<PendingGraphicsState>>,
-}
-
-impl Default for Deferrer {
-    fn default() -> Self {
-        Self {
-            allocator: Allocator::default(),
-            pending_x_objects: Vec::new(),
-            pending_graphics_states: Vec::new(),
-            pending_patterns: Vec::new(),
-        }
-    }
 }
 
 impl Deferrer {

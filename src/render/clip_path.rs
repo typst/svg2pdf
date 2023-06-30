@@ -1,10 +1,10 @@
 use crate::render::group;
+use crate::render::group::make_transparency_group;
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, RectExt};
 use pdf_writer::{Content, Finish, PdfWriter};
 use std::rc::Rc;
 use usvg::{ClipPath, Node, NodeKind, Transform, Units};
-use crate::render::group::make_transparency_group;
 
 pub(crate) fn render(
     node: &Node,
