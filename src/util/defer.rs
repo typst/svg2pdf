@@ -108,7 +108,6 @@ impl Deferrer {
         fill_opacity: Option<f32>,
     ) -> String {
         let name = self.allocator.alloc_graphics_state_name();
-
         self.push_opacity(name.clone(), stroke_opacity, fill_opacity);
         name
     }

@@ -38,8 +38,12 @@ pub(crate) fn create_x_object(
         clip_path::render(node, clip_path.clone(), writer, &mut child_content, ctx);
     }
 
+    // TODO: This doesn't work correctly yet. If the group has an opacity and the paths directly
+    // beneath it as well, the group opacity will be overwritten because the graphics state of the
+    // child will override it. So if there is a group opacity, we will have to wrap everything in
+    // another x object.
     if group.opacity.get() != 1.0 {
-        let name = ctx.deferrer.add_opacity(None, Some(group.opacity.get() as f32));
+        let name = ctx.deferrer.add_opacity(Some(group.opacity.get() as f32), Some(group.opacity.get() as f32));
         child_content.set_parameters(name.as_name());
     }
 
