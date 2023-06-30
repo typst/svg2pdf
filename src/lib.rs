@@ -4,6 +4,7 @@ mod util;
 use pdf_writer::{Content, Finish, PdfWriter, Ref, TextStr};
 use usvg::Tree;
 use util::context::Context;
+use crate::render::group::make_transparency_group;
 
 #[derive(Copy, Clone)]
 pub struct Options {

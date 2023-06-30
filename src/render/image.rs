@@ -2,9 +2,9 @@ use crate::render::{path, tree_to_stream};
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, RectExt, TransformExt};
 
-use image::{GenericImageView, ImageFormat, ImageOutputFormat};
+use image::{ColorType, DynamicImage, GenericImageView, ImageFormat, ImageOutputFormat};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use std::io::Cursor;
 use std::rc::Rc;
 
@@ -24,36 +24,37 @@ pub(crate) fn render(
         return;
     }
 
-    let soft_mask_id = ctx.deferrer.alloc_ref();
-
-    let (image_size, image_buffer, filter, alpha_mask) = match &image.kind {
+    let (dynamic_image, samples, filter, alpha_mask) = match &image.kind {
         ImageKind::JPEG(content) => {
-            let result = prepare_image(
-                content.as_slice(),
-                ImageFormat::Jpeg,
-                ImageOutputFormat::Jpeg(100),
-            );
-            (result.0, result.1, Filter::DctDecode, None)
+            let image = prepare_image(content, ImageFormat::Jpeg);
+            let samples = image_to_samples(&image, ImageOutputFormat::Jpeg(100));
+            (image, samples, Filter::DctDecode, None)
         }
         ImageKind::PNG(content) => {
             // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
             // so we need to undo that
-            let image = image::load_from_memory_with_format(content, ImageFormat::Png)
-                .unwrap()
-                .flipv();
+            let image = prepare_image(content, ImageFormat::Png);
+
+            let map_alpha = |image: &DynamicImage| image.pixels().map(|p| (p.2).0[3]).collect();
+            let (encoded_image, encoded_mask) = match &image {
+                DynamicImage::ImageRgb8(_) => (image.to_rgb8().as_raw(), None),
+                DynamicImage::ImageRgba8(_) => (image.to_rgb8().as_raw(), Some(map_alpha(&image))),
+                DynamicImage::ImageRgb16(_) => (image.to_rgb16().as_raw(), None),
+                DynamicImage::ImageRgba16(_) => (image.to_rgb16().as_raw(), Some(map_alpha(&image))),
+                DynamicImage::ImageLuma8(_) => (image.to_luma8().as_raw(), None),
+                DynamicImage::ImageLumaA8(_) => (image.to_luma8().as_raw(), Some(map_alpha(&image))),
+                DynamicImage::ImageLuma16(_) => (image.to_luma16().as_raw(), None),
+                DynamicImage::ImageLumaA16(_) => (image.to_luma16().as_raw(), Some(map_alpha(&image))),
+                DynamicImage::ImageRgb32F(_) => (image.to_rgb32f().as_raw(), None),
+                DynamicImage::ImageRgba32F(_) => (image.to_rgb32f().as_raw(), Some(map_alpha(&image))),
+                _ => return
+            };
 
             let compression_level = CompressionLevel::DefaultLevel as u8;
-            let encoded_buffer =
-                compress_to_vec_zlib(image.to_rgb8().as_raw(), compression_level);
+            let compressed_image = compress_to_vec_zlib(encoded_image, compression_level);
+            let compressed_mask = encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
 
-            let mask = image.color().has_alpha().then(|| {
-                let alphas: Vec<_> = image.pixels().map(|p| (p.2).0[3]).collect();
-                compress_to_vec_zlib(&alphas, compression_level)
-            });
-
-            let image_size =
-                Size::new(image.width() as f64, image.height() as f64).unwrap();
-            (image_size, encoded_buffer, Filter::FlateDecode, mask)
+            (image, compressed_image, Filter::FlateDecode, compressed_mask)
         }
         ImageKind::SVG(tree) => {
             render_svg(image, tree, writer, content, ctx);
@@ -66,32 +67,13 @@ pub(crate) fn render(
 
     ctx.context_frame.push();
 
-    let (image_name, image_id) = ctx.deferrer.add_x_object();
-
-    let mut image_x_object = writer.image_xobject(image_id, &image_buffer);
-    image_x_object.filter(filter);
-    image_x_object.width(image_size.width() as i32);
-    image_x_object.height(image_size.height() as i32);
-    image_x_object.color_space().device_rgb();
-    image_x_object.bits_per_component(8);
-    if alpha_mask.is_some() {
-        image_x_object.s_mask(soft_mask_id);
-    }
-    image_x_object.finish();
-
-    if let Some(encoded) = &alpha_mask {
-        let mut s_mask = writer.image_xobject(soft_mask_id, encoded);
-        s_mask.filter(filter);
-        s_mask.width(image_size.width() as i32);
-        s_mask.height(image_size.height() as i32);
-        s_mask.color_space().device_gray();
-        s_mask.bits_per_component(8);
-    }
-
     ctx.context_frame.append_transform(&image.transform);
+    let image_size = Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap();
     let image_rect = image_rect(&image.view_box, image_size);
 
     let soft_mask = clip_outer(image.view_box.rect, writer, ctx);
+
+    let image_name = create_image_x_object(writer, ctx, &samples, filter, &dynamic_image, alpha_mask.as_deref());
 
     content.save_state();
     content.set_parameters(soft_mask.as_name());
@@ -106,22 +88,66 @@ pub(crate) fn render(
     ctx.context_frame.pop();
 }
 
-fn prepare_image(
-    content: &[u8],
-    input_format: ImageFormat,
-    output_format: ImageOutputFormat,
-) -> (Size, Vec<u8>) {
-    // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
-    // so we need to undo that
-    let image = image::load_from_memory_with_format(content, input_format)
-        .unwrap()
-        .flipv();
+fn create_image_x_object(writer: &mut PdfWriter,
+                        ctx: &mut Context,
+                        samples: &[u8],
+                         filter: Filter,
+                         dynamic_image: &DynamicImage,
+                         alpha_mask: Option<&[u8]>) -> String {
+    let color = dynamic_image.color();
+    let alpha_mask = alpha_mask.map(|mask_bytes| {
+        let soft_mask_id = ctx.deferrer.alloc_ref();
+        let mut s_mask = writer.image_xobject(soft_mask_id, mask_bytes);
+        s_mask.filter(filter);
+        s_mask.width(dynamic_image.width() as i32);
+        s_mask.height(dynamic_image.height() as i32);
+        s_mask.color_space().device_gray();
+        s_mask.bits_per_component(calculate_bits_per_component(color));
+        soft_mask_id
+    });
+
+    let (image_name, image_id) = ctx.deferrer.add_x_object();
+
+    let mut image_x_object = writer.image_xobject(image_id, &samples);
+    image_x_object.filter(filter);
+    image_x_object.width(dynamic_image.width() as i32);
+    image_x_object.height(dynamic_image.height() as i32);
+
+    let color_space =image_x_object.color_space();
+    if color.has_color() {
+        color_space.device_rgb();
+    }   else {
+        color_space.device_gray();
+    }
+
+    image_x_object.bits_per_component(calculate_bits_per_component(color));
+    if let Some(soft_mask_id) = alpha_mask {
+        image_x_object.s_mask(soft_mask_id);
+    }
+    image_x_object.finish();
+    image_name
+}
+
+fn calculate_bits_per_component(color_type: ColorType) -> i32 {
+    (color_type.bits_per_pixel() / color_type.channel_count() as u16) as i32
+}
+
+fn image_to_samples(image: &DynamicImage, output_format: ImageOutputFormat) -> Vec<u8> {
     let mut buffer: Vec<u8> = Vec::new();
     let mut writer = Cursor::new(&mut buffer);
     image.write_to(&mut writer, output_format).unwrap();
+    buffer
+}
 
-    let image_size = Size::new(image.width() as f64, image.height() as f64).unwrap();
-    (image_size, buffer)
+fn prepare_image(
+    content: &[u8],
+    input_format: ImageFormat
+) -> DynamicImage {
+    // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
+    // so we need to undo that
+    image::load_from_memory_with_format(content, input_format)
+        .unwrap()
+        .flipv()
 }
 
 fn render_svg(
