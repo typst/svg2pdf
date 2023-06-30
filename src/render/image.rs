@@ -31,54 +31,12 @@ pub(crate) fn render(
             (image, samples, Filter::DctDecode, None)
         }
         ImageKind::PNG(content) => {
-            // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
-            // so we need to undo that
             let image = prepare_image(content, ImageFormat::Png);
-            let color = image.color();
-            let bits = color.bits_per_pixel();
-            let channels = color.channel_count() as u16;
-
-            let encoded_image: Vec<u8> = match (channels, bits / channels > 8) {
-                (1 | 2, false) => {
-                    image.to_luma8().pixels().flat_map(|&Luma(c)| c).collect()
-                }
-                (1 | 2, true) => image
-                    .to_luma16()
-                    .pixels()
-                    .flat_map(|&Luma(x)| x)
-                    .flat_map(|x| x.to_be_bytes())
-                    .collect(),
-                (3 | 4, false) => {
-                    image.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
-                }
-                (3 | 4, true) => image
-                    .to_rgb16()
-                    .pixels()
-                    .flat_map(|&Rgb(c)| c)
-                    .flat_map(|x| x.to_be_bytes())
-                    .collect(),
-                _ => panic!("unknown number of channels={channels}")
-            };
-
-            let encoded_mask: Option<Vec<u8>> = if color.has_alpha() {
-                if bits / channels > 8 {
-                    Some(image
-                        .to_rgba16()
-                        .pixels()
-                        .flat_map(|&Rgba([.., a])| a.to_be_bytes())
-                        .collect())
-                } else {
-                    Some(image.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect())
-                }
-            }   else {
-                None
-            };
-
-            let compression_level = CompressionLevel::DefaultLevel as u8;
-            let compressed_image = compress_to_vec_zlib(&encoded_image, compression_level);
-            let compressed_mask = encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
-
-            (image, compressed_image, Filter::FlateDecode, compressed_mask)
+            handle_transparent_image(image)
+        }
+        ImageKind::GIF(content) => {
+            let image = prepare_image(content, ImageFormat::Gif);
+            handle_transparent_image(image)
         }
         ImageKind::SVG(tree) => {
             render_svg(image, tree, writer, content, ctx);
@@ -110,6 +68,54 @@ pub(crate) fn render(
     content.restore_state();
 
     ctx.context_frame.pop();
+}
+
+fn handle_transparent_image(image: DynamicImage) -> (DynamicImage, Vec<u8>, Filter, Option<Vec<u8>>) {
+    let color = image.color();
+    let bits = color.bits_per_pixel();
+    let channels = color.channel_count() as u16;
+
+    let encoded_image: Vec<u8> = match (channels, bits / channels > 8) {
+        (1 | 2, false) => {
+            image.to_luma8().pixels().flat_map(|&Luma(c)| c).collect()
+        }
+        (1 | 2, true) => image
+            .to_luma16()
+            .pixels()
+            .flat_map(|&Luma(x)| x)
+            .flat_map(|x| x.to_be_bytes())
+            .collect(),
+        (3 | 4, false) => {
+            image.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
+        }
+        (3 | 4, true) => image
+            .to_rgb16()
+            .pixels()
+            .flat_map(|&Rgb(c)| c)
+            .flat_map(|x| x.to_be_bytes())
+            .collect(),
+        _ => panic!("unknown number of channels={channels}")
+    };
+
+    let encoded_mask: Option<Vec<u8>> = if color.has_alpha() {
+        if bits / channels > 8 {
+            Some(image
+                .to_rgba16()
+                .pixels()
+                .flat_map(|&Rgba([.., a])| a.to_be_bytes())
+                .collect())
+        } else {
+            Some(image.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect())
+        }
+    }   else {
+        None
+    };
+
+    let compression_level = CompressionLevel::DefaultLevel as u8;
+    let compressed_image = compress_to_vec_zlib(&encoded_image, compression_level);
+    let compressed_mask = encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
+
+    (image, compressed_image, Filter::FlateDecode, compressed_mask)
 }
 
 fn create_image_x_object(writer: &mut PdfWriter,
