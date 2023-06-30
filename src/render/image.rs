@@ -2,7 +2,7 @@ use crate::render::{path, tree_to_stream};
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, RectExt, TransformExt};
 
-use image::{ColorType, DynamicImage, GenericImageView, ImageFormat, ImageOutputFormat};
+use image::{ColorType, DynamicImage, GenericImageView, ImageFormat, ImageOutputFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use std::io::Cursor;
@@ -34,24 +34,48 @@ pub(crate) fn render(
             // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
             // so we need to undo that
             let image = prepare_image(content, ImageFormat::Png);
+            let color = image.color();
+            let bits = color.bits_per_pixel();
+            let channels = color.channel_count() as u16;
 
-            let map_alpha = |image: &DynamicImage| image.pixels().map(|p| (p.2).0[3]).collect();
-            let (encoded_image, encoded_mask) = match &image {
-                DynamicImage::ImageRgb8(_) => (image.to_rgb8().as_raw(), None),
-                DynamicImage::ImageRgba8(_) => (image.to_rgb8().as_raw(), Some(map_alpha(&image))),
-                DynamicImage::ImageRgb16(_) => (image.to_rgb16().as_raw(), None),
-                DynamicImage::ImageRgba16(_) => (image.to_rgb16().as_raw(), Some(map_alpha(&image))),
-                DynamicImage::ImageLuma8(_) => (image.to_luma8().as_raw(), None),
-                DynamicImage::ImageLumaA8(_) => (image.to_luma8().as_raw(), Some(map_alpha(&image))),
-                DynamicImage::ImageLuma16(_) => (image.to_luma16().as_raw(), None),
-                DynamicImage::ImageLumaA16(_) => (image.to_luma16().as_raw(), Some(map_alpha(&image))),
-                DynamicImage::ImageRgb32F(_) => (image.to_rgb32f().as_raw(), None),
-                DynamicImage::ImageRgba32F(_) => (image.to_rgb32f().as_raw(), Some(map_alpha(&image))),
-                _ => return
+            let encoded_image: Vec<u8> = match (channels, bits / channels > 8) {
+                (1 | 2, false) => {
+                    image.to_luma8().pixels().flat_map(|&Luma(c)| c).collect()
+                }
+                (1 | 2, true) => image
+                    .to_luma16()
+                    .pixels()
+                    .flat_map(|&Luma(x)| x)
+                    .flat_map(|x| x.to_be_bytes())
+                    .collect(),
+                (3 | 4, false) => {
+                    image.to_rgb8().pixels().flat_map(|&Rgb(c)| c).collect()
+                }
+                (3 | 4, true) => image
+                    .to_rgb16()
+                    .pixels()
+                    .flat_map(|&Rgb(c)| c)
+                    .flat_map(|x| x.to_be_bytes())
+                    .collect(),
+                _ => panic!("unknown number of channels={channels}")
+            };
+
+            let encoded_mask: Option<Vec<u8>> = if color.has_alpha() {
+                if bits / channels > 8 {
+                    Some(image
+                        .to_rgba16()
+                        .pixels()
+                        .flat_map(|&Rgba([.., a])| a.to_be_bytes())
+                        .collect())
+                } else {
+                    Some(image.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect())
+                }
+            }   else {
+                None
             };
 
             let compression_level = CompressionLevel::DefaultLevel as u8;
-            let compressed_image = compress_to_vec_zlib(encoded_image, compression_level);
+            let compressed_image = compress_to_vec_zlib(&encoded_image, compression_level);
             let compressed_mask = encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
 
             (image, compressed_image, Filter::FlateDecode, compressed_mask)
