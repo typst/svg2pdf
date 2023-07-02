@@ -4,8 +4,34 @@ on: [push, pull_request]
 jobs:
   ci:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Get Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Get Rust cache
+        uses: Swatinem/rust-cache@v2
+      - name: Build svg2pdf
+        run: cargo build --package svg2pdf-tests --bin test --release
+      - name: Run tests
+        id: tests
+        run: cargo run --package svg2pdf-tests --bin test --release
+      - name: Upload artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./tests/diffs
+
+  checks:
+    name: Check clippy, formatting, and documentation
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo build
-      - run: cargo test
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-targets
+      - run: cargo fmt --check --all

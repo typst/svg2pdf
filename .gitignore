@@ -1,10 +1,8 @@
 .idea
 .vscode
 
-print_tree.txt
-test_1.pdf
-test_1.svg
-
 /target
-Cargo.lock
 .DS_Store
+
+.idea
+.vscode
