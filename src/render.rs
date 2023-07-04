@@ -2,6 +2,7 @@ pub mod clip_path;
 pub mod group;
 pub mod image;
 pub mod path;
+pub mod pattern;
 
 use crate::util::context::Context;
 use pdf_writer::{Content, PdfWriter};
