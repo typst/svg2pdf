@@ -2,7 +2,7 @@ use std::rc::Rc;
 use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
 use pdf_writer::types::ShadingType;
 use pdf_writer::writers::ExponentialFunction;
-use usvg::StopOffset;
+use usvg::{SpreadMethod, StopOffset};
 use crate::util::context::Context;
 use crate::util::helper::{ColorExt, RectExt, TransformExt};
 
@@ -13,7 +13,7 @@ pub fn create_linear(
     ctx: &mut Context,
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
-    let shading_function = get_shading_function(gradient, writer, ctx);
+    let shading_function = get_spread_shading_function(gradient, writer, ctx);
     let mut shading_pattern = writer.shading_pattern(pattern_id);
     let mut shading = shading_pattern.shading();
     shading.shading_type(ShadingType::Axial);
@@ -37,7 +37,102 @@ fn get_spread_shading_function(
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> Ref {
-    ctx.deferrer.alloc_ref()
+    let shading_function = get_shading_function(gradient.clone(), writer, ctx);
+
+    if (&gradient).x1 == 0.0 && (&gradient).x2 == 1.0 {
+        return shading_function;
+    }
+
+    let spread_shading_function = ctx.deferrer.alloc_ref();
+
+    let generate_repeating_pattern = |reflect: bool| {
+        let (sequences, min, max) = {
+            let reflect_cycle = if reflect {
+                [true, false]
+            }   else {
+                [false, false]
+            }.into_iter().cycle();
+
+            let mut backward_reflect_cycle = reflect_cycle.clone();
+            let x_delta = (gradient.x2 - gradient.x1) as f32;
+            let mut sub_ranges: Vec<(f32, f32, bool)> = vec![(gradient.x1 as f32, gradient.x2 as f32, false)];
+
+            let mut min = gradient.x1 as f32;
+            while min > 0.0 {
+                min -= x_delta;
+                sub_ranges.push((min, min + x_delta, backward_reflect_cycle.next().unwrap()));
+            }
+
+            sub_ranges.reverse();
+
+            let mut forward_reflect_cycle = reflect_cycle.clone();
+            let mut max = gradient.x2 as f32;
+            while max < 1.0 {
+                sub_ranges.push((max, max + x_delta, forward_reflect_cycle.next().unwrap()));
+                max += x_delta;
+            }
+
+            (sub_ranges, min, max)
+        };
+        let mut bounds: Vec<f32> = vec![];
+        let mut functions = vec![];
+        let mut encode: Vec<f32> = vec![];
+
+        for sequence in sequences {
+            bounds.push(sequence.1);
+            functions.push(shading_function);
+            encode.extend(if sequence.2 {[1.0, 0.0]} else {get_default_encode()});
+        }
+
+        bounds.pop();
+
+        (functions, bounds, vec![min, max], encode)
+    };
+
+
+    let (functions, bounds, domain, encode) = match gradient.spread_method {
+        SpreadMethod::Pad => {
+            let mut functions = vec![];
+            let mut bounds: Vec<f32> = vec![];
+            let mut encode = vec![];
+            let domain: Vec<f32> = Vec::from(get_default_domain());
+
+            if gradient.x1 > 0.0 {
+                let pad_ref = ctx.deferrer.alloc_ref();
+                let pad_function = single_color_function(gradient.stops[0].color, writer, pad_ref);
+                functions.push(pad_function);
+                bounds.push(gradient.x1 as f32);
+                encode.extend(get_default_encode());
+            }
+
+            functions.push(shading_function);
+            bounds.push(gradient.x2 as f32);
+            encode.extend(get_default_encode());
+
+            if gradient.x2 < 1.0 {
+                let pad_ref = ctx.deferrer.alloc_ref();
+                let pad_function = single_color_function(gradient.stops.last().unwrap().color, writer, pad_ref);
+                functions.push(pad_function);
+                bounds.push(1.0);
+                encode.extend(get_default_encode());
+            }
+
+            bounds.pop();
+
+            (functions, bounds, domain, encode)
+        }
+        SpreadMethod::Reflect => generate_repeating_pattern(true),
+        SpreadMethod::Repeat => generate_repeating_pattern(false)
+    };
+
+    let mut stitching_function = writer.stitching_function(spread_shading_function);
+    stitching_function.range(get_color_range());
+    stitching_function.functions(functions);
+    stitching_function.bounds(bounds);
+    stitching_function.domain(domain);
+    stitching_function.encode(encode);
+
+    spread_shading_function
 }
 
 fn get_shading_function(
@@ -96,6 +191,18 @@ fn get_shading_function(
     stitching_function.bounds(bounds);
     stitching_function.encode(encode);
 
+    reference
+}
+
+fn single_color_function(color: usvg::Color, writer: &mut PdfWriter, reference: Ref) -> Ref {
+    let mut exp = writer.exponential_function(reference);
+
+    exp.c0(color.as_array());
+    exp.c1(color.as_array());
+    exp.domain(get_default_domain());
+    exp.range(get_color_range());
+    exp.n(1.0);
+    exp.finish();
     reference
 }
 

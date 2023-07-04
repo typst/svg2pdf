@@ -11,7 +11,7 @@ pub const SVG_DIR: &str = "svgs";
 pub const REF_DIR: &str = "references";
 pub const DIFF_DIR: &str = "diffs";
 
-pub const SKIPPED_FILES: [&str; 128] = [
+pub const SKIPPED_FILES: [&str; 129] = [
     // These files crash svg2pdf so we always skip them.
     "svgs/resvg/structure/svg/zero-size.svg",
     "svgs/resvg/structure/svg/not-UTF-8-encoding.svg",
@@ -37,6 +37,7 @@ pub const SKIPPED_FILES: [&str; 128] = [
     "svgs/resvg/structure/style/external-CSS.svg",
     "svgs/resvg/structure/style/important.svg",
     "svgs/resvg/structure/svg/funcIRI-parsing.svg",
+    "svgs/resvg/structure/svg/funcIRI-with-invalid-characters.svg",
     "svgs/resvg/structure/svg/invalid-id-attribute-1.svg",
     "svgs/resvg/structure/svg/invalid-id-attribute-2.svg",
     "svgs/resvg/structure/svg/not-UTF-8-encoding.svg",
