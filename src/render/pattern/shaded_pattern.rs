@@ -1,5 +1,5 @@
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, RectExt, TransformExt};
+use crate::util::helper::{ColorExt, RectExt};
 use pdf_writer::types::ShadingType;
 use pdf_writer::writers::ExponentialFunction;
 use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
@@ -39,7 +39,7 @@ fn get_spread_shading_function(
 ) -> Ref {
     let shading_function = get_shading_function(gradient.clone(), writer, ctx);
 
-    if (&gradient).x1 == 0.0 && (&gradient).x2 == 1.0 {
+    if gradient.x1 == 0.0 && gradient.x2 == 1.0 {
         return shading_function;
     }
 
@@ -68,7 +68,7 @@ fn get_spread_shading_function(
 
             sub_ranges.reverse();
 
-            let mut forward_reflect_cycle = reflect_cycle.clone();
+            let mut forward_reflect_cycle = reflect_cycle;
             let mut max = gradient.x2 as f32;
             while max < 1.0 {
                 sub_ranges.push((
@@ -168,7 +168,7 @@ fn get_shading_function(
     // We manually pad the stops if necessary so that they are always in the range from 0-1
     if let Some(first) = stops.first() {
         if first.offset != 0.0 {
-            let mut new_stop = first.clone();
+            let mut new_stop = *first;
             new_stop.offset = StopOffset::new(0.0).unwrap();
             stops.insert(0, new_stop);
         }
@@ -176,7 +176,7 @@ fn get_shading_function(
 
     if let Some(last) = stops.last() {
         if last.offset != 1.0 {
-            let mut new_stop = last.clone();
+            let mut new_stop = *last;
             new_stop.offset = StopOffset::new(1.0).unwrap();
             stops.push(new_stop);
         }

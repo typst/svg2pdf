@@ -3,7 +3,7 @@ use crate::util::helper::{calc_node_bbox, dpi_ratio};
 use crate::Options;
 use pdf_writer::Rect;
 use usvg::utils::view_box_to_transform;
-use usvg::{Node, NodeExt, Size, Transform, Tree, ViewBox};
+use usvg::{Node, Size, Transform, Tree, ViewBox};
 
 #[derive(Clone)]
 #[derive(Default)]

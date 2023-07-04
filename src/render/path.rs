@@ -1,17 +1,12 @@
 use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
-use pdf_writer::types::{
-    ColorSpaceOperand, LineCapStyle, LineJoinStyle
-};
-use pdf_writer::{Content, Finish, PdfWriter};
-
-use std::rc::Rc;
+use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
+use pdf_writer::{Content, PdfWriter};
 
 use crate::render::pattern::{shaded_pattern, tiled_pattern};
 use crate::util::context::Context;
-use usvg::utils::view_box_to_transform;
+use usvg::Fill;
 use usvg::Stroke;
-use usvg::{Fill, NodeKind, Size, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
 
 pub(crate) fn render(
