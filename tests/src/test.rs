@@ -14,7 +14,7 @@ struct Args {
     #[clap(short, long)]
     replace: bool,
 }
-
+#[derive(PartialEq, Eq)]
 enum TestStatus {
     Success,
     Failure,
