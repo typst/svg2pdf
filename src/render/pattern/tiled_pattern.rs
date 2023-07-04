@@ -1,11 +1,11 @@
-use std::rc::Rc;
-use pdf_writer::{Content, Finish, PdfWriter};
-use usvg::{NodeKind, Size, Transform, Units};
-use usvg::utils::view_box_to_transform;
-use pdf_writer::types::{PaintType, TilingType};
 use crate::render::group::create_x_object;
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, TransformExt};
+use pdf_writer::types::{PaintType, TilingType};
+use pdf_writer::{Content, Finish, PdfWriter};
+use std::rc::Rc;
+use usvg::utils::view_box_to_transform;
+use usvg::{NodeKind, Size, Transform, Units};
 
 pub fn create(
     pattern: Rc<usvg::Pattern>,

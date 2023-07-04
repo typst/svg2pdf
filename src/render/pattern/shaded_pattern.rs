@@ -1,10 +1,10 @@
-use std::rc::Rc;
-use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
-use pdf_writer::types::ShadingType;
-use pdf_writer::writers::ExponentialFunction;
-use usvg::{SpreadMethod, StopOffset};
 use crate::util::context::Context;
 use crate::util::helper::{ColorExt, RectExt, TransformExt};
+use pdf_writer::types::ShadingType;
+use pdf_writer::writers::ExponentialFunction;
+use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
+use std::rc::Rc;
+use usvg::{SpreadMethod, StopOffset};
 
 pub fn create_linear(
     gradient: Rc<usvg::LinearGradient>,
@@ -47,20 +47,23 @@ fn get_spread_shading_function(
 
     let generate_repeating_pattern = |reflect: bool| {
         let (sequences, min, max) = {
-            let reflect_cycle = if reflect {
-                [true, false]
-            }   else {
-                [false, false]
-            }.into_iter().cycle();
+            let reflect_cycle = if reflect { [true, false] } else { [false, false] }
+                .into_iter()
+                .cycle();
 
             let mut backward_reflect_cycle = reflect_cycle.clone();
             let x_delta = (gradient.x2 - gradient.x1) as f32;
-            let mut sub_ranges: Vec<(f32, f32, bool)> = vec![(gradient.x1 as f32, gradient.x2 as f32, false)];
+            let mut sub_ranges: Vec<(f32, f32, bool)> =
+                vec![(gradient.x1 as f32, gradient.x2 as f32, false)];
 
             let mut min = gradient.x1 as f32;
             while min > 0.0 {
                 min -= x_delta;
-                sub_ranges.push((min, min + x_delta, backward_reflect_cycle.next().unwrap()));
+                sub_ranges.push((
+                    min,
+                    min + x_delta,
+                    backward_reflect_cycle.next().unwrap(),
+                ));
             }
 
             sub_ranges.reverse();
@@ -68,7 +71,11 @@ fn get_spread_shading_function(
             let mut forward_reflect_cycle = reflect_cycle.clone();
             let mut max = gradient.x2 as f32;
             while max < 1.0 {
-                sub_ranges.push((max, max + x_delta, forward_reflect_cycle.next().unwrap()));
+                sub_ranges.push((
+                    max,
+                    max + x_delta,
+                    forward_reflect_cycle.next().unwrap(),
+                ));
                 max += x_delta;
             }
 
@@ -81,14 +88,13 @@ fn get_spread_shading_function(
         for sequence in sequences {
             bounds.push(sequence.1);
             functions.push(shading_function);
-            encode.extend(if sequence.2 {[1.0, 0.0]} else {get_default_encode()});
+            encode.extend(if sequence.2 { [1.0, 0.0] } else { get_default_encode() });
         }
 
         bounds.pop();
 
         (functions, bounds, vec![min, max], encode)
     };
-
 
     let (functions, bounds, domain, encode) = match gradient.spread_method {
         SpreadMethod::Pad => {
@@ -99,7 +105,8 @@ fn get_spread_shading_function(
 
             if gradient.x1 > 0.0 {
                 let pad_ref = ctx.deferrer.alloc_ref();
-                let pad_function = single_color_function(gradient.stops[0].color, writer, pad_ref);
+                let pad_function =
+                    single_color_function(gradient.stops[0].color, writer, pad_ref);
                 functions.push(pad_function);
                 bounds.push(gradient.x1 as f32);
                 encode.extend(get_default_encode());
@@ -111,7 +118,11 @@ fn get_spread_shading_function(
 
             if gradient.x2 < 1.0 {
                 let pad_ref = ctx.deferrer.alloc_ref();
-                let pad_function = single_color_function(gradient.stops.last().unwrap().color, writer, pad_ref);
+                let pad_function = single_color_function(
+                    gradient.stops.last().unwrap().color,
+                    writer,
+                    pad_ref,
+                );
                 functions.push(pad_function);
                 bounds.push(1.0);
                 encode.extend(get_default_encode());
@@ -122,7 +133,7 @@ fn get_spread_shading_function(
             (functions, bounds, domain, encode)
         }
         SpreadMethod::Reflect => generate_repeating_pattern(true),
-        SpreadMethod::Repeat => generate_repeating_pattern(false)
+        SpreadMethod::Repeat => generate_repeating_pattern(false),
     };
 
     let mut stitching_function = writer.stitching_function(spread_shading_function);
@@ -173,7 +184,8 @@ fn get_shading_function(
 
     for window in stops.windows(2) {
         let (first, second) = (window[0], window[1]);
-        let (first_color, second_color) = (first.color.as_array(), second.color.as_array());
+        let (first_color, second_color) =
+            (first.color.as_array(), second.color.as_array());
         bounds.push(second.offset.get() as f32);
         let mut exp = ExponentialFunction::start(func_array.push());
         exp.domain(get_default_domain());
@@ -194,7 +206,11 @@ fn get_shading_function(
     reference
 }
 
-fn single_color_function(color: usvg::Color, writer: &mut PdfWriter, reference: Ref) -> Ref {
+fn single_color_function(
+    color: usvg::Color,
+    writer: &mut PdfWriter,
+    reference: Ref,
+) -> Ref {
     let mut exp = writer.exponential_function(reference);
 
     exp.c0(color.as_array());

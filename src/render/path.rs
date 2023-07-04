@@ -1,19 +1,18 @@
-use crate::render::group::create_x_object;
-use crate::util::helper::{ColorExt, NameExt, SRGB, TransformExt};
+use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{
-    ColorSpaceOperand, LineCapStyle, LineJoinStyle, PaintType, TilingType,
+    ColorSpaceOperand, LineCapStyle, LineJoinStyle
 };
 use pdf_writer::{Content, Finish, PdfWriter};
 
 use std::rc::Rc;
 
+use crate::render::pattern::{shaded_pattern, tiled_pattern};
 use crate::util::context::Context;
 use usvg::utils::view_box_to_transform;
 use usvg::Stroke;
 use usvg::{Fill, NodeKind, Size, Transform, Units};
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
-use crate::render::pattern::{shaded_pattern, tiled_pattern};
 
 pub(crate) fn render(
     path: &usvg::Path,
@@ -116,7 +115,8 @@ fn set_stroke(
             content.set_stroke_pattern(None, pattern_name.as_name());
         }
         Paint::LinearGradient(l) => {
-            let pattern_name = shaded_pattern::create_linear(l.clone(), parent_bbox, writer, ctx);
+            let pattern_name =
+                shaded_pattern::create_linear(l.clone(), parent_bbox, writer, ctx);
             content.set_stroke_color_space(Pattern);
             content.set_stroke_pattern(None, pattern_name.as_name());
         }
@@ -144,7 +144,8 @@ fn set_fill(
             content.set_fill_pattern(None, pattern_name.as_name());
         }
         Paint::LinearGradient(l) => {
-            let pattern_name = shaded_pattern::create_linear(l.clone(), parent_bbox, writer, ctx);
+            let pattern_name =
+                shaded_pattern::create_linear(l.clone(), parent_bbox, writer, ctx);
             content.set_fill_color_space(Pattern);
             content.set_fill_pattern(None, pattern_name.as_name());
         }
