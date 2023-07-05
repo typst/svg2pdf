@@ -4,7 +4,7 @@ use pdf_writer::types::ShadingType;
 use pdf_writer::writers::ExponentialFunction;
 use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
 use std::rc::Rc;
-use usvg::{SpreadMethod, StopOffset};
+use usvg::{NormalizedF64, SpreadMethod, StopOffset};
 
 pub fn create_linear(
     gradient: Rc<usvg::LinearGradient>,
@@ -13,7 +13,7 @@ pub fn create_linear(
     ctx: &mut Context,
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
-    let shading_function = get_spread_shading_function(gradient, writer, ctx);
+    let shading_function = get_spread_shading_function(gradient.clone(), writer, ctx);
     let mut shading_pattern = writer.shading_pattern(pattern_id);
     let mut shading = shading_pattern.shading();
     shading.shading_type(ShadingType::Axial);
@@ -27,7 +27,9 @@ pub fn create_linear(
     shading.coords([parent_bbox.x() as f32, parent_bbox.y() as f32, (parent_bbox.x() + parent_bbox.width()) as f32, parent_bbox.y() as f32]);
     shading.finish();
 
-    shading_pattern.matrix(ctx.context_frame.full_transform().as_array());
+    let mut matrix_transform = ctx.context_frame.full_transform();
+    matrix_transform.append(&gradient.transform);
+    shading_pattern.matrix(matrix_transform.as_array());
     shading_pattern.finish();
 
     pattern_name
@@ -168,7 +170,7 @@ fn get_shading_function(
 
     // We manually pad the stops if necessary so that they are always in the range from 0-1
     if let Some(first) = stops.first() {
-        if first.offset != 0.0 {
+        if first.offset != NormalizedF64::ZERO {
             let mut new_stop = *first;
             new_stop.offset = StopOffset::new(0.0).unwrap();
             stops.insert(0, new_stop);
@@ -176,7 +178,7 @@ fn get_shading_function(
     }
 
     if let Some(last) = stops.last() {
-        if last.offset != 1.0 {
+        if last.offset != NormalizedF64::ONE {
             let mut new_stop = *last;
             new_stop.offset = StopOffset::new(1.0).unwrap();
             stops.push(new_stop);
