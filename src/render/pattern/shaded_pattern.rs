@@ -1,10 +1,10 @@
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, TransformExt};
+use crate::util::helper::{ColorExt, RectExt, TransformExt};
 use pdf_writer::types::ShadingType;
 use pdf_writer::writers::ExponentialFunction;
 use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
 use std::rc::Rc;
-use usvg::{NormalizedF64, SpreadMethod, StopOffset};
+use usvg::{NormalizedF64, SpreadMethod, StopOffset, Transform, Units};
 
 pub fn create_linear(
     gradient: Rc<usvg::LinearGradient>,
@@ -24,15 +24,21 @@ pub fn create_linear(
 
     // TODO: Figure out the proper values for y
     shading.extend([true, true]);
-    shading.coords([
-        parent_bbox.x() as f32,
-        parent_bbox.y() as f32,
-        (parent_bbox.x() + parent_bbox.width()) as f32,
-        parent_bbox.y() as f32,
-    ]);
+    // y2 and y1 need to be switched because of the differences in the svg/pdf coordinate system
+    let (x1, x2) = if gradient.units == Units::ObjectBoundingBox {
+        (0.0, 1.0)
+    }   else {
+        (gradient.x1 as f32, gradient.x2 as f32)
+    };
+    shading.coords([x1, gradient.y2 as f32, x2, gradient.y1 as f32]);
     shading.finish();
 
     let mut matrix_transform = ctx.context_frame.full_transform();
+
+    if gradient.units == Units::ObjectBoundingBox {
+        matrix_transform.append(&Transform::from_bbox(*parent_bbox));
+    }
+
     matrix_transform.append(&gradient.transform);
     shading_pattern.matrix(matrix_transform.as_array());
     shading_pattern.finish();
