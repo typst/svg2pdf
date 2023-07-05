@@ -1,5 +1,5 @@
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, RectExt, TransformExt};
+use crate::util::helper::{ColorExt, TransformExt};
 use pdf_writer::types::ShadingType;
 use pdf_writer::writers::ExponentialFunction;
 use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
@@ -24,7 +24,12 @@ pub fn create_linear(
 
     // TODO: Figure out the proper values for y
     shading.extend([true, true]);
-    shading.coords([parent_bbox.x() as f32, parent_bbox.y() as f32, (parent_bbox.x() + parent_bbox.width()) as f32, parent_bbox.y() as f32]);
+    shading.coords([
+        parent_bbox.x() as f32,
+        parent_bbox.y() as f32,
+        (parent_bbox.x() + parent_bbox.width()) as f32,
+        parent_bbox.y() as f32,
+    ]);
     shading.finish();
 
     let mut matrix_transform = ctx.context_frame.full_transform();

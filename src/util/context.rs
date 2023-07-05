@@ -45,14 +45,6 @@ impl ContextFrame {
         self.current_frame().full_transform()
     }
 
-    pub fn current_transform(&self) -> Transform {
-        self.current_frame().current_transform
-    }
-
-    pub fn base_transform(&self) -> Transform {
-        self.current_frame().base_transform
-    }
-
     pub fn push(&mut self) {
         self.frames.push(self.current_frame().clone());
     }
