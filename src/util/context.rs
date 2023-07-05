@@ -8,8 +8,8 @@ use usvg::{Node, Size, Transform, Tree, ViewBox};
 #[derive(Clone)]
 #[derive(Default)]
 pub struct Frame {
-    base_transform: Transform,
-    current_transform: Transform,
+    pub base_transform: Transform,
+    pub current_transform: Transform,
 }
 
 impl Frame {
@@ -43,6 +43,14 @@ impl ContextFrame {
 
     pub fn full_transform(&self) -> Transform {
         self.current_frame().full_transform()
+    }
+
+    pub fn current_transform(&self) -> Transform {
+        self.current_frame().current_transform
+    }
+
+    pub fn base_transform(&self) -> Transform {
+        self.current_frame().base_transform
     }
 
     pub fn push(&mut self) {
