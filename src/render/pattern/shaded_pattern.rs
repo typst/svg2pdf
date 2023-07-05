@@ -24,7 +24,11 @@ pub fn create_linear(
 
     let coords_rect = parent_bbox.as_pdf_rect(&ctx.context_frame.full_transform());
     // TODO: Figure out the proper values for y
-    shading.coords([coords_rect.x1, coords_rect.y2, coords_rect.x2, coords_rect.y2]);
+    shading.extend([true, true]);
+    let (mut x1, mut x2, mut y1, mut y2) = (parent_bbox.x(), parent_bbox.x() + parent_bbox.width(), parent_bbox.y(), parent_bbox.y());
+    ctx.context_frame.full_transform().apply_to(&mut x1, &mut y1);
+    ctx.context_frame.full_transform().apply_to(&mut x2, &mut y2);
+    shading.coords([x1 as f32, y1 as f32, x2 as f32, y2 as f32]);
     shading.finish();
 
     shading_pattern.finish();
