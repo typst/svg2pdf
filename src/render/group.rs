@@ -1,10 +1,10 @@
 use crate::render::clip_path;
 use crate::render::Render;
 use crate::util::context::Context;
-use crate::util::helper::{calc_node_bbox, NameExt, RectExt, TransformExt};
+use crate::util::helper::{NameExt, RectExt, TransformExt};
 use pdf_writer::writers::FormXObject;
 use pdf_writer::{Content, Finish, PdfWriter, Ref};
-use usvg::{Node, NodeExt, Transform};
+use usvg::Node;
 
 pub(crate) fn render(
     node: &Node,
@@ -28,7 +28,7 @@ pub(crate) fn create_x_object(
 
     let mut child_content = Content::new();
     child_content.save_state();
-    let pdf_bbox = ctx.plain_bbox(&node).as_pdf_rect();
+    let pdf_bbox = ctx.plain_bbox(node).as_pdf_rect();
 
     if let Some(clip_path) = &group.clip_path {
         clip_path::render(node, clip_path.clone(), writer, &mut child_content, ctx);

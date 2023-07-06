@@ -1,5 +1,5 @@
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, RectExt, TransformExt};
+use crate::util::helper::{ColorExt, TransformExt};
 use pdf_writer::types::ShadingType;
 use pdf_writer::writers::ExponentialFunction;
 use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
@@ -27,7 +27,7 @@ pub fn create_linear(
     // y2 and y1 need to be switched because of the differences in the svg/pdf coordinate system
     let (x1, x2) = if gradient.units == Units::ObjectBoundingBox {
         (0.0, 1.0)
-    }   else {
+    } else {
         (gradient.x1 as f32, gradient.x2 as f32)
     };
     shading.coords([x1, gradient.y2 as f32, x2, gradient.y1 as f32]);

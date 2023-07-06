@@ -5,9 +5,9 @@ pub mod path;
 pub mod pattern;
 
 use crate::util::context::Context;
+use crate::util::helper::TransformExt;
 use pdf_writer::{Content, Finish, PdfWriter, Rect};
 use usvg::{Node, NodeKind, Tree};
-use crate::util::helper::{NameExt, TransformExt};
 
 pub fn tree_to_x_object(
     tree: &Tree,

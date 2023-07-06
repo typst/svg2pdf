@@ -1,18 +1,14 @@
-use crate::render::{path, tree_to_x_object};
+use crate::render::tree_to_x_object;
 use crate::util::context::Context;
-use crate::util::helper::{image_rect, NameExt, RectExt, TransformExt};
+use crate::util::helper::{image_rect, NameExt, TransformExt};
 
 use image::{ColorType, DynamicImage, ImageFormat, ImageOutputFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
+use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use std::io::Cursor;
-use std::rc::Rc;
 
-use crate::render::group::make_transparency_group;
-use usvg::{
-    Color, Fill, ImageKind, Node, Paint, PathData, Size, Transform, Tree, Visibility,
-};
 use crate::Options;
+use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
 
 pub(crate) fn render(
     _node: &Node,
@@ -49,7 +45,6 @@ pub(crate) fn render(
         Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap();
     let image_rect = image_rect(&image.view_box, image_size);
 
-
     let image_name = create_image_x_object(
         writer,
         ctx,
@@ -62,11 +57,13 @@ pub(crate) fn render(
     content.save_state();
     content.transform(image.transform.as_array());
     clip_outer(image.view_box.rect, content);
-    content.transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
-    content.transform(Transform::new_scale(image_rect.width(), image_rect.height()).as_array());
+    content
+        .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
+    content.transform(
+        Transform::new_scale(image_rect.width(), image_rect.height()).as_array(),
+    );
     content.x_object(image_name.as_name());
     content.restore_state();
-
 }
 
 fn handle_transparent_image(
@@ -191,25 +188,38 @@ fn render_svg(
     let image_rect = image_rect(&image.view_box, tree.size);
     // Account for the x/y shift of the image
     clip_outer(image.view_box.rect, content);
-    content.transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
+    content
+        .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
     // content.set_parameters(soft_mask.as_name());
     // Apply transformation so that the embedded svg has the same size as the image
-    content.transform(Transform::new_scale(
-        image_rect.width(),
-        image_rect.height(),
-    ).as_array());
+    content.transform(
+        Transform::new_scale(image_rect.width(), image_rect.height()).as_array(),
+    );
 
-    let mut child_ctx = Context::new(tree, Options::default(), Transform::default(), Some(ctx.deferrer.alloc_ref().get()));
+    let mut child_ctx = Context::new(
+        tree,
+        Options::default(),
+        Transform::default(),
+        Some(ctx.deferrer.alloc_ref().get()),
+    );
     child_ctx.deferrer = ctx.deferrer.clone();
     let tree_x_object = tree_to_x_object(tree, writer, &mut child_ctx);
-    content.transform(Transform::new_scale(1.0 / child_ctx.size.width(), 1.0 / child_ctx.size.height()).as_array());
+    content.transform(
+        Transform::new_scale(1.0 / child_ctx.size.width(), 1.0 / child_ctx.size.height())
+            .as_array(),
+    );
     content.x_object(tree_x_object.as_name());
     ctx.deferrer = child_ctx.deferrer.clone();
     content.restore_state();
 }
 
 fn clip_outer(rect: usvg::Rect, content: &mut Content) {
-    content.rect(rect.x() as f32, rect.y() as f32, rect.width() as f32, rect.height() as f32);
+    content.rect(
+        rect.x() as f32,
+        rect.y() as f32,
+        rect.width() as f32,
+        rect.height() as f32,
+    );
     content.close_path();
     content.clip_nonzero();
     content.end_path();

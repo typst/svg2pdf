@@ -82,10 +82,6 @@ impl Deferrer {
         self.write_pending_patterns(resources);
     }
 
-    pub fn set_next_ref(&mut self, reference: i32) {
-        self.allocator.set_next_ref(reference);
-    }
-
     pub fn alloc_ref(&mut self) -> Ref {
         self.allocator.alloc_ref()
     }

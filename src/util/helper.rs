@@ -1,5 +1,5 @@
 use pdf_writer::{Name, Rect};
-use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform};
+use usvg::{Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
 

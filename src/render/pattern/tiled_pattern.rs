@@ -40,25 +40,27 @@ pub fn create(
                 pattern_rect.y(),
             ));
 
-
             let mut pattern_content = Content::new();
             pattern_content.save_state();
 
             if use_content_units_obb {
                 // Again, the x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
                 // the x/y would be applied twice.
-                pattern_content.transform(Transform::new_scale(
-                    parent_bbox.width(),
-                    parent_bbox.height(),
-                ).as_array());
+                pattern_content.transform(
+                    Transform::new_scale(parent_bbox.width(), parent_bbox.height())
+                        .as_array(),
+                );
             }
 
             if let Some(view_box) = pattern.view_box {
-                pattern_content.transform(view_box_to_transform(
-                    view_box.rect,
-                    view_box.aspect,
-                    Size::new(pattern_rect.width(), pattern_rect.height()).unwrap(),
-                ).as_array());
+                pattern_content.transform(
+                    view_box_to_transform(
+                        view_box.rect,
+                        view_box.aspect,
+                        Size::new(pattern_rect.width(), pattern_rect.height()).unwrap(),
+                    )
+                    .as_array(),
+                );
             }
 
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);

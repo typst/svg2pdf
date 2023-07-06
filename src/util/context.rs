@@ -15,24 +15,24 @@ pub struct Context {
 
 impl Context {
     /// Create a new context.
-    pub fn new(tree: &Tree, options: Options, initial_transform: Transform, start_ref: Option<i32>) -> Self {
-        let mut context = Self {
+    pub fn new(
+        tree: &Tree,
+        options: Options,
+        initial_transform: Transform,
+        start_ref: Option<i32>,
+    ) -> Self {
+        Self {
             viewbox: tree.view_box,
             size: tree.size,
             initial_transform,
             deferrer: Deferrer::new_with_start_ref(start_ref.unwrap_or(1)),
             options,
-        };
-
-        context
+        }
     }
 
     pub fn get_base_transform(&self) -> Transform {
-        let viewbox_transform = view_box_to_transform(
-            self.viewbox.rect,
-            self.viewbox.aspect,
-            self.size,
-        );
+        let viewbox_transform =
+            view_box_to_transform(self.viewbox.rect, self.viewbox.aspect, self.size);
 
         let mut base_transform = self.initial_transform;
         base_transform.append(&viewbox_transform);
