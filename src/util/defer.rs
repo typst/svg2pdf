@@ -4,42 +4,59 @@ use pdf_writer::types::{MaskType, ProcSet};
 use pdf_writer::writers::{ColorSpace, ExtGraphicsState, Resources};
 use pdf_writer::{Finish, Ref};
 
+#[derive(Clone)]
 pub struct PendingXObject {
     pub name: String,
     pub reference: Ref,
 }
 
+#[derive(Clone)]
 pub struct PendingPattern {
     pub name: String,
     pub reference: Ref,
 }
 
+#[derive(Clone)]
 pub struct PendingGraphicsState {
     name: String,
     state_type: GraphicsStateType,
 }
 
+#[derive(Clone)]
 enum GraphicsStateType {
     Opacity(Opacity),
     SoftMask(SoftMask),
 }
 
+#[derive(Clone, Copy)]
 struct Opacity {
     stroke_opacity: f32,
     fill_opacity: f32,
 }
 
+#[derive(Clone)]
 struct SoftMask {
     mask_type: MaskType,
     group: Ref,
 }
 
-#[derive(Default)]
+#[derive(Clone)]
 pub struct Deferrer {
     allocator: Allocator,
     pending_x_objects: Vec<Vec<PendingXObject>>,
     pending_patterns: Vec<Vec<PendingPattern>>,
     pending_graphics_states: Vec<Vec<PendingGraphicsState>>,
+}
+
+impl Default for Deferrer {
+    fn default() -> Self {
+        Self {
+            allocator: Allocator::default(),
+            pending_x_objects: vec![vec![]],
+            pending_patterns: vec![vec![]],
+            pending_graphics_states: vec![vec![]],
+        }
+    }
 }
 
 impl Deferrer {
@@ -63,6 +80,10 @@ impl Deferrer {
         self.write_pending_x_objects(resources);
         self.write_pending_graphics_states(resources);
         self.write_pending_patterns(resources);
+    }
+
+    pub fn set_next_ref(&mut self, reference: i32) {
+        self.allocator.set_next_ref(reference);
     }
 
     pub fn alloc_ref(&mut self) -> Ref {

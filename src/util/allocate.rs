@@ -1,5 +1,6 @@
 use pdf_writer::Ref;
 
+#[derive(Clone, Copy)]
 pub struct Allocator {
     /// The next id for indirect object references
     next_ref_id: i32,
@@ -26,6 +27,9 @@ impl Default for Allocator {
 }
 
 impl Allocator {
+    pub fn set_next_ref(&mut self, reference: i32) {
+        self.next_ref_id = reference
+    }
     pub fn new_with_start_ref(start_ref: i32) -> Self {
         Self { next_ref_id: start_ref, ..Allocator::default() }
     }

@@ -29,8 +29,7 @@ pub fn create(
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
-            let mut pattern_matrix = ctx.context_frame.full_transform();
-            pattern_matrix.append(&pattern.transform);
+            let mut pattern_matrix = pattern.transform;
             // Make sure that the pattern moves accordingly when a different x/y value is set for the pattern
             pattern_matrix.append(&Transform::new(
                 1.0,
@@ -40,31 +39,32 @@ pub fn create(
                 pattern_rect.x(),
                 pattern_rect.y(),
             ));
-            // All transformations up until now will be applied to the pattern by setting the matrix argument of the pattern,
-            // so we create a completely new context frame here which doesn't contain any of the transformations up until now
-            ctx.context_frame.push_new();
+
+
+            let mut pattern_content = Content::new();
+            pattern_content.save_state();
 
             if use_content_units_obb {
                 // Again, the x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
                 // the x/y would be applied twice.
-                ctx.context_frame.append_transform(&Transform::new_scale(
+                pattern_content.transform(Transform::new_scale(
                     parent_bbox.width(),
                     parent_bbox.height(),
-                ));
+                ).as_array());
             }
 
             if let Some(view_box) = pattern.view_box {
-                ctx.context_frame.append_transform(&view_box_to_transform(
+                pattern_content.transform(view_box_to_transform(
                     view_box.rect,
                     view_box.aspect,
                     Size::new(pattern_rect.width(), pattern_rect.height()).unwrap(),
-                ));
+                ).as_array());
             }
 
             let (x_object_name, _) = create_x_object(&pattern.root, group, writer, ctx);
 
-            let mut pattern_content = Content::new();
             pattern_content.x_object(x_object_name.as_name());
+            pattern_content.restore_state();
             let pattern_content_stream = pattern_content.finish();
 
             let mut tiling_pattern =
@@ -91,7 +91,6 @@ pub fn create(
                 .x_step(final_bbox.x2 - final_bbox.x1)
                 .y_step(final_bbox.y2 - final_bbox.y1);
 
-            ctx.context_frame.pop();
             pattern_name
         }
         _ => unreachable!(),

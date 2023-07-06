@@ -5,19 +5,33 @@ pub mod path;
 pub mod pattern;
 
 use crate::util::context::Context;
-use pdf_writer::{Content, PdfWriter};
+use pdf_writer::{Content, Finish, PdfWriter, Rect};
 use usvg::{Node, NodeKind, Tree};
+use crate::util::helper::{NameExt, TransformExt};
 
-pub fn tree_to_stream(
+pub fn tree_to_x_object(
     tree: &Tree,
     writer: &mut PdfWriter,
-    content: &mut Content,
     ctx: &mut Context,
-) {
-    // Root of tree is always a group, so we can just directly iterate over all of the children
+) -> String {
+    let (name, reference) = ctx.deferrer.add_x_object();
+    ctx.deferrer.push();
+
+    let mut child_content = Content::new();
+
     for el in tree.root.children() {
-        el.render(writer, content, ctx);
+        el.render(writer, &mut child_content, ctx);
     }
+
+    let child_content_stream = child_content.finish();
+
+    let mut x_object = writer.form_xobject(reference, &child_content_stream);
+    ctx.deferrer.pop(&mut x_object.resources());
+
+    x_object.bbox(Rect::new(0.0, 0.0, ctx.size.width() as f32, ctx.size.height() as f32));
+    x_object.matrix(ctx.get_base_transform().as_array());
+    x_object.finish();
+    name
 }
 
 pub trait Render {

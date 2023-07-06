@@ -2,8 +2,9 @@ mod render;
 mod util;
 
 use pdf_writer::{Content, Finish, PdfWriter, Ref, TextStr};
-use usvg::Tree;
+use usvg::{Size, Transform, Tree};
 use util::context::Context;
+use crate::util::helper::{dpi_ratio, NameExt};
 
 #[derive(Copy, Clone)]
 pub struct Options {
@@ -16,8 +17,23 @@ impl Default for Options {
     }
 }
 
+fn pdf_base_transform(dpi: f32, size: Size) -> Transform {
+    let dpi_transform = Transform::new_scale(
+        dpi_ratio(dpi) as f64,
+        dpi_ratio(dpi) as f64,
+    );
+    let viewport_transform =
+        Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, size.height());
+
+    let mut base_transform = dpi_transform;
+    base_transform.append(&viewport_transform);
+    base_transform
+}
+
 pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
-    let mut ctx = Context::new(tree, options, None);
+
+
+    let mut ctx = Context::new(tree, options, pdf_base_transform(options.dpi, tree.size), None);
     let mut writer = PdfWriter::new();
 
     let catalog_id = ctx.deferrer.alloc_ref();
@@ -30,8 +46,9 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 
     // Generate main content
     ctx.deferrer.push();
+    let tree_x_object = render::tree_to_x_object(tree, &mut writer, &mut ctx);
     let mut content = Content::new();
-    render::tree_to_stream(tree, &mut writer, &mut content, &mut ctx);
+    content.x_object(tree_x_object.as_name());
 
     let content_stream = content.finish();
     let stream = writer.stream(content_id, &content_stream);
@@ -59,13 +76,14 @@ pub fn convert_tree_into(
     writer: &mut PdfWriter,
     start_ref: Ref,
 ) -> Ref {
-    let mut ctx = Context::new(tree, options, Some(start_ref.get()));
+    let mut ctx = Context::new(tree, options, pdf_base_transform(options.dpi, tree.size),Some(start_ref.get()));
 
     let x_object_id = ctx.deferrer.alloc_ref();
     ctx.deferrer.push();
 
+    let tree_x_object = render::tree_to_x_object(tree, writer, &mut ctx);
     let mut content = Content::new();
-    render::tree_to_stream(tree, writer, &mut content, &mut ctx);
+    content.x_object(tree_x_object.as_name());
     let content_stream = content.finish();
     let mut x_object = writer.form_xobject(x_object_id, &content_stream);
     x_object.bbox(ctx.get_media_box());

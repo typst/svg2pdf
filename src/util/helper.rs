@@ -41,17 +41,16 @@ impl NameExt for String {
 }
 
 pub trait RectExt {
-    fn as_pdf_rect(&self, base_transform: &Transform) -> Rect;
+    fn as_pdf_rect(&self) -> Rect;
 }
 
 impl RectExt for usvg::Rect {
-    fn as_pdf_rect(&self, transform: &Transform) -> Rect {
-        let transformed = self.transform(transform).unwrap();
+    fn as_pdf_rect(&self) -> Rect {
         Rect::new(
-            transformed.x() as f32,
-            transformed.y() as f32,
-            (transformed.x() + transformed.width()) as f32,
-            (transformed.y() + transformed.height()) as f32,
+            self.x() as f32,
+            self.y() as f32,
+            (self.x() + self.width()) as f32,
+            (self.y() + self.height()) as f32,
         )
     }
 }
@@ -75,11 +74,6 @@ pub(crate) fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
                 if let Some(c_bbox) = calc_node_bbox(&child, child_transform) {
                     bbox = bbox.expand(c_bbox);
                 }
-            }
-
-            // Make sure bbox was changed.
-            if bbox.fuzzy_eq(&PathBbox::new_bbox()) {
-                return None;
             }
 
             Some(bbox)

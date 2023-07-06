@@ -1,10 +1,10 @@
 use crate::render::clip_path;
 use crate::render::Render;
 use crate::util::context::Context;
-use crate::util::helper::{NameExt, RectExt};
+use crate::util::helper::{calc_node_bbox, NameExt, RectExt, TransformExt};
 use pdf_writer::writers::FormXObject;
 use pdf_writer::{Content, Finish, PdfWriter, Ref};
-use usvg::Node;
+use usvg::{Node, NodeExt, Transform};
 
 pub(crate) fn render(
     node: &Node,
@@ -26,13 +26,9 @@ pub(crate) fn create_x_object(
     let (name, reference) = ctx.deferrer.add_x_object();
     ctx.deferrer.push();
 
-    ctx.context_frame.push();
-    ctx.context_frame.append_transform(&group.transform);
-
     let mut child_content = Content::new();
     child_content.save_state();
-
-    let pdf_bbox = ctx.plain_bbox(node).as_pdf_rect(&ctx.context_frame.full_transform());
+    let pdf_bbox = ctx.plain_bbox(&node).as_pdf_rect();
 
     if let Some(clip_path) = &group.clip_path {
         clip_path::render(node, clip_path.clone(), writer, &mut child_content, ctx);
@@ -54,7 +50,6 @@ pub(crate) fn create_x_object(
         child.render(writer, &mut child_content, ctx);
     }
 
-    ctx.context_frame.pop();
     child_content.restore_state();
 
     let child_content_stream = child_content.finish();
@@ -65,6 +60,7 @@ pub(crate) fn create_x_object(
     make_transparency_group(&mut x_object);
 
     x_object.bbox(pdf_bbox);
+    x_object.matrix(group.transform.as_array());
     x_object.finish();
     (name, reference)
 }

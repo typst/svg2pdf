@@ -20,11 +20,8 @@ pub(crate) fn render(
         return;
     }
 
-    ctx.context_frame.push();
-    ctx.context_frame.append_transform(&path.transform);
-
     content.save_state();
-    content.transform(ctx.context_frame.full_transform().as_array());
+    content.transform(path.transform.as_array());
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
     let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get() as f32);
@@ -45,9 +42,7 @@ pub(crate) fn render(
 
     draw_path(path.data.segments(), content);
     finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
-
     content.restore_state();
-    ctx.context_frame.pop();
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {

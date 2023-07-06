@@ -33,13 +33,9 @@ pub fn create_linear(
     shading.coords([x1, gradient.y2 as f32, x2, gradient.y1 as f32]);
     shading.finish();
 
-    let mut matrix_transform = ctx.context_frame.full_transform();
-
-    if gradient.units == Units::ObjectBoundingBox {
-        matrix_transform.append(&Transform::from_bbox(*parent_bbox));
-    }
-
+    let mut matrix_transform = Transform::from_bbox(*parent_bbox);
     matrix_transform.append(&gradient.transform);
+
     shading_pattern.matrix(matrix_transform.as_array());
     shading_pattern.finish();
 
