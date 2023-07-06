@@ -1,5 +1,5 @@
 use pdf_writer::{Name, Rect};
-use usvg::{Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform};
+use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
 
@@ -74,6 +74,11 @@ pub(crate) fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
                 if let Some(c_bbox) = calc_node_bbox(&child, child_transform) {
                     bbox = bbox.expand(c_bbox);
                 }
+            }
+
+            // Make sure bbox was changed.
+            if bbox.fuzzy_eq(&PathBbox::new_bbox()) {
+                return None;
             }
 
             Some(bbox)
