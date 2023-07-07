@@ -27,6 +27,10 @@ impl Default for Allocator {
 }
 
 impl Allocator {
+    pub fn set_next_ref(&mut self, next_ref: i32) {
+        self.next_ref_id = next_ref
+    }
+
     pub fn new_with_start_ref(start_ref: i32) -> Self {
         Self { next_ref_id: start_ref, ..Allocator::default() }
     }

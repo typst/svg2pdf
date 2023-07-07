@@ -7,11 +7,10 @@ use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use std::sync::Arc;
 
-use crate::Options;
+use crate::{convert_tree_into, Options};
 use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
 
 pub(crate) fn render(
-    _node: &Node,
     image: &usvg::Image,
     writer: &mut PdfWriter,
     content: &mut Content,
@@ -58,7 +57,7 @@ pub(crate) fn render(
 
     content.save_state();
     content.transform(image.transform.as_array());
-    clip_outer(image.view_box.rect, content);
+    clip_image_to_rect(image.view_box.rect, content);
     content
         .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
     content.transform(
@@ -182,33 +181,29 @@ fn render_svg(
     content.save_state();
     let image_rect = image_rect(&image.view_box, tree.size);
     // Account for the x/y shift of the image
-    clip_outer(image.view_box.rect, content);
+    clip_image_to_rect(image.view_box.rect, content);
     content
         .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
-    // content.set_parameters(soft_mask.as_name());
-    // Apply transformation so that the embedded svg has the same size as the image
     content.transform(
-        Transform::new_scale(image_rect.width(), image_rect.height()).as_array(),
-    );
-
-    let mut child_ctx = Context::new(
-        tree,
-        Options::default(),
-        Transform::default(),
-        Some(ctx.deferrer.alloc_ref().get()),
-    );
-    child_ctx.deferrer = ctx.deferrer.clone();
-    let tree_x_object = tree_to_x_object(tree, writer, &mut child_ctx);
-    content.transform(
-        Transform::new_scale(1.0 / child_ctx.size.width(), 1.0 / child_ctx.size.height())
+        Transform::new(
+            image_rect.width(),
+            0.0,
+            0.0,
+            -image_rect.height(),
+            0.0,
+            image_rect.height(),
+        )
             .as_array(),
     );
-    content.x_object(tree_x_object.as_name());
-    ctx.deferrer = child_ctx.deferrer.clone();
+
+    let (image_name, image_ref) = ctx.deferrer.add_x_object();
+    let next_ref = convert_tree_into(tree, Options::default(), writer, image_ref);
+    content.x_object(image_name.as_name());
     content.restore_state();
+    ctx.deferrer.set_next_ref(next_ref.get());
 }
 
-fn clip_outer(rect: usvg::Rect, content: &mut Content) {
+fn clip_image_to_rect(rect: usvg::Rect, content: &mut Content) {
     content.rect(
         rect.x() as f32,
         rect.y() as f32,

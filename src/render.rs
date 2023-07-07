@@ -48,7 +48,7 @@ impl Render for Node {
                 group::render(self, group, writer, content, ctx)
             }
             NodeKind::Image(ref image) => {
-                image::render(self, image, writer, content, ctx)
+                image::render(image, writer, content, ctx)
             }
             _ => unimplemented!(),
         }
