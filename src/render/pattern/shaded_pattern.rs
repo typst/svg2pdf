@@ -33,7 +33,6 @@ pub fn create_linear(
     shading.finish();
 
     let mut matrix_transform = Transform::from_bbox(*parent_bbox);
-    matrix_transform.append(&gradient.transform);
 
     shading_pattern.matrix(matrix_transform.as_array());
     shading_pattern.finish();
