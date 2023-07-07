@@ -88,6 +88,7 @@ pub fn convert_tree_into(
     let content_stream = content.finish();
     let mut x_object = writer.form_xobject(x_object_id, &content_stream);
     x_object.bbox(ctx.get_media_box());
+    // Revert the PDF transformation so that the resulting xobject is 1x1 in size
     x_object.matrix([
         1.0 / (ctx.get_media_box().x2 - ctx.get_media_box().x1),
         0.0,

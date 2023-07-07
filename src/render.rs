@@ -19,6 +19,7 @@ pub fn tree_to_x_object(
 
     let mut child_content = Content::new();
 
+    // The root of a tree is always a group, so we can just iterate over the children
     for el in tree.root.children() {
         el.render(writer, &mut child_content, ctx);
     }
