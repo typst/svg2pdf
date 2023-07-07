@@ -14,14 +14,19 @@ pub fn create_linear(
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
 
-    let (x1, x2, y1, y2, matrix, gradient) = if gradient.units == Units::ObjectBoundingBox {
-        (0.0, 1.0, gradient.y1, gradient.y2, Transform::from_bbox(*parent_bbox), gradient)
+    let (x1, x2, y1, y2, mut matrix, gradient) = if gradient.units == Units::ObjectBoundingBox {
+        let mut new_gradient = (*gradient).clone();
+        gradient.transform.apply_to(&mut new_gradient.x1, &mut new_gradient.y1);
+        gradient.transform.apply_to(&mut new_gradient.x2, &mut new_gradient.y2);
+        (0.0, 1.0, 0.0, 0.0, Transform::from_bbox(*parent_bbox), Rc::new(new_gradient))
     }   else {
         let mut new_gradient = (*gradient).clone();
-        new_gradient.x1 = gradient.x1 / ctx.size.width();
-        new_gradient.x2 = gradient.x2 / ctx.size.width();
-        new_gradient.y1 = gradient.y1 / ctx.size.height();
-        new_gradient.y2 = gradient.y2 / ctx.size.height();
+        gradient.transform.apply_to(&mut new_gradient.x1, &mut new_gradient.y1);
+        gradient.transform.apply_to(&mut new_gradient.x2, &mut new_gradient.y2);
+        new_gradient.x1 = new_gradient.x1 / ctx.size.width();
+        new_gradient.x2 = new_gradient.x2 / ctx.size.width();
+        new_gradient.y1 = new_gradient.y1 / ctx.size.height();
+        new_gradient.y2 = new_gradient.y2 / ctx.size.height();
         (0.0, 1.0, 0.0, 0.0,
          Transform::from_bbox(usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap()),
         Rc::new(new_gradient))
@@ -36,7 +41,6 @@ pub fn create_linear(
     shading.function(shading_function);
     shading.insert(Name(b"Domain")).array().items([0.0, 1.0]);
     shading.extend([true, true]);
-
     shading.coords([x1 as f32, y2 as f32, x2 as f32, y1 as f32]);
     shading.finish();
 
