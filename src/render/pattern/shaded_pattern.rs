@@ -22,7 +22,6 @@ pub fn create_linear(
     shading.function(shading_function);
     shading.insert(Name(b"Domain")).array().items([0.0, 1.0]);
 
-    // TODO: Figure out the proper values for y
     shading.extend([true, true]);
     // y2 and y1 need to be switched because of the differences in the svg/pdf coordinate system
     let (x1, x2) = if gradient.units == Units::ObjectBoundingBox {
@@ -49,6 +48,8 @@ fn get_spread_shading_function(
 ) -> Ref {
     let shading_function = get_shading_function(gradient.clone(), writer, ctx);
 
+    // If the x values of the gradient cover the whole span, we don't need to take the spread
+    // method into consideration anymore.
     if gradient.x1 == 0.0 && gradient.x2 == 1.0 {
         return shading_function;
     }
@@ -111,12 +112,15 @@ fn get_spread_shading_function(
             let mut functions = vec![];
             let mut bounds: Vec<f32> = vec![];
             let mut encode = vec![];
-            let domain: Vec<f32> = Vec::from(get_default_domain());
+            let domain: Vec<f32> = Vec::from([0.0, 1.0]);
 
             if gradient.x1 > 0.0 {
-                let pad_ref = ctx.deferrer.alloc_ref();
-                let pad_function =
-                    single_color_function(gradient.stops[0].color, writer, pad_ref);
+                let pad_function = single_gradient(
+                    gradient.stops.first().unwrap().color.as_array(),
+                    gradient.stops.first().unwrap().color.as_array(),
+                    writer,
+                    ctx,
+                );
                 functions.push(pad_function);
                 bounds.push(gradient.x1 as f32);
                 encode.extend(get_default_encode());
@@ -127,11 +131,11 @@ fn get_spread_shading_function(
             encode.extend(get_default_encode());
 
             if gradient.x2 < 1.0 {
-                let pad_ref = ctx.deferrer.alloc_ref();
-                let pad_function = single_color_function(
-                    gradient.stops.last().unwrap().color,
+                let pad_function = single_gradient(
+                    gradient.stops.last().unwrap().color.as_array(),
+                    gradient.stops.last().unwrap().color.as_array(),
                     writer,
-                    pad_ref,
+                    ctx,
                 );
                 functions.push(pad_function);
                 bounds.push(1.0);
@@ -147,7 +151,7 @@ fn get_spread_shading_function(
     };
 
     let mut stitching_function = writer.stitching_function(spread_shading_function);
-    stitching_function.range(get_color_range());
+    stitching_function.range([0.0, 1.0, 0.0, 1.0, 0.0, 1.0]);
     stitching_function.functions(functions);
     stitching_function.bounds(bounds);
     stitching_function.domain(domain);
@@ -168,10 +172,8 @@ fn get_shading_function(
 
     let reference = ctx.deferrer.alloc_ref();
 
-    let mut stitching_function = writer.stitching_function(reference);
-    stitching_function.domain(get_default_domain());
-    stitching_function.range(get_color_range());
-    let mut func_array = stitching_function.insert(Name(b"Functions")).array();
+    let mut functions = vec![];
+    // let mut func_array = stitching_function.insert(Name(b"Functions")).array();
     let mut bounds = vec![];
     let mut encode = vec![];
 
@@ -197,49 +199,46 @@ fn get_shading_function(
         let (first_color, second_color) =
             (first.color.as_array(), second.color.as_array());
         bounds.push(second.offset.get() as f32);
-        let mut exp = ExponentialFunction::start(func_array.push());
-        exp.domain(get_default_domain());
-        exp.range(get_color_range());
-        exp.n(1.0);
-        exp.c0(first_color);
-        exp.c1(second_color);
+        functions.push(single_gradient(first_color, second_color, writer, ctx));
         encode.extend(get_default_encode());
     }
 
-    func_array.finish();
     // Remove the last bound since the bounds array only contains the points *in-between*
     // the stops
     bounds.pop();
+
+    let mut stitching_function = writer.stitching_function(reference);
+    stitching_function.domain([0.0, 1.0]);
+    stitching_function.range([0.0, 1.0, 0.0, 1.0, 0.0, 1.0]);
+    stitching_function.functions(functions);
     stitching_function.bounds(bounds);
     stitching_function.encode(encode);
 
     reference
 }
 
-fn single_color_function(
-    color: usvg::Color,
+fn single_gradient(
+    c0: impl Into<Vec<f32>>,
+    c1: impl Into<Vec<f32>>,
     writer: &mut PdfWriter,
-    reference: Ref,
+    ctx: &mut Context,
 ) -> Ref {
+    let reference = ctx.deferrer.alloc_ref();
     let mut exp = writer.exponential_function(reference);
 
-    exp.c0(color.as_array());
-    exp.c1(color.as_array());
-    exp.domain(get_default_domain());
-    exp.range(get_color_range());
+    let c0: Vec<f32> = c0.into();
+    let c1: Vec<f32> = c1.into();
+    let length = c0.len();
+
+    exp.range([0.0, 1.0].repeat(length));
+    exp.c0(c0);
+    exp.c1(c1);
+    exp.domain([0.0, 1.0]);
     exp.n(1.0);
     exp.finish();
     reference
 }
 
-fn get_default_domain() -> [f32; 2] {
-    [0.0, 1.0]
-}
-
 fn get_default_encode() -> [f32; 2] {
     [0.0, 1.0]
-}
-
-fn get_color_range() -> [f32; 6] {
-    [0.0, 1.0, 0.0, 1.0, 0.0, 1.0]
 }
