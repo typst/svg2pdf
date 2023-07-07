@@ -13,6 +13,20 @@ pub fn create_linear(
     ctx: &mut Context,
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
+
+    let (x1, x2, y1, y2, matrix, gradient) = if gradient.units == Units::ObjectBoundingBox {
+        (0.0, 1.0, gradient.y1, gradient.y2, Transform::from_bbox(*parent_bbox), gradient)
+    }   else {
+        let mut new_gradient = (*gradient).clone();
+        new_gradient.x1 = gradient.x1 / ctx.size.width();
+        new_gradient.x2 = gradient.x2 / ctx.size.width();
+        new_gradient.y1 = gradient.y1 / ctx.size.height();
+        new_gradient.y2 = gradient.y2 / ctx.size.height();
+        (0.0, 1.0, 0.0, 0.0,
+         Transform::from_bbox(usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap()),
+        Rc::new(new_gradient))
+    };
+
     let shading_function = get_spread_shading_function(gradient.clone(), writer, ctx);
     let mut shading_pattern = writer.shading_pattern(pattern_id);
     let mut shading = shading_pattern.shading();
@@ -21,20 +35,12 @@ pub fn create_linear(
 
     shading.function(shading_function);
     shading.insert(Name(b"Domain")).array().items([0.0, 1.0]);
-
     shading.extend([true, true]);
-    // y2 and y1 need to be switched because of the differences in the svg/pdf coordinate system
-    let (x1, x2) = if gradient.units == Units::ObjectBoundingBox {
-        (0.0, 1.0)
-    } else {
-        (gradient.x1 as f32, gradient.x2 as f32)
-    };
-    shading.coords([x1, gradient.y2 as f32, x2, gradient.y1 as f32]);
+
+    shading.coords([x1 as f32, y2 as f32, x2 as f32, y1 as f32]);
     shading.finish();
 
-    let mut matrix_transform = Transform::from_bbox(*parent_bbox);
-
-    shading_pattern.matrix(matrix_transform.as_array());
+    shading_pattern.matrix(matrix.as_array());
     shading_pattern.finish();
 
     pattern_name
