@@ -2,10 +2,10 @@ use crate::render::tree_to_x_object;
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
 
-use image::{ColorType, DynamicImage, ImageFormat, ImageOutputFormat, Luma, Rgb, Rgba};
+use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use std::io::Cursor;
+use std::sync::Arc;
 
 use crate::Options;
 use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
@@ -23,16 +23,18 @@ pub(crate) fn render(
 
     let (dynamic_image, samples, filter, alpha_mask) = match &image.kind {
         ImageKind::JPEG(content) => {
-            let image = prepare_image(content, ImageFormat::Jpeg);
-            let samples = image_to_samples(&image, ImageOutputFormat::Jpeg(100));
-            (image, samples, Filter::DctDecode, None)
+            let image =
+                image::load_from_memory_with_format(content, ImageFormat::Jpeg).unwrap();
+            (image, Arc::clone(content), Filter::DctDecode, None)
         }
         ImageKind::PNG(content) => {
-            let image = prepare_image(content, ImageFormat::Png);
+            let image =
+                image::load_from_memory_with_format(content, ImageFormat::Png).unwrap();
             handle_transparent_image(image)
         }
         ImageKind::GIF(content) => {
-            let image = prepare_image(content, ImageFormat::Gif);
+            let image =
+                image::load_from_memory_with_format(content, ImageFormat::Gif).unwrap();
             handle_transparent_image(image)
         }
         ImageKind::SVG(tree) => {
@@ -60,7 +62,15 @@ pub(crate) fn render(
     content
         .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
     content.transform(
-        Transform::new_scale(image_rect.width(), image_rect.height()).as_array(),
+        Transform::new(
+            image_rect.width(),
+            0.0,
+            0.0,
+            -image_rect.height(),
+            0.0,
+            image_rect.height(),
+        )
+        .as_array(),
     );
     content.x_object(image_name.as_name());
     content.restore_state();
@@ -68,7 +78,7 @@ pub(crate) fn render(
 
 fn handle_transparent_image(
     image: DynamicImage,
-) -> (DynamicImage, Vec<u8>, Filter, Option<Vec<u8>>) {
+) -> (DynamicImage, Arc<Vec<u8>>, Filter, Option<Vec<u8>>) {
     let color = image.color();
     let bits = color.bits_per_pixel();
     let channels = color.channel_count() as u16;
@@ -112,7 +122,7 @@ fn handle_transparent_image(
     let compressed_mask =
         encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
 
-    (image, compressed_image, Filter::FlateDecode, compressed_mask)
+    (image, Arc::new(compressed_image), Filter::FlateDecode, compressed_mask)
 }
 
 fn create_image_x_object(
@@ -159,21 +169,6 @@ fn create_image_x_object(
 
 fn calculate_bits_per_component(color_type: ColorType) -> i32 {
     (color_type.bits_per_pixel() / color_type.channel_count() as u16) as i32
-}
-
-fn image_to_samples(image: &DynamicImage, output_format: ImageOutputFormat) -> Vec<u8> {
-    let mut buffer: Vec<u8> = Vec::new();
-    let mut writer = Cursor::new(&mut buffer);
-    image.write_to(&mut writer, output_format).unwrap();
-    buffer
-}
-
-fn prepare_image(content: &[u8], input_format: ImageFormat) -> DynamicImage {
-    // We flip the image vertically because when applying the PDF base transformation the y axis will be flipped,
-    // so we need to undo that
-    image::load_from_memory_with_format(content, input_format)
-        .unwrap()
-        .flipv()
 }
 
 fn render_svg(
