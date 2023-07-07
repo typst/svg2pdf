@@ -60,7 +60,6 @@ impl Default for Deferrer {
 }
 
 impl Deferrer {
-
     pub fn new_with_start_ref(start_ref: i32) -> Self {
         Self {
             allocator: Allocator::new_with_start_ref(start_ref),

@@ -1,14 +1,12 @@
-use crate::render::tree_to_x_object;
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
 
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use std::sync::Arc;
 
 use crate::{convert_tree_into, Options};
-use usvg::{ImageKind, Node, Size, Transform, Tree, Visibility};
+use usvg::{ImageKind, Size, Transform, Tree, Visibility};
 
 pub(crate) fn render(
     image: &usvg::Image,
@@ -20,40 +18,49 @@ pub(crate) fn render(
         return;
     }
 
-    let (dynamic_image, samples, filter, alpha_mask) = match &image.kind {
+    let (image_name, image_size) = match &image.kind {
         ImageKind::JPEG(content) => {
-            let image =
+            let dynamic_image =
                 image::load_from_memory_with_format(content, ImageFormat::Jpeg).unwrap();
-            (image, Arc::clone(content), Filter::DctDecode, None)
+            create_raster_image(
+                writer,
+                ctx,
+                content,
+                Filter::DctDecode,
+                &dynamic_image,
+                None,
+            )
         }
         ImageKind::PNG(content) => {
-            let image =
+            let dynamic_image =
                 image::load_from_memory_with_format(content, ImageFormat::Png).unwrap();
-            handle_transparent_image(image)
+            let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
+            create_raster_image(
+                writer,
+                ctx,
+                &samples,
+                filter,
+                &dynamic_image,
+                alpha_mask.as_deref(),
+            )
         }
         ImageKind::GIF(content) => {
-            let image =
+            let dynamic_image =
                 image::load_from_memory_with_format(content, ImageFormat::Gif).unwrap();
-            handle_transparent_image(image)
+            let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
+            create_raster_image(
+                writer,
+                ctx,
+                &samples,
+                filter,
+                &dynamic_image,
+                alpha_mask.as_deref(),
+            )
         }
-        ImageKind::SVG(tree) => {
-            render_svg(image, tree, writer, content, ctx);
-            return;
-        }
+        ImageKind::SVG(tree) => create_svg_image(tree, writer, ctx),
     };
 
-    let image_size =
-        Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap();
     let image_rect = image_rect(&image.view_box, image_size);
-
-    let image_name = create_image_x_object(
-        writer,
-        ctx,
-        &samples,
-        filter,
-        &dynamic_image,
-        alpha_mask.as_deref(),
-    );
 
     content.save_state();
     content.transform(image.transform.as_array());
@@ -75,9 +82,7 @@ pub(crate) fn render(
     content.restore_state();
 }
 
-fn handle_transparent_image(
-    image: DynamicImage,
-) -> (DynamicImage, Arc<Vec<u8>>, Filter, Option<Vec<u8>>) {
+fn handle_transparent_image(image: &DynamicImage) -> (Vec<u8>, Filter, Option<Vec<u8>>) {
     let color = image.color();
     let bits = color.bits_per_pixel();
     let channels = color.channel_count() as u16;
@@ -121,17 +126,17 @@ fn handle_transparent_image(
     let compressed_mask =
         encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
 
-    (image, Arc::new(compressed_image), Filter::FlateDecode, compressed_mask)
+    (compressed_image, Filter::FlateDecode, compressed_mask)
 }
 
-fn create_image_x_object(
+fn create_raster_image(
     writer: &mut PdfWriter,
     ctx: &mut Context,
     samples: &[u8],
     filter: Filter,
     dynamic_image: &DynamicImage,
     alpha_mask: Option<&[u8]>,
-) -> String {
+) -> (String, Size) {
     let color = dynamic_image.color();
     let alpha_mask = alpha_mask.map(|mask_bytes| {
         let soft_mask_id = ctx.deferrer.alloc_ref();
@@ -144,6 +149,8 @@ fn create_image_x_object(
         soft_mask_id
     });
 
+    let image_size =
+        Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap();
     let (image_name, image_id) = ctx.deferrer.add_x_object();
 
     let mut image_x_object = writer.image_xobject(image_id, samples);
@@ -163,44 +170,22 @@ fn create_image_x_object(
         image_x_object.s_mask(soft_mask_id);
     }
     image_x_object.finish();
-    image_name
+    (image_name, image_size)
 }
 
 fn calculate_bits_per_component(color_type: ColorType) -> i32 {
     (color_type.bits_per_pixel() / color_type.channel_count() as u16) as i32
 }
 
-fn render_svg(
-    image: &usvg::Image,
+fn create_svg_image(
     tree: &Tree,
     writer: &mut PdfWriter,
-    content: &mut Content,
     ctx: &mut Context,
-) {
-    content.transform(image.transform.as_array());
-    content.save_state();
-    let image_rect = image_rect(&image.view_box, tree.size);
-    // Account for the x/y shift of the image
-    clip_image_to_rect(image.view_box.rect, content);
-    content
-        .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
-    content.transform(
-        Transform::new(
-            image_rect.width(),
-            0.0,
-            0.0,
-            -image_rect.height(),
-            0.0,
-            image_rect.height(),
-        )
-            .as_array(),
-    );
-
+) -> (String, Size) {
     let (image_name, image_ref) = ctx.deferrer.add_x_object();
     let next_ref = convert_tree_into(tree, Options::default(), writer, image_ref);
-    content.x_object(image_name.as_name());
-    content.restore_state();
     ctx.deferrer.set_next_ref(next_ref.get());
+    (image_name, tree.size)
 }
 
 fn clip_image_to_rect(rect: usvg::Rect, content: &mut Content) {
