@@ -53,8 +53,8 @@ pub fn create_linear(
     shading
         .insert(Name(b"Domain"))
         .array()
-        .items([c1.x as f32, c2.x as f32]);
-    shading.coords([c1.x as f32, c1.y as f32, c2.x as f32, c2.y as f32]);
+        .items([c1.x.min(c2.x) as f32, c1.x.max(c2.x) as f32]);
+    shading.coords([c1.x.min(c2.x) as f32, c1.y as f32, c1.x.max(c2.x) as f32, c2.y as f32]);
     shading.extend([true, true]);
     shading.finish();
 
@@ -129,14 +129,15 @@ fn get_spread_shading_function(
 
     let generate_repeating_pattern = |reflect: bool| {
         let (sequences, domain) = {
-            let reflect_cycle = if reflect { [true, false] } else { [false, false] }
+            let basic_boolean = gradient.x1 <= gradient.x2;
+            let reflect_cycle = if reflect { [basic_boolean, !basic_boolean] } else { [!basic_boolean, !basic_boolean] }
                 .into_iter()
                 .cycle();
 
             let mut backward_reflect_cycle = reflect_cycle.clone();
             let x_delta = (gradient.x2 - gradient.x1).abs();
             let mut sub_ranges: Vec<(f32, f32, bool)> =
-                vec![(gradient.x1 as f32, gradient.x2 as f32, false)];
+                vec![(gradient.x1 as f32, gradient.x2 as f32, !basic_boolean)];
 
             let (mut x_min, mut x_max) = (x_min, x_max);
             while x_min > bound_min {
@@ -182,12 +183,24 @@ fn get_spread_shading_function(
             let mut functions = vec![];
             let mut bounds: Vec<f32> = vec![];
             let mut encode = vec![];
+            let basic_encode = if gradient.x1 <= gradient.x2 {[0.0, 1.0]} else {[1.0, 0.0]};
+            let (first_stop, last_stop) = if gradient.x1 <= gradient.x2 {
+                (
+                    gradient.stops.first().unwrap(),
+                    gradient.stops.last().unwrap()
+                )
+            }   else {
+                (
+                    gradient.stops.last().unwrap(),
+                    gradient.stops.first().unwrap()
+                )
+            };
             let domain: Vec<f32> = Vec::from([bound_min as f32, bound_max as f32]);
 
             if x_min > bound_min {
                 let pad_function = single_gradient(
-                    gradient.stops.first().unwrap().color.as_array(),
-                    gradient.stops.first().unwrap().color.as_array(),
+                    first_stop.color.as_array(),
+                    first_stop.color.as_array(),
                     writer,
                     ctx,
                 );
@@ -198,12 +211,12 @@ fn get_spread_shading_function(
 
             functions.push(single_shading_function);
             bounds.push(x_max as f32);
-            encode.extend([0.0, 1.0]);
+            encode.extend(basic_encode);
 
             if x_max < bound_max {
                 let pad_function = single_gradient(
-                    gradient.stops.last().unwrap().color.as_array(),
-                    gradient.stops.last().unwrap().color.as_array(),
+                    last_stop.color.as_array(),
+                    last_stop.color.as_array(),
                     writer,
                     ctx,
                 );
