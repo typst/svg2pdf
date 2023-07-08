@@ -190,9 +190,9 @@ fn get_spread_shading_function(
             let mut functions = vec![];
             let mut bounds: Vec<f32> = vec![];
             let mut encode = vec![];
-            let domain: Vec<f32> = Vec::from([0.0, 1.0]);
+            let domain: Vec<f32> = Vec::from([bound_min as f32, bound_max as f32]);
 
-            if gradient.x1 > 0.0 {
+            if x_min > bound_min {
                 let pad_function = single_gradient(
                     gradient.stops.first().unwrap().color.as_array(),
                     gradient.stops.first().unwrap().color.as_array(),
@@ -200,15 +200,15 @@ fn get_spread_shading_function(
                     ctx,
                 );
                 functions.push(pad_function);
-                bounds.push(gradient.x1 as f32);
-                encode.extend(get_default_encode());
+                bounds.push(x_min as f32);
+                encode.extend([0.0, 1.0]);
             }
 
             functions.push(single_shading_function);
-            bounds.push(gradient.x2 as f32);
-            encode.extend(get_default_encode());
+            bounds.push(x_max as f32);
+            encode.extend([0.0, 1.0]);
 
-            if gradient.x2 < 1.0 {
+            if x_max < bound_max {
                 let pad_function = single_gradient(
                     gradient.stops.last().unwrap().color.as_array(),
                     gradient.stops.last().unwrap().color.as_array(),
@@ -216,8 +216,8 @@ fn get_spread_shading_function(
                     ctx,
                 );
                 functions.push(pad_function);
-                bounds.push(1.0);
-                encode.extend(get_default_encode());
+                bounds.push(bound_max as f32);
+                encode.extend([0.0, 1.0]);
             }
 
             bounds.pop();
