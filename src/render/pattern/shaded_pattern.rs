@@ -195,7 +195,7 @@ fn get_spread_shading_function(
                     gradient.stops.first().unwrap()
                 )
             };
-            let domain: Vec<f32> = Vec::from([bound_min as f32, bound_max as f32]);
+            let domain: Vec<f32> = Vec::from([bound_min.min(x_min) as f32, bound_max.max(x_max) as f32]);
 
             if x_min > bound_min {
                 let pad_function = single_gradient(

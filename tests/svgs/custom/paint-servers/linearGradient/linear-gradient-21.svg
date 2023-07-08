@@ -1,7 +1,7 @@
 <svg id="svg1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
     <title>reverse x1 x2 with spread method repeat</title>
 
-    <linearGradient x1="0.6" x2="0.4" id="lg1" spreadMethod="repeat">
+    <linearGradient x1="0.7" x2="0.4" id="lg1" spreadMethod="repeat">
         <stop offset="0.25" stop-color="green"/>
         <stop offset="0.5" stop-color="red"/>
         <stop offset="0.75" stop-color="yellow"/>
