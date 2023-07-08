@@ -19,16 +19,13 @@ pub fn create_linear(
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
     let gradient_transform = gradient.transform;
 
-    let bounding_rect = usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap();
-
     let mut gradient = (*gradient).clone();
     apply_gradient_transform(&gradient_transform, &mut gradient);
 
-    let matrix = if gradient.units == Units::ObjectBoundingBox {
-        Transform::from_bbox(*parent_bbox)
+    let (matrix, bounding_rect) = if gradient.units == Units::ObjectBoundingBox {
+        (Transform::from_bbox(*parent_bbox), usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap())
     } else {
-        normalize_gradient(&ctx.size, &mut gradient);
-        Transform::from_bbox(usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap())
+        (Transform::default(), usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap())
     };
 
     let inverted = {
