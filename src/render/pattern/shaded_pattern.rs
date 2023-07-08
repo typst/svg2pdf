@@ -10,7 +10,7 @@ use usvg::{
 };
 
 pub fn create_linear(
-    gradient: Rc<usvg::LinearGradient>,
+    gradient: Rc<LinearGradient>,
     parent_bbox: &usvg::Rect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
@@ -111,7 +111,7 @@ fn normalize_gradient(size: &Size, gradient: &mut LinearGradient) {
 
 fn get_spread_shading_function(
     (x1, x2): (f64, f64),
-    gradient: Rc<usvg::LinearGradient>,
+    gradient: Rc<LinearGradient>,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> Ref {

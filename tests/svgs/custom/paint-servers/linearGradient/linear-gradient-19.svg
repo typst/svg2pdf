@@ -1,7 +1,7 @@
 <svg id="svg1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
     <title>linear gradient with gradient transform and spread method pad</title>
 
-    <linearGradient  id="lg1" gradientTransform="scale(2 2)"  spreadMethod="pad">
+    <linearGradient  id="lg1" gradientTransform="scale(2 2)" spreadMethod="pad">
         <stop offset="0.25" stop-color="green"/>
         <stop offset="0.5" stop-color="red"/>
         <stop offset="0.75" stop-color="yellow"/>
