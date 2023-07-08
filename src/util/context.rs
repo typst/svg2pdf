@@ -55,8 +55,8 @@ impl Context {
                 usvg::Rect::new(
                     0.0,
                     0.0,
-                    (self.size.width() as f32 * dpi_ratio(self.options.dpi)) as f64,
-                    (self.size.height() as f32 * dpi_ratio(self.options.dpi)) as f64,
+                    1.0,
+                    1.0,
                 )
                 .unwrap(),
             )
