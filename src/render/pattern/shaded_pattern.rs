@@ -1,13 +1,13 @@
-use std::mem;
 use crate::util::context::Context;
 use crate::util::helper::{ColorExt, TransformExt};
-use nalgebra::{Point2, Vector2};
+use nalgebra::{Point2};
 use pdf_writer::types::ShadingType;
-use pdf_writer::writers::ExponentialFunction;
-use pdf_writer::{Finish, Name, PdfWriter, Ref, Writer};
+
+use pdf_writer::{Finish, Name, PdfWriter, Ref};
+use std::mem;
 use std::rc::Rc;
 use usvg::{
-    LinearGradient, NormalizedF64, Size, SpreadMethod, StopOffset, Transform, Units,
+    LinearGradient, NormalizedF64, SpreadMethod, StopOffset, Transform, Units,
 };
 
 pub fn create_linear(
@@ -25,13 +25,16 @@ pub fn create_linear(
     let (matrix, bounding_rect) = if gradient.units == Units::ObjectBoundingBox {
         (Transform::from_bbox(*parent_bbox), usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap())
     } else {
-        (Transform::default(), usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap())
+        (
+            Transform::default(),
+            usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap(),
+        )
     };
 
     let inverted = {
         if gradient.x1 < gradient.x2 {
             false
-        }   else {
+        } else {
             mem::swap(&mut gradient.x1, &mut gradient.x2);
             mem::swap(&mut gradient.y1, &mut gradient.y2);
             true
@@ -55,8 +58,13 @@ pub fn create_linear(
 
     let gradient = Rc::new(gradient);
 
-    let shading_function =
-        get_spread_shading_function(inverted, (c1.x, c2.x), gradient.clone(), writer, ctx);
+    let shading_function = get_spread_shading_function(
+        inverted,
+        (c1.x, c2.x),
+        gradient,
+        writer,
+        ctx,
+    );
     let mut shading_pattern = writer.shading_pattern(pattern_id);
     let mut shading = shading_pattern.shading();
     shading.shading_type(ShadingType::Axial);
@@ -92,7 +100,7 @@ fn get_coordinate_points(
         Point2::from([rect_p2.x, rect_p2.y]),
     ];
 
-    let line_vector = &line_vertices[1] - &line_vertices[0];
+    let line_vector = line_vertices[1] - line_vertices[0];
 
     let mut a_min = f64::MAX;
     let mut a_max = f64::MIN;
@@ -113,13 +121,6 @@ fn get_coordinate_points(
 fn apply_gradient_transform(transform: &Transform, gradient: &mut LinearGradient) {
     transform.apply_to(&mut gradient.x1, &mut gradient.y1);
     transform.apply_to(&mut gradient.x2, &mut gradient.y2);
-}
-
-fn normalize_gradient(size: &Size, gradient: &mut LinearGradient) {
-    gradient.x1 = gradient.x1 / size.width();
-    gradient.x2 = gradient.x2 / size.width();
-    gradient.y1 = gradient.y1 / size.height();
-    gradient.y2 = gradient.y2 / size.height();
 }
 
 fn get_spread_shading_function(
@@ -166,7 +167,12 @@ fn get_spread_shading_function(
                 x_max += x_delta;
             }
 
-            sub_ranges.iter_mut().for_each(|e| if !inverted {} else {e.2 = !e.2});
+            sub_ranges.iter_mut().for_each(|e| {
+                if !inverted {
+                } else {
+                    e.2 = !e.2
+                }
+            });
 
             (sub_ranges, vec![x_min as f32, x_max as f32])
         };
@@ -191,17 +197,14 @@ fn get_spread_shading_function(
             let mut bounds: Vec<f32> = vec![];
             let mut encode = vec![];
             let (first_stop, last_stop) = if !inverted {
-                (
-                    gradient.stops.first().unwrap(),
-                    gradient.stops.last().unwrap()
-                )
-            }   else {
-                (
-                    gradient.stops.last().unwrap(),
-                    gradient.stops.first().unwrap()
-                )
+                (gradient.stops.first().unwrap(), gradient.stops.last().unwrap())
+            } else {
+                (gradient.stops.last().unwrap(), gradient.stops.first().unwrap())
             };
-            let domain: Vec<f32> = Vec::from([gradient.x1.min(bounding_x1) as f32, gradient.x2.max(bounding_x2) as f32]);
+            let domain: Vec<f32> = Vec::from([
+                gradient.x1.min(bounding_x1) as f32,
+                gradient.x2.max(bounding_x2) as f32,
+            ]);
 
             if gradient.x1 > bounding_x1 {
                 let pad_function = single_gradient(
@@ -217,7 +220,7 @@ fn get_spread_shading_function(
 
             functions.push(single_shading_function);
             bounds.push(gradient.x2 as f32);
-            encode.extend(if inverted {[1.0, 0.0]} else {[0.0, 1.0]});
+            encode.extend(if inverted { [1.0, 0.0] } else { [0.0, 1.0] });
 
             if gradient.x2 < bounding_x2 {
                 let pad_function = single_gradient(
@@ -325,8 +328,4 @@ fn single_gradient(
     exp.n(1.0);
     exp.finish();
     reference
-}
-
-fn get_default_encode() -> [f32; 2] {
-    [0.0, 1.0]
 }
