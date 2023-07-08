@@ -18,21 +18,19 @@ pub fn create_linear(
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
     let gradient_transform = gradient.transform;
 
-    let bounding_rect = if gradient.units == Units::ObjectBoundingBox {
-        usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap()
-    } else {
-        let media_box = ctx.get_media_box();
-        usvg::Rect::new(
-            media_box.x1 as f64,
-            media_box.y1 as f64,
-            (media_box.x2 - media_box.x1) as f64,
-            (media_box.y2 - media_box.y1) as f64,
-        )
-        .unwrap()
-    };
+    let bounding_rect = usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap();
 
     let mut gradient = (*gradient).clone();
     apply_gradient_transform(&gradient_transform, &mut gradient);
+
+    let matrix = if gradient.units == Units::ObjectBoundingBox {
+        Transform::from_bbox(*parent_bbox)
+    } else {
+        normalize_gradient(&ctx.size, &mut gradient);
+        Transform::from_bbox(usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap())
+    };
+
+
     let (c1, c2) = get_coordinate_points(
         Point2::from([gradient.x1, gradient.y1]),
         Point2::from([gradient.x2, gradient.y2]),
@@ -59,12 +57,6 @@ pub fn create_linear(
     shading.coords([c1.x as f32, c1.y as f32, c2.x as f32, c2.y as f32]);
     shading.extend([true, true]);
     shading.finish();
-
-    let matrix = if gradient.units == Units::ObjectBoundingBox {
-        Transform::from_bbox(*parent_bbox)
-    } else {
-        Transform::default()
-    };
 
     shading_pattern.matrix(matrix.as_array());
     shading_pattern.finish();
