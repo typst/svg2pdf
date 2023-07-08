@@ -1,3 +1,4 @@
+use std::mem;
 use crate::util::context::Context;
 use crate::util::helper::{ColorExt, TransformExt};
 use nalgebra::{Point2, Vector2};
@@ -30,6 +31,15 @@ pub fn create_linear(
         Transform::from_bbox(usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap())
     };
 
+    let inverted = {
+        if gradient.x1 < gradient.x2 {
+            false
+        }   else {
+            mem::swap(&mut gradient.x1, &mut gradient.x2);
+            mem::swap(&mut gradient.y1, &mut gradient.y2);
+            true
+        }
+    };
 
     let (c1, c2) = get_coordinate_points(
         Point2::from([gradient.x1, gradient.y1]),
@@ -40,10 +50,16 @@ pub fn create_linear(
             bounding_rect.y() + bounding_rect.width(),
         ]),
     );
+
+    // The opposite must never be the case. If it is the case, there is some logic error and it's
+    // better to crash rather than create an invalid PDF.
+    assert!(c1.x < c2.x);
+    assert!(gradient.x1 < gradient.x2);
+
     let gradient = Rc::new(gradient);
 
     let shading_function =
-        get_spread_shading_function((c1.x, c2.x), gradient.clone(), writer, ctx);
+        get_spread_shading_function(inverted, (c1.x, c2.x), gradient.clone(), writer, ctx);
     let mut shading_pattern = writer.shading_pattern(pattern_id);
     let mut shading = shading_pattern.shading();
     shading.shading_type(ShadingType::Axial);
@@ -53,8 +69,8 @@ pub fn create_linear(
     shading
         .insert(Name(b"Domain"))
         .array()
-        .items([c1.x.min(c2.x) as f32, c1.x.max(c2.x) as f32]);
-    shading.coords([c1.x.min(c2.x) as f32, c1.y as f32, c1.x.max(c2.x) as f32, c2.y as f32]);
+        .items([c1.x as f32, c2.x as f32]);
+    shading.coords([c1.x as f32, c1.y as f32, c2.x as f32, c2.y as f32]);
     shading.extend([true, true]);
     shading.finish();
 
@@ -110,7 +126,8 @@ fn normalize_gradient(size: &Size, gradient: &mut LinearGradient) {
 }
 
 fn get_spread_shading_function(
-    (x1, x2): (f64, f64),
+    inverted: bool,
+    (bounding_x1, bounding_x2): (f64, f64),
     gradient: Rc<LinearGradient>,
     writer: &mut PdfWriter,
     ctx: &mut Context,
@@ -119,28 +136,19 @@ fn get_spread_shading_function(
         get_single_shading_function(gradient.clone(), writer, ctx);
     let spread_shading_function = ctx.deferrer.alloc_ref();
 
-    let (bound_min, bound_max, x_min, x_max) =
-        (
-            x1.min(x2),
-            x1.max(x2),
-            gradient.x1.min(gradient.x2),
-            gradient.x1.max(gradient.x2)
-        );
-
     let generate_repeating_pattern = |reflect: bool| {
         let (sequences, domain) = {
-            let basic_boolean = gradient.x1 <= gradient.x2;
-            let reflect_cycle = if reflect { [basic_boolean, !basic_boolean] } else { [!basic_boolean, !basic_boolean] }
+            let reflect_cycle = if reflect { [true, false] } else { [false, false] }
                 .into_iter()
                 .cycle();
 
             let mut backward_reflect_cycle = reflect_cycle.clone();
-            let x_delta = (gradient.x2 - gradient.x1).abs();
+            let x_delta = gradient.x2 - gradient.x1;
             let mut sub_ranges: Vec<(f32, f32, bool)> =
-                vec![(gradient.x1 as f32, gradient.x2 as f32, !basic_boolean)];
+                vec![(gradient.x1 as f32, gradient.x2 as f32, false)];
 
-            let (mut x_min, mut x_max) = (x_min, x_max);
-            while x_min > bound_min {
+            let (mut x_min, mut x_max) = (gradient.x1, gradient.x2);
+            while x_min > bounding_x1 {
                 x_min -= x_delta;
                 sub_ranges.push((
                     x_min as f32,
@@ -152,7 +160,7 @@ fn get_spread_shading_function(
             sub_ranges.reverse();
 
             let mut forward_reflect_cycle = reflect_cycle;
-            while x_max < bound_max {
+            while x_max < bounding_x2 {
                 sub_ranges.push((
                     x_max as f32,
                     (x_max + x_delta) as f32,
@@ -160,6 +168,8 @@ fn get_spread_shading_function(
                 ));
                 x_max += x_delta;
             }
+
+            sub_ranges.iter_mut().for_each(|e| if !inverted {} else {e.2 = !e.2});
 
             (sub_ranges, vec![x_min as f32, x_max as f32])
         };
@@ -183,8 +193,7 @@ fn get_spread_shading_function(
             let mut functions = vec![];
             let mut bounds: Vec<f32> = vec![];
             let mut encode = vec![];
-            let basic_encode = if gradient.x1 <= gradient.x2 {[0.0, 1.0]} else {[1.0, 0.0]};
-            let (first_stop, last_stop) = if gradient.x1 <= gradient.x2 {
+            let (first_stop, last_stop) = if !inverted {
                 (
                     gradient.stops.first().unwrap(),
                     gradient.stops.last().unwrap()
@@ -195,9 +204,9 @@ fn get_spread_shading_function(
                     gradient.stops.first().unwrap()
                 )
             };
-            let domain: Vec<f32> = Vec::from([bound_min.min(x_min) as f32, bound_max.max(x_max) as f32]);
+            let domain: Vec<f32> = Vec::from([bounding_x1 as f32, bounding_x2 as f32]);
 
-            if x_min > bound_min {
+            if gradient.x1 > bounding_x1 {
                 let pad_function = single_gradient(
                     first_stop.color.as_array(),
                     first_stop.color.as_array(),
@@ -205,15 +214,15 @@ fn get_spread_shading_function(
                     ctx,
                 );
                 functions.push(pad_function);
-                bounds.push(x_min as f32);
+                bounds.push(gradient.x1 as f32);
                 encode.extend([0.0, 1.0]);
             }
 
             functions.push(single_shading_function);
-            bounds.push(x_max as f32);
-            encode.extend(basic_encode);
+            bounds.push(gradient.x2 as f32);
+            encode.extend(if inverted {[1.0, 0.0]} else {[0.0, 1.0]});
 
-            if x_max < bound_max {
+            if gradient.x2 < bounding_x2 {
                 let pad_function = single_gradient(
                     last_stop.color.as_array(),
                     last_stop.color.as_array(),
@@ -221,7 +230,7 @@ fn get_spread_shading_function(
                     ctx,
                 );
                 functions.push(pad_function);
-                bounds.push(bound_max as f32);
+                bounds.push(bounding_x2 as f32);
                 encode.extend([0.0, 1.0]);
             }
 
@@ -282,7 +291,7 @@ fn get_single_shading_function(
             (first.color.as_array(), second.color.as_array());
         bounds.push(second.offset.get() as f32);
         functions.push(single_gradient(first_color, second_color, writer, ctx));
-        encode.extend(get_default_encode());
+        encode.extend([0.0, 1.0]);
     }
 
     // Remove the last bound since the bounds array only contains the points *in-between*
