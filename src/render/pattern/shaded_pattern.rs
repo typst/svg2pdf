@@ -127,11 +127,16 @@ fn get_spread_shading_function(
         get_single_shading_function(gradient.clone(), writer, ctx);
     let spread_shading_function = ctx.deferrer.alloc_ref();
 
-    let (bound_min, bound_max) =
-        (x1.min(x2), x1.max(x2));
+    let (bound_min, bound_max, x_min, x_max) =
+        (
+            x1.min(x2),
+            x1.max(x2),
+            gradient.x1.min(gradient.x2),
+            gradient.x1.max(gradient.x2)
+        );
 
     let generate_repeating_pattern = |reflect: bool| {
-        let (sequences, x_min, x_max) = {
+        let (sequences, domain) = {
             let reflect_cycle = if reflect { [true, false] } else { [false, false] }
                 .into_iter()
                 .cycle();
@@ -141,7 +146,7 @@ fn get_spread_shading_function(
             let mut sub_ranges: Vec<(f32, f32, bool)> =
                 vec![(gradient.x1 as f32, gradient.x2 as f32, false)];
 
-            let (mut x_min, mut x_max) = (gradient.x1.min(gradient.x2), gradient.x1.max(gradient.x2));
+            let (mut x_min, mut x_max) = (x_min, x_max);
             while x_min > bound_min {
                 x_min -= x_delta;
                 sub_ranges.push((
@@ -163,7 +168,7 @@ fn get_spread_shading_function(
                 x_max += x_delta;
             }
 
-            (sub_ranges, x_min as f32, x_max as f32)
+            (sub_ranges, vec![x_min as f32, x_max as f32])
         };
         let mut bounds: Vec<f32> = vec![];
         let mut functions = vec![];
@@ -177,7 +182,7 @@ fn get_spread_shading_function(
 
         bounds.pop();
 
-        (functions, bounds, vec![x_min, x_max], encode)
+        (functions, bounds, domain, encode)
     };
 
     let (functions, bounds, domain, encode) = match gradient.spread_method {
