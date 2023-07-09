@@ -1,6 +1,6 @@
 use crate::util::context::Context;
 use crate::util::helper::{ColorExt, TransformExt};
-use nalgebra::{Point2};
+use nalgebra::{Point, Point2};
 use pdf_writer::types::ShadingType;
 
 use pdf_writer::{Finish, Name, PdfWriter, Ref};
@@ -17,12 +17,10 @@ pub fn create_linear(
     ctx: &mut Context,
 ) -> String {
     let (pattern_name, pattern_id) = ctx.deferrer.add_pattern();
-    let gradient_transform = gradient.transform;
 
     let mut gradient = (*gradient).clone();
-    apply_gradient_transform(&gradient_transform, &mut gradient);
 
-    let (matrix, bounding_rect) = if gradient.units == Units::ObjectBoundingBox {
+    let (mut matrix, bounding_rect) = if gradient.units == Units::ObjectBoundingBox {
         (Transform::from_bbox(*parent_bbox), usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap())
     } else {
         (
@@ -30,6 +28,17 @@ pub fn create_linear(
             usvg::Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()).unwrap(),
         )
     };
+
+    matrix.append(&gradient.transform);
+
+    let (c1, c2) = get_coordinate_points(
+        &mut gradient,
+        Point2::from([bounding_rect.x(), bounding_rect.y()]),
+        Point2::from([
+            bounding_rect.x() + bounding_rect.width(),
+            bounding_rect.y() + bounding_rect.width(),
+        ]),
+    );
 
     let inverted = {
         if gradient.x1 < gradient.x2 {
@@ -40,16 +49,6 @@ pub fn create_linear(
             true
         }
     };
-
-    let (c1, c2) = get_coordinate_points(
-        Point2::from([gradient.x1, gradient.y1]),
-        Point2::from([gradient.x2, gradient.y2]),
-        Point2::from([bounding_rect.x(), bounding_rect.y()]),
-        Point2::from([
-            bounding_rect.x() + bounding_rect.width(),
-            bounding_rect.y() + bounding_rect.width(),
-        ]),
-    );
 
     // The opposite must never be the case. If it is the case, there is some logic error and it's
     // better to crash rather than create an invalid PDF.
@@ -74,9 +73,9 @@ pub fn create_linear(
     shading
         .insert(Name(b"Domain"))
         .array()
-        .items([c1.x as f32, c2.x as f32]);
+        .items([bounding_rect.x() as f32, (bounding_rect.x() + bounding_rect.width()) as f32]);
     shading.coords([c1.x as f32, c1.y as f32, c2.x as f32, c2.y as f32]);
-    shading.extend([true, true]);
+    // shading.extend([true, true]);
     shading.finish();
 
     shading_pattern.matrix(matrix.as_array());
@@ -86,11 +85,77 @@ pub fn create_linear(
 }
 
 fn get_coordinate_points(
+    gradient: &mut LinearGradient,
+    rect_top_left: Point2<f64>,
+    rect_bottom_right: Point2<f64>,
+) -> (Point2<f64>, Point2<f64>) {
+
+    let top_line = [Point2::from([rect_top_left.x, rect_top_left.y]), Point2::from([rect_bottom_right.x, rect_top_left.y])];
+    let bottom_line = [Point2::from([rect_top_left.x, rect_bottom_right.y]), Point2::from([rect_bottom_right.x, rect_bottom_right.y])];
+    // Simulate the gradient transform on the bounding rect's top and bottom line so
+    // that we can calculate by how much we need to extend the bounding rect so that
+    // the whole bounding rect will actually be covered by the gradient once it's transformed.
+    let transform_line = |line: [Point2<f64>; 2]| -> [Point<f64, 2>; 2] {
+        let (mut x1, mut y1, mut x2, mut y2) = (line[0].x, line[0].y, line[1].x, line[1].y);
+        gradient.transform.apply_to(&mut x1, &mut y1);
+        gradient.transform.apply_to(&mut x2, &mut y2);
+        [Point2::from([x1, y1]), Point2::from([x2, y2])]
+    };
+
+    let transformed_top_line = transform_line(top_line);
+    let transformed_bottom_line = transform_line(bottom_line);
+
+    let top_extended_line = extend_line(transformed_top_line[0], transformed_top_line[1], rect_top_left, rect_bottom_right);
+    let bottom_extended_line = extend_line(transformed_bottom_line[0], transformed_bottom_line[1], rect_top_left, rect_bottom_right);
+
+    let (top_x1_scale, top_x2_scale, bottom_x1_scale, bottom_x2_scale) = {
+        (
+            nalgebra::distance(&transformed_top_line[1], &top_extended_line[0]) / nalgebra::distance(&transformed_top_line[1], &transformed_top_line[0]),
+            nalgebra::distance(&transformed_top_line[0], &top_extended_line[1]) / nalgebra::distance(&transformed_top_line[0], &transformed_top_line[1]),
+            nalgebra::distance(&transformed_bottom_line[1], &bottom_extended_line[0]) / nalgebra::distance(&transformed_bottom_line[1], &transformed_bottom_line[0]),
+            nalgebra::distance(&transformed_bottom_line[0], &bottom_extended_line[1]) / nalgebra::distance(&transformed_bottom_line[0], &transformed_bottom_line[1]),
+        )
+    };
+
+    let x1_scale = top_x1_scale.max(bottom_x1_scale);
+    let x2_scale = top_x2_scale.max(bottom_x2_scale);
+
+    let scale_line = |line: [Point2<f64>; 2], x1_scale: f64, x2_scale: f64| {
+        let mut x1_vector = line[0] - line[1];
+        let mut x2_vector = line[1] - line[0];
+        x1_vector = x1_vector * x1_scale;
+        x2_vector = x2_vector * x2_scale;
+        [line[1] + x1_vector, line[0] + x2_vector]
+    };
+
+    let gradient_line = [Point2::from([gradient.x1, gradient.y1]), Point2::from([gradient.x2, gradient.y2])];
+    let scaled_gradient_line = scale_line(gradient_line, 1.0 / x1_scale, 1.0 / x2_scale);
+    gradient.x1 = scaled_gradient_line[0].x;
+    gradient.y1 = scaled_gradient_line[0].y;
+    gradient.x2 = scaled_gradient_line[1].x;
+    gradient.y2 = scaled_gradient_line[1].y;
+
+    let scaled_top_line = scale_line(top_line, x1_scale, x2_scale);
+    let scaled_bottom_line = scale_line(bottom_line, x1_scale, x2_scale);
+    let a = 4;
+    (
+        Point2::from([
+            scaled_top_line[0].x.min(scaled_bottom_line[0].x),
+            scaled_top_line[0].y
+        ]),
+        Point2::from([
+            scaled_top_line[1].x.max(scaled_bottom_line[1].x),
+            scaled_top_line[1].y
+        ]),
+    )
+}
+
+fn extend_line(
     line_p1: Point2<f64>,
     line_p2: Point2<f64>,
     rect_p1: Point2<f64>,
     rect_p2: Point2<f64>,
-) -> (Point2<f64>, Point2<f64>) {
+) -> [Point2<f64>; 2] {
     let line_vertices = [line_p1, line_p2];
 
     let rect_vertices = [
@@ -102,8 +167,8 @@ fn get_coordinate_points(
 
     let line_vector = line_vertices[1] - line_vertices[0];
 
-    let mut a_min = f64::MAX;
-    let mut a_max = f64::MIN;
+    let mut a_min: f64 = 0.0;
+    let mut a_max: f64 = 1.0;
 
     for rect_point in rect_vertices {
         let q = rect_point - line_vertices[0];
@@ -115,12 +180,7 @@ fn get_coordinate_points(
 
     let new_line_point_1 = line_vertices[0] + line_vector * a_min;
     let new_line_point_2 = line_vertices[0] + line_vector * a_max;
-    (new_line_point_1, new_line_point_2)
-}
-
-fn apply_gradient_transform(transform: &Transform, gradient: &mut LinearGradient) {
-    transform.apply_to(&mut gradient.x1, &mut gradient.y1);
-    transform.apply_to(&mut gradient.x2, &mut gradient.y2);
+    [new_line_point_1, new_line_point_2]
 }
 
 fn get_spread_shading_function(
