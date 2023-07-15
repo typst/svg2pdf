@@ -6,7 +6,7 @@ compressed and access to an instance of the deferrer + allocator.
 
 use pdf_writer::{Content, Ref};
 use usvg::utils::view_box_to_transform;
-use usvg::{Size, Transform, Tree, ViewBox};
+use usvg::{NonZeroRect, Size, Transform, Tree, ViewBox};
 
 use crate::util::defer::Deferrer;
 use crate::util::helper::deflate;
@@ -52,16 +52,16 @@ impl Context {
     /// i.e. the initial transform passed by the user + the view box transform to account for the
     /// view box of the SVG).
     pub fn get_base_transform(&self) -> Transform {
-        let mut base_transform = self.initial_transform;
-        let view_box_transform =
-            view_box_to_transform(self.view_box.rect, self.view_box.aspect, self.size);
-        base_transform.append(&view_box_transform);
-        base_transform
+        self.initial_transform.pre_concat(view_box_to_transform(
+            self.view_box.rect,
+            self.view_box.aspect,
+            self.size,
+        ))
     }
 
     /// Returns a [`usvg` Rect](usvg::Rect) with the dimensions of the whole SVG.
-    pub fn get_rect(&self) -> usvg::Rect {
-        usvg::Rect::new(0.0, 0.0, self.size.width(), self.size.height()).unwrap()
+    pub fn get_rect(&self) -> NonZeroRect {
+        NonZeroRect::from_xywh(0.0, 0.0, self.size.width(), self.size.height()).unwrap()
     }
 
     /// Just a helper method so that we don't have to manually compress the content if this was

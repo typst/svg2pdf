@@ -3,7 +3,7 @@ use std::rc::Rc;
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use usvg::{ImageKind, Size, Transform, Tree, Visibility};
+use usvg::{ImageKind, NonZeroRect, Size, Transform, Tree, Visibility};
 
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
@@ -84,10 +84,10 @@ pub fn render(
 
     // Account for the x/y of the viewbox.
     content
-        .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
+        .transform(Transform::from_translate(image_rect.x(), image_rect.y()).as_array());
     // Scale the image from 1x1 to the actual dimensions.
     content.transform(
-        Transform::new(
+        Transform::from_row(
             image_rect.width(),
             0.0,
             0.0,
@@ -169,7 +169,8 @@ fn create_raster_image(
     });
 
     let image_size =
-        Size::new(dynamic_image.width() as f64, dynamic_image.height() as f64).unwrap();
+        Size::from_wh(dynamic_image.width() as f32, dynamic_image.height() as f32)
+            .unwrap();
     let image_ref = ctx.alloc_ref();
     let image_name = ctx.deferrer.add_x_object(image_ref);
 
@@ -211,13 +212,8 @@ fn create_svg_image(
     (image_name, tree.size)
 }
 
-fn clip_image_to_rect(rect: usvg::Rect, content: &mut Content) {
-    content.rect(
-        rect.x() as f32,
-        rect.y() as f32,
-        rect.width() as f32,
-        rect.height() as f32,
-    );
+fn clip_image_to_rect(rect: NonZeroRect, content: &mut Content) {
+    content.rect(rect.x(), rect.y(), rect.width(), rect.height());
     content.close_path();
     content.clip_nonzero();
     content.end_path();

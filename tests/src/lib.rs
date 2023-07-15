@@ -71,6 +71,21 @@ impl TestFile {
         path_buf
     }
 
+    // Most resvg tests are only 200x200, so we scale them up to 500x500 so they are easier to see.
+    // However, integration tests are usually more than 1000x1000, so in this case we don't scale them
+    // at all.
+    pub fn scale_factor(&self) -> f32 {
+        if self.is_integration_test() {
+            1.0
+        } else {
+            2.5
+        }
+    }
+
+    fn is_integration_test(&self) -> bool {
+        self.raw_path.as_path().to_str().unwrap().contains("integration")
+    }
+
     pub fn as_raw_path(&self) -> PathBuf {
         self.raw_path.clone()
     }
@@ -147,12 +162,13 @@ impl Runner {
         &self,
         svg_string: &str,
         test_runner: &Runner,
+        scale_factor: f32,
     ) -> (Vec<u8>, RgbaImage) {
         let tree = self.read_svg(svg_string);
         // We scale the images by 2.5 so that their resolution is 500 x 500
         let pdf = svg2pdf::convert_tree(
             &tree,
-            Options { dpi: 72.0 * 2.5, ..Options::default() },
+            Options { dpi: 72.0 * scale_factor, ..Options::default() },
         );
         let image = test_runner.render_pdf(pdf.as_slice());
         (pdf, image)

@@ -1,5 +1,5 @@
 use pdf_writer::{Name, Rect};
-use usvg::{FuzzyEq, Node, NodeExt, NodeKind, PathBbox, PathData, Size, Transform};
+use usvg::{BBox, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
 
@@ -21,14 +21,7 @@ pub trait TransformExt {
 
 impl TransformExt for Transform {
     fn as_array(&self) -> [f32; 6] {
-        [
-            self.a as f32,
-            self.b as f32,
-            self.c as f32,
-            self.d as f32,
-            self.e as f32,
-            self.f as f32,
-        ]
+        [self.sx, self.ky, self.kx, self.sy, self.tx, self.ty]
     }
 }
 
@@ -48,21 +41,16 @@ pub trait RectExt {
     fn as_pdf_rect(&self) -> Rect;
 }
 
-impl RectExt for usvg::Rect {
+impl RectExt for NonZeroRect {
     fn as_pdf_rect(&self) -> Rect {
-        Rect::new(
-            self.x() as f32,
-            self.y() as f32,
-            (self.x() + self.width()) as f32,
-            (self.y() + self.height()) as f32,
-        )
+        Rect::new(self.x(), self.y(), self.x() + self.width(), self.y() + self.height())
     }
 }
 
 // Taken from resvg
 /// Calculate the rect of an image after it is scaled using a view box.
 #[cfg(feature = "image")]
-pub fn image_rect(view_box: &usvg::ViewBox, img_size: Size) -> usvg::Rect {
+pub fn image_rect(view_box: &usvg::ViewBox, img_size: Size) -> NonZeroRect {
     let new_size = fit_view_box(img_size, view_box);
     let (x, y) = usvg::utils::aligned_pos(
         view_box.aspect.align,
@@ -72,7 +60,7 @@ pub fn image_rect(view_box: &usvg::ViewBox, img_size: Size) -> usvg::Rect {
         view_box.rect.height() - new_size.height(),
     );
 
-    new_size.to_rect(x, y)
+    new_size.to_non_zero_rect(x, y)
 }
 
 // Taken from resvg
@@ -103,36 +91,48 @@ pub fn deflate(data: &[u8]) -> Vec<u8> {
 }
 
 /// Calculate the bbox of a node as a [Rect](usvg::Rect).
-pub fn plain_bbox(node: &Node) -> usvg::Rect {
+pub fn plain_bbox(node: &Node) -> usvg::NonZeroRect {
     calc_node_bbox(node, Transform::default())
-        .and_then(|b| b.to_rect())
-        .unwrap_or(usvg::Rect::new(0.0, 0.0, 1.0, 1.0).unwrap())
+        .and_then(|b| b.to_non_zero_rect())
+        .unwrap_or(usvg::NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
 }
 
 // Taken from resvg
 /// Calculate the bbox of a node with a given transform.
-fn calc_node_bbox(node: &Node, ts: Transform) -> Option<PathBbox> {
+fn calc_node_bbox(node: &Node, ts: Transform) -> Option<BBox> {
     match *node.borrow() {
-        NodeKind::Path(ref path) => {
-            path.data.bbox_with_transform(ts, path.stroke.as_ref())
-        }
-        NodeKind::Image(ref img) => {
-            let path = PathData::from_rect(img.view_box.rect);
-            path.bbox_with_transform(ts, None)
-        }
+        NodeKind::Path(ref path) => path
+            .data
+            .bounds()
+            .transform(ts)
+            .map(|r| {
+                let (x, y, w, h) = if let Some(stroke) = &path.stroke {
+                    let w = stroke.width.get()
+                        / if ts.is_identity() {
+                            2.0
+                        } else {
+                            2.0 / (ts.sx * ts.sy - ts.ky * ts.kx).abs().sqrt()
+                        };
+                    (r.x() - w, r.y() - w, r.width() + 2.0 * w, r.height() + 2.0 * w)
+                } else {
+                    (r.x(), r.y(), r.width(), r.height())
+                };
+                usvg::Rect::from_xywh(x, y, w, h).unwrap_or(r)
+            })
+            .map(BBox::from),
+        NodeKind::Image(ref img) => img.view_box.rect.transform(ts).map(BBox::from),
         NodeKind::Group(_) => {
-            let mut bbox = PathBbox::new_bbox();
+            let mut bbox = BBox::default();
 
             for child in node.children() {
-                let mut child_transform = ts;
-                child_transform.append(&child.transform());
+                let child_transform = ts.pre_concat(child.transform());
                 if let Some(c_bbox) = calc_node_bbox(&child, child_transform) {
                     bbox = bbox.expand(c_bbox);
                 }
             }
 
             // Make sure bbox was changed.
-            if bbox.fuzzy_eq(&PathBbox::new_bbox()) {
+            if bbox.is_default() {
                 return None;
             }
 

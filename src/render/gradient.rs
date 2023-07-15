@@ -3,8 +3,8 @@ use std::rc::Rc;
 use pdf_writer::types::{MaskType, ShadingType};
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use usvg::{
-    LinearGradient, NormalizedF64, Paint, RadialGradient, Stop, StopOffset, Transform,
-    Units,
+    LinearGradient, NonZeroRect, NormalizedF32, Paint, RadialGradient, Stop, StopOffset,
+    Transform, Units,
 };
 
 use crate::util::context::Context;
@@ -15,7 +15,7 @@ use crate::util::helper::{ColorExt, NameExt, RectExt, TransformExt};
 /// the name of the soft mask.
 pub fn create(
     paint: &Paint,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> Option<(Rc<String>, Option<Rc<String>>)> {
@@ -40,17 +40,12 @@ struct GradientProperties {
 
 fn create_linear_gradient(
     gradient: Rc<LinearGradient>,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> (Rc<String>, Option<Rc<String>>) {
     let properties = GradientProperties {
-        coords: vec![
-            gradient.x1 as f32,
-            gradient.y1 as f32,
-            gradient.x2 as f32,
-            gradient.y2 as f32,
-        ],
+        coords: vec![gradient.x1, gradient.y1, gradient.x2, gradient.y2],
         shading_type: ShadingType::Axial,
         stops: gradient.stops.clone(),
         transform: gradient.transform,
@@ -61,18 +56,18 @@ fn create_linear_gradient(
 
 fn create_radial_gradient(
     gradient: Rc<RadialGradient>,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> (Rc<String>, Option<Rc<String>>) {
     let properties = GradientProperties {
         coords: vec![
-            gradient.fx as f32,
-            gradient.fy as f32,
+            gradient.fx,
+            gradient.fy,
             0.0,
-            gradient.cx as f32,
-            gradient.cy as f32,
-            gradient.r.get() as f32,
+            gradient.cx,
+            gradient.cy,
+            gradient.r.get(),
         ],
         shading_type: ShadingType::Radial,
         stops: gradient.stops.clone(),
@@ -84,7 +79,7 @@ fn create_radial_gradient(
 
 fn create_shading_pattern(
     properties: &GradientProperties,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> (Rc<String>, Option<Rc<String>>) {
@@ -96,13 +91,12 @@ fn create_shading_pattern(
         None
     };
 
-    let mut matrix = if properties.units == Units::ObjectBoundingBox {
+    let matrix = if properties.units == Units::ObjectBoundingBox {
         Transform::from_bbox(*parent_bbox)
     } else {
         Transform::default()
-    };
-
-    matrix.append(&properties.transform);
+    }
+    .pre_concat(properties.transform);
 
     let shading_function_ref =
         get_shading_function(false, &properties.stops, writer, ctx);
@@ -124,7 +118,7 @@ fn create_shading_pattern(
 
 fn get_soft_mask(
     properties: &GradientProperties,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> Rc<String> {
@@ -134,12 +128,13 @@ fn get_soft_mask(
     let shading_name = ctx.deferrer.add_shading(shading_ref);
     let bbox = ctx.get_rect().as_pdf_rect();
 
-    let mut transform = properties.transform;
-    transform.append(&if properties.units == Units::ObjectBoundingBox {
-        Transform::from_bbox(*parent_bbox)
-    } else {
-        Transform::default()
-    });
+    let transform = properties.transform.pre_concat(
+        if properties.units == Units::ObjectBoundingBox {
+            Transform::from_bbox(*parent_bbox)
+        } else {
+            Transform::default()
+        },
+    );
 
     let shading_function_ref = get_shading_function(true, &properties.stops, writer, ctx);
     let mut shading = writer.shading(shading_ref);
@@ -201,7 +196,7 @@ fn get_shading_function(
 
     // We manually pad the stops if necessary so that they are always in the range from 0-1
     if let Some(first) = stops.first() {
-        if first.offset != NormalizedF64::ZERO {
+        if first.offset != NormalizedF32::ZERO {
             let mut new_stop = *first;
             new_stop.offset = StopOffset::new(0.0).unwrap();
             stops.insert(0, new_stop);
@@ -209,7 +204,7 @@ fn get_shading_function(
     }
 
     if let Some(last) = stops.last() {
-        if last.offset != NormalizedF64::ONE {
+        if last.offset != NormalizedF32::ONE {
             let mut new_stop = *last;
             new_stop.offset = StopOffset::new(1.0).unwrap();
             stops.push(new_stop);
@@ -219,12 +214,12 @@ fn get_shading_function(
     for window in stops.windows(2) {
         let (first, second) = (window[0], window[1]);
         let (first_color, second_color) = if alpha {
-            (vec![first.opacity.get() as f32], vec![second.opacity.get() as f32])
+            (vec![first.opacity.get()], vec![second.opacity.get()])
         } else {
             (Vec::from(first.color.as_array()), Vec::from(second.color.as_array()))
         };
 
-        bounds.push(second.offset.get() as f32);
+        bounds.push(second.offset.get());
         functions.push(single_gradient(first_color, second_color, writer, ctx));
         encode.extend([0.0, 1.0]);
     }

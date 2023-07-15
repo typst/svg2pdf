@@ -3,7 +3,7 @@ use std::rc::Rc;
 use pdf_writer::types::{PaintType, TilingType};
 use pdf_writer::{Content, Filter, PdfWriter};
 use usvg::utils::view_box_to_transform;
-use usvg::{NodeKind, Size, Transform, Units};
+use usvg::{NodeKind, NonZeroRect, Size, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
@@ -13,7 +13,7 @@ use crate::util::helper::{NameExt, TransformExt};
 /// the pattern
 pub fn create(
     pattern: Rc<usvg::Pattern>,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> Rc<String> {
@@ -34,9 +34,7 @@ pub fn create(
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
-            let mut pattern_matrix = pattern.transform;
-            // Account for the x/y shift of the pattern.
-            pattern_matrix.append(&Transform::new(
+            let pattern_matrix = pattern.transform.pre_concat(Transform::from_row(
                 1.0,
                 0.0,
                 0.0,
@@ -52,7 +50,7 @@ pub fn create(
                 // The x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
                 // the x/y would be applied twice.
                 pattern_content.transform(
-                    Transform::new_scale(parent_bbox.width(), parent_bbox.height())
+                    Transform::from_scale(parent_bbox.width(), parent_bbox.height())
                         .as_array(),
                 );
             }
@@ -61,7 +59,7 @@ pub fn create(
                 let pattern_transform = view_box_to_transform(
                     view_box.rect,
                     view_box.aspect,
-                    Size::new(pattern_rect.width(), pattern_rect.height()).unwrap(),
+                    Size::from_wh(pattern_rect.width(), pattern_rect.height()).unwrap(),
                 );
                 pattern_content.transform(pattern_transform.as_array());
             }
@@ -86,8 +84,8 @@ pub fn create(
             let final_bbox = pdf_writer::Rect::new(
                 0.0,
                 0.0,
-                pattern_rect.width() as f32,
-                pattern_rect.height() as f32,
+                pattern_rect.width(),
+                pattern_rect.height(),
             );
 
             tiling_pattern

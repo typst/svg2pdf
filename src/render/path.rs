@@ -1,9 +1,10 @@
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
 use pdf_writer::{Content, Finish, PdfWriter};
-use usvg::Fill;
+use usvg::tiny_skia_path::PathSegment;
 use usvg::Stroke;
-use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
+use usvg::{Fill, NonZeroRect};
+use usvg::{FillRule, LineCap, LineJoin, Paint, Visibility};
 
 use super::{gradient, pattern};
 use crate::util::context::Context;
@@ -12,7 +13,7 @@ use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 /// Render a path into a content stream.
 pub fn render(
     path: &usvg::Path,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
@@ -25,8 +26,8 @@ pub fn render(
     content.transform(path.transform.as_array());
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
-    let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get() as f32);
-    let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get() as f32);
+    let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get());
+    let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get());
 
     // Only create a graphics state if at least one of the opacities is not 1.
     if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
@@ -53,13 +54,41 @@ pub fn render(
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
+    fn calc(n1: f32, n2: f32) -> f32 {
+        (n1 + n2 * 2.0) / 3.0
+    }
+
+    let mut p_prev = None;
+
     for operation in path_data {
         match operation {
-            PathSegment::MoveTo { x, y } => content.move_to(x as f32, y as f32),
-            PathSegment::LineTo { x, y } => content.line_to(x as f32, y as f32),
-            PathSegment::CurveTo { x1, y1, x2, y2, x, y } => content
-                .cubic_to(x1 as f32, y1 as f32, x2 as f32, y2 as f32, x as f32, y as f32),
-            PathSegment::ClosePath => content.close_path(),
+            PathSegment::MoveTo(p) => {
+                content.move_to(p.x, p.y);
+                p_prev = Some(p);
+            }
+            PathSegment::LineTo(p) => {
+                content.line_to(p.x, p.y);
+                p_prev = Some(p);
+            }
+            PathSegment::QuadTo(p1, p2) => {
+                let prev = p_prev.unwrap();
+                content.cubic_to(
+                    calc(prev.x, p1.x),
+                    calc(prev.y, p1.y),
+                    calc(p2.x, p1.x),
+                    calc(p2.y, p1.y),
+                    p2.x,
+                    p2.y,
+                );
+                p_prev = Some(p2);
+            }
+            PathSegment::CubicTo(p1, p2, p3) => {
+                content.cubic_to(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+                p_prev = Some(p3);
+            }
+            PathSegment::Close => {
+                content.close_path();
+            }
         };
     }
 }
@@ -77,13 +106,13 @@ fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Conte
 
 fn set_stroke(
     stroke: &Stroke,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) {
-    content.set_line_width(stroke.width.get() as f32);
-    content.set_miter_limit(stroke.miterlimit.get() as f32);
+    content.set_line_width(stroke.width.get());
+    content.set_miter_limit(stroke.miterlimit.get());
 
     match stroke.linecap {
         LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
@@ -98,7 +127,7 @@ fn set_stroke(
     };
 
     if let Some(dasharray) = &stroke.dasharray {
-        content.set_dash_pattern(dasharray.iter().map(|&x| x as f32), stroke.dashoffset);
+        content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
     }
 
     let paint = &stroke.paint;
@@ -131,7 +160,7 @@ fn set_stroke(
 
 fn set_fill(
     fill: &Fill,
-    parent_bbox: &usvg::Rect,
+    parent_bbox: &NonZeroRect,
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,

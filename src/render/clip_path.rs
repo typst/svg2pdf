@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use pdf_writer::types::MaskType;
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use usvg::tiny_skia_path::PathSegment;
 use usvg::{ClipPath, FillRule, Node, NodeKind, Transform, Units, Visibility};
 
 use super::group;
@@ -45,30 +46,27 @@ pub fn render(
 }
 
 fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
-    clip_path.transform.is_default()
-        && clip_path.units == Units::UserSpaceOnUse
+    clip_path.units == Units::UserSpaceOnUse
         && clip_path.root.descendants().all(|n| match *n.borrow() {
             NodeKind::Path(ref path) => {
                 // PDFs clip path operator doesn't support the EvenOdd rule
-                path.transform.is_default()
-                    && path
+                path
                         .fill
                         .as_ref()
                         .map_or(true, |fill| fill.rule == FillRule::NonZero)
             }
             NodeKind::Group(ref group) => {
-                group.transform.is_default()
-                    && group
-                        .clip_path
-                        .as_ref()
-                        .map_or(true, |clip_path| is_simple_clip_path(clip_path.clone()))
+                // Nested clip paths are not supported in PDF
+                group
+                    .clip_path
+                    .is_none()
             }
             _ => false,
         })
+        // Nested clip paths are not supported in PDF
         && clip_path
             .clip_path
-            .as_ref()
-            .map_or(true, |clip_path| is_simple_clip_path(clip_path.clone()))
+            .is_none()
 }
 
 fn create_simple_clip_path(clip_path: Rc<ClipPath>, content: &mut Content) {
@@ -76,26 +74,57 @@ fn create_simple_clip_path(clip_path: Rc<ClipPath>, content: &mut Content) {
     // path will still be applied and everything will be hidden.
     content.move_to(0.0, 0.0);
 
-    if let Some(clip_path) = &clip_path.clip_path {
-        create_simple_clip_path(clip_path.clone(), content);
-    }
-
-    for node in clip_path.root.descendants() {
-        if let NodeKind::Path(ref path) = *node.borrow() {
-            if path.visibility != Visibility::Hidden {
-                draw_path(path.data.segments(), content);
-            }
-        }
-
-        if let NodeKind::Group(ref group) = *node.borrow() {
-            if let Some(clip_path) = &group.clip_path {
-                create_simple_clip_path(clip_path.clone(), content);
-            }
-        }
-    }
-
+    let mut segments = vec![];
+    extend_segments_from_node(&clip_path.root, &clip_path.transform, &mut segments);
+    draw_path(segments.into_iter(), content);
     content.clip_nonzero();
     content.end_path();
+}
+
+fn extend_segments_from_node(
+    node: &Node,
+    transform: &Transform,
+    segments: &mut Vec<PathSegment>,
+) {
+    match *node.borrow() {
+        NodeKind::Path(ref path) => {
+            if path.visibility != Visibility::Hidden {
+                let path_transform = transform.pre_concat(path.transform);
+                path.data.segments().for_each(|segment| match segment {
+                    PathSegment::MoveTo(p) => {
+                        let mut new_p = p;
+                        path_transform.map_point(&mut new_p);
+                        segments.push(PathSegment::MoveTo(new_p));
+                    }
+                    PathSegment::LineTo(p) => {
+                        let mut new_p = p;
+                        path_transform.map_point(&mut new_p);
+                        segments.push(PathSegment::LineTo(new_p));
+                    }
+                    PathSegment::QuadTo(p1, p2) => {
+                        let mut new_ps = [p1, p2];
+                        path_transform.map_points(&mut new_ps);
+                        segments.push(PathSegment::QuadTo(new_ps[0], new_ps[1]));
+                    }
+                    PathSegment::CubicTo(p1, p2, p3) => {
+                        let mut new_ps = [p1, p2, p3];
+                        path_transform.map_points(&mut new_ps);
+                        segments
+                            .push(PathSegment::CubicTo(new_ps[0], new_ps[1], new_ps[2]));
+                    }
+                    PathSegment::Close => segments.push(PathSegment::Close),
+                })
+            }
+        }
+        NodeKind::Group(ref group) => {
+            let group_transform = transform.pre_concat(group.transform);
+            for child in node.children() {
+                extend_segments_from_node(&child, &group_transform, segments);
+            }
+        }
+        // Images are not valid in a clip path
+        _ => {}
+    }
 }
 
 // TODO: Figure out if there is a way to deduplicate and reuse parts of mask?

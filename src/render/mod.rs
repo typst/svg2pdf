@@ -41,7 +41,7 @@ pub fn tree_to_x_object(
         x_object.filter(Filter::FlateDecode);
     }
 
-    x_object.bbox(Rect::new(0.0, 0.0, ctx.size.width() as f32, ctx.size.height() as f32));
+    x_object.bbox(Rect::new(0.0, 0.0, ctx.size.width(), ctx.size.height()));
     // Apply the base transform
     x_object.matrix(ctx.get_base_transform().as_array());
     x_object.finish();

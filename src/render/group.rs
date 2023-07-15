@@ -48,8 +48,8 @@ pub fn create(
     if group.opacity.get() != 1.0 {
         let gs_ref = ctx.alloc_ref();
         let mut gs = writer.ext_graphics(gs_ref);
-        gs.non_stroking_alpha(group.opacity.get() as f32)
-            .stroking_alpha(group.opacity.get() as f32)
+        gs.non_stroking_alpha(group.opacity.get())
+            .stroking_alpha(group.opacity.get())
             .finish();
         child_content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).as_name());
     }
