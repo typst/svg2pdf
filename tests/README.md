@@ -17,8 +17,8 @@ use [this version](https://github.com/bblanchon/pdfium-binaries/releases/tag/chr
 which is the one the CI uses.
 
 In the `svgs` folder, you can find all test files that are part of the test suite. They mostly
-comprise the files of the [resvg-test-suite](https://github.com/RazrFalcon/resvg-test-suite), 
-which is a comprehensive suite of SVG files (1000+ files) that cover a big part of the SVG spec. 
+comprise the files of the [resvg-test-suite](https://github.com/RazrFalcon/resvg-test-suite),
+(filter tests have not been included yet since they are not implemented) which is a comprehensive suite of SVG files (1000+ files) that cover a big part of the SVG spec. 
 You can find the tests in `svgs/resvg`. In addition to that, a couple of custom tests were added
 that covert certain other edge cases and some integration tests. You can find them in 
 `svgs/custom`. In the `references` folder, you can find the corresponding reference images.
