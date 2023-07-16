@@ -13,7 +13,7 @@ struct Args {
     #[clap(short, long)]
     subset: Option<Regex>,
     #[clap(short, long)]
-    pdfs: bool,
+    pdf: bool,
 }
 
 fn main() {
@@ -78,13 +78,15 @@ fn main() {
             &runner,
         );
 
-        fs::create_dir_all(output_path.as_path().parent().unwrap()).unwrap();
-        save_image(&image, &output_path);
-
-        if args.pdfs {
+        if args.pdf {
+            // We just write the pdfs.
             let pdf_path = svg_file.as_pdf_path();
             fs::create_dir_all(pdf_path.as_path().parent().unwrap()).unwrap();
             fs::write(pdf_path.as_path(), pdf).unwrap();
+        } else {
+            // Otherwise we write the actual reference images.
+            fs::create_dir_all(output_path.as_path().parent().unwrap()).unwrap();
+            save_image(&image, &output_path);
         }
 
         progress_bar.inc(1);

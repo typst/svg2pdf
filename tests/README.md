@@ -76,6 +76,8 @@ that will be matched against all SVG files. For example, if you run
 `cargo run --bin generate -- --subset "arabic"`, reference images for every test file where the path name contains "arabic" will
 be generated.
 
+If you want to generate the actual PDFs instead of images, you can pass the `--pdf` flag instead.
+
 # Typst
 
 The final target is `typst`. This library was initially written
