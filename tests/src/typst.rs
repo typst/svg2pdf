@@ -59,8 +59,6 @@ fn main() {
 #for file in files {{
   file
 }}
-
-#let dat = datetime(day: 1, month: 7, year: 2023)
 ",
         file_list
     );
