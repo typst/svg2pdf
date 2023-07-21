@@ -83,8 +83,8 @@ pub fn render(
     clip_image_to_rect(image.view_box.rect, content);
 
     // Account for the x/y of the viewbox.
-    // content
-    //     .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
+    content
+        .transform(Transform::new_translate(image_rect.x(), image_rect.y()).as_array());
     // Scale the image from 1x1 to the actual dimensions.
     content.transform(
         Transform::new(
