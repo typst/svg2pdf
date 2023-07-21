@@ -18,7 +18,7 @@ so no quality is lost.
 This example reads an SVG file and writes the corresponding PDF back to the disk.
 
 ```rust
-let path = "tests/svgs/custom/integration/matplotlib/time_series.svg";
+let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
 let svg = std::fs::read_to_string(path)?;
 
 // This can only fail if the SVG is malformed. This one is not.

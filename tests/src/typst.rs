@@ -14,7 +14,7 @@ fn main() {
             format!(
                 "  (\"{}\", \"{}\"),",
                 f.as_svg_path().to_str().unwrap(),
-                f.as_references_path().to_str().unwrap()
+                f.as_ref_path().to_str().unwrap()
             )
         })
         .collect::<Vec<String>>()

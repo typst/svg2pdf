@@ -16,12 +16,12 @@ for your operating system and put it into the "pdfium_lib" folder. For full repr
 use [this version](https://github.com/bblanchon/pdfium-binaries/releases/tag/chromium%2F5880),
 which is the one the CI uses.
 
-In the `svgs` folder, you can find all test files that are part of the test suite. They mostly
+In the `svg` folder, you can find all test files that are part of the test suite. They mostly
 comprise the files of the [resvg-test-suite](https://github.com/RazrFalcon/resvg-test-suite),
 (filter tests have not been included yet since they are not implemented) which is a comprehensive suite of SVG files (1000+ files) that cover a big part of the SVG spec.
-You can find the tests in `svgs/resvg`. In addition to that, a couple of custom tests were added
+You can find the tests in `svg/resvg`. In addition to that, a couple of custom tests were added
 that cover certain other edge cases and some integration tests. You can find them in
-`svgs/custom`. In the `references` folder, you can find the corresponding reference images.
+`svg/custom`. In the `ref` folder, you can find the corresponding reference images.
 
 There are three binary targets in this crate: `test`, `generate` and `typst`.
 
@@ -38,13 +38,13 @@ you can pass the verbose flag to the command: `cargo run --release -- --verbose`
 
 - A test case will be skipped if there exists an SVG file that doesn't have a corresponding
 reference image. Currently, this is the case for a few tests that either don't work correctly
-yet (like for example `svgs/resvg/paint-servers/stop/stops-with-equal-offset-5.svg`), are simply
+yet (like for example `svg/resvg/paint-servers/stop/stops-with-equal-offset-5.svg`), are simply
 not implemented yet (e.g. spread method of gradients and blend modes) or were skipped simply
 because it wasn't deemed necessary to add them (for example text tests that test
 Japanese/Arabic that would've required to add additional fonts to the repository).
 
 - A test case fails if the rendered PDF doesn't pixel-match the reference image. In this
-case, a new folder `diffs` will be generated that contains a diff image (the left image
+case, a new folder `diff` will be generated that contains a diff image (the left image
 is the expected image, the middle one the pixel difference and the right one the actual
 image). If some parts of the core logic of the program have been changed, it is possible
 that the images rendered by pdfium actually looks _pretty much_ the same but only differs

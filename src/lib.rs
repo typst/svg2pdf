@@ -12,7 +12,7 @@ This example reads an SVG file and writes the corresponding PDF back to the disk
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-let path = "tests/svgs/custom/integration/matplotlib/time_series.svg";
+let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
 let svg = std::fs::read_to_string(path)?;
 
 // This can only fail if the SVG is malformed. This one is not.
@@ -143,7 +143,7 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 /// use usvg::{fontdb, TreeParsing, TreeTextToPath};
 /// use svg2pdf::Options;
 ///
-/// let input = "tests/svgs/custom/integration/matplotlib/step.svg";
+/// let input = "tests/svg/custom/integration/matplotlib/step.svg";
 /// let output = "target/step.pdf";
 ///
 /// let svg = std::fs::read_to_string(input)?;
@@ -268,7 +268,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 ///
 /// // Let's add an SVG graphic to this file.
 /// // We need to load its source first and manually parse it into a usvg Tree.
-/// let path = "tests/svgs/custom/integration/matplotlib/step.svg";
+/// let path = "tests/svg/custom/integration/matplotlib/step.svg";
 /// let svg = std::fs::read_to_string(path)?;
 /// let tree = usvg::Tree::from_str(&svg, &usvg::Options::default())?;
 ///

@@ -59,7 +59,7 @@ fn main() -> ExitCode {
             continue;
         }
 
-        let expected_image = Reader::open(svg_file.as_references_path())
+        let expected_image = Reader::open(svg_file.as_ref_path())
             .unwrap()
             .decode()
             .unwrap()
@@ -87,13 +87,13 @@ fn main() -> ExitCode {
         if diff {
             let _ = print_test_case_result(TestStatus::Failure, svg_file, args.verbose);
             failure_tests.push(svg_file);
-            fs::create_dir_all(svg_file.as_diffs_path().parent().unwrap()).unwrap();
+            fs::create_dir_all(svg_file.as_diff_path().parent().unwrap()).unwrap();
             diff_image
-                .save_with_format(svg_file.as_diffs_path(), image::ImageFormat::Png)
+                .save_with_format(svg_file.as_diff_path(), image::ImageFormat::Png)
                 .unwrap();
 
             if args.replace {
-                save_image(&actual_image, &svg_file.as_references_path());
+                save_image(&actual_image, &svg_file.as_ref_path());
             }
         } else {
             successful_tests.push(svg_file);

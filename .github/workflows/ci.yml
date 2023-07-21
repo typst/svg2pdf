@@ -40,7 +40,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          path: ./tests/diffs
+          path: ./tests/diff
 
   checks:
     name: Check clippy, formatting, and documentation

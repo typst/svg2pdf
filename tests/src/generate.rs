@@ -70,7 +70,7 @@ fn main() {
 
     for svg_file in &svg_files {
         let input_path = svg_file.as_svg_path();
-        let output_path = svg_file.as_references_path();
+        let output_path = svg_file.as_ref_path();
 
         progress_bar.set_message(svg_file.as_raw_path().to_str().unwrap().to_string());
 

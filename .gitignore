@@ -2,7 +2,7 @@
 .vscode
 .DS_Store
 /target
-/tests/pdfs
-/tests/diffs
+/tests/pdf
+/tests/diff
 /tests/typst.typ
 /tests/typst.pdf
