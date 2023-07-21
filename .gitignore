@@ -1,3 +1,8 @@
-/target
-Cargo.lock
+.idea
+.vscode
 .DS_Store
+/target
+/tests/pdf
+/tests/diff
+/tests/typst.typ
+/tests/typst.pdf

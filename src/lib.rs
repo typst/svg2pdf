@@ -4,24 +4,28 @@ This crate allows to convert static (i.e. non-interactive) SVG files to
 either standalone PDF files or Form XObjects that can be embedded in another
 PDF file and used just like images.
 
-The conversion will translate the SVG content to PDF without rasterizing it,
+The conversion will translate the SVG content to PDF without rasterizing them,
 so no quality is lost.
 
 ## Example
 This example reads an SVG file and writes the corresponding PDF back to the disk.
 
-```rust
-let svg = std::fs::read_to_string("tests/example.svg").unwrap();
+```
+# fn main() -> Result<(), Box<dyn std::error::Error>> {
+let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
+let svg = std::fs::read_to_string(path)?;
 
 // This can only fail if the SVG is malformed. This one is not.
-let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default()).unwrap();
+let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default())?;
 
 // ... and now you have a Vec<u8> which you could write to a file or
 // transmit over the network!
-std::fs::write("target/example.pdf", pdf).unwrap();
+std::fs::write("target/time_series.pdf", pdf)?;
+# Ok(()) }
 ```
 
 ## Supported features
+In general, a large part of the SVG specification is supported, including features like:
 - Path drawing with fills and strokes
 - Gradients
 - Patterns
@@ -31,55 +35,52 @@ std::fs::write("target/example.pdf", pdf).unwrap();
 - Respecting the `keepAspectRatio` attribute
 - Raster images and nested SVGs
 
-Filters are not currently supported and embedded raster images are not color
-managed. Instead, they use PDF's `DeviceRGB` color space.
+## Unsupported features
+Among the unsupported features are currently:
+- The `spreadMethod` attribute of gradients
+- Filters
+- Blend modes
+- Raster images are not color managed but use PDF's DeviceRGB color space
+- A number of features that were added in SVG2
 */
 
-use std::collections::HashMap;
-use std::rc::Rc;
-
-use pdf_writer::types::ProcSet;
-use pdf_writer::writers::{ColorSpace, ExponentialFunction, FormXObject, Resources};
-use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Rect, Ref, TextStr, Writer};
-use usvg::{NodeExt, NodeKind, Opacity, Paint, Stop, Tree, TreeParsing};
-
-mod defer;
 mod render;
-mod scale;
+mod util;
 
-use defer::*;
-use render::*;
-use scale::*;
+use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect, Ref, TextStr};
+use usvg::utils::view_box_to_transform;
+use usvg::{Align, AspectRatio, Size, Transform, Tree, TreeParsing};
 
-const SRGB: Name = Name(b"srgb");
+use crate::util::context::Context;
+use crate::util::helper::{dpi_ratio, NameExt, RectExt};
 
 /// Set size and scaling preferences for the conversion.
-#[derive(Debug, Clone)]
+#[derive(Copy, Clone)]
 pub struct Options {
     /// Specific dimensions the SVG will be forced to fill in nominal SVG
     /// pixels. If this is `Some`, the resulting PDF will always have the
     /// corresponding size converted to PostScript points according to `dpi`. If
-    /// it is `None`, the PDF will either take on the native size of the SVG or
-    /// 100 by 100 if no native size was specified (i.e. there is no `viewBox`,
-    /// no `width`, and no `height` attribute).
+    /// it is `None`, the PDF will take on the native size of the SVG.
     ///
     /// Normally, unsized SVGs will take on the size of the target viewport. In
     /// order to achieve the behavior in which your SVG will take its native
     /// size and the size of your viewport only if it has no native size, you
-    /// need to create a usvg [`Tree`] for your file in your own code. You will
-    /// then need to set the `default_size` field of the [`usvg::Options`]
-    /// struct to your viewport size and set this field according to
-    /// `tree.svg_node().size`.
+    /// need to create a [`usvg` tree](usvg::Tree) for your file in your own
+    /// code. You will then need to set the `default_size` field of the
+    /// [`usvg::Options`] struct to your viewport size and set this field
+    /// according to `tree.svg_node().size`.
     ///
     /// _Default:_ `None`.
-    pub viewport: Option<(f64, f64)>,
+    pub viewport: Option<Size>,
+
     /// Override the scaling mode of the SVG within its viewport. Look
     /// [here][aspect] to learn about the different possible modes.
     ///
     /// _Default:_ `None`.
     ///
     /// [aspect]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/preserveAspectRatio
-    pub aspect: Option<usvg::AspectRatio>,
+    pub aspect: Option<AspectRatio>,
+
     /// The dots per inch to assume for the conversion to PDF's printer's
     /// points. Common values include `72.0` (1pt = 1px; Adobe and macOS) and
     /// `96.0` (Microsoft) for standard resolution screens and multiples of
@@ -91,7 +92,8 @@ pub struct Options {
     /// pixel should be on paper when printed without scaling.
     ///
     /// _Default:_ `72.0`.
-    pub dpi: f64,
+    pub dpi: f32,
+
     /// Whether the content streams should be compressed.
     ///
     /// The smaller PDFs generated by this are generally more practical but it
@@ -103,209 +105,111 @@ pub struct Options {
 
 impl Default for Options {
     fn default() -> Self {
-        Options {
+        Self {
+            dpi: 72.0,
             viewport: None,
             aspect: None,
-            dpi: 72.0,
             compress: true,
         }
-    }
-}
-
-/// Data is needed during the preparation of the file.
-struct Context {
-    /// Converter to the PDF coordinate system.
-    c: CoordToPdf,
-    /// References for functions for gradient color and alpha values.
-    function_map: HashMap<String, (Ref, Option<Ref>)>,
-    /// The next indirect reference id.
-    next_id: i32,
-    /// The next pattern id, to be used as e.g. `p1`.
-    next_pattern: u32,
-    /// The next graphics state id, to be used as e.g. `gs2`.
-    next_graphic: u32,
-    /// The next XObject id, to be used as e.g. `xo3`.
-    next_xobject: u32,
-    /// The next shading id, to be used as e.g. `sh5`.
-    next_shading: u32,
-    /// Patterns which have been used but not yet written to the file.
-    pending_gradients: Vec<PendingGradient>,
-    /// Patterns which have been used but not yet written to the file.
-    pending_patterns: Vec<(u32, Ref)>,
-    /// Graphics states which have been used but not yet written to the file.
-    pending_graphics: Vec<PendingGS>,
-    /// XObjects that have been both written as indirect objects and referenced
-    /// but still need to be registered with the `Resources` dictionary.
-    pending_xobjects: Vec<(u32, Ref)>,
-    /// IDs of nodes which need to be written to the root of the document as a
-    /// transparency group along with their metadata.
-    pending_groups: HashMap<String, PendingGroup>,
-    /// This array stores the lengths of the pending vectors and allows to push
-    /// each of their elements onto the closes `Resources` dictionary.
-    checkpoints: Vec<[usize; 4]>,
-    /// The mask that needs to be applied at the start of a path drawing
-    /// operation.
-    initial_mask: Option<String>,
-    /// Whether the content streas should be compressed.
-    compress: bool,
-}
-
-impl Context {
-    /// Create a new context.
-    fn new(compress: bool, c: CoordToPdf) -> Self {
-        Self {
-            c,
-            function_map: HashMap::new(),
-            next_id: 1,
-            next_pattern: 0,
-            next_graphic: 0,
-            next_xobject: 0,
-            next_shading: 0,
-            pending_gradients: vec![],
-            pending_patterns: vec![],
-            pending_graphics: vec![],
-            pending_xobjects: vec![],
-            pending_groups: HashMap::new(),
-            checkpoints: vec![],
-            initial_mask: None,
-            compress,
-        }
-    }
-
-    /// Push a new context frame for the pending objects.
-    fn push(&mut self) {
-        self.checkpoints.push([
-            self.pending_gradients.len(),
-            self.pending_patterns.len(),
-            self.pending_graphics.len(),
-            self.pending_xobjects.len(),
-        ]);
-    }
-
-    /// Pop a context frame and write all pending objects onto an `Resources`
-    /// dictionary.
-    fn pop(&mut self, resources: &mut Resources) {
-        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
-        resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
-
-        let [gradients, patterns, graphics, xobjects] = self.checkpoints.pop().unwrap();
-
-        let pending_gradients = self.pending_gradients.split_off(gradients);
-        let pending_patterns = self.pending_patterns.split_off(patterns);
-        write_gradients(
-            &pending_gradients,
-            &pending_patterns,
-            &self.function_map,
-            resources,
-        );
-
-        let pending_graphics = self.pending_graphics.split_off(graphics);
-        write_graphics(&pending_graphics, resources);
-
-        let pending_xobjects = self.pending_xobjects.split_off(xobjects);
-        write_xobjects(&pending_xobjects, resources);
-    }
-
-    /// Allocate a new indirect reference id.
-    fn alloc_ref(&mut self) -> Ref {
-        let reference = Ref::new(self.next_id);
-        self.next_id += 1;
-        reference
-    }
-
-    /// Allocate a new pattern id.
-    fn alloc_pattern(&mut self) -> u32 {
-        let num = self.next_pattern;
-        self.next_pattern += 1;
-        num
-    }
-
-    /// Allocate a new graphics state id.
-    fn alloc_gs(&mut self) -> u32 {
-        let num = self.next_graphic;
-        self.next_graphic += 1;
-        num
-    }
-
-    /// Allocate a new XObject id.
-    fn alloc_xobject(&mut self) -> u32 {
-        let num = self.next_xobject;
-        self.next_xobject += 1;
-        num
-    }
-
-    /// Allocate a new shading id.
-    fn alloc_shading(&mut self) -> u32 {
-        let num = self.next_shading;
-        self.next_shading += 1;
-        num
     }
 }
 
 /// Convert an SVG source string to a standalone PDF buffer.
 ///
 /// Does not load any fonts and consequently cannot convert `text` elements. To
-/// convert text, you should convert your source string to a usvg [`Tree`]
-/// manually (providing a [font database](usvg::Options::fontdb)) and then use
+/// convert text, you should convert your source string to a
+/// [`usvg` tree](usvg::Tree) manually,
+/// [convert text with usvg](usvg::TreeTextToPath::convert_text) and then use
 /// [`convert_tree`].
 ///
 /// Returns an error if the SVG string is malformed.
 pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> {
-    let mut usvg_opts = usvg::Options::default();
-    if let Some((width, height)) = options.viewport {
-        usvg_opts.default_size =
-            usvg::Size::new(width.max(1.0), height.max(1.0)).unwrap();
+    let mut usvg_options = usvg::Options::default();
+    if let Some(size) = options.viewport {
+        usvg_options.default_size = size;
     }
-    let tree = Tree::from_str(src, &usvg_opts)?;
+    let tree = Tree::from_str(src, &usvg_options)?;
     Ok(convert_tree(&tree, options))
 }
 
-/// Convert a [`usvg` tree](Tree) to a standalone PDF buffer.
+/// Convert a [`usvg` tree](usvg::Tree) into a standalone PDF buffer.
+///
+/// ## Example
+/// The example below reads an SVG file, processes text within it, then converts
+/// it into a PDF and finally writes it back to the file system.
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use usvg::{fontdb, TreeParsing, TreeTextToPath};
+/// use svg2pdf::Options;
+///
+/// let input = "tests/svg/custom/integration/matplotlib/step.svg";
+/// let output = "target/step.pdf";
+///
+/// let svg = std::fs::read_to_string(input)?;
+/// let options = usvg::Options::default();
+/// let mut tree = usvg::Tree::from_str(&svg, &options)?;
+///
+/// let mut db = fontdb::Database::new();
+/// db.load_system_fonts();
+/// tree.convert_text(&db);
+///
+/// let pdf = svg2pdf::convert_tree(&tree, Options::default());
+/// std::fs::write(output, pdf)?;
+/// # Ok(()) }
+/// ```
 pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
-    let c = get_sizings(tree, &options);
-    let mut ctx = Context::new(options.compress, c);
-
+    let page_size = options.viewport.unwrap_or(tree.size);
+    let mut ctx =
+        Context::new(tree, options, initial_transform(&options, tree, page_size), None);
     let mut writer = PdfWriter::new();
-    let catalog_id = ctx.alloc_ref();
-    let page_tree_id = ctx.alloc_ref();
-    let page_id = ctx.alloc_ref();
-    let content_id = ctx.alloc_ref();
 
-    writer.catalog(catalog_id).pages(page_tree_id);
-    writer.pages(page_tree_id).count(1).kids([page_id]);
+    let catalog_ref = ctx.alloc_ref();
+    let page_tree_ref = ctx.alloc_ref();
+    let page_ref = ctx.alloc_ref();
+    let content_ref = ctx.alloc_ref();
 
-    preregister(tree, &mut writer, &mut ctx);
+    writer.catalog(catalog_ref).pages(page_tree_ref);
+    writer.pages(page_tree_ref).count(1).kids([page_ref]);
 
-    ctx.push();
-    let content = content_stream(&tree.root, &mut writer, &mut ctx);
+    // Generate main content
+    ctx.deferrer.push();
+    let tree_x_object = render::tree_to_x_object(tree, &mut writer, &mut ctx);
+    let mut content = Content::new();
+    content.x_object(tree_x_object.as_name());
 
-    write_masks(tree, &mut writer, &mut ctx);
+    let content_stream = ctx.finish_content(content);
+    let mut stream = writer.stream(content_ref, &content_stream);
 
-    let mut page = writer.page(page_id);
-    page.media_box(c.bbox());
-    page.parent(page_tree_id);
-    page.contents(content_id);
-
-    let mut resources = page.resources();
-    ctx.pop(&mut resources);
-
-    resources.finish();
-    page.finish();
-
-    let mut stream = writer.stream(content_id, &content);
-    if ctx.compress {
+    if ctx.options.compress {
         stream.filter(Filter::FlateDecode);
     }
 
     stream.finish();
 
-    writer.document_info(ctx.alloc_ref()).producer(TextStr("svg2pdf"));
+    let mut page = writer.page(page_ref);
+    let mut page_resources = page.resources();
+    ctx.deferrer.pop(&mut page_resources);
+    page_resources.finish();
+
+    page.media_box(Rect::new(
+        0.0,
+        0.0,
+        dpi_ratio(options.dpi) * page_size.width() as f32,
+        dpi_ratio(options.dpi) * page_size.height() as f32,
+    ));
+    page.parent(page_tree_ref);
+    page.contents(content_ref);
+    page.finish();
+
+    let document_info_id = ctx.alloc_ref();
+    writer.document_info(document_info_id).producer(TextStr("svg2pdf"));
 
     writer.finish()
 }
 
-/// Convert a [`usvg` tree](Tree) into a Form XObject that can be used as part
-/// of a larger document.
+/// Convert a [`usvg` tree](usvg::Tree) into a Form XObject that can be used as
+/// part of a larger document.
 ///
 /// This method is intended for use in an existing [`PdfWriter`] workflow. It
 /// will always return an XObject with the width and height of one printer's
@@ -314,8 +218,8 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 ///
 /// The resulting object can be used by registering a name and the `id` with a
 /// page's [`/XObject`](pdf_writer::writers::Resources::x_objects) resources
-/// dictionary and then invoking the [`Do`](pdf_writer::Content::x_object)
-/// operator with the name in the page's content stream.
+/// dictionary and then invoking the [`Do`](Content::x_object) operator with the
+/// name in the page's content stream.
 ///
 /// As the conversion process may need to create multiple indirect objects in
 /// the PDF, this function allocates consecutive IDs starting at `id` for its
@@ -324,7 +228,8 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// ## Example
 /// Write a PDF file with some text and an SVG graphic.
 ///
-/// ```rust
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf;
 /// use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, Str};
 /// use usvg::TreeParsing;
@@ -363,8 +268,9 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 ///
 /// // Let's add an SVG graphic to this file.
 /// // We need to load its source first and manually parse it into a usvg Tree.
-/// let svg = std::fs::read_to_string("tests/example.svg").unwrap();
-/// let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+/// let path = "tests/svg/custom/integration/matplotlib/step.svg";
+/// let svg = std::fs::read_to_string(path)?;
+/// let tree = usvg::Tree::from_str(&svg, &usvg::Options::default())?;
 ///
 /// // Then, we will write it to the page as the 6th indirect object.
 /// //
@@ -384,407 +290,85 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 ///
 /// // Add our graphic.
 /// content
-///     .transform([300.0, 0.0, 0.0, 300.0, 147.5, 385.0])
+///     .transform([300.0, 0.0, 0.0, 225.0, 147.5, 385.0])
 ///     .x_object(svg_name);
 ///
 /// // Write the file to the disk.
 /// writer.stream(content_id, &content.finish());
-/// std::fs::write("target/embedded.pdf", writer.finish()).unwrap();
+/// std::fs::write("target/embedded.pdf", writer.finish())?;
+/// # Ok(()) }
 /// ```
 pub fn convert_tree_into(
     tree: &Tree,
     options: Options,
     writer: &mut PdfWriter,
-    id: Ref,
+    start_ref: Ref,
 ) -> Ref {
-    let c = get_sizings(tree, &options);
-    let mut ctx = Context::new(options.compress, c);
+    let mut ctx = Context::new(
+        tree,
+        options,
+        initial_transform(&options, tree, tree.size),
+        Some(start_ref.get()),
+    );
 
-    ctx.next_id = id.get() + 1;
+    let x_ref = ctx.alloc_ref();
+    ctx.deferrer.push();
 
-    preregister(tree, writer, &mut ctx);
+    let tree_x_object = render::tree_to_x_object(tree, writer, &mut ctx);
+    let mut content = Content::new();
+    content.x_object(tree_x_object.as_name());
 
-    ctx.push();
-    let content = content_stream(&tree.root, writer, &mut ctx);
+    let content_stream = ctx.finish_content(content);
 
-    write_masks(tree, writer, &mut ctx);
-
-    let bbox = ctx.c.bbox();
-
-    let mut xobject = writer.form_xobject(id, &content);
-    xobject.bbox(bbox);
-    xobject.matrix([
-        1.0 / (bbox.x2 - bbox.x1),
+    let mut x_object = writer.form_xobject(x_ref, &content_stream);
+    x_object.bbox(ctx.get_rect().as_pdf_rect());
+    // Revert the PDF transformation so that the resulting XObject is 1x1 in size.
+    x_object.matrix([
+        1.0 / ctx.get_rect().width() as f32,
         0.0,
         0.0,
-        1.0 / (bbox.y2 - bbox.y1),
+        1.0 / ctx.get_rect().height() as f32,
         0.0,
         0.0,
     ]);
 
-    if ctx.compress {
-        xobject.filter(Filter::FlateDecode);
+    if ctx.options.compress {
+        x_object.filter(Filter::FlateDecode);
     }
 
-    let mut resources = xobject.resources();
-    ctx.pop(&mut resources);
+    let mut resources = x_object.resources();
+    ctx.deferrer.pop(&mut resources);
 
     ctx.alloc_ref()
 }
 
-/// Calculates the bounding box and size conversions for an usvg tree.
-fn get_sizings(tree: &Tree, options: &Options) -> CoordToPdf {
-    let native_size = tree.size;
-    let viewport = if let Some((width, height)) = options.viewport {
-        (width, height)
-    } else {
-        (native_size.width(), native_size.height())
-    };
-
-    CoordToPdf::new(viewport, options.dpi, tree.view_box, options.aspect)
-}
-
-fn preregister(tree: &Tree, writer: &mut PdfWriter, ctx: &mut Context) {
-    tree.paint_servers(|paint| match paint {
-        Paint::LinearGradient(ref lg) => {
-            register_functions(writer, ctx, &lg.id, &lg.base.stops);
-        }
-        Paint::RadialGradient(ref rg) => {
-            register_functions(writer, ctx, &rg.id, &rg.base.stops);
-        }
-        _ => {}
-    });
-}
-
-/// Write a content stream for a node.
-fn content_stream(
-    node: &usvg::Node,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-) -> Vec<u8> {
-    let mut content = Content::new();
-    let num = ctx.alloc_gs();
-
-    if let Some(reference) = ctx
-        .initial_mask
-        .as_ref()
-        .and_then(|id| ctx.pending_groups.get(id).map(|g| g.reference))
-    {
-        content.set_parameters(Name(format!("gs{}", num).as_bytes()));
-        ctx.pending_graphics.push(PendingGS::soft_mask(reference, num));
-    }
-
-    for element in node.children() {
-        if &element == node {
-            continue;
-        }
-
-        match *element.borrow() {
-            NodeKind::Path(ref path) => {
-                path.render(&element, writer, &mut content, ctx);
-            }
-            NodeKind::Group(ref group) => {
-                group.render(&element, writer, &mut content, ctx);
-            }
-            NodeKind::Image(ref image) => {
-                image.render(&element, writer, &mut content, ctx);
-            }
-            _ => {}
-        }
-    }
-
-    let res = content.finish();
-
-    if ctx.compress {
-        deflate(&res)
-    } else {
-        res
-    }
-}
-
-/// Draw a clipping path into a content stream.
-fn apply_clip_path(
-    path: Option<Rc<usvg::ClipPath>>,
-    content: &mut Content,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-) {
-    let path = match path {
-        Some(path) => path,
-        None => return,
-    };
-
-    apply_clip_path(path.clip_path.clone(), content, writer, ctx);
-
-    let old = ctx.c.concat_transform(path.transform);
-
-    for child in (*path).root.children() {
-        match *child.borrow() {
-            NodeKind::Path(ref path) => {
-                draw_path(path.data.segments(), path.transform, content, &ctx.c);
-                content.clip_nonzero();
-                content.end_path();
-            }
-            NodeKind::Group(ref group) => {
-                group.render(&child, writer, content, ctx);
-            }
-            _ => unreachable!(),
-        }
-    }
-
-    ctx.c.set_transform(old);
-}
-
-/// Prepare a mask to be written to the file. This will calculate the metadata
-/// and create a `pending_group`.
-fn apply_mask(
-    mask: Option<Rc<usvg::Mask>>,
-    bbox: usvg::Rect,
-    pdf_bbox: Rect,
-    ctx: &mut Context,
-) -> Option<Ref> {
-    let mask = match mask {
-        Some(mask) => mask,
-        None => return None,
-    };
-
-    let reference = ctx.alloc_ref();
-    let (bbox, matrix) = if mask.content_units == usvg::Units::UserSpaceOnUse {
-        (ctx.c.bbox(), None)
-    } else {
-        let point = mask.root.transform().apply(mask.rect.x(), mask.rect.y());
-        let (x, y) = ctx.c.point(point);
-        let transform = [1.0, 0.0, 0.0, 1.0, bbox.x() as f32 + x, bbox.y() as f32 + y];
-        (pdf_bbox, Some(transform))
-    };
-
-    apply_mask(mask.mask.clone(), mask.rect, pdf_bbox, ctx);
-
-    let context_transform = ctx.c.get_transform();
-
-    ctx.pending_groups.insert(
-        mask.id.clone(),
-        PendingGroup {
-            reference,
-            bbox,
-            matrix,
-            transform: context_transform,
-            initial_mask: mask.mask.as_ref().map(|m| m.id.clone()),
-        },
+/// Return the initial transform that is necessary for the conversion between SVG coordinates
+/// and the final PDF page (including DPI and a custom viewport).
+fn initial_transform(options: &Options, tree: &Tree, actual_size: Size) -> Transform {
+    // Account for DPI.
+    let dpi_transform = Transform::new_scale(
+        dpi_ratio(options.dpi) as f64,
+        dpi_ratio(options.dpi) as f64,
     );
 
-    Some(reference)
-}
+    // Account for the custom viewport that has been passed in the Options struct. If nothing has
+    // been passed, actual_size will be same as tree.size, so the transform will just be the
+    // default transform.
+    let custom_viewport_transform = view_box_to_transform(
+        usvg::Rect::new(0.0, 0.0, tree.size.width(), tree.size.height()).unwrap(),
+        options.aspect.unwrap_or(AspectRatio {
+            defer: false,
+            align: Align::None,
+            slice: false,
+        }),
+        actual_size,
+    );
 
-/// A color helper function that stores colors with values between 0.0 and 1.0.
-#[derive(Debug, Clone, Copy)]
-struct RgbColor {
-    /// Red.
-    r: f32,
-    /// Green.
-    g: f32,
-    /// Blue.
-    b: f32,
-}
+    // Account for the direction of the y axis and the shift of the origin in the coordinate system.
+    let pdf_transform = Transform::new(1.0, 0.0, 0.0, -1.0, 0.0, actual_size.height());
 
-impl RgbColor {
-    /// Create a new color.
-    fn new(r: f32, g: f32, b: f32) -> RgbColor {
-        RgbColor { r, g, b }
-    }
-
-    /// Create a new color from u8 color components between 0.0 and 255.0.
-    fn from_u8(r: u8, g: u8, b: u8) -> RgbColor {
-        RgbColor::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
-    }
-
-    /// Create a RGB array for use in PDF.
-    fn to_array(&self) -> [f32; 3] {
-        [self.r, self.g, self.b]
-    }
-}
-
-impl From<usvg::Color> for RgbColor {
-    fn from(color: usvg::Color) -> Self {
-        Self::from_u8(color.red, color.green, color.blue)
-    }
-}
-
-/// Write the functions for a gradient with its stops. Also registers them with
-/// the context and can create an alpha gradient function.
-fn register_functions(
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-    id: &str,
-    stops: &[Stop],
-) {
-    // The function may be called multiple times per paint, but we only need to
-    // write once.
-    if ctx.function_map.contains_key(id) {
-        return;
-    }
-
-    let func_ref = ctx.alloc_ref();
-    stops_to_function(writer, func_ref, stops, false);
-
-    let alpha_ref = if stops.iter().any(|stop| stop.opacity.get() < 1.0) {
-        let alpha_ref = ctx.alloc_ref();
-        stops_to_function(writer, alpha_ref, &stops, true);
-        Some(alpha_ref)
-    } else {
-        None
-    };
-
-    ctx.function_map.insert(id.to_string(), (func_ref, alpha_ref));
-}
-
-/// Convert a list of stops to a function and write it.
-fn stops_to_function(
-    writer: &mut PdfWriter,
-    id: Ref,
-    stops: &[Stop],
-    alpha: bool,
-) -> bool {
-    let range = [0.0f32, 1.0f32].into_iter().cycle().take(if alpha { 2 } else { 6 });
-
-    let set_alphas =
-        |exp: &mut ExponentialFunction, a_alpha: Opacity, b_alpha: Opacity| {
-            exp.c0([a_alpha.get() as f32]);
-            exp.c1([b_alpha.get() as f32]);
-        };
-
-    let set_rgbs =
-        |exp: &mut ExponentialFunction, a_color: RgbColor, b_color: RgbColor| {
-            exp.c0(a_color.to_array());
-            exp.c1(b_color.to_array());
-        };
-
-    if stops.is_empty() {
-        return false;
-    } else if stops.len() == 1 {
-        let mut exp = writer.exponential_function(id);
-        let stop = stops[0];
-        let color = RgbColor::from(stop.color);
-
-        exp.domain([0.0, 1.0]);
-        exp.range(range);
-        if alpha {
-            set_alphas(&mut exp, stop.opacity, stop.opacity)
-        } else {
-            set_rgbs(&mut exp, color, color);
-        }
-
-        exp.n(1.0);
-        return true;
-    }
-
-    let mut stitching = writer.stitching_function(id);
-    stitching.domain([0.0, 1.0]);
-    stitching.range(range.clone());
-
-    let mut func_array = stitching.insert(Name(b"Functions")).array();
-    let mut bounds = Vec::new();
-    let mut encode = Vec::with_capacity(2 * (stops.len() - 1));
-
-    let stops = if stops[0].offset.get() != 0.0 {
-        let mut appended = stops[0].clone();
-        // Only returns none if value < 0.0 or > 1.0.
-        appended.offset = usvg::StopOffset::new(0.0).unwrap();
-
-        let mut res = vec![appended];
-        res.extend_from_slice(stops);
-        res
-    } else {
-        stops.to_vec()
-    };
-
-    for window in stops.windows(2) {
-        let (a, b) = (window[0], window[1]);
-        let (a_color, b_color) = (RgbColor::from(a.color), RgbColor::from(b.color));
-        bounds.push(b.offset.get() as f32);
-        let mut exp = ExponentialFunction::start(func_array.push());
-        exp.domain([0.0, 1.0]);
-        exp.range(range.clone());
-        if alpha {
-            set_alphas(&mut exp, a.opacity, b.opacity);
-        } else {
-            set_rgbs(&mut exp, a_color, b_color);
-        }
-
-        exp.n(1.0);
-
-        encode.extend([0.0, 1.0]);
-    }
-
-    func_array.finish();
-    bounds.pop();
-    stitching.bounds(bounds);
-    stitching.encode(encode);
-
-    true
-}
-
-/// Create and return the writer for an transparency group form XObject.
-fn form_xobject<'a>(
-    writer: &'a mut PdfWriter,
-    reference: Ref,
-    content: &'a [u8],
-    bbox: Rect,
-    compress: bool,
-    has_color: bool,
-) -> FormXObject<'a> {
-    let mut form = writer.form_xobject(reference, content);
-    form.bbox(bbox);
-
-    if compress {
-        form.filter(Filter::FlateDecode);
-    }
-
-    let mut group = form.group();
-    group.transparency();
-    group.isolated(true);
-    group.knockout(false);
-
-    let space = group.color_space();
-    if has_color {
-        space.srgb();
-    } else {
-        space.d65_gray();
-    }
-
-    group.finish();
-    form
-}
-
-/// Compress data with the DEFLATE algorithm.
-fn deflate(data: &[u8]) -> Vec<u8> {
-    const COMPRESSION_LEVEL: u8 = 6;
-    miniz_oxide::deflate::compress_to_vec_zlib(data, COMPRESSION_LEVEL)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::fs;
-
-    #[test]
-    fn files() {
-        let paths = fs::read_dir("tests").unwrap();
-        for path in paths {
-            let path = path.unwrap();
-            let base_name = path.file_name().to_string_lossy().to_string();
-
-            println!("{}", base_name);
-
-            let doc = fs::read_to_string(path.path()).unwrap();
-            let mut options = Options::default();
-            options.dpi = 72.0;
-            let buf = convert_str(&doc, options).unwrap();
-
-            let len = base_name.len();
-            let file_name = format!("{}.pdf", &base_name[0..len - 4]);
-
-            std::fs::write(format!("target/{}", file_name), buf).unwrap();
-        }
-    }
+    let mut base_transform = dpi_transform;
+    base_transform.append(&pdf_transform);
+    base_transform.append(&custom_viewport_transform);
+    base_transform
 }

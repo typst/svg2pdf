@@ -6,6 +6,8 @@ use clap::Parser;
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
 use usvg::{TreeParsing, TreeTextToPath};
 
+use svg2pdf::Options;
+
 #[derive(Debug, Parser)]
 #[clap(about, version)]
 struct Args {
@@ -15,7 +17,7 @@ struct Args {
     output: Option<PathBuf>,
     /// The number of SVG pixels per PDF points.
     #[clap(long, default_value = "72.0")]
-    dpi: f64,
+    dpi: f32,
 }
 
 fn main() {
@@ -28,16 +30,13 @@ fn main() {
 fn run() -> Result<(), String> {
     let args = Args::parse();
 
-    // Determine output path.
     let name =
         Path::new(args.input.file_name().ok_or("Input path does not point to a file")?);
     let output = args.output.unwrap_or_else(|| name.with_extension("pdf"));
 
-    // Load source file.
     let svg =
         std::fs::read_to_string(&args.input).map_err(|_| "Failed to load SVG file")?;
 
-    // Convert string to SVG.
     let options = usvg::Options::default();
     let mut fontdb = fontdb::Database::new();
     fontdb.load_system_fonts();
@@ -45,12 +44,9 @@ fn run() -> Result<(), String> {
     let mut tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
     tree.convert_text(&fontdb);
 
-    // Convert SVG to PDF.
-    let mut options = svg2pdf::Options::default();
-    options.dpi = args.dpi;
-    let pdf = svg2pdf::convert_tree(&tree, options);
+    let pdf =
+        svg2pdf::convert_tree(&tree, Options { dpi: args.dpi, ..Options::default() });
 
-    // Write output file.
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 
     Ok(())

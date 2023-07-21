@@ -1,8 +1,0 @@
-<svg viewBox="-10 -10 120 120" xmlns="http://www.w3.org/2000/svg">
-<mask id="a">
-<path fill="#fff" d="M0 0h100v100H0z"/>
-<path d="M10 35a20 20 0 0 1 40 0 20 20 0 0 1 40 0q0 30-40 60-40-30-40-60Z"/>
-</mask>
-<path fill="orange" d="M-10 110h120V-10z"/>
-<circle cx="50" cy="50" r="50" mask="url(#a)"/>
-</svg>

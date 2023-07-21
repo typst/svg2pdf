@@ -18,14 +18,15 @@ so no quality is lost.
 This example reads an SVG file and writes the corresponding PDF back to the disk.
 
 ```rust
-let svg = std::fs::read_to_string("tests/example.svg").unwrap();
+let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
+let svg = std::fs::read_to_string(path)?;
 
 // This can only fail if the SVG is malformed. This one is not.
-let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default()).unwrap();
+let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default())?;
 
 // ... and now you have a Vec<u8> which you could write to a file or
 // transmit over the network!
-std::fs::write("target/example.pdf", pdf).unwrap();
+std::fs::write("target/time_series.pdf", pdf)?;
 ```
 
 ## CLI
@@ -43,7 +44,8 @@ svg2pdf your.svg
 ```
 
 ## Supported features
-
+In general, a large part of the SVG specification is supported, including
+features like:
 - Path drawing with fills and strokes
 - Gradients
 - Patterns
@@ -53,11 +55,15 @@ svg2pdf your.svg
 - Respecting the `keepAspectRatio` attribute
 - Raster images and nested SVGs
 
-Filters are not currently supported and embedded raster images are not color
-managed. Instead, they use PDF's `DeviceRGB` color space.
+## Unsupported features
+Among the unsupported features are currently:
+- The `spreadMethod` attribute of gradients
+- Filters
+- Blend modes
+- Raster images are not color managed but use PDF's DeviceRGB color space
+- A number of features that were added in SVG2
 
 ## Contributing
-
 We are looking forward to receiving your bugs and feature requests in the Issues
 tab. We would also be very happy to accept PRs for bug fixes, features, or
 refactorings!
@@ -73,8 +79,7 @@ Thanks to each and every prospective contributor for the effort you (plan to)
 invest in this project and for adopting it!
 
 ## License
-
-svg2pdf is licensed under a MIT / Apache 2.0 dual license.
+`svg2pdf` is licensed under a MIT / Apache 2.0 dual license.
 
 Users and consumers of the library may choose which of those licenses they want
 to apply whereas contributors have to accept that their code is in compliance
