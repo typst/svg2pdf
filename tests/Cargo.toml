@@ -6,24 +6,26 @@ authors.workspace = true
 edition.workspace = true
 repository.workspace = true
 license.workspace = true
-default-run = "test"
+publish = false
+
+[lib]
+test = false
+doctest = false
 
 [[test]]
 name = "tests"
-path = "src/test.rs"
+path = "src/tests.rs"
 harness = false
-
-[[bin]]
-name = "test"
-path = "src/test.rs"
 
 [[bin]]
 name = "generate"
 path = "src/generate.rs"
+test = false
 
 [[bin]]
 name = "typst"
 path = "src/typst.rs"
+test = false
 
 [dependencies]
 fontdb = "0.13"

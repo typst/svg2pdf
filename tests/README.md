@@ -23,18 +23,18 @@ You can find the tests in `svg/resvg`. In addition to that, a couple of custom t
 that cover certain other edge cases and some integration tests. You can find them in
 `svg/custom`. In the `ref` folder, you can find the corresponding reference images.
 
-There are three binary targets in this crate: `test`, `generate` and `typst`.
+There are three binary targets in this crate: `tests`, `generate` and `typst`.
 
-# Test
+# Tests
 
-The `test` target allows you to run the whole test suite to check whether the current
+The `tests` target allows you to run the whole test suite to check whether the current
 implementation of `svg2pdf` produces the same output as the ones before. You should run it
-using the following command: `cargo run --release`, or alternatively `cargo run --release --bin test` (Make sure to run it in release mode,
+using the following command: `cargo test --release` (Make sure to run it in release mode,
 otherwise it will be very slow!)
 
 Once you run this command, it will go through each test case and print out the ones that were
 skipped and the ones that were failed. If you want to see every file that has been tested,
-you can pass the verbose flag to the command: `cargo run --release -- --verbose`.
+you can pass the verbose flag to the command: `cargo test --release -- --verbose`.
 
 - A test case will be skipped if there exists an SVG file that doesn't have a corresponding
 reference image. Currently, this is the case for a few tests that either don't work correctly
@@ -49,7 +49,7 @@ is the expected image, the middle one the pixel difference and the right one the
 image). If some parts of the core logic of the program have been changed, it is possible
 that the images rendered by pdfium actually looks _pretty much_ the same but only differs
 in a few sub-pixel ranges. You will notice this if you look at the diff image. If this is the
-case for all failed tests, you can just run the command `cargo run --release -- --replace`,
+case for all failed tests, you can just run the command `cargo test --release -- --replace`,
 in which case all reference images of the failed tests will be overridden with the
 new ones. Then you just need to check the new reference images into the repository. However,
 if an image significantly differs from its reference image, you will have to investigate the

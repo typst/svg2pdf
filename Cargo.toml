@@ -25,6 +25,10 @@ default = ["image"]
 image = ["dep:image"]
 cli = ["dep:clap", "dep:termcolor", "usvg/text", "dep:fontdb"]
 
+[lib]
+test = false
+doctest = false
+
 [[bin]]
 name = "svg2pdf"
 path = "src/main.rs"
