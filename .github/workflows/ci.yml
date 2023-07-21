@@ -12,7 +12,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -28,14 +27,14 @@ jobs:
           curl -LO https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F5880/pdfium-linux-x64.tgz
           mkdir pdfium-linux-x64
           tar -xvzf ./pdfium-linux-x64.tgz -C pdfium-linux-x64
-          mv ./pdfium-linux-x64/lib/libpdfium.so ./pdfium_lib
+          mv ./pdfium-linux-x64/lib/libpdfium.so ./tests/pdfium_lib
 
-      - name: Build svg2pdf-tests
-        run: cargo build --release
+      - name: Build svg2pdf
+        run: cargo build --all --release
 
       - name: Run tests
         id: tests
-        run: cargo run --release
+        run: cargo test --release --workspace
 
       - name: Upload artifacts
         if: failure()

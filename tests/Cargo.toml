@@ -8,6 +8,11 @@ repository.workspace = true
 license.workspace = true
 default-run = "test"
 
+[[test]]
+name = "tests"
+path = "src/test.rs"
+harness = false
+
 [[bin]]
 name = "test"
 path = "src/test.rs"
