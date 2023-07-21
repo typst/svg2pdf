@@ -1,7 +1,8 @@
+use std::fs;
+
 use clap::Parser;
 use indicatif::{ProgressBar, ProgressStyle};
 use regex::Regex;
-use std::fs;
 
 use svg2pdf_tests::*;
 
@@ -22,7 +23,7 @@ fn main() {
 
     let _ = fs::remove_dir_all(PDF_DIR);
 
-    //Only generate the ones that match the subset selected
+    // Only generate the ones that match the subset selected
     let filter_replace = |f: &TestFile| {
         args.subset
             .as_ref()

@@ -1,12 +1,14 @@
+use std::fmt::{self, Display, Formatter};
+use std::fs;
+use std::io::{self, Write};
+use std::process::ExitCode;
+
 use clap::Parser;
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
-use std::fmt::Formatter;
-use std::io::Write;
-use std::process::ExitCode;
-use std::{fmt, fs, io};
-use svg2pdf_tests::*;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+
+use svg2pdf_tests::*;
 
 #[derive(Parser, Debug)]
 #[clap(about, version)]
@@ -23,8 +25,8 @@ enum TestStatus {
     Skipped,
 }
 
-impl fmt::Display for TestStatus {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+impl Display for TestStatus {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             TestStatus::Success => write!(f, "SUCCESS"),
             TestStatus::Failure => write!(f, "FAILURE"),

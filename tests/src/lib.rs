@@ -1,13 +1,15 @@
+use std::path::{Path, PathBuf};
+
 use fontdb::Database;
 use image::RgbaImage;
 use lazy_static::lazy_static;
 use oxipng::{InFile, OutFile};
 use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
-use std::path::{Path, PathBuf};
-use svg2pdf::Options;
 use usvg::{Tree, TreeParsing, TreeTextToPath};
 use walkdir::WalkDir;
+
+use svg2pdf::Options;
 
 pub const SVG_DIR: &str = "svgs";
 pub const REF_DIR: &str = "references";

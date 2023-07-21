@@ -1,13 +1,14 @@
-use crate::util::context::Context;
-use crate::util::helper::{ColorExt, NameExt, RectExt, TransformExt};
-use pdf_writer::types::{MaskType, ShadingType};
-
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use std::rc::Rc;
+
+use pdf_writer::types::{MaskType, ShadingType};
+use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use usvg::{
     LinearGradient, NormalizedF64, Paint, RadialGradient, Stop, StopOffset, Transform,
     Units,
 };
+
+use crate::util::context::Context;
+use crate::util::helper::{ColorExt, NameExt, RectExt, TransformExt};
 
 /// Turn a group into an shading object (including a soft mask if the gradient contains stop opacities).
 /// Returns the name (= the name in the `Resources` dictionary) of the shading object and optionally

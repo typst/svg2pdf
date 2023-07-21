@@ -7,11 +7,13 @@ pub mod mask;
 pub mod path;
 pub mod pattern;
 
+use std::rc::Rc;
+
+use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
+use usvg::{Node, NodeKind, Tree};
+
 use crate::util::context::Context;
 use crate::util::helper::{plain_bbox, TransformExt};
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
-use std::rc::Rc;
-use usvg::{Node, NodeKind, Tree};
 
 /// Turn a tree into an XObject. Returns the name (= the name in the `Resources` dictionary) of
 /// the XObject
@@ -47,7 +49,7 @@ pub fn tree_to_x_object(
     ctx.deferrer.add_x_object(x_ref)
 }
 
-pub trait Render {
+trait Render {
     fn render(&self, writer: &mut PdfWriter, content: &mut Content, ctx: &mut Context);
 }
 

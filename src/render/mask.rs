@@ -1,10 +1,12 @@
-use crate::render::group;
-use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
+use std::rc::Rc;
+
 use pdf_writer::types::MaskType;
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use std::rc::Rc;
 use usvg::{Mask, Node, NodeKind, Transform, Units};
+
+use super::group;
+use crate::util::context::Context;
+use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
 
 /// Render a mask into a content stream.
 pub fn render(

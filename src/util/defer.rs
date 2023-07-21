@@ -11,12 +11,14 @@ Once we are done writing the whole content stream, we can just pop the deferrer 
 add all of the named resources to the `Resources` dictionary of the XObject.
 */
 
-use crate::util::allocate::Allocator;
-use crate::util::helper::{NameExt, SRGB};
+use std::rc::Rc;
+
 use pdf_writer::types::ProcSet;
 use pdf_writer::writers::{ColorSpace, Resources};
 use pdf_writer::{Dict, Finish, Ref};
-use std::rc::Rc;
+
+use crate::util::allocate::Allocator;
+use crate::util::helper::{NameExt, SRGB};
 
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum PendingObjectType {

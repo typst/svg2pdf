@@ -1,11 +1,13 @@
-use crate::render::group;
-use crate::util::context::Context;
-use crate::util::helper::{NameExt, TransformExt};
+use std::rc::Rc;
+
 use pdf_writer::types::{PaintType, TilingType};
 use pdf_writer::{Content, Filter, PdfWriter};
-use std::rc::Rc;
 use usvg::utils::view_box_to_transform;
 use usvg::{NodeKind, Size, Transform, Units};
+
+use super::group;
+use crate::util::context::Context;
+use crate::util::helper::{NameExt, TransformExt};
 
 /// Turn a pattern into a Pattern object. Returns the name (= the name in the `Resources` dictionary) of
 /// the pattern

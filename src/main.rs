@@ -3,9 +3,10 @@ use std::path::{Path, PathBuf};
 use std::process;
 
 use clap::Parser;
-use svg2pdf::Options;
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
 use usvg::{TreeParsing, TreeTextToPath};
+
+use svg2pdf::Options;
 
 #[derive(Debug, Parser)]
 #[clap(about, version)]

@@ -28,12 +28,16 @@ cli = ["dep:clap", "dep:termcolor", "usvg/text", "dep:fontdb"]
 [[bin]]
 name = "svg2pdf"
 path = "src/main.rs"
+required-features = ["cli"]
 
 [dependencies]
 miniz_oxide = "0.7"
 pdf-writer = "0.7"
-usvg = {version = "0.32", default-features = false}
-image = {version = "0.24", features=["jpeg", "png", "gif"], optional = true}
-termcolor = {version = "1", optional = true}
+usvg = { version = "0.32", default-features = false }
+image = { version = "0.24", features = ["jpeg", "png", "gif"], optional = true }
+termcolor = { version = "1", optional = true }
 clap = { version = "3", features = ["derive"], optional = true }
 fontdb = { version = "0.13", optional= true }
+
+[dev-dependencies]
+usvg = { version = "0.32" }

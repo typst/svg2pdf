@@ -1,8 +1,8 @@
 .idea
 .vscode
-
-/target
 .DS_Store
-
-.idea
-.vscode
+/target
+/tests/pdfs
+/tests/diffs
+/tests/typst.typ
+/tests/typst.pdf

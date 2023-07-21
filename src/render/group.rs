@@ -1,10 +1,11 @@
-use crate::render::Render;
-use crate::render::{clip_path, mask};
+use std::rc::Rc;
+
+use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use usvg::Node;
+
+use super::{clip_path, mask, Render};
 use crate::util::context::Context;
 use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use std::rc::Rc;
-use usvg::Node;
 
 /// Render a group into a content stream.
 pub fn render(

@@ -4,6 +4,7 @@ For each object in a PDF document, a unique numerical ID needs to be assigned to
 the allocator is to keep track of the current ID. In addition to that, it allows us to generate
 names that will be used for the named resources of an object.
  */
+
 use pdf_writer::Ref;
 
 /// The struct that holds all of the necessary counters.

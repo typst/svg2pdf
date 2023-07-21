@@ -1,14 +1,16 @@
-use crate::render::group;
-use crate::render::path::draw_path;
-use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
+use std::rc::Rc;
+
 use pdf_writer::types::MaskType;
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use std::rc::Rc;
 use usvg::{ClipPath, FillRule, Node, NodeKind, Transform, Units, Visibility};
 
+use super::group;
+use super::path::draw_path;
+use crate::util::context::Context;
+use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
+
 /// Render a clip path into a content stream.
-pub(crate) fn render(
+pub fn render(
     node: &Node,
     clip_path: Rc<ClipPath>,
     writer: &mut PdfWriter,

@@ -1,13 +1,13 @@
-use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
 use pdf_writer::{Content, Finish, PdfWriter};
-
-use crate::render::{gradient, pattern};
-use crate::util::context::Context;
 use usvg::Fill;
 use usvg::Stroke;
 use usvg::{FillRule, LineCap, LineJoin, Paint, PathSegment, Visibility};
+
+use super::{gradient, pattern};
+use crate::util::context::Context;
+use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 
 /// Render a path into a content stream.
 pub fn render(
@@ -48,6 +48,7 @@ pub fn render(
 
     draw_path(path.data.segments(), content);
     finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
+
     content.restore_state();
 }
 

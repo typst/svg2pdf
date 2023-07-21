@@ -1,16 +1,16 @@
-use crate::util::context::Context;
-use crate::util::helper::{image_rect, NameExt, TransformExt};
 use std::rc::Rc;
 
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-
-use crate::{convert_tree_into, Options};
 use usvg::{ImageKind, Size, Transform, Tree, Visibility};
 
+use crate::util::context::Context;
+use crate::util::helper::{image_rect, NameExt, TransformExt};
+use crate::{convert_tree_into, Options};
+
 /// Render an image into a content stream.
-pub(crate) fn render(
+pub fn render(
     image: &usvg::Image,
     writer: &mut PdfWriter,
     content: &mut Content,
