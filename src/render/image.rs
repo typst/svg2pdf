@@ -80,7 +80,7 @@ pub fn render(
     content.save_state();
     content.transform(image.transform.as_array());
     // Clip the image so just the part inside of the view box is actually visible.
-    clip_image_to_rect(image.view_box.rect, content);
+    // clip_image_to_rect(image.view_box.rect, content);
 
     // Account for the x/y of the viewbox.
     content
