@@ -2,9 +2,9 @@ use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
 use pdf_writer::{Content, Finish, PdfWriter};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::Stroke;
 use usvg::{Fill, NonZeroRect};
 use usvg::{FillRule, LineCap, LineJoin, Paint, Visibility};
+use usvg::{Stroke, Transform};
 
 use super::{gradient, pattern};
 use crate::util::context::Context;
@@ -17,6 +17,7 @@ pub fn render(
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
+    accumulated_transform: Transform,
 ) {
     if path.visibility != Visibility::Visible {
         return;
@@ -24,6 +25,7 @@ pub fn render(
 
     content.save_state();
     content.transform(path.transform.as_array());
+    let accumulated_transform = accumulated_transform.pre_concat(path.transform);
     content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
     let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get());
@@ -40,11 +42,11 @@ pub fn render(
     }
 
     if let Some(stroke) = &path.stroke {
-        set_stroke(stroke, parent_bbox, content, writer, ctx);
+        set_stroke(stroke, parent_bbox, content, writer, ctx, accumulated_transform);
     }
 
     if let Some(fill) = &path.fill {
-        set_fill(fill, parent_bbox, content, writer, ctx);
+        set_fill(fill, parent_bbox, content, writer, ctx, accumulated_transform);
     }
 
     draw_path(path.data.segments(), content);
@@ -110,6 +112,7 @@ fn set_stroke(
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    accumulated_transform: Transform,
 ) {
     content.set_line_width(stroke.width.get());
     content.set_miter_limit(stroke.miterlimit.get());
@@ -138,13 +141,19 @@ fn set_stroke(
             content.set_stroke_color(c.as_array());
         }
         Paint::Pattern(p) => {
-            let pattern_name = pattern::create(p.clone(), parent_bbox, writer, ctx);
+            let pattern_name = pattern::create(
+                p.clone(),
+                parent_bbox,
+                writer,
+                ctx,
+                accumulated_transform,
+            );
             content.set_stroke_color_space(Pattern);
             content.set_stroke_pattern(None, pattern_name.as_name());
         }
         Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
             if let Some((pattern_name, mask)) =
-                gradient::create(paint, parent_bbox, writer, ctx)
+                gradient::create(paint, parent_bbox, writer, ctx, &accumulated_transform)
             {
                 // If the gradient contains stop with opacities, we need to write those separately
                 // using a soft mask.
@@ -164,6 +173,7 @@ fn set_fill(
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    accumulated_transform: Transform,
 ) {
     let paint = &fill.paint;
 
@@ -173,13 +183,19 @@ fn set_fill(
             content.set_fill_color(c.as_array());
         }
         Paint::Pattern(p) => {
-            let pattern_name = pattern::create(p.clone(), parent_bbox, writer, ctx);
+            let pattern_name = pattern::create(
+                p.clone(),
+                parent_bbox,
+                writer,
+                ctx,
+                accumulated_transform,
+            );
             content.set_fill_color_space(Pattern);
             content.set_fill_pattern(None, pattern_name.as_name());
         }
         Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
             if let Some((pattern_name, mask)) =
-                gradient::create(paint, parent_bbox, writer, ctx)
+                gradient::create(paint, parent_bbox, writer, ctx, &accumulated_transform)
             {
                 if let Some(mask) = mask {
                     content.set_parameters(mask.as_name());

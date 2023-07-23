@@ -47,12 +47,13 @@ Among the unsupported features are currently:
 mod render;
 mod util;
 
+use crate::render::tree_to_stream;
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect, Ref, TextStr};
 use usvg::utils::view_box_to_transform;
 use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, TreeParsing};
 
 use crate::util::context::Context;
-use crate::util::helper::{dpi_ratio, NameExt, RectExt};
+use crate::util::helper::{dpi_ratio, NameExt};
 
 /// Set size and scaling preferences for the conversion.
 #[derive(Copy, Clone)]
@@ -109,7 +110,7 @@ impl Default for Options {
             dpi: 72.0,
             viewport: None,
             aspect: None,
-            compress: true,
+            compress: false,
         }
     }
 }
@@ -159,9 +160,8 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 /// # Ok(()) }
 /// ```
 pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
-    let page_size = options.viewport.unwrap_or(tree.size);
-    let mut ctx =
-        Context::new(tree, options, initial_transform(&options, tree, page_size), None);
+    let pdf_size = pdf_size(tree, options);
+    let mut ctx = Context::new(tree, options, None);
     let mut writer = PdfWriter::new();
 
     let catalog_ref = ctx.alloc_ref();
@@ -174,10 +174,10 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 
     // Generate main content
     ctx.deferrer.push();
-    let tree_x_object = render::tree_to_x_object(tree, &mut writer, &mut ctx);
+    let tree_x_object =
+        render::tree_to_x_object(tree, &mut writer, &mut ctx, pdf_size, options.aspect);
     let mut content = Content::new();
     content.x_object(tree_x_object.as_name());
-
     let content_stream = ctx.finish_content(content);
     let mut stream = writer.stream(content_ref, &content_stream);
 
@@ -192,12 +192,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     ctx.deferrer.pop(&mut page_resources);
     page_resources.finish();
 
-    page.media_box(Rect::new(
-        0.0,
-        0.0,
-        dpi_ratio(options.dpi) * page_size.width(),
-        dpi_ratio(options.dpi) * page_size.height(),
-    ));
+    page.media_box(Rect::new(0.0, 0.0, pdf_size.width(), pdf_size.height()));
     page.parent(page_tree_ref);
     page.contents(content_ref);
     page.finish();
@@ -304,30 +299,29 @@ pub fn convert_tree_into(
     writer: &mut PdfWriter,
     start_ref: Ref,
 ) -> Ref {
-    let mut ctx = Context::new(
-        tree,
-        options,
-        initial_transform(&options, tree, tree.size),
-        Some(start_ref.get()),
-    );
+    let pdf_size = pdf_size(tree, options);
+    let mut ctx = Context::new(tree, options, Some(start_ref.get()));
 
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
-    let tree_x_object = render::tree_to_x_object(tree, writer, &mut ctx);
     let mut content = Content::new();
-    content.x_object(tree_x_object.as_name());
-
+    tree_to_stream(
+        tree,
+        writer,
+        &mut content,
+        &mut ctx,
+        initial_transform(options.aspect, tree, pdf_size),
+    );
     let content_stream = ctx.finish_content(content);
 
     let mut x_object = writer.form_xobject(x_ref, &content_stream);
-    x_object.bbox(ctx.get_rect().as_pdf_rect());
-    // Revert the PDF transformation so that the resulting XObject is 1x1 in size.
+    x_object.bbox(Rect::new(0.0, 0.0, pdf_size.width(), pdf_size.height()));
     x_object.matrix([
-        1.0 / ctx.get_rect().width(),
+        1.0 / pdf_size.width(),
         0.0,
         0.0,
-        1.0 / ctx.get_rect().height(),
+        1.0 / pdf_size.height(),
         0.0,
         0.0,
     ]);
@@ -342,31 +336,33 @@ pub fn convert_tree_into(
     ctx.alloc_ref()
 }
 
-/// Return the initial transform that is necessary for the conversion between SVG coordinates
-/// and the final PDF page (including DPI and a custom viewport).
-fn initial_transform(options: &Options, tree: &Tree, actual_size: Size) -> Transform {
-    // Account for DPI.
-    let dpi_transform =
-        Transform::from_scale(dpi_ratio(options.dpi), dpi_ratio(options.dpi));
+fn pdf_size(tree: &Tree, options: Options) -> Size {
+    let viewport_size = options.viewport.unwrap_or(tree.size);
+    Size::from_wh(
+        viewport_size.width() * dpi_ratio(options.dpi),
+        viewport_size.height() * dpi_ratio(options.dpi),
+    )
+    .unwrap()
+}
 
+/// Return the initial transform that is necessary for the conversion between SVG coordinates
+/// and the final PDF page.
+fn initial_transform(
+    aspect: Option<AspectRatio>,
+    tree: &Tree,
+    pdf_size: Size,
+) -> Transform {
     // Account for the custom viewport that has been passed in the Options struct. If nothing has
-    // been passed, actual_size will be same as tree.size, so the transform will just be the
+    // been passed, pdf_size should be the same as tree.size, so the transform will just be the
     // default transform.
     let custom_viewport_transform = view_box_to_transform(
         NonZeroRect::from_xywh(0.0, 0.0, tree.size.width(), tree.size.height()).unwrap(),
-        options.aspect.unwrap_or(AspectRatio {
-            defer: false,
-            align: Align::None,
-            slice: false,
-        }),
-        actual_size,
+        aspect.unwrap_or(AspectRatio { defer: false, align: Align::None, slice: false }),
+        pdf_size,
     );
 
     // Account for the direction of the y axis and the shift of the origin in the coordinate system.
-    let pdf_transform =
-        Transform::from_row(1.0, 0.0, 0.0, -1.0, 0.0, actual_size.height());
+    let pdf_transform = Transform::from_row(1.0, 0.0, 0.0, -1.0, 0.0, pdf_size.height());
 
-    dpi_transform
-        .pre_concat(pdf_transform)
-        .pre_concat(custom_viewport_transform)
+    pdf_transform.pre_concat(custom_viewport_transform)
 }

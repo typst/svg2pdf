@@ -47,10 +47,20 @@ pub fn create(
 
     match *mask.root.borrow() {
         NodeKind::Group(ref group) => {
+            let mut accumulated_transform = Transform::default();
             if mask.content_units == Units::ObjectBoundingBox {
                 content.transform(Transform::from_bbox(parent_svg_bbox).as_array());
+                accumulated_transform = Transform::from_bbox(parent_svg_bbox);
             }
-            content.x_object(group::create(&mask.root, group, writer, ctx).as_name());
+
+            group::render(
+                &mask.root,
+                group,
+                writer,
+                &mut content,
+                ctx,
+                accumulated_transform,
+            );
         }
         _ => unreachable!(),
     };
