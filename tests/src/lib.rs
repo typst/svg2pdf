@@ -78,7 +78,9 @@ impl TestFile {
         if self.is_integration_test() {
             1.0
         } else {
-            2.5
+            // resvg SVGs are usually only 200x200, so we can make them a bit bigger. And this
+            // conveniently also allows us to test whether the DPI feature works correctly.
+            1.5
         }
     }
 
