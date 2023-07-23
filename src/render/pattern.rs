@@ -7,7 +7,7 @@ use usvg::{NodeKind, NonZeroRect, Size, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{TransformExt};
+use crate::util::helper::TransformExt;
 
 /// Turn a pattern into a Pattern object. Returns the name (= the name in the `Resources` dictionary) of
 /// the pattern

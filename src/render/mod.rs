@@ -9,7 +9,7 @@ pub mod pattern;
 
 use std::rc::Rc;
 
-use crate::{initial_transform};
+use crate::initial_transform;
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
 
 use usvg::{AspectRatio, Node, NodeKind, Size, Transform, Tree};
