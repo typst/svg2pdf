@@ -7,7 +7,7 @@ use usvg::{NodeKind, NonZeroRect, Size, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{NameExt, TransformExt};
+use crate::util::helper::{TransformExt};
 
 /// Turn a pattern into a Pattern object. Returns the name (= the name in the `Resources` dictionary) of
 /// the pattern
@@ -16,6 +16,7 @@ pub fn create(
     parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    matrix: Transform,
 ) -> Rc<String> {
     let pattern_ref = ctx.alloc_ref();
     ctx.deferrer.push();
@@ -34,14 +35,15 @@ pub fn create(
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
-            let pattern_matrix = pattern.transform.pre_concat(Transform::from_row(
-                1.0,
-                0.0,
-                0.0,
-                1.0,
-                pattern_rect.x(),
-                pattern_rect.y(),
-            ));
+            let pattern_matrix =
+                matrix.pre_concat(pattern.transform).pre_concat(Transform::from_row(
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    pattern_rect.x(),
+                    pattern_rect.y(),
+                ));
 
             let mut pattern_content = Content::new();
             pattern_content.save_state();
@@ -64,8 +66,15 @@ pub fn create(
                 pattern_content.transform(pattern_transform.as_array());
             }
 
-            pattern_content
-                .x_object(group::create(&pattern.root, group, writer, ctx).as_name());
+            group::render(
+                &pattern.root,
+                group,
+                writer,
+                &mut pattern_content,
+                ctx,
+                Transform::default(),
+            );
+
             pattern_content.restore_state();
 
             let pattern_content_stream = ctx.finish_content(pattern_content);

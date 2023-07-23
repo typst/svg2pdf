@@ -18,14 +18,23 @@ pub fn create(
     parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    accumulated_transform: &Transform,
 ) -> Option<(Rc<String>, Option<Rc<String>>)> {
     match paint {
-        Paint::LinearGradient(l) => {
-            Some(create_linear_gradient(l.clone(), parent_bbox, writer, ctx))
-        }
-        Paint::RadialGradient(r) => {
-            Some(create_radial_gradient(r.clone(), parent_bbox, writer, ctx))
-        }
+        Paint::LinearGradient(l) => Some(create_linear_gradient(
+            l.clone(),
+            parent_bbox,
+            writer,
+            ctx,
+            accumulated_transform,
+        )),
+        Paint::RadialGradient(r) => Some(create_radial_gradient(
+            r.clone(),
+            parent_bbox,
+            writer,
+            ctx,
+            accumulated_transform,
+        )),
         _ => None,
     }
 }
@@ -43,6 +52,7 @@ fn create_linear_gradient(
     parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    accumulated_transform: &Transform,
 ) -> (Rc<String>, Option<Rc<String>>) {
     let properties = GradientProperties {
         coords: vec![gradient.x1, gradient.y1, gradient.x2, gradient.y2],
@@ -51,7 +61,7 @@ fn create_linear_gradient(
         transform: gradient.transform,
         units: gradient.units,
     };
-    create_shading_pattern(&properties, parent_bbox, writer, ctx)
+    create_shading_pattern(&properties, parent_bbox, writer, ctx, accumulated_transform)
 }
 
 fn create_radial_gradient(
@@ -59,6 +69,7 @@ fn create_radial_gradient(
     parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    accumulated_transform: &Transform,
 ) -> (Rc<String>, Option<Rc<String>>) {
     let properties = GradientProperties {
         coords: vec![
@@ -74,7 +85,7 @@ fn create_radial_gradient(
         transform: gradient.transform,
         units: gradient.units,
     };
-    create_shading_pattern(&properties, parent_bbox, writer, ctx)
+    create_shading_pattern(&properties, parent_bbox, writer, ctx, accumulated_transform)
 }
 
 fn create_shading_pattern(
@@ -82,6 +93,7 @@ fn create_shading_pattern(
     parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    accumulated_transform: &Transform,
 ) -> (Rc<String>, Option<Rc<String>>) {
     let pattern_ref = ctx.alloc_ref();
 
@@ -91,12 +103,13 @@ fn create_shading_pattern(
         None
     };
 
-    let matrix = if properties.units == Units::ObjectBoundingBox {
-        Transform::from_bbox(*parent_bbox)
-    } else {
-        Transform::default()
-    }
-    .pre_concat(properties.transform);
+    let matrix = accumulated_transform
+        .pre_concat(if properties.units == Units::ObjectBoundingBox {
+            Transform::from_bbox(*parent_bbox)
+        } else {
+            Transform::default()
+        })
+        .pre_concat(properties.transform);
 
     let shading_function_ref =
         get_shading_function(false, &properties.stops, writer, ctx);

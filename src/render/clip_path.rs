@@ -37,7 +37,7 @@ pub fn render(
     // should suffice. But in order to conform with the SVG specification, we also handle the case
     // of more complex clipping paths, even if this means that Safari won't display them correctly.
     if is_simple_clip_path(clip_path.clone()) {
-        create_simple_clip_path(clip_path, content);
+        create_simple_clip_path(node, clip_path, content);
     } else {
         content.set_parameters(
             create_complex_clip_path(node, clip_path, writer, ctx).as_name(),
@@ -46,8 +46,7 @@ pub fn render(
 }
 
 fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
-    clip_path.units == Units::UserSpaceOnUse
-        && clip_path.root.descendants().all(|n| match *n.borrow() {
+    clip_path.root.descendants().all(|n| match *n.borrow() {
             NodeKind::Path(ref path) => {
                 // PDFs clip path operator doesn't support the EvenOdd rule
                 path
@@ -69,13 +68,26 @@ fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
             .is_none()
 }
 
-fn create_simple_clip_path(clip_path: Rc<ClipPath>, content: &mut Content) {
+fn create_simple_clip_path(
+    parent: &Node,
+    clip_path: Rc<ClipPath>,
+    content: &mut Content,
+) {
     // Just a dummy operation, so that in case the clip path only has hidden children the clip
     // path will still be applied and everything will be hidden.
     content.move_to(0.0, 0.0);
 
+    let base_transform =
+        clip_path
+            .transform
+            .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
+                Transform::default()
+            } else {
+                Transform::from_bbox(plain_bbox(parent))
+            });
+
     let mut segments = vec![];
-    extend_segments_from_node(&clip_path.root, &clip_path.transform, &mut segments);
+    extend_segments_from_node(&clip_path.root, &base_transform, &mut segments);
     draw_path(segments.into_iter(), content);
     content.clip_nonzero();
     content.end_path();
@@ -154,8 +166,14 @@ fn create_complex_clip_path(
                 let parent_svg_bbox = plain_bbox(parent);
                 content.transform(Transform::from_bbox(parent_svg_bbox).as_array());
             }
-            content
-                .x_object(group::create(&clip_path.root, group, writer, ctx).as_name());
+            group::render(
+                &clip_path.root,
+                group,
+                writer,
+                &mut content,
+                ctx,
+                Transform::default(),
+            );
         }
         _ => unreachable!(),
     };
