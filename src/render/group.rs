@@ -1,11 +1,11 @@
 use std::rc::Rc;
 
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use usvg::{Node, Transform};
+use usvg::{BlendMode, Node, Transform};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
+use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt, BlendModeExt};
 
 /// Render a group into a content stream.
 pub fn render(
@@ -16,15 +16,13 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if group.opacity.get() != 1.0 {
-        // TODO: This doesn't work correctly yet. If the group has an opacity and the paths directly
-        // beneath it as well, the group opacity will be overwritten because the graphics state of the
-        // child will override it since they are in the same XObject.
+    if group.opacity.get() != 1.0 || group.blend_mode != BlendMode::Normal {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
         let mut gs = writer.ext_graphics(gs_ref);
         gs.non_stroking_alpha(group.opacity.get())
-            .stroking_alpha(group.opacity.get());
+            .stroking_alpha(group.opacity.get())
+            .blend_mode(group.blend_mode.to_pdf_blend_mode());
 
         gs.finish();
         content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).as_name());

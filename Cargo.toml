@@ -36,7 +36,7 @@ required-features = ["cli"]
 
 [dependencies]
 miniz_oxide = "0.7"
-pdf-writer = "0.7"
+pdf-writer = {git = "https://github.com/LaurenzV/pdf-writer", rev = "353b65d"}
 usvg = { version = "0.35.0", default-features = false }
 image = { version = "0.24", features = ["jpeg", "png", "gif"], optional = true }
 termcolor = { version = "1", optional = true }

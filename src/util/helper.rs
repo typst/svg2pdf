@@ -1,4 +1,5 @@
 use pdf_writer::{Name, Rect};
+use pdf_writer::types::BlendMode;
 use usvg::{BBox, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
@@ -44,6 +45,33 @@ pub trait RectExt {
 impl RectExt for NonZeroRect {
     fn as_pdf_rect(&self) -> Rect {
         Rect::new(self.x(), self.y(), self.x() + self.width(), self.y() + self.height())
+    }
+}
+
+pub trait BlendModeExt {
+    fn to_pdf_blend_mode(&self) -> BlendMode;
+}
+
+impl BlendModeExt for usvg::BlendMode {
+    fn to_pdf_blend_mode(&self) -> BlendMode {
+        match self {
+            usvg::BlendMode::Normal => BlendMode::Normal,
+            usvg::BlendMode::Multiply => BlendMode::Multiply,
+            usvg::BlendMode::Screen => BlendMode::Screen,
+            usvg::BlendMode::Overlay => BlendMode::Overlay,
+            usvg::BlendMode::Darken => BlendMode::Darken,
+            usvg::BlendMode::Lighten => BlendMode::Lighten,
+            usvg::BlendMode::ColorDodge => BlendMode::ColorDodge,
+            usvg::BlendMode::ColorBurn => BlendMode::ColorBurn,
+            usvg::BlendMode::HardLight => BlendMode::HardLight,
+            usvg::BlendMode::SoftLight => BlendMode::SoftLight,
+            usvg::BlendMode::Difference => BlendMode::Difference,
+            usvg::BlendMode::Exclusion => BlendMode::Exclusion,
+            usvg::BlendMode::Hue => BlendMode::Hue,
+            usvg::BlendMode::Saturation => BlendMode::Saturation,
+            usvg::BlendMode::Color => BlendMode::Color,
+            usvg::BlendMode::Luminosity => BlendMode::Luminosity,
+        }
     }
 }
 
