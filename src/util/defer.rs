@@ -102,7 +102,6 @@ impl Deferrer {
 
     /// Pop a stack frame and write the pending named resources into the `Resources` dictionary.
     pub fn pop(&mut self, resources: &mut Resources) {
-        // TODO: Could probably be optimized? Not every XObject needs the color space entry.
         resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
         resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
 
