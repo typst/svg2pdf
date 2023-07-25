@@ -5,7 +5,7 @@ use usvg::{BlendMode, Node, Transform};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt, BlendModeExt};
+use crate::util::helper::{plain_bbox, BlendModeExt, NameExt, RectExt, TransformExt};
 
 /// Render a group into a content stream.
 pub fn render(

@@ -1,5 +1,5 @@
-use pdf_writer::{Name, Rect};
 use pdf_writer::types::BlendMode;
+use pdf_writer::{Name, Rect};
 use usvg::{BBox, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
