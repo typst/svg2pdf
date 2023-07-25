@@ -22,7 +22,7 @@ pub fn render(
         let mut gs = writer.ext_graphics(gs_ref);
         gs.non_stroking_alpha(group.opacity.get())
             .stroking_alpha(group.opacity.get())
-            // TODO: Blend mode seem to render wrongly if a transformation is applied before?
+            // TODO: Blend modes don't quite work correctly yet.
             .blend_mode(group.blend_mode.to_pdf_blend_mode());
 
         gs.finish();
