@@ -39,21 +39,20 @@ In general, a large part of the SVG specification is supported, including featur
 Among the unsupported features are currently:
 - The `spreadMethod` attribute of gradients
 - Filters
-- Blend modes
 - Raster images are not color managed but use PDF's DeviceRGB color space
 - A number of features that were added in SVG2
-*/
+ */
 
-mod render;
-mod util;
-
-use crate::render::tree_to_stream;
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect, Ref, TextStr};
 use usvg::utils::view_box_to_transform;
 use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, TreeParsing};
 
+use crate::render::tree_to_stream;
 use crate::util::context::Context;
-use crate::util::helper::{dpi_ratio, NameExt};
+use crate::util::helper::dpi_ratio;
+
+mod render;
+mod util;
 
 /// Set size and scaling preferences for the conversion.
 #[derive(Copy, Clone)]
@@ -110,7 +109,7 @@ impl Default for Options {
             dpi: 72.0,
             viewport: None,
             aspect: None,
-            compress: false,
+            compress: true,
         }
     }
 }
@@ -119,7 +118,7 @@ impl Default for Options {
 ///
 /// Does not load any fonts and consequently cannot convert `text` elements. To
 /// convert text, you should convert your source string to a
-/// [`usvg` tree](usvg::Tree) manually,
+/// [`usvg` tree](Tree) manually,
 /// [convert text with usvg](usvg::TreeTextToPath::convert_text) and then use
 /// [`convert_tree`].
 ///
@@ -133,7 +132,7 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
     Ok(convert_tree(&tree, options))
 }
 
-/// Convert a [`usvg` tree](usvg::Tree) into a standalone PDF buffer.
+/// Convert a [`usvg` tree](Tree) into a standalone PDF buffer.
 ///
 /// ## Example
 /// The example below reads an SVG file, processes text within it, then converts
@@ -174,17 +173,20 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 
     // Generate main content
     ctx.deferrer.push();
-    let tree_x_object =
-        render::tree_to_x_object(tree, &mut writer, &mut ctx, pdf_size, options.aspect);
     let mut content = Content::new();
-    content.x_object(tree_x_object.as_name());
+    tree_to_stream(
+        tree,
+        &mut writer,
+        &mut content,
+        &mut ctx,
+        initial_transform(options.aspect, tree, pdf_size),
+    );
     let content_stream = ctx.finish_content(content);
     let mut stream = writer.stream(content_ref, &content_stream);
 
     if ctx.options.compress {
         stream.filter(Filter::FlateDecode);
     }
-
     stream.finish();
 
     let mut page = writer.page(page_ref);
@@ -194,6 +196,12 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 
     page.media_box(Rect::new(0.0, 0.0, pdf_size.width(), pdf_size.height()));
     page.parent(page_tree_ref);
+    page.group()
+        .transparency()
+        .isolated(true)
+        .knockout(false)
+        .color_space()
+        .srgb();
     page.contents(content_ref);
     page.finish();
 
@@ -203,7 +211,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     writer.finish()
 }
 
-/// Convert a [`usvg` tree](usvg::Tree) into a Form XObject that can be used as
+/// Convert a [`usvg` tree](Tree) into a Form XObject that can be used as
 /// part of a larger document.
 ///
 /// This method is intended for use in an existing [`PdfWriter`] workflow. It
@@ -336,7 +344,9 @@ pub fn convert_tree_into(
     ctx.alloc_ref()
 }
 
+/// Return the dimensions of the PDF page
 fn pdf_size(tree: &Tree, options: Options) -> Size {
+    // If no custom viewport is defined, we use the size of the tree.
     let viewport_size = options.viewport.unwrap_or(tree.size);
     Size::from_wh(
         viewport_size.width() * dpi_ratio(options.dpi),

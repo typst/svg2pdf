@@ -99,20 +99,21 @@ of your choice (keep in mind that you need to load the Noto
 Sans fonts in Typst as well to get the same output).
 
 Some observations that were made:
-- **Google Chrome**: Everything looks the same as in the reference
+- **Google Chrome**: Nested patterns are sometimes rendered wrongly, 
+but only when embedded via Typst. Seems to be a bug in Chrome. Blend modes
+also seem to be rendered wrongly, weirdly enough they work fine when
+rendered via pdfium in the test suite, though.
+- **Adobe Acrobat**: Everything looks the same as in the reference
 images.
-- **Adobe Acrobat**: Some colors seem to have a different "tone"
-and patterns on stroke are rendered a bit differently, but
-other than that everything looks the same.
-- **Firefox**: Stop opacities don't seem to be displayed
-correctly; patterns on stroke look a bit different. Otherwise,
-the rest looks correct.
+- **Firefox**: Anything where stop opacities are involved is not 
+rendered correctly.
 - **Safari**: Unfortunately, Safari has quite a few issues. Soft
 masks aren't displayed properly at all (they work when opening
 a PDF directly created by svg2pdf, but not once they are
-embedded via Typst). In addition, transforms on patterns and gradients
-are not applied properly. However, this most likely is an issue
+embedded via Typst). However, this most likely is an issue
 with the PDF rendering engine of Safari itself, so there is
 not much we can do. Most of the test cases still display fine.
-- **muPDF**: Patterns on strokes look a bit different, otherwise
-everything looks the same.
+- **muPDF**: Stroke opacities on linear gradients/patterns look different, 
+otherwise everything looks the same.
+- **xPDF**: Similarly to Firefox, stop opacities don't seem to be rendered
+well. Stroke opacities on linear gradients don't seem to render correctly.

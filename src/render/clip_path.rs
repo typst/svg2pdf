@@ -35,37 +35,32 @@ pub fn render(
     // only very few SVGs seem to have such complex clipping paths (they are not even rendered correctly
     // by all online converters that were tested), so in most real-life scenarios, the simple version
     // should suffice. But in order to conform with the SVG specification, we also handle the case
-    // of more complex clipping paths, even if this means that Safari won't display them correctly.
+    // of more complex clipping paths, even if this means that Safari will in some cases not
+    // display them correctly.
     if is_simple_clip_path(clip_path.clone()) {
         create_simple_clip_path(node, clip_path, content);
     } else {
         content.set_parameters(
-            create_complex_clip_path(node, clip_path, writer, ctx).as_name(),
+            create_complex_clip_path(node, clip_path, writer, ctx).to_pdf_name(),
         );
     }
 }
 
 fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
     clip_path.root.descendants().all(|n| match *n.borrow() {
-            NodeKind::Path(ref path) => {
-                // PDFs clip path operator doesn't support the EvenOdd rule
-                path
-                        .fill
-                        .as_ref()
-                        .map_or(true, |fill| fill.rule == FillRule::NonZero)
-            }
-            NodeKind::Group(ref group) => {
-                // Nested clip paths are not supported in PDF
-                group
-                    .clip_path
-                    .is_none()
-            }
-            _ => false,
-        })
-        // Nested clip paths are not supported in PDF
-        && clip_path
-            .clip_path
-            .is_none()
+        NodeKind::Path(ref path) => {
+            // While there is a clipping path for EvenOdd, it will produce wrong results
+            // if the clip-rule is defined on a group instead of on the children.
+            path.fill.as_ref().map_or(true, |fill| fill.rule == FillRule::NonZero)
+        }
+        NodeKind::Group(ref group) => {
+            // We can only intersect one clipping path with another one, meaning that we
+            // can convert nested clip paths if a second clip path is defined on the clip
+            // path itself, but not if it is defined on a child.
+            group.clip_path.is_none()
+        }
+        _ => false,
+    })
 }
 
 fn create_simple_clip_path(
@@ -73,6 +68,10 @@ fn create_simple_clip_path(
     clip_path: Rc<ClipPath>,
     content: &mut Content,
 ) {
+    if let Some(clip_path) = &clip_path.clip_path {
+        create_simple_clip_path(parent, clip_path.clone(), content);
+    }
+
     // Just a dummy operation, so that in case the clip path only has hidden children the clip
     // path will still be applied and everything will be hidden.
     content.move_to(0.0, 0.0);
@@ -83,7 +82,7 @@ fn create_simple_clip_path(
             .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(plain_bbox(parent))
+                Transform::from_bbox(plain_bbox(parent, false))
             });
 
     let mut segments = vec![];
@@ -103,26 +102,24 @@ fn extend_segments_from_node(
             if path.visibility != Visibility::Hidden {
                 let path_transform = transform.pre_concat(path.transform);
                 path.data.segments().for_each(|segment| match segment {
-                    PathSegment::MoveTo(p) => {
-                        let mut new_p = p;
-                        path_transform.map_point(&mut new_p);
-                        segments.push(PathSegment::MoveTo(new_p));
+                    PathSegment::MoveTo(mut p) => {
+                        path_transform.map_point(&mut p);
+                        segments.push(PathSegment::MoveTo(p));
                     }
-                    PathSegment::LineTo(p) => {
-                        let mut new_p = p;
-                        path_transform.map_point(&mut new_p);
-                        segments.push(PathSegment::LineTo(new_p));
+                    PathSegment::LineTo(mut p) => {
+                        path_transform.map_point(&mut p);
+                        segments.push(PathSegment::LineTo(p));
                     }
                     PathSegment::QuadTo(p1, p2) => {
-                        let mut new_ps = [p1, p2];
-                        path_transform.map_points(&mut new_ps);
-                        segments.push(PathSegment::QuadTo(new_ps[0], new_ps[1]));
+                        let mut points = [p1, p2];
+                        path_transform.map_points(&mut points);
+                        segments.push(PathSegment::QuadTo(points[0], points[1]));
                     }
                     PathSegment::CubicTo(p1, p2, p3) => {
-                        let mut new_ps = [p1, p2, p3];
-                        path_transform.map_points(&mut new_ps);
+                        let mut points = [p1, p2, p3];
+                        path_transform.map_points(&mut points);
                         segments
-                            .push(PathSegment::CubicTo(new_ps[0], new_ps[1], new_ps[2]));
+                            .push(PathSegment::CubicTo(points[0], points[1], points[2]));
                     }
                     PathSegment::Close => segments.push(PathSegment::Close),
                 })
@@ -134,12 +131,11 @@ fn extend_segments_from_node(
                 extend_segments_from_node(&child, &group_transform, segments);
             }
         }
-        // Images are not valid in a clip path
+        // Images are not valid in a clip path. Text will be converted into shapes beforehand.
         _ => {}
     }
 }
 
-// TODO: Figure out if there is a way to deduplicate and reuse parts of mask?
 fn create_complex_clip_path(
     parent: &Node,
     clip_path: Rc<ClipPath>,
@@ -156,15 +152,16 @@ fn create_complex_clip_path(
         render(parent, recursive_clip_path.clone(), writer, &mut content, ctx);
     }
 
-    content.transform(clip_path.transform.as_array());
+    content.transform(clip_path.transform.to_pdf_transform());
 
-    let pdf_bbox = plain_bbox(parent).as_pdf_rect();
+    let pdf_bbox = plain_bbox(parent, false).to_pdf_rect();
 
     match *clip_path.root.borrow() {
         NodeKind::Group(ref group) => {
             if clip_path.units == Units::ObjectBoundingBox {
-                let parent_svg_bbox = plain_bbox(parent);
-                content.transform(Transform::from_bbox(parent_svg_bbox).as_array());
+                let parent_svg_bbox = plain_bbox(parent, false);
+                content
+                    .transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
             }
             group::render(
                 &clip_path.root,
@@ -192,7 +189,7 @@ fn create_complex_clip_path(
     x_object
         .group()
         .transparency()
-        .isolated(true)
+        .isolated(false)
         .knockout(false)
         .color_space()
         .srgb();

@@ -2,14 +2,14 @@
 
 This includes information like for example what the size of the SVG is, whether content should be
 compressed and access to an instance of the deferrer + allocator.
-*/
+ */
 
 use pdf_writer::{Content, Ref};
 use usvg::utils::view_box_to_transform;
 use usvg::{NonZeroRect, Size, Transform, Tree, ViewBox};
 
-use crate::util::defer::Deferrer;
-use crate::util::helper::deflate;
+use super::defer::Deferrer;
+use super::helper::deflate;
 use crate::Options;
 
 /// Holds all of the necessary information for the conversion process.

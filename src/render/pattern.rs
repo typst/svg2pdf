@@ -1,15 +1,16 @@
+use std::ops::Mul;
 use std::rc::Rc;
 
 use pdf_writer::types::{PaintType, TilingType};
 use pdf_writer::{Content, Filter, PdfWriter};
 use usvg::utils::view_box_to_transform;
-use usvg::{NodeKind, NonZeroRect, Size, Transform, Units};
+use usvg::{NodeKind, NonZeroRect, Opacity, Size, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
 use crate::util::helper::TransformExt;
 
-/// Turn a pattern into a Pattern object. Returns the name (= the name in the `Resources` dictionary) of
+/// Turn a pattern into a tiling pattern. Returns the name (= the name in the `Resources` dictionary) of
 /// the pattern
 pub fn create(
     pattern: Rc<usvg::Pattern>,
@@ -17,21 +18,26 @@ pub fn create(
     writer: &mut PdfWriter,
     ctx: &mut Context,
     matrix: Transform,
+    initial_opacity: Option<Opacity>,
 ) -> Rc<String> {
     let pattern_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
     // Content units object bounding box should only be used if no view box is declared.
-    let use_content_units_object_bounding_box =
+    let content_units_obb =
         pattern.content_units == Units::ObjectBoundingBox && pattern.view_box.is_none();
 
-    let pattern_rect = if pattern.units == Units::ObjectBoundingBox
-        || use_content_units_object_bounding_box
-    {
+    let pattern_rect = if pattern.units == Units::ObjectBoundingBox || content_units_obb {
         pattern.rect.bbox_transform(*parent_bbox)
     } else {
         pattern.rect
     };
+
+    if let Some(initial_opacity) = initial_opacity {
+        if let NodeKind::Group(ref mut group) = *pattern.root.borrow_mut() {
+            group.opacity = group.opacity.mul(initial_opacity);
+        }
+    }
 
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
@@ -45,42 +51,41 @@ pub fn create(
                     pattern_rect.y(),
                 ));
 
-            let mut pattern_content = Content::new();
-            pattern_content.save_state();
+            let mut content = Content::new();
+            content.save_state();
 
-            if use_content_units_object_bounding_box {
+            if content_units_obb {
                 // The x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
                 // the x/y would be applied twice.
-                pattern_content.transform(
+                content.transform(
                     Transform::from_scale(parent_bbox.width(), parent_bbox.height())
-                        .as_array(),
+                        .to_pdf_transform(),
                 );
             }
 
             if let Some(view_box) = pattern.view_box {
-                let pattern_transform = view_box_to_transform(
+                let view_box_transform = view_box_to_transform(
                     view_box.rect,
                     view_box.aspect,
                     Size::from_wh(pattern_rect.width(), pattern_rect.height()).unwrap(),
                 );
-                pattern_content.transform(pattern_transform.as_array());
+                content.transform(view_box_transform.to_pdf_transform());
             }
 
             group::render(
                 &pattern.root,
                 group,
                 writer,
-                &mut pattern_content,
+                &mut content,
                 ctx,
                 Transform::default(),
             );
 
-            pattern_content.restore_state();
+            content.restore_state();
 
-            let pattern_content_stream = ctx.finish_content(pattern_content);
+            let content_stream = ctx.finish_content(content);
 
-            let mut tiling_pattern =
-                writer.tiling_pattern(pattern_ref, &pattern_content_stream);
+            let mut tiling_pattern = writer.tiling_pattern(pattern_ref, &content_stream);
 
             if ctx.options.compress {
                 tiling_pattern.filter(Filter::FlateDecode);
@@ -101,7 +106,7 @@ pub fn create(
                 .tiling_type(TilingType::ConstantSpacing)
                 .paint_type(PaintType::Colored)
                 .bbox(final_bbox)
-                .matrix(pattern_matrix.as_array())
+                .matrix(pattern_matrix.to_pdf_transform())
                 .x_step(final_bbox.x2 - final_bbox.x1)
                 .y_step(final_bbox.y2 - final_bbox.y1);
 
