@@ -17,51 +17,8 @@ use usvg::{AspectRatio, Node, NodeKind, Size, Transform, Tree};
 use crate::util::context::Context;
 use crate::util::helper::{plain_bbox, TransformExt};
 
-/// Turn a tree into an XObject. Returns the name (= the name in the `Resources` dictionary) of
-/// the XObject. The bounding box of the resulting XObject will be [0, 0, pdf_size.width, pdf_size.height]
-pub fn tree_to_x_object(
-    tree: &Tree,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-    pdf_size: Size,
-    aspect: Option<AspectRatio>,
-) -> Rc<String> {
-    let x_ref = ctx.alloc_ref();
-    ctx.deferrer.push();
-
-    let mut child_content = Content::new();
-    tree_to_stream(
-        tree,
-        writer,
-        &mut child_content,
-        ctx,
-        initial_transform(aspect, tree, pdf_size),
-    );
-    let child_content_stream = ctx.finish_content(child_content);
-
-    let mut x_object = writer.form_xobject(x_ref, &child_content_stream);
-    ctx.deferrer.pop(&mut x_object.resources());
-
-    if ctx.options.compress {
-        x_object.filter(Filter::FlateDecode);
-    }
-
-    x_object.bbox(Rect::new(0.0, 0.0, pdf_size.width(), pdf_size.height()));
-    x_object
-        .group()
-        .transparency()
-        .isolated(true)
-        .knockout(false)
-        .color_space()
-        .srgb();
-    x_object.finish();
-
-    ctx.deferrer.add_x_object(x_ref)
-}
-
-/// Write a tree into a stream. Assumes that the stream belongs to an XObject
-/// that is a transparency group and already has the right bounding boxes, otherwise
-/// the result might be wrong.
+/// Write a tree into a stream. Assumes that the stream belongs to transparency group and has the
+/// right bounding boxes.
 pub fn tree_to_stream(
     tree: &Tree,
     writer: &mut PdfWriter,

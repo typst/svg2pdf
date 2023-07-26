@@ -174,10 +174,8 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 
     // Generate main content
     ctx.deferrer.push();
-    let tree_x_object =
-        render::tree_to_x_object(tree, &mut writer, &mut ctx, pdf_size, options.aspect);
     let mut content = Content::new();
-    content.x_object(tree_x_object.as_name());
+    tree_to_stream(tree, &mut writer, &mut content, &mut ctx, initial_transform(options.aspect, tree, pdf_size));
     let content_stream = ctx.finish_content(content);
     let mut stream = writer.stream(content_ref, &content_stream);
 
@@ -194,6 +192,12 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 
     page.media_box(Rect::new(0.0, 0.0, pdf_size.width(), pdf_size.height()));
     page.parent(page_tree_ref);
+    page.group()
+        .transparency()
+        .isolated(true)
+        .knockout(false)
+        .color_space()
+        .srgb();
     page.contents(content_ref);
     page.finish();
 
