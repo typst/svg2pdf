@@ -192,7 +192,7 @@ fn create_complex_clip_path(
     x_object
         .group()
         .transparency()
-        .isolated(true)
+        .isolated(false)
         .knockout(false)
         .color_space()
         .srgb();

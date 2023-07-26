@@ -82,7 +82,7 @@ pub fn create(
     x_object
         .group()
         .transparency()
-        .isolated(true)
+        .isolated(false)
         .knockout(false)
         .color_space()
         .srgb();

@@ -169,7 +169,7 @@ fn get_soft_mask(
     x_object
         .group()
         .transparency()
-        .isolated(true)
+        .isolated(false)
         .knockout(false)
         .color_space()
         .d65_gray();

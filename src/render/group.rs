@@ -67,7 +67,7 @@ fn create_x_object(
     x_object
         .group()
         .transparency()
-        .isolated(true)
+        .isolated(false)
         .knockout(false)
         .color_space()
         .srgb();
