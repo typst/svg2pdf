@@ -6,7 +6,7 @@ use usvg::{Mask, Node, NodeKind, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
+use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt, clip_to_rect};
 
 /// Render a mask into a content stream.
 pub fn render(
@@ -39,11 +39,15 @@ pub fn create(
 
     let parent_svg_bbox = plain_bbox(parent);
 
-    let pdf_bbox = match mask.units {
+    let actual_rect = match mask.units {
         Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),
         Units::UserSpaceOnUse => mask.rect,
-    }
-    .as_pdf_rect();
+    };
+
+    // In addition to setting the bounding box, we also apply a clip path to the mask rect to
+    // circumvent a bug in Firefox where the bounding box is not applied properly for some transforms.
+    // If we don't do this, the "half-width-region-with-rotation.svg" test case won't render properly.
+    clip_to_rect(actual_rect, &mut content);
 
     match *mask.root.borrow() {
         NodeKind::Group(ref group) => {
@@ -83,7 +87,7 @@ pub fn create(
         .color_space()
         .srgb();
 
-    x_object.bbox(pdf_bbox);
+    x_object.bbox(actual_rect.as_pdf_rect());
     x_object.finish();
 
     let mask_type = match mask.kind {

@@ -1,5 +1,5 @@
 use pdf_writer::types::BlendMode;
-use pdf_writer::{Name, Rect};
+use pdf_writer::{Content, Name, Rect};
 use usvg::{BBox, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
 
 pub const SRGB: Name = Name(b"srgb");
@@ -168,4 +168,11 @@ fn calc_node_bbox(node: &Node, ts: Transform) -> Option<BBox> {
         }
         NodeKind::Text(_) => None,
     }
+}
+
+pub fn clip_to_rect(rect: NonZeroRect, content: &mut Content) {
+    content.rect(rect.x(), rect.y(), rect.width(), rect.height());
+    content.close_path();
+    content.clip_nonzero();
+    content.end_path();
 }

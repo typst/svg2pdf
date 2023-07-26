@@ -3,11 +3,12 @@ use std::rc::Rc;
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
-use usvg::{ImageKind, NonZeroRect, Size, Transform, Tree, Visibility};
+use usvg::{ImageKind, Size, Transform, Tree, Visibility};
 
 use crate::util::context::Context;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
 use crate::{convert_tree_into, Options};
+use crate::util::helper;
 
 /// Render an image into a content stream.
 pub fn render(
@@ -80,7 +81,7 @@ pub fn render(
     content.save_state();
     content.transform(image.transform.as_array());
     // Clip the image so just the part inside of the view box is actually visible.
-    clip_image_to_rect(image.view_box.rect, content);
+    helper::clip_to_rect(image.view_box.rect, content);
 
     // Account for the x/y of the viewbox.
     content
@@ -210,11 +211,4 @@ fn create_svg_image(
     let next_ref = convert_tree_into(tree, Options::default(), writer, image_ref);
     ctx.deferrer.set_next_ref(next_ref.get());
     (image_name, tree.size)
-}
-
-fn clip_image_to_rect(rect: NonZeroRect, content: &mut Content) {
-    content.rect(rect.x(), rect.y(), rect.width(), rect.height());
-    content.close_path();
-    content.clip_nonzero();
-    content.end_path();
 }
