@@ -53,7 +53,7 @@ use usvg::utils::view_box_to_transform;
 use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, TreeParsing};
 
 use crate::util::context::Context;
-use crate::util::helper::{dpi_ratio, NameExt};
+use crate::util::helper::dpi_ratio;
 
 /// Set size and scaling preferences for the conversion.
 #[derive(Copy, Clone)]
@@ -175,7 +175,13 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     // Generate main content
     ctx.deferrer.push();
     let mut content = Content::new();
-    tree_to_stream(tree, &mut writer, &mut content, &mut ctx, initial_transform(options.aspect, tree, pdf_size));
+    tree_to_stream(
+        tree,
+        &mut writer,
+        &mut content,
+        &mut ctx,
+        initial_transform(options.aspect, tree, pdf_size),
+    );
     let content_stream = ctx.finish_content(content);
     let mut stream = writer.stream(content_ref, &content_stream);
 

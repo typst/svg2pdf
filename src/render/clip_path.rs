@@ -47,24 +47,19 @@ pub fn render(
 
 fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
     clip_path.root.descendants().all(|n| match *n.borrow() {
-            NodeKind::Path(ref path) => {
-                // While there is a clipping path for EvenOdd, it will produce wrong results
-                // if the clip-rule is defined on a group.
-                path
-                        .fill
-                        .as_ref()
-                        .map_or(true, |fill| fill.rule == FillRule::NonZero)
-            }
-            NodeKind::Group(ref group) => {
-                // We can only intersect one clipping path with another one, meaning that we
-                // can convert nested clip paths if a second clip path is defined on the clip
-                // path itself, but not if it is defined on a child.
-                group
-                    .clip_path
-                    .is_none()
-            }
-            _ => false,
-        })
+        NodeKind::Path(ref path) => {
+            // While there is a clipping path for EvenOdd, it will produce wrong results
+            // if the clip-rule is defined on a group.
+            path.fill.as_ref().map_or(true, |fill| fill.rule == FillRule::NonZero)
+        }
+        NodeKind::Group(ref group) => {
+            // We can only intersect one clipping path with another one, meaning that we
+            // can convert nested clip paths if a second clip path is defined on the clip
+            // path itself, but not if it is defined on a child.
+            group.clip_path.is_none()
+        }
+        _ => false,
+    })
 }
 
 fn create_simple_clip_path(
@@ -72,7 +67,6 @@ fn create_simple_clip_path(
     clip_path: Rc<ClipPath>,
     content: &mut Content,
 ) {
-
     if let Some(clip_path) = &clip_path.clip_path {
         create_simple_clip_path(parent, clip_path.clone(), content);
     }

@@ -6,7 +6,7 @@ use usvg::{Mask, Node, NodeKind, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt, clip_to_rect};
+use crate::util::helper::{clip_to_rect, plain_bbox, NameExt, RectExt, TransformExt};
 
 /// Render a mask into a content stream.
 pub fn render(

@@ -6,9 +6,9 @@ use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use usvg::{ImageKind, Size, Transform, Tree, Visibility};
 
 use crate::util::context::Context;
+use crate::util::helper;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
 use crate::{convert_tree_into, Options};
-use crate::util::helper;
 
 /// Render an image into a content stream.
 pub fn render(

@@ -7,12 +7,9 @@ pub mod mask;
 pub mod path;
 pub mod pattern;
 
-use std::rc::Rc;
+use pdf_writer::{Content, PdfWriter};
 
-use crate::initial_transform;
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect};
-
-use usvg::{AspectRatio, Node, NodeKind, Size, Transform, Tree};
+use usvg::{Node, NodeKind, Transform, Tree};
 
 use crate::util::context::Context;
 use crate::util::helper::{plain_bbox, TransformExt};

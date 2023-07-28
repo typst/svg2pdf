@@ -47,7 +47,7 @@ impl PendingResourceType {
         }
     }
 
-    pub fn iterator() -> impl Iterator<Item =PendingResourceType> {
+    pub fn iterator() -> impl Iterator<Item = PendingResourceType> {
         [
             PendingResourceType::XObject,
             PendingResourceType::Pattern,
@@ -141,7 +141,11 @@ impl Deferrer {
     }
 
     /// Write all of the entries into a `Resources` dictionary.
-    fn write_entries(&mut self, resources: &mut Resources, entries: Vec<PendingResource>) {
+    fn write_entries(
+        &mut self,
+        resources: &mut Resources,
+        entries: Vec<PendingResource>,
+    ) {
         for object_type in PendingResourceType::iterator() {
             let entries: Vec<_> =
                 entries.iter().filter(|e| e.object_type == object_type).collect();

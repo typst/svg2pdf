@@ -135,23 +135,27 @@ fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox>
             .transform(ts)
             .map(|old_rect| {
                 // Adapted from resvg
-                let new_rect = if let Some(stroke) = &path.stroke {
+                if let Some(stroke) = &path.stroke {
                     if with_stroke {
                         let w = stroke.width.get()
                             / if ts.is_identity() {
-                            2.0
-                        } else {
-                            2.0 / (ts.sx * ts.sy - ts.ky * ts.kx).abs().sqrt()
-                        };
-                        usvg::Rect::from_xywh(old_rect.x() - w, old_rect.y() - w, old_rect.width() + 2.0 * w, old_rect.height() + 2.0 * w)
-                            .unwrap_or(usvg::Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
-                    }   else {
+                                2.0
+                            } else {
+                                2.0 / (ts.sx * ts.sy - ts.ky * ts.kx).abs().sqrt()
+                            };
+                        usvg::Rect::from_xywh(
+                            old_rect.x() - w,
+                            old_rect.y() - w,
+                            old_rect.width() + 2.0 * w,
+                            old_rect.height() + 2.0 * w,
+                        )
+                        .unwrap_or(usvg::Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
+                    } else {
                         old_rect
                     }
                 } else {
                     old_rect
-                };
-                new_rect
+                }
             })
             .map(BBox::from),
         NodeKind::Image(ref img) => img.view_box.rect.transform(ts).map(BBox::from),
@@ -160,7 +164,8 @@ fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox>
 
             for child in node.children() {
                 let child_transform = ts.pre_concat(child.transform());
-                if let Some(c_bbox) = calc_node_bbox(&child, child_transform, with_stroke) {
+                if let Some(c_bbox) = calc_node_bbox(&child, child_transform, with_stroke)
+                {
                     bbox = bbox.expand(c_bbox);
                 }
             }
