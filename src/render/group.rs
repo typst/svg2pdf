@@ -49,7 +49,7 @@ fn create_x_object(
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
-    let pdf_bbox = plain_bbox(node).transform(group.transform).unwrap().as_pdf_rect();
+    let pdf_bbox = plain_bbox(node, true).transform(group.transform).unwrap().as_pdf_rect();
 
     let mut content = Content::new();
 

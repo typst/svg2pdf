@@ -58,7 +58,7 @@ impl Render for Node {
         match *self.borrow() {
             NodeKind::Path(ref path) => path::render(
                 path,
-                &plain_bbox(self),
+                &plain_bbox(self, true),
                 writer,
                 content,
                 ctx,

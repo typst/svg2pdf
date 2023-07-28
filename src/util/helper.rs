@@ -119,33 +119,39 @@ pub fn deflate(data: &[u8]) -> Vec<u8> {
 }
 
 /// Calculate the bbox of a node as a [Rect](usvg::Rect).
-pub fn plain_bbox(node: &Node) -> usvg::NonZeroRect {
-    calc_node_bbox(node, Transform::default())
+pub fn plain_bbox(node: &Node, with_stroke: bool) -> usvg::NonZeroRect {
+    calc_node_bbox(node, Transform::default(), with_stroke)
         .and_then(|b| b.to_non_zero_rect())
         .unwrap_or(usvg::NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
 }
 
 // Taken from resvg
 /// Calculate the bbox of a node with a given transform.
-fn calc_node_bbox(node: &Node, ts: Transform) -> Option<BBox> {
+fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox> {
     match *node.borrow() {
         NodeKind::Path(ref path) => path
             .data
             .bounds()
             .transform(ts)
-            .map(|r| {
-                let (x, y, w, h) = if let Some(stroke) = &path.stroke {
-                    let w = stroke.width.get()
-                        / if ts.is_identity() {
+            .map(|old_rect| {
+                // Adapted from resvg
+                let new_rect = if let Some(stroke) = &path.stroke {
+                    if with_stroke {
+                        let w = stroke.width.get()
+                            / if ts.is_identity() {
                             2.0
                         } else {
                             2.0 / (ts.sx * ts.sy - ts.ky * ts.kx).abs().sqrt()
                         };
-                    (r.x() - w, r.y() - w, r.width() + 2.0 * w, r.height() + 2.0 * w)
+                        usvg::Rect::from_xywh(old_rect.x() - w, old_rect.y() - w, old_rect.width() + 2.0 * w, old_rect.height() + 2.0 * w)
+                            .unwrap_or(usvg::Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
+                    }   else {
+                        old_rect
+                    }
                 } else {
-                    (r.x(), r.y(), r.width(), r.height())
+                    old_rect
                 };
-                usvg::Rect::from_xywh(x, y, w, h).unwrap_or(r)
+                new_rect
             })
             .map(BBox::from),
         NodeKind::Image(ref img) => img.view_box.rect.transform(ts).map(BBox::from),
@@ -154,7 +160,7 @@ fn calc_node_bbox(node: &Node, ts: Transform) -> Option<BBox> {
 
             for child in node.children() {
                 let child_transform = ts.pre_concat(child.transform());
-                if let Some(c_bbox) = calc_node_bbox(&child, child_transform) {
+                if let Some(c_bbox) = calc_node_bbox(&child, child_transform, with_stroke) {
                     bbox = bbox.expand(c_bbox);
                 }
             }

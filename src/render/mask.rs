@@ -37,7 +37,7 @@ pub fn create(
         render(parent, recursive_mask.clone(), writer, &mut content, ctx);
     }
 
-    let parent_svg_bbox = plain_bbox(parent);
+    let parent_svg_bbox = plain_bbox(parent, true);
 
     let actual_rect = match mask.units {
         Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),

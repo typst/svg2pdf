@@ -87,7 +87,7 @@ fn create_simple_clip_path(
             .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(plain_bbox(parent))
+                Transform::from_bbox(plain_bbox(parent, false))
             });
 
     let mut segments = vec![];
@@ -160,12 +160,12 @@ fn create_complex_clip_path(
 
     content.transform(clip_path.transform.as_array());
 
-    let pdf_bbox = plain_bbox(parent).as_pdf_rect();
+    let pdf_bbox = plain_bbox(parent, false).as_pdf_rect();
 
     match *clip_path.root.borrow() {
         NodeKind::Group(ref group) => {
             if clip_path.units == Units::ObjectBoundingBox {
-                let parent_svg_bbox = plain_bbox(parent);
+                let parent_svg_bbox = plain_bbox(parent, false);
                 content.transform(Transform::from_bbox(parent_svg_bbox).as_array());
             }
             group::render(
