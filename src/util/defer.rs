@@ -154,7 +154,7 @@ impl Deferrer {
                 let mut dict = object_type.get_dict(resources);
 
                 for entry in entries {
-                    dict.pair(entry.name.as_name(), entry.reference);
+                    dict.pair(entry.name.to_pdf_name(), entry.reference);
                 }
 
                 dict.finish();

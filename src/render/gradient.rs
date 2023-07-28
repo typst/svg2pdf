@@ -123,7 +123,7 @@ fn create_shading_pattern(
     shading.extend([true, true]);
     shading.finish();
 
-    shading_pattern.matrix(matrix.as_array());
+    shading_pattern.matrix(matrix.to_pdf_transform());
     shading_pattern.finish();
 
     (ctx.deferrer.add_pattern(pattern_ref), soft_mask)
@@ -139,7 +139,7 @@ fn get_soft_mask(
     let x_object_id = ctx.alloc_ref();
     let shading_ref = ctx.alloc_ref();
     let shading_name = ctx.deferrer.add_shading(shading_ref);
-    let bbox = ctx.get_rect().as_pdf_rect();
+    let bbox = ctx.get_rect().to_pdf_rect();
 
     let transform = properties.transform.pre_concat(
         if properties.units == Units::ObjectBoundingBox {
@@ -160,12 +160,20 @@ fn get_soft_mask(
     shading.finish();
 
     let mut content = Content::new();
-    content.transform(transform.as_array());
-    content.shading(shading_name.as_name());
+    content.transform(transform.to_pdf_transform());
+    content.shading(shading_name.to_pdf_name());
     let content_stream = ctx.finish_content(content);
 
     let mut x_object = writer.form_xobject(x_object_id, &content_stream);
     ctx.deferrer.pop(&mut x_object.resources());
+
+    x_object
+        .group()
+        .transparency()
+        .isolated(false)
+        .knockout(false)
+        .color_space()
+        .d65_gray();
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
@@ -222,7 +230,7 @@ fn get_shading_function(
         let (first_color, second_color) = if alpha {
             (vec![first.opacity.get()], vec![second.opacity.get()])
         } else {
-            (Vec::from(first.color.as_array()), Vec::from(second.color.as_array()))
+            (Vec::from(first.color.to_pdf_color()), Vec::from(second.color.to_pdf_color()))
         };
 
         bounds.push(second.offset.get());

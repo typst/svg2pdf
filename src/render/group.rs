@@ -26,10 +26,10 @@ pub fn render(
             .blend_mode(group.blend_mode.to_pdf_blend_mode());
 
         gs.finish();
-        content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).as_name());
+        content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
 
         content.x_object(
-            create_x_object(node, group, writer, ctx, accumulated_transform).as_name(),
+            create_x_object(node, group, writer, ctx, accumulated_transform).to_pdf_name(),
         );
         content.restore_state();
     } else {
@@ -52,7 +52,7 @@ fn create_x_object(
     let pdf_bbox = plain_bbox(node, true)
         .transform(group.transform)
         .unwrap()
-        .as_pdf_rect();
+        .to_pdf_rect();
 
     let mut content = Content::new();
 
@@ -92,7 +92,7 @@ fn create_to_stream(
     accumulated_transform: Transform,
 ) {
     content.save_state();
-    content.transform(group.transform.as_array());
+    content.transform(group.transform.to_pdf_transform());
     let accumulated_transform = accumulated_transform.pre_concat(group.transform);
 
     if let Some(mask) = &group.mask {

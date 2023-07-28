@@ -1,12 +1,11 @@
 use std::rc::Rc;
 
-use pdf_writer::types::MaskType;
 use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use usvg::{Mask, Node, NodeKind, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{clip_to_rect, plain_bbox, NameExt, RectExt, TransformExt};
+use crate::util::helper::{clip_to_rect, plain_bbox, NameExt, RectExt, TransformExt, MaskTypeExt};
 
 /// Render a mask into a content stream.
 pub fn render(
@@ -16,7 +15,7 @@ pub fn render(
     content: &mut Content,
     ctx: &mut Context,
 ) {
-    content.set_parameters(create(node, mask, writer, ctx).as_name());
+    content.set_parameters(create(node, mask, writer, ctx).to_pdf_name());
 }
 
 /// Turn a mask into an graphics state object. Returns the name (= the name in the `Resources` dictionary) of
@@ -53,7 +52,7 @@ pub fn create(
         NodeKind::Group(ref group) => {
             let mut accumulated_transform = Transform::default();
             if mask.content_units == Units::ObjectBoundingBox {
-                content.transform(Transform::from_bbox(parent_svg_bbox).as_array());
+                content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
                 accumulated_transform = Transform::from_bbox(parent_svg_bbox);
             }
 
@@ -87,17 +86,12 @@ pub fn create(
         .color_space()
         .srgb();
 
-    x_object.bbox(actual_rect.as_pdf_rect());
+    x_object.bbox(actual_rect.to_pdf_rect());
     x_object.finish();
-
-    let mask_type = match mask.kind {
-        usvg::MaskType::Alpha => MaskType::Alpha,
-        usvg::MaskType::Luminance => MaskType::Luminosity,
-    };
 
     let gs_ref = ctx.alloc_ref();
     let mut gs = writer.ext_graphics(gs_ref);
-    gs.soft_mask().subtype(mask_type).group(x_ref);
+    gs.soft_mask().subtype(mask.kind.to_pdf_mask_type()).group(x_ref);
 
     ctx.deferrer.add_graphics_state(gs_ref)
 }

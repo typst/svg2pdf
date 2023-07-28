@@ -76,8 +76,7 @@ fn main() {
 
         let (pdf, image) = runner.convert_svg(
             &fs::read_to_string(input_path.to_str().unwrap()).unwrap(),
-            &runner,
-            svg_file.scale_factor(),
+            &runner
         );
 
         if args.pdf {

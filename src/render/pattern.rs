@@ -53,7 +53,7 @@ pub fn create(
                 // the x/y would be applied twice.
                 pattern_content.transform(
                     Transform::from_scale(parent_bbox.width(), parent_bbox.height())
-                        .as_array(),
+                        .to_pdf_transform(),
                 );
             }
 
@@ -63,7 +63,7 @@ pub fn create(
                     view_box.aspect,
                     Size::from_wh(pattern_rect.width(), pattern_rect.height()).unwrap(),
                 );
-                pattern_content.transform(pattern_transform.as_array());
+                pattern_content.transform(pattern_transform.to_pdf_transform());
             }
 
             group::render(
@@ -101,7 +101,7 @@ pub fn create(
                 .tiling_type(TilingType::ConstantSpacing)
                 .paint_type(PaintType::Colored)
                 .bbox(final_bbox)
-                .matrix(pattern_matrix.as_array())
+                .matrix(pattern_matrix.to_pdf_transform())
                 .x_step(final_bbox.x2 - final_bbox.x1)
                 .y_step(final_bbox.y2 - final_bbox.y1);
 

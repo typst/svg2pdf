@@ -66,8 +66,7 @@ fn main() -> ExitCode {
             .into_rgba8();
         let (_, actual_image) = runner.convert_svg(
             &fs::read_to_string(svg_file.as_svg_path()).unwrap(),
-            &runner,
-            svg_file.scale_factor(),
+            &runner
         );
 
         let (width, height) = expected_image.dimensions();

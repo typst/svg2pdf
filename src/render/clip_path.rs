@@ -40,7 +40,7 @@ pub fn render(
         create_simple_clip_path(node, clip_path, content);
     } else {
         content.set_parameters(
-            create_complex_clip_path(node, clip_path, writer, ctx).as_name(),
+            create_complex_clip_path(node, clip_path, writer, ctx).to_pdf_name(),
         );
     }
 }
@@ -152,15 +152,15 @@ fn create_complex_clip_path(
         render(parent, recursive_clip_path.clone(), writer, &mut content, ctx);
     }
 
-    content.transform(clip_path.transform.as_array());
+    content.transform(clip_path.transform.to_pdf_transform());
 
-    let pdf_bbox = plain_bbox(parent, false).as_pdf_rect();
+    let pdf_bbox = plain_bbox(parent, false).to_pdf_rect();
 
     match *clip_path.root.borrow() {
         NodeKind::Group(ref group) => {
             if clip_path.units == Units::ObjectBoundingBox {
                 let parent_svg_bbox = plain_bbox(parent, false);
-                content.transform(Transform::from_bbox(parent_svg_bbox).as_array());
+                content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
             }
             group::render(
                 &clip_path.root,

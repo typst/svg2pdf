@@ -1,4 +1,4 @@
-use pdf_writer::types::BlendMode;
+use pdf_writer::types::{BlendMode, MaskType};
 use pdf_writer::{Content, Name, Rect};
 use usvg::{BBox, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
 
@@ -6,48 +6,49 @@ pub const SRGB: Name = Name(b"srgb");
 
 /// Extension trait to convert [Colors](usvg::Color) into PDF colors.
 pub trait ColorExt {
-    fn as_array(&self) -> [f32; 3];
+    fn to_pdf_color(&self) -> [f32; 3];
 }
 
 impl ColorExt for usvg::Color {
-    fn as_array(&self) -> [f32; 3] {
+    fn to_pdf_color(&self) -> [f32; 3] {
         [self.red as f32 / 255.0, self.green as f32 / 255.0, self.blue as f32 / 255.0]
     }
 }
 
 /// Extension trait to convert a [Transform] into PDF transforms.
 pub trait TransformExt {
-    fn as_array(&self) -> [f32; 6];
+    fn to_pdf_transform(&self) -> [f32; 6];
 }
 
 impl TransformExt for Transform {
-    fn as_array(&self) -> [f32; 6] {
+    fn to_pdf_transform(&self) -> [f32; 6] {
         [self.sx, self.ky, self.kx, self.sy, self.tx, self.ty]
     }
 }
 
 /// Extension trait to convert a [String] into a [Name]
 pub trait NameExt {
-    fn as_name(&self) -> Name;
+    fn to_pdf_name(&self) -> Name;
 }
 
 impl NameExt for String {
-    fn as_name(&self) -> Name {
+    fn to_pdf_name(&self) -> Name {
         Name(self.as_bytes())
     }
 }
 
 /// Extension trait to turn a [`usvg` Rect](usvg::Rect) into a [PDF Rect](Rect)
 pub trait RectExt {
-    fn as_pdf_rect(&self) -> Rect;
+    fn to_pdf_rect(&self) -> Rect;
 }
 
 impl RectExt for NonZeroRect {
-    fn as_pdf_rect(&self) -> Rect {
+    fn to_pdf_rect(&self) -> Rect {
         Rect::new(self.x(), self.y(), self.x() + self.width(), self.y() + self.height())
     }
 }
 
+/// Extension trait to turn a [`usvg` BlendMode](usvg::BlendMode) into a [PDF Blendmode](BlendMode)
 pub trait BlendModeExt {
     fn to_pdf_blend_mode(&self) -> BlendMode;
 }
@@ -71,6 +72,19 @@ impl BlendModeExt for usvg::BlendMode {
             usvg::BlendMode::Saturation => BlendMode::Saturation,
             usvg::BlendMode::Color => BlendMode::Color,
             usvg::BlendMode::Luminosity => BlendMode::Luminosity,
+        }
+    }
+}
+
+pub trait MaskTypeExt {
+    fn to_pdf_mask_type(&self) -> MaskType;
+}
+
+impl MaskTypeExt for usvg::MaskType {
+    fn to_pdf_mask_type(&self) -> MaskType {
+        match self {
+            usvg::MaskType::Alpha => MaskType::Alpha,
+            usvg::MaskType::Luminance => MaskType::Luminosity,
         }
     }
 }

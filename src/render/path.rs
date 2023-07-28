@@ -13,12 +13,18 @@ use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 /// Render a path into a content stream.
 pub fn render(
     path: &usvg::Path,
-    parent_bbox: &NonZeroRect,
+    path_bbox: Option<&NonZeroRect>,
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    let Some(path_bbox) = path_bbox else { return };
+
+    if path.visibility != Visibility::Visible {
+        return;
+    }
+
     let separate_fill_stroke = || {
         let mut stroked_path = path.clone();
         stroked_path.fill = None;
@@ -33,32 +39,56 @@ pub fn render(
             // stroke. For SVG, it should be visible. In order to achieve consistent behaviour,
             // we draw the stroke and fill separately in such a case.
             let (stroked_path, filled_path) = separate_fill_stroke();
-            render_impl(&filled_path, parent_bbox, writer, content, ctx, accumulated_transform);
-            render_impl(&stroked_path, parent_bbox, writer, content, ctx, accumulated_transform);
-        }   else {
-            render_impl(path, parent_bbox, writer, content, ctx, accumulated_transform)
+            render_impl(
+                &filled_path,
+                path_bbox,
+                writer,
+                content,
+                ctx,
+                accumulated_transform,
+            );
+            render_impl(
+                &stroked_path,
+                path_bbox,
+                writer,
+                content,
+                ctx,
+                accumulated_transform,
+            );
+        } else {
+            render_impl(path, path_bbox, writer, content, ctx, accumulated_transform)
         }
-    }   else {
+    } else {
         let (stroked_path, filled_path) = separate_fill_stroke();
-        render_impl(&stroked_path, parent_bbox, writer, content, ctx, accumulated_transform);
-        render_impl(&filled_path, parent_bbox, writer, content, ctx, accumulated_transform);
+        render_impl(
+            &stroked_path,
+            path_bbox,
+            writer,
+            content,
+            ctx,
+            accumulated_transform,
+        );
+        render_impl(
+            &filled_path,
+            path_bbox,
+            writer,
+            content,
+            ctx,
+            accumulated_transform,
+        );
     }
 }
 
 fn render_impl(
     path: &usvg::Path,
-    parent_bbox: &NonZeroRect,
+    path_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if path.visibility != Visibility::Visible {
-        return;
-    }
-
     content.save_state();
-    content.transform(path.transform.as_array());
+    content.transform(path.transform.to_pdf_transform());
     let accumulated_transform = accumulated_transform.pre_concat(path.transform);
 
     let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get());
@@ -71,15 +101,15 @@ fn render_impl(
         gs.non_stroking_alpha(fill_opacity.unwrap_or(1.0))
             .stroking_alpha(stroke_opacity.unwrap_or(1.0))
             .finish();
-        content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).as_name());
+        content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
     }
 
     if let Some(stroke) = &path.stroke {
-        set_stroke(stroke, parent_bbox, content, writer, ctx, accumulated_transform);
+        set_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
     }
 
     if let Some(fill) = &path.fill {
-        set_fill(fill, parent_bbox, content, writer, ctx, accumulated_transform);
+        set_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
     }
 
     draw_path(path.data.segments(), content);
@@ -144,7 +174,7 @@ fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Conte
 
 fn set_stroke(
     stroke: &Stroke,
-    parent_bbox: &NonZeroRect,
+    path_bbox: &NonZeroRect,
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,
@@ -174,30 +204,30 @@ fn set_stroke(
     match paint {
         Paint::Color(c) => {
             content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
-            content.set_stroke_color(c.as_array());
+            content.set_stroke_color(c.to_pdf_color());
         }
         Paint::Pattern(p) => {
             let pattern_name = pattern::create(
                 p.clone(),
-                parent_bbox,
+                path_bbox,
                 writer,
                 ctx,
                 accumulated_transform,
             );
             content.set_stroke_color_space(Pattern);
-            content.set_stroke_pattern(None, pattern_name.as_name());
+            content.set_stroke_pattern(None, pattern_name.to_pdf_name());
         }
         Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
             if let Some((pattern_name, mask)) =
-                gradient::create(paint, parent_bbox, writer, ctx, &accumulated_transform)
+                gradient::create(paint, path_bbox, writer, ctx, &accumulated_transform)
             {
                 // If the gradient contains stop with opacities, we need to write those separately
                 // using a soft mask.
                 if let Some(mask) = mask {
-                    content.set_parameters(mask.as_name());
+                    content.set_parameters(mask.to_pdf_name());
                 }
                 content.set_stroke_color_space(Pattern);
-                content.set_stroke_pattern(None, pattern_name.as_name());
+                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
         }
     }
@@ -205,7 +235,7 @@ fn set_stroke(
 
 fn set_fill(
     fill: &Fill,
-    parent_bbox: &NonZeroRect,
+    path_bbox: &NonZeroRect,
     content: &mut Content,
     writer: &mut PdfWriter,
     ctx: &mut Context,
@@ -216,28 +246,28 @@ fn set_fill(
     match paint {
         Paint::Color(c) => {
             content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
-            content.set_fill_color(c.as_array());
+            content.set_fill_color(c.to_pdf_color());
         }
         Paint::Pattern(p) => {
             let pattern_name = pattern::create(
                 p.clone(),
-                parent_bbox,
+                path_bbox,
                 writer,
                 ctx,
                 accumulated_transform,
             );
             content.set_fill_color_space(Pattern);
-            content.set_fill_pattern(None, pattern_name.as_name());
+            content.set_fill_pattern(None, pattern_name.to_pdf_name());
         }
         Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
             if let Some((pattern_name, mask)) =
-                gradient::create(paint, parent_bbox, writer, ctx, &accumulated_transform)
+                gradient::create(paint, path_bbox, writer, ctx, &accumulated_transform)
             {
                 if let Some(mask) = mask {
-                    content.set_parameters(mask.as_name());
+                    content.set_parameters(mask.to_pdf_name());
                 }
                 content.set_fill_color_space(Pattern);
-                content.set_fill_pattern(None, pattern_name.as_name());
+                content.set_fill_pattern(None, pattern_name.to_pdf_name());
             }
         }
     }

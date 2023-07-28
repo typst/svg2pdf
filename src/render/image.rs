@@ -79,13 +79,13 @@ pub fn render(
     let image_rect = image_rect(&image.view_box, image_size);
 
     content.save_state();
-    content.transform(image.transform.as_array());
+    content.transform(image.transform.to_pdf_transform());
     // Clip the image so just the part inside of the view box is actually visible.
     helper::clip_to_rect(image.view_box.rect, content);
 
     // Account for the x/y of the viewbox.
     content
-        .transform(Transform::from_translate(image_rect.x(), image_rect.y()).as_array());
+        .transform(Transform::from_translate(image_rect.x(), image_rect.y()).to_pdf_transform());
     // Scale the image from 1x1 to the actual dimensions.
     content.transform(
         Transform::from_row(
@@ -96,9 +96,9 @@ pub fn render(
             0.0,
             image_rect.height(),
         )
-        .as_array(),
+        .to_pdf_transform(),
     );
-    content.x_object(image_name.as_name());
+    content.x_object(image_name.to_pdf_name());
     content.restore_state();
 }
 
