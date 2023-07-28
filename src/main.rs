@@ -27,6 +27,7 @@ fn main() {
     }
 }
 
+//TODO: Add license for new test!
 fn run() -> Result<(), String> {
     let args = Args::parse();
 

@@ -166,13 +166,6 @@ fn get_soft_mask(
 
     let mut x_object = writer.form_xobject(x_object_id, &content_stream);
     ctx.deferrer.pop(&mut x_object.resources());
-    x_object
-        .group()
-        .transparency()
-        .isolated(false)
-        .knockout(false)
-        .color_space()
-        .d65_gray();
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
