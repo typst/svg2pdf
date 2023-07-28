@@ -56,9 +56,9 @@ fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
                         .map_or(true, |fill| fill.rule == FillRule::NonZero)
             }
             NodeKind::Group(ref group) => {
-                // We can only intersect one clipping path with another one, but not if the
-                // clipping path is on an object *inside* the clipping path instead of the
-                // clipping path itself.
+                // We can only intersect one clipping path with another one, meaning that we
+                // can convert nested clip paths if a second clip path is defined on the clip
+                // path itself, but not if it is defined on a child.
                 group
                     .clip_path
                     .is_none()
@@ -107,10 +107,9 @@ fn extend_segments_from_node(
             if path.visibility != Visibility::Hidden {
                 let path_transform = transform.pre_concat(path.transform);
                 path.data.segments().for_each(|segment| match segment {
-                    PathSegment::MoveTo(p) => {
-                        let mut new_p = p;
-                        path_transform.map_point(&mut new_p);
-                        segments.push(PathSegment::MoveTo(new_p));
+                    PathSegment::MoveTo(mut p) => {
+                        path_transform.map_point(&mut p);
+                        segments.push(PathSegment::MoveTo(p));
                     }
                     PathSegment::LineTo(p) => {
                         let mut new_p = p;
@@ -138,7 +137,7 @@ fn extend_segments_from_node(
                 extend_segments_from_node(&child, &group_transform, segments);
             }
         }
-        // Images are not valid in a clip path
+        // Images are not valid in a clip path. Text will be converted into shapes beforehand.
         _ => {}
     }
 }
