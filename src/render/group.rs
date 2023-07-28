@@ -16,7 +16,7 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if group.opacity.get() != 1.0 || group.blend_mode != BlendMode::Normal {
+    if is_isolated_group(group) {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
         let mut gs = writer.ext_graphics(gs_ref);
@@ -70,7 +70,7 @@ fn create_x_object(
     x_object
         .group()
         .transparency()
-        .isolated(false)
+        .isolated(is_isolated_group(group))
         .knockout(false)
         .color_space()
         .srgb();
@@ -108,4 +108,12 @@ fn create_to_stream(
     }
 
     content.restore_state();
+}
+
+fn is_isolated_group(group: &usvg::Group) -> bool {
+    group.isolate ||
+        group.mask.is_some() ||
+        group.blend_mode != BlendMode::Normal ||
+        !group.filters.is_empty()
+    || group.opacity.get() != 1.0
 }

@@ -4,7 +4,7 @@ use std::process;
 
 use clap::Parser;
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
-use usvg::{TreeParsing, TreeTextToPath};
+use usvg::{Node, TreeParsing, TreeTextToPath};
 
 use svg2pdf::Options;
 
