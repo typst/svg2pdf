@@ -111,21 +111,20 @@ fn extend_segments_from_node(
                         path_transform.map_point(&mut p);
                         segments.push(PathSegment::MoveTo(p));
                     }
-                    PathSegment::LineTo(p) => {
-                        let mut new_p = p;
-                        path_transform.map_point(&mut new_p);
-                        segments.push(PathSegment::LineTo(new_p));
+                    PathSegment::LineTo(mut p) => {
+                        path_transform.map_point(&mut p);
+                        segments.push(PathSegment::LineTo(p));
                     }
                     PathSegment::QuadTo(p1, p2) => {
-                        let mut new_ps = [p1, p2];
-                        path_transform.map_points(&mut new_ps);
-                        segments.push(PathSegment::QuadTo(new_ps[0], new_ps[1]));
+                        let mut points = [p1, p2];
+                        path_transform.map_points(&mut points);
+                        segments.push(PathSegment::QuadTo(points[0], points[1]));
                     }
                     PathSegment::CubicTo(p1, p2, p3) => {
-                        let mut new_ps = [p1, p2, p3];
-                        path_transform.map_points(&mut new_ps);
+                        let mut points = [p1, p2, p3];
+                        path_transform.map_points(&mut points);
                         segments
-                            .push(PathSegment::CubicTo(new_ps[0], new_ps[1], new_ps[2]));
+                            .push(PathSegment::CubicTo(points[0], points[1], points[2]));
                     }
                     PathSegment::Close => segments.push(PathSegment::Close),
                 })
