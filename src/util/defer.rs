@@ -21,46 +21,46 @@ use crate::util::allocate::Allocator;
 use crate::util::helper::{NameExt, SRGB};
 
 #[derive(Clone, Copy, Eq, PartialEq)]
-enum PendingObjectType {
+enum PendingResourceType {
     XObject,
     Pattern,
     GraphicsState,
     Shading,
 }
 
-impl PendingObjectType {
+impl PendingResourceType {
     fn get_name(&self, allocator: &mut Allocator) -> String {
         match *self {
-            PendingObjectType::XObject => allocator.alloc_x_object_name(),
-            PendingObjectType::Pattern => allocator.alloc_pattern_name(),
-            PendingObjectType::GraphicsState => allocator.alloc_graphics_state_name(),
-            PendingObjectType::Shading => allocator.alloc_shading_name(),
+            PendingResourceType::XObject => allocator.alloc_x_object_name(),
+            PendingResourceType::Pattern => allocator.alloc_pattern_name(),
+            PendingResourceType::GraphicsState => allocator.alloc_graphics_state_name(),
+            PendingResourceType::Shading => allocator.alloc_shading_name(),
         }
     }
 
     fn get_dict<'a>(&'a self, resources: &'a mut Resources) -> Dict {
         match *self {
-            PendingObjectType::XObject => resources.x_objects(),
-            PendingObjectType::Pattern => resources.patterns(),
-            PendingObjectType::GraphicsState => resources.ext_g_states(),
-            PendingObjectType::Shading => resources.shadings(),
+            PendingResourceType::XObject => resources.x_objects(),
+            PendingResourceType::Pattern => resources.patterns(),
+            PendingResourceType::GraphicsState => resources.ext_g_states(),
+            PendingResourceType::Shading => resources.shadings(),
         }
     }
 
-    pub fn iterator() -> impl Iterator<Item = PendingObjectType> {
+    pub fn iterator() -> impl Iterator<Item =PendingResourceType> {
         [
-            PendingObjectType::XObject,
-            PendingObjectType::Pattern,
-            PendingObjectType::GraphicsState,
-            PendingObjectType::Shading,
+            PendingResourceType::XObject,
+            PendingResourceType::Pattern,
+            PendingResourceType::GraphicsState,
+            PendingResourceType::Shading,
         ]
         .iter()
         .copied()
     }
 }
 
-struct Entry {
-    object_type: PendingObjectType,
+struct PendingResource {
+    object_type: PendingResourceType,
     reference: Ref,
     name: Rc<String>,
 }
@@ -71,7 +71,7 @@ pub struct Deferrer {
     /// The allocator that allows us to allocate new Refs and Names.
     allocator: Allocator,
     /// The stack frames containing the deferred objects.
-    pending_entries: Vec<Vec<Entry>>,
+    pending_entries: Vec<Vec<PendingResource>>,
 }
 
 impl Deferrer {
@@ -112,37 +112,37 @@ impl Deferrer {
     fn add_entry(
         &mut self,
         reference: Ref,
-        object_type: PendingObjectType,
+        object_type: PendingResourceType,
     ) -> Rc<String> {
         let name = Rc::new(object_type.get_name(&mut self.allocator));
 
-        self.push_entry(Entry { object_type, reference, name: name.clone() });
+        self.push_entry(PendingResource { object_type, reference, name: name.clone() });
         name
     }
 
     /// Add a new XObject entry. Returns the name of the XObject.
     pub fn add_x_object(&mut self, reference: Ref) -> Rc<String> {
-        self.add_entry(reference, PendingObjectType::XObject)
+        self.add_entry(reference, PendingResourceType::XObject)
     }
 
     /// Add a new Shading entry. Returns the name of the Shading.
     pub fn add_shading(&mut self, reference: Ref) -> Rc<String> {
-        self.add_entry(reference, PendingObjectType::Shading)
+        self.add_entry(reference, PendingResourceType::Shading)
     }
 
     /// Add a new Pattern entry. Returns the name of the Pattern.
     pub fn add_pattern(&mut self, reference: Ref) -> Rc<String> {
-        self.add_entry(reference, PendingObjectType::Pattern)
+        self.add_entry(reference, PendingResourceType::Pattern)
     }
 
     /// Add a new GraphicsState entry. Returns the name of the GraphicsState.
     pub fn add_graphics_state(&mut self, reference: Ref) -> Rc<String> {
-        self.add_entry(reference, PendingObjectType::GraphicsState)
+        self.add_entry(reference, PendingResourceType::GraphicsState)
     }
 
     /// Write all of the entries into a `Resources` dictionary.
-    fn write_entries(&mut self, resources: &mut Resources, entries: Vec<Entry>) {
-        for object_type in PendingObjectType::iterator() {
+    fn write_entries(&mut self, resources: &mut Resources, entries: Vec<PendingResource>) {
+        for object_type in PendingResourceType::iterator() {
             let entries: Vec<_> =
                 entries.iter().filter(|e| e.object_type == object_type).collect();
 
@@ -158,7 +158,7 @@ impl Deferrer {
         }
     }
 
-    fn push_entry(&mut self, entry: Entry) {
+    fn push_entry(&mut self, entry: PendingResource) {
         self.pending_entries.last_mut().unwrap().push(entry);
     }
 }

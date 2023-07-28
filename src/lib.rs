@@ -194,7 +194,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     page.parent(page_tree_ref);
     page.group()
         .transparency()
-        .isolated(false)
+        .isolated(true)
         .knockout(false)
         .color_space()
         .srgb();
