@@ -12,7 +12,7 @@ use pdf_writer::{Content, PdfWriter};
 use usvg::{Node, NodeKind, Transform, Tree};
 
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, TransformExt};
+use crate::util::helper::{plain_bbox, plain_bbox_without_default, TransformExt};
 
 /// Write a tree into a stream. Assumes that the stream belongs to transparency group and has the
 /// right bounding boxes.
@@ -53,14 +53,18 @@ impl Render for Node {
         accumulated_transform: Transform,
     ) {
         match *self.borrow() {
-            NodeKind::Path(ref path) => path::render(
-                path,
-                &plain_bbox(self, true),
-                writer,
-                content,
-                ctx,
-                accumulated_transform,
-            ),
+            NodeKind::Path(ref path) => {
+                if !plain_bbox_without_default(&self, true).is_none() {
+                    path::render(
+                        path,
+                        &plain_bbox(self, true),
+                        writer,
+                        content,
+                        ctx,
+                        accumulated_transform,
+                    )
+                }
+            },
             NodeKind::Group(ref group) => {
                 group::render(self, group, writer, content, ctx, accumulated_transform)
             }

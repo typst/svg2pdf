@@ -119,10 +119,15 @@ pub fn deflate(data: &[u8]) -> Vec<u8> {
 }
 
 /// Calculate the bbox of a node as a [Rect](usvg::Rect).
-pub fn plain_bbox(node: &Node, with_stroke: bool) -> usvg::NonZeroRect {
+pub fn plain_bbox(node: &Node, with_stroke: bool) -> NonZeroRect {
+    plain_bbox_without_default(node, with_stroke)
+        .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
+}
+
+/// Calculate the bbox of a node as a [Rect](usvg::Rect).
+pub fn plain_bbox_without_default(node: &Node, with_stroke: bool) -> Option<NonZeroRect> {
     calc_node_bbox(node, Transform::default(), with_stroke)
         .and_then(|b| b.to_non_zero_rect())
-        .unwrap_or(usvg::NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
 }
 
 // Taken from resvg

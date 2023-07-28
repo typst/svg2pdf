@@ -2,7 +2,7 @@ use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
 use pdf_writer::{Content, Finish, PdfWriter};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{Fill, NonZeroRect};
+use usvg::{Fill, NonZeroRect, PaintOrder};
 use usvg::{FillRule, LineCap, LineJoin, Paint, Visibility};
 use usvg::{Stroke, Transform};
 
@@ -19,6 +19,40 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    let separate_fill_stroke = || {
+        let mut stroked_path = path.clone();
+        stroked_path.fill = None;
+        let mut filled_path = path.clone();
+        filled_path.stroke = None;
+        (stroked_path, filled_path)
+    };
+
+    if path.paint_order == PaintOrder::FillAndStroke {
+        if path.stroke.as_ref().is_some_and(|stroke| stroke.opacity.get() != 1.0) {
+            // Chrome and Adobe Acrobat will clip the fill so that it is not visible under the
+            // stroke. For SVG, it should be visible. In order to achieve consistent behaviour,
+            // we draw the stroke and fill separately in such a case.
+            let (stroked_path, filled_path) = separate_fill_stroke();
+            render_impl(&filled_path, parent_bbox, writer, content, ctx, accumulated_transform);
+            render_impl(&stroked_path, parent_bbox, writer, content, ctx, accumulated_transform);
+        }   else {
+            render_impl(path, parent_bbox, writer, content, ctx, accumulated_transform)
+        }
+    }   else {
+        let (stroked_path, filled_path) = separate_fill_stroke();
+        render_impl(&stroked_path, parent_bbox, writer, content, ctx, accumulated_transform);
+        render_impl(&filled_path, parent_bbox, writer, content, ctx, accumulated_transform);
+    }
+}
+
+fn render_impl(
+    path: &usvg::Path,
+    parent_bbox: &NonZeroRect,
+    writer: &mut PdfWriter,
+    content: &mut Content,
+    ctx: &mut Context,
+    accumulated_transform: Transform,
+) {
     if path.visibility != Visibility::Visible {
         return;
     }
@@ -26,7 +60,6 @@ pub fn render(
     content.save_state();
     content.transform(path.transform.as_array());
     let accumulated_transform = accumulated_transform.pre_concat(path.transform);
-    content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
 
     let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get());
     let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get());
@@ -56,6 +89,7 @@ pub fn render(
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
+    // Taken from resvg
     fn calc(n1: f32, n2: f32) -> f32 {
         (n1 + n2 * 2.0) / 3.0
     }
@@ -73,6 +107,8 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
                 p_prev = Some(p);
             }
             PathSegment::QuadTo(p1, p2) => {
+                // Since PDF doesn't support quad curves, we ned to convert them into
+                // cubic
                 let prev = p_prev.unwrap();
                 content.cubic_to(
                     calc(prev.x, p1.x),
