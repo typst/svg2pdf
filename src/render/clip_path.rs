@@ -48,24 +48,23 @@ pub fn render(
 fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
     clip_path.root.descendants().all(|n| match *n.borrow() {
             NodeKind::Path(ref path) => {
-                // PDFs clip path operator doesn't support the EvenOdd rule
+                // While there is a clipping path for EvenOdd, it will produce wrong results
+                // if the clip-rule is defined on a group.
                 path
                         .fill
                         .as_ref()
                         .map_or(true, |fill| fill.rule == FillRule::NonZero)
             }
             NodeKind::Group(ref group) => {
-                // Nested clip paths are not supported in PDF
+                // We can only intersect one clipping path with another one, but not if the
+                // clipping path is on an object *inside* the clipping path instead of the
+                // clipping path itself.
                 group
                     .clip_path
                     .is_none()
             }
             _ => false,
         })
-        // Nested clip paths are not supported in PDF
-        && clip_path
-            .clip_path
-            .is_none()
 }
 
 fn create_simple_clip_path(
@@ -73,6 +72,11 @@ fn create_simple_clip_path(
     clip_path: Rc<ClipPath>,
     content: &mut Content,
 ) {
+
+    if let Some(clip_path) = &clip_path.clip_path {
+        create_simple_clip_path(parent, clip_path.clone(), content);
+    }
+
     // Just a dummy operation, so that in case the clip path only has hidden children the clip
     // path will still be applied and everything will be hidden.
     content.move_to(0.0, 0.0);
