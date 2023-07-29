@@ -1,14 +1,10 @@
-use pdf_writer::types::ColorSpaceOperand::Pattern;
-use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
-use pdf_writer::{Content, Finish, PdfWriter};
+use pdf_writer::{Content, PdfWriter};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{Fill, NonZeroRect, PaintOrder};
-use usvg::{FillRule, LineCap, LineJoin, Paint, Visibility};
-use usvg::{Stroke, Transform};
+use usvg::Transform;
+use usvg::Visibility;
+use usvg::{NonZeroRect, Paint, PaintOrder};
 
-use super::{gradient, pattern};
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
 
 /// Render a path into a content stream.
 pub fn render(
@@ -17,7 +13,7 @@ pub fn render(
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
-    accumulated_transform: Transform,
+    transform: Transform,
 ) {
     let Some(path_bbox) = path_bbox else { return };
 
@@ -33,89 +29,391 @@ pub fn render(
         (stroked_path, filled_path)
     };
 
-    if path.paint_order == PaintOrder::FillAndStroke {
-        if path.stroke.as_ref().is_some_and(|stroke| stroke.opacity.get() != 1.0) {
-            // Chrome and Adobe Acrobat will clip the fill so that it is not visible under the
-            // stroke. For SVG, it should be visible. In order to achieve consistent behaviour,
-            // we draw the stroke and fill separately in such a case.
-            let (stroked_path, filled_path) = separate_fill_stroke();
-            render_impl(
-                &filled_path,
-                path_bbox,
-                writer,
-                content,
-                ctx,
-                accumulated_transform,
-            );
-            render_impl(
-                &stroked_path,
-                path_bbox,
-                writer,
-                content,
-                ctx,
-                accumulated_transform,
-            );
-        } else {
-            render_impl(path, path_bbox, writer, content, ctx, accumulated_transform)
+    let has_stroke_opacity =
+        path.stroke.as_ref().is_some_and(|stroke| stroke.opacity.get() != 1.0);
+
+    let is_complex_path = {
+        let has_complex_stroke =
+            path.stroke.as_ref().is_some_and(|stroke| match &stroke.paint {
+                Paint::Pattern(_) => stroke.opacity != 1.0,
+                Paint::RadialGradient(rg) => {
+                    rg.stops.iter().any(|stop| stop.opacity.get() < 1.0)
+                }
+                Paint::LinearGradient(lg) => {
+                    lg.stops.iter().any(|stop| stop.opacity.get() < 1.0)
+                }
+                Paint::Color(_) => false,
+            });
+
+        let has_complex_fill = path.fill.as_ref().is_some_and(|fill| match &fill.paint {
+            Paint::Pattern(_) => fill.opacity != 1.0,
+            Paint::RadialGradient(rg) => {
+                rg.stops.iter().any(|stop| stop.opacity.get() < 1.0)
+            }
+            Paint::LinearGradient(lg) => {
+                lg.stops.iter().any(|stop| stop.opacity.get() < 1.0)
+            }
+            Paint::Color(_) => false,
+        });
+
+        has_complex_stroke || has_complex_fill
+    };
+
+    let render_func =
+        if is_complex_path { complex_path::render } else { simple_path::render };
+
+    match (path.paint_order, has_stroke_opacity) {
+        (PaintOrder::FillAndStroke, false) => {
+            render_func(&path, path_bbox, writer, content, ctx, transform);
         }
-    } else {
-        let (stroked_path, filled_path) = separate_fill_stroke();
-        render_impl(
-            &stroked_path,
-            path_bbox,
-            writer,
-            content,
-            ctx,
-            accumulated_transform,
-        );
-        render_impl(
-            &filled_path,
-            path_bbox,
-            writer,
-            content,
-            ctx,
-            accumulated_transform,
-        );
+        (PaintOrder::FillAndStroke, true) => {
+            let (stroke_path, fill_path) = separate_fill_stroke();
+            render_func(&fill_path, path_bbox, writer, content, ctx, transform);
+            render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
+        }
+        (PaintOrder::StrokeAndFill, _) => {
+            let (stroke_path, fill_path) = separate_fill_stroke();
+            render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
+            render_func(&fill_path, path_bbox, writer, content, ctx, transform);
+        }
     }
 }
 
-fn render_impl(
-    path: &usvg::Path,
-    path_bbox: &NonZeroRect,
-    writer: &mut PdfWriter,
-    content: &mut Content,
-    ctx: &mut Context,
-    accumulated_transform: Transform,
-) {
-    content.save_state();
-    content.transform(path.transform.to_pdf_transform());
-    let accumulated_transform = accumulated_transform.pre_concat(path.transform);
+mod simple_path {
+    use crate::render::path::draw_path;
+    use crate::render::{gradient, pattern};
+    use crate::util::context::Context;
+    use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
+    use pdf_writer::types::ColorSpaceOperand::Pattern;
+    use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
+    use pdf_writer::{Content, Finish, PdfWriter};
+    use usvg::{
+        Fill, FillRule, LineCap, LineJoin, NonZeroRect, Paint, Stroke, Transform,
+    };
 
-    let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get());
-    let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get());
+    pub fn render(
+        path: &usvg::Path,
+        path_bbox: &NonZeroRect,
+        writer: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        content.save_state();
+        content.transform(path.transform.to_pdf_transform());
+        let accumulated_transform = accumulated_transform.pre_concat(path.transform);
 
-    // Only create a graphics state if at least one of the opacities is not 1.
-    if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
-        let gs_ref = ctx.alloc_ref();
-        let mut gs = writer.ext_graphics(gs_ref);
-        gs.non_stroking_alpha(fill_opacity.unwrap_or(1.0))
-            .stroking_alpha(stroke_opacity.unwrap_or(1.0))
-            .finish();
-        content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+        let stroke_opacity = path.stroke.as_ref().map(|s| s.opacity.get());
+        let fill_opacity = path.fill.as_ref().map(|f| f.opacity.get());
+
+        // Only create a graphics state if at least one of the opacities is not 1.
+        if stroke_opacity.unwrap_or(1.0) != 1.0 || fill_opacity.unwrap_or(1.0) != 1.0 {
+            let gs_ref = ctx.alloc_ref();
+            let mut gs = writer.ext_graphics(gs_ref);
+            gs.non_stroking_alpha(fill_opacity.unwrap_or(1.0))
+                .stroking_alpha(stroke_opacity.unwrap_or(1.0))
+                .finish();
+            content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+        }
+
+        if let Some(stroke) = &path.stroke {
+            set_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
+        }
+
+        if let Some(fill) = &path.fill {
+            set_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
+        }
+
+        draw_path(path.data.segments(), content);
+        finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
+
+        content.restore_state();
     }
 
-    if let Some(stroke) = &path.stroke {
-        set_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
+    fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
+        match (stroke, fill.map(|f| f.rule)) {
+            (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
+            (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
+            (None, Some(FillRule::NonZero)) => content.fill_nonzero(),
+            (None, Some(FillRule::EvenOdd)) => content.fill_even_odd(),
+            (Some(_), None) => content.stroke(),
+            (None, None) => content.end_path(),
+        };
     }
 
-    if let Some(fill) = &path.fill {
-        set_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
+    fn set_stroke(
+        stroke: &Stroke,
+        path_bbox: &NonZeroRect,
+        content: &mut Content,
+        writer: &mut PdfWriter,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        content.set_line_width(stroke.width.get());
+        content.set_miter_limit(stroke.miterlimit.get());
+
+        match stroke.linecap {
+            LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
+            LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
+            LineCap::Square => content.set_line_cap(LineCapStyle::ProjectingSquareCap),
+        };
+
+        match stroke.linejoin {
+            LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
+            LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
+            LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
+        };
+
+        if let Some(dasharray) = &stroke.dasharray {
+            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
+        }
+
+        let paint = &stroke.paint;
+
+        match paint {
+            Paint::Color(c) => {
+                content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+                content.set_stroke_color(c.to_pdf_color());
+            }
+            Paint::Pattern(p) => {
+                let pattern_name = pattern::create(
+                    p.clone(),
+                    path_bbox,
+                    writer,
+                    ctx,
+                    accumulated_transform,
+                    None
+                );
+                content.set_stroke_color_space(Pattern);
+                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
+            }
+            Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
+                if let Some((pattern_name, mask)) = gradient::create(
+                    paint,
+                    path_bbox,
+                    writer,
+                    ctx,
+                    &accumulated_transform,
+                ) {
+                    // If the gradient contains stop with opacities, we need to write those separately
+                    // using a soft mask.
+                    if let Some(mask) = mask {
+                        content.set_parameters(mask.to_pdf_name());
+                    }
+                    content.set_stroke_color_space(Pattern);
+                    content.set_stroke_pattern(None, pattern_name.to_pdf_name());
+                }
+            }
+        }
     }
 
-    draw_path(path.data.segments(), content);
-    finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
+    fn set_fill(
+        fill: &Fill,
+        path_bbox: &NonZeroRect,
+        content: &mut Content,
+        writer: &mut PdfWriter,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        let paint = &fill.paint;
 
-    content.restore_state();
+        match paint {
+            Paint::Color(c) => {
+                content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+                content.set_fill_color(c.to_pdf_color());
+            }
+            Paint::Pattern(p) => {
+                let pattern_name = pattern::create(
+                    p.clone(),
+                    path_bbox,
+                    writer,
+                    ctx,
+                    accumulated_transform,
+                    None
+                );
+                content.set_fill_color_space(Pattern);
+                content.set_fill_pattern(None, pattern_name.to_pdf_name());
+            }
+            Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
+                if let Some((pattern_name, mask)) = gradient::create(
+                    paint,
+                    path_bbox,
+                    writer,
+                    ctx,
+                    &accumulated_transform,
+                ) {
+                    if let Some(mask) = mask {
+                        content.set_parameters(mask.to_pdf_name());
+                    }
+                    content.set_fill_color_space(Pattern);
+                    content.set_fill_pattern(None, pattern_name.to_pdf_name());
+                }
+            },
+        }
+    }
+}
+
+mod complex_path {
+    use crate::render::path::draw_path;
+    use crate::render::{gradient, pattern};
+    use crate::util::context::Context;
+    use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
+    use pdf_writer::types::ColorSpaceOperand::Pattern;
+    use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
+    use pdf_writer::{Content, Finish, PdfWriter};
+    use usvg::{
+        Fill, FillRule, LineCap, LineJoin, NonZeroRect, Paint, Stroke, Transform,
+    };
+
+    pub fn render(
+        path: &usvg::Path,
+        path_bbox: &NonZeroRect,
+        writer: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        content.save_state();
+        content.transform(path.transform.to_pdf_transform());
+        let accumulated_transform = accumulated_transform.pre_concat(path.transform);
+
+        debug_assert!(path.stroke.is_none() || path.fill.is_none());
+
+        if let Some(stroke) = &path.stroke {
+            set_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
+        }
+
+        if let Some(fill) = &path.fill {
+            set_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
+        }
+
+        draw_path(path.data.segments(), content);
+        finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
+
+        content.restore_state();
+    }
+
+    fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
+        match (stroke, fill.map(|f| f.rule)) {
+            (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
+            (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
+            (None, Some(FillRule::NonZero)) => content.fill_nonzero(),
+            (None, Some(FillRule::EvenOdd)) => content.fill_even_odd(),
+            (Some(_), None) => content.stroke(),
+            (None, None) => content.end_path(),
+        };
+    }
+
+    fn set_stroke(
+        stroke: &Stroke,
+        path_bbox: &NonZeroRect,
+        content: &mut Content,
+        writer: &mut PdfWriter,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        content.set_line_width(stroke.width.get());
+        content.set_miter_limit(stroke.miterlimit.get());
+
+        match stroke.linecap {
+            LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
+            LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
+            LineCap::Square => content.set_line_cap(LineCapStyle::ProjectingSquareCap),
+        };
+
+        match stroke.linejoin {
+            LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
+            LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
+            LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
+        };
+
+        if let Some(dasharray) = &stroke.dasharray {
+            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
+        }
+
+        let paint = &stroke.paint;
+
+        match paint {
+            Paint::Pattern(p) => {
+                let pattern_name = pattern::create(
+                    p.clone(),
+                    path_bbox,
+                    writer,
+                    ctx,
+                    accumulated_transform,
+                    Some(stroke.opacity.get())
+                );
+                content.set_stroke_color_space(Pattern);
+                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
+            }
+            Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
+                if let Some((pattern_name, mask)) = gradient::create(
+                    paint,
+                    path_bbox,
+                    writer,
+                    ctx,
+                    &accumulated_transform,
+                ) {
+                    // If the gradient contains stop with opacities, we need to write those separately
+                    // using a soft mask.
+                    if let Some(mask) = mask {
+                        content.set_parameters(mask.to_pdf_name());
+                    }
+                    content.set_stroke_color_space(Pattern);
+                    content.set_stroke_pattern(None, pattern_name.to_pdf_name());
+                }
+            }
+            Paint::Color(c) => {
+                content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+                content.set_stroke_color(c.to_pdf_color());
+            }
+        }
+    }
+
+    fn set_fill(
+        fill: &Fill,
+        path_bbox: &NonZeroRect,
+        content: &mut Content,
+        writer: &mut PdfWriter,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        let paint = &fill.paint;
+
+        match paint {
+            Paint::Color(c) => {
+                content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+                content.set_fill_color(c.to_pdf_color());
+            }
+            Paint::Pattern(p) => {
+                let pattern_name = pattern::create(
+                    p.clone(),
+                    path_bbox,
+                    writer,
+                    ctx,
+                    accumulated_transform,
+                    Some(fill.opacity.get())
+                );
+                content.set_fill_color_space(Pattern);
+                content.set_fill_pattern(None, pattern_name.to_pdf_name());
+            }
+            Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
+                if let Some((pattern_name, mask)) = gradient::create(
+                    paint,
+                    path_bbox,
+                    writer,
+                    ctx,
+                    &accumulated_transform,
+                ) {
+                    if let Some(mask) = mask {
+                        content.set_parameters(mask.to_pdf_name());
+                    }
+                    content.set_fill_color_space(Pattern);
+                    content.set_fill_pattern(None, pattern_name.to_pdf_name());
+                }
+            }
+        }
+    }
 }
 
 pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
@@ -158,117 +456,5 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
                 content.close_path();
             }
         };
-    }
-}
-
-fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
-    match (stroke, fill.map(|f| f.rule)) {
-        (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
-        (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
-        (None, Some(FillRule::NonZero)) => content.fill_nonzero(),
-        (None, Some(FillRule::EvenOdd)) => content.fill_even_odd(),
-        (Some(_), None) => content.stroke(),
-        (None, None) => content.end_path(),
-    };
-}
-
-fn set_stroke(
-    stroke: &Stroke,
-    path_bbox: &NonZeroRect,
-    content: &mut Content,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-    accumulated_transform: Transform,
-) {
-    content.set_line_width(stroke.width.get());
-    content.set_miter_limit(stroke.miterlimit.get());
-
-    match stroke.linecap {
-        LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
-        LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
-        LineCap::Square => content.set_line_cap(LineCapStyle::ProjectingSquareCap),
-    };
-
-    match stroke.linejoin {
-        LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
-        LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
-        LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
-    };
-
-    if let Some(dasharray) = &stroke.dasharray {
-        content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
-    }
-
-    let paint = &stroke.paint;
-
-    match paint {
-        Paint::Color(c) => {
-            content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
-            content.set_stroke_color(c.to_pdf_color());
-        }
-        Paint::Pattern(p) => {
-            let pattern_name = pattern::create(
-                p.clone(),
-                path_bbox,
-                writer,
-                ctx,
-                accumulated_transform,
-            );
-            content.set_stroke_color_space(Pattern);
-            content.set_stroke_pattern(None, pattern_name.to_pdf_name());
-        }
-        Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-            if let Some((pattern_name, mask)) =
-                gradient::create(paint, path_bbox, writer, ctx, &accumulated_transform)
-            {
-                // If the gradient contains stop with opacities, we need to write those separately
-                // using a soft mask.
-                if let Some(mask) = mask {
-                    content.set_parameters(mask.to_pdf_name());
-                }
-                content.set_stroke_color_space(Pattern);
-                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
-            }
-        }
-    }
-}
-
-fn set_fill(
-    fill: &Fill,
-    path_bbox: &NonZeroRect,
-    content: &mut Content,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-    accumulated_transform: Transform,
-) {
-    let paint = &fill.paint;
-
-    match paint {
-        Paint::Color(c) => {
-            content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
-            content.set_fill_color(c.to_pdf_color());
-        }
-        Paint::Pattern(p) => {
-            let pattern_name = pattern::create(
-                p.clone(),
-                path_bbox,
-                writer,
-                ctx,
-                accumulated_transform,
-            );
-            content.set_fill_color_space(Pattern);
-            content.set_fill_pattern(None, pattern_name.to_pdf_name());
-        }
-        Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-            if let Some((pattern_name, mask)) =
-                gradient::create(paint, path_bbox, writer, ctx, &accumulated_transform)
-            {
-                if let Some(mask) = mask {
-                    content.set_parameters(mask.to_pdf_name());
-                }
-                content.set_fill_color_space(Pattern);
-                content.set_fill_pattern(None, pattern_name.to_pdf_name());
-            }
-        }
     }
 }

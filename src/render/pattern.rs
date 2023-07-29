@@ -1,13 +1,13 @@
 use std::rc::Rc;
 
 use pdf_writer::types::{PaintType, TilingType};
-use pdf_writer::{Content, Filter, PdfWriter};
+use pdf_writer::{Content, Filter, Finish, PdfWriter};
 use usvg::utils::view_box_to_transform;
 use usvg::{NodeKind, NonZeroRect, Size, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::TransformExt;
+use crate::util::helper::{NameExt, TransformExt};
 
 /// Turn a pattern into a Pattern object. Returns the name (= the name in the `Resources` dictionary) of
 /// the pattern
@@ -17,6 +17,7 @@ pub fn create(
     writer: &mut PdfWriter,
     ctx: &mut Context,
     matrix: Transform,
+    initial_opacity: Option<f32>
 ) -> Rc<String> {
     let pattern_ref = ctx.alloc_ref();
     ctx.deferrer.push();
@@ -45,13 +46,23 @@ pub fn create(
                     pattern_rect.y(),
                 ));
 
-            let mut pattern_content = Content::new();
-            pattern_content.save_state();
+            let mut content = Content::new();
+            content.save_state();
+
+            if let Some(initial_opacity) = initial_opacity {
+                let gs_ref = ctx.alloc_ref();
+                let mut gs = writer.ext_graphics(gs_ref);
+                gs.non_stroking_alpha(initial_opacity)
+                    .stroking_alpha(initial_opacity);
+
+                gs.finish();
+                content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+            }
 
             if use_content_units_object_bounding_box {
                 // The x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
                 // the x/y would be applied twice.
-                pattern_content.transform(
+                content.transform(
                     Transform::from_scale(parent_bbox.width(), parent_bbox.height())
                         .to_pdf_transform(),
                 );
@@ -63,21 +74,21 @@ pub fn create(
                     view_box.aspect,
                     Size::from_wh(pattern_rect.width(), pattern_rect.height()).unwrap(),
                 );
-                pattern_content.transform(pattern_transform.to_pdf_transform());
+                content.transform(pattern_transform.to_pdf_transform());
             }
 
             group::render(
                 &pattern.root,
                 group,
                 writer,
-                &mut pattern_content,
+                &mut content,
                 ctx,
                 Transform::default(),
             );
 
-            pattern_content.restore_state();
+            content.restore_state();
 
-            let pattern_content_stream = ctx.finish_content(pattern_content);
+            let pattern_content_stream = ctx.finish_content(content);
 
             let mut tiling_pattern =
                 writer.tiling_pattern(pattern_ref, &pattern_content_stream);

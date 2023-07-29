@@ -5,7 +5,9 @@ use usvg::{Mask, Node, NodeKind, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{clip_to_rect, plain_bbox, NameExt, RectExt, TransformExt, MaskTypeExt};
+use crate::util::helper::{
+    clip_to_rect, plain_bbox, MaskTypeExt, NameExt, RectExt, TransformExt,
+};
 
 /// Render a mask into a content stream.
 pub fn render(
@@ -52,7 +54,8 @@ pub fn create(
         NodeKind::Group(ref group) => {
             let mut accumulated_transform = Transform::default();
             if mask.content_units == Units::ObjectBoundingBox {
-                content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
+                content
+                    .transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
                 accumulated_transform = Transform::from_bbox(parent_svg_bbox);
             }
 

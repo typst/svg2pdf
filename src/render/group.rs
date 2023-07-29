@@ -29,7 +29,8 @@ pub fn render(
         content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
 
         content.x_object(
-            create_x_object(node, group, writer, ctx, accumulated_transform).to_pdf_name(),
+            create_x_object(node, group, writer, ctx, accumulated_transform)
+                .to_pdf_name(),
         );
         content.restore_state();
     } else {
@@ -111,9 +112,9 @@ fn create_to_stream(
 }
 
 fn is_isolated_group(group: &usvg::Group) -> bool {
-    group.isolate ||
-        group.mask.is_some() ||
-        group.blend_mode != BlendMode::Normal ||
-        !group.filters.is_empty()
-    || group.opacity.get() != 1.0
+    group.isolate
+        || group.mask.is_some()
+        || group.blend_mode != BlendMode::Normal
+        || !group.filters.is_empty()
+        || group.opacity.get() != 1.0
 }

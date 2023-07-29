@@ -230,7 +230,10 @@ fn get_shading_function(
         let (first_color, second_color) = if alpha {
             (vec![first.opacity.get()], vec![second.opacity.get()])
         } else {
-            (Vec::from(first.color.to_pdf_color()), Vec::from(second.color.to_pdf_color()))
+            (
+                Vec::from(first.color.to_pdf_color()),
+                Vec::from(second.color.to_pdf_color()),
+            )
         };
 
         bounds.push(second.offset.get());

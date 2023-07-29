@@ -64,10 +64,8 @@ fn main() -> ExitCode {
             .decode()
             .unwrap()
             .into_rgba8();
-        let (_, actual_image) = runner.convert_svg(
-            &fs::read_to_string(svg_file.as_svg_path()).unwrap(),
-            &runner
-        );
+        let (_, actual_image) = runner
+            .convert_svg(&fs::read_to_string(svg_file.as_svg_path()).unwrap(), &runner);
 
         let (width, height) = expected_image.dimensions();
         let mut diff_image = RgbaImage::new(width * 3, height);

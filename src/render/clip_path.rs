@@ -160,7 +160,8 @@ fn create_complex_clip_path(
         NodeKind::Group(ref group) => {
             if clip_path.units == Units::ObjectBoundingBox {
                 let parent_svg_bbox = plain_bbox(parent, false);
-                content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
+                content
+                    .transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
             }
             group::render(
                 &clip_path.root,

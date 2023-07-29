@@ -84,8 +84,9 @@ pub fn render(
     helper::clip_to_rect(image.view_box.rect, content);
 
     // Account for the x/y of the viewbox.
-    content
-        .transform(Transform::from_translate(image_rect.x(), image_rect.y()).to_pdf_transform());
+    content.transform(
+        Transform::from_translate(image_rect.x(), image_rect.y()).to_pdf_transform(),
+    );
     // Scale the image from 1x1 to the actual dimensions.
     content.transform(
         Transform::from_row(

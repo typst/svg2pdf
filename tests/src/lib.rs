@@ -146,7 +146,7 @@ impl Runner {
     pub fn convert_svg(
         &self,
         svg_string: &str,
-        test_runner: &Runner
+        test_runner: &Runner,
     ) -> (Vec<u8>, RgbaImage) {
         let scale_factor = 1.0;
         let tree = self.read_svg(svg_string);
