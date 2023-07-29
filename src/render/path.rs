@@ -1,10 +1,11 @@
 use pdf_writer::{Content, PdfWriter};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::Transform;
 use usvg::Visibility;
 use usvg::{NonZeroRect, Paint, PaintOrder};
+use usvg::{Stroke, Transform};
 
 use crate::util::context::Context;
+use crate::util::helper::{LineCapExt, LineJoinExt};
 
 /// Render a path into a content stream.
 pub fn render(
@@ -21,7 +22,7 @@ pub fn render(
         return;
     }
 
-    let separate_fill_stroke = || {
+    let separate_path = || {
         let mut stroked_path = path.clone();
         stroked_path.fill = None;
         let mut filled_path = path.clone();
@@ -59,20 +60,28 @@ pub fn render(
         has_complex_stroke || has_complex_fill
     };
 
-    let render_func =
-        if is_complex_path { complex_path::render } else { simple_path::render };
+    let render_func = if is_complex_path {complex_path::render} else {simple_path::render};
 
-    match (path.paint_order, has_stroke_opacity) {
-        (PaintOrder::FillAndStroke, false) => {
+    match (path.paint_order, has_stroke_opacity, is_complex_path) {
+        (PaintOrder::FillAndStroke, false, false) => {
             render_func(&path, path_bbox, writer, content, ctx, transform);
         }
-        (PaintOrder::FillAndStroke, true) => {
-            let (stroke_path, fill_path) = separate_fill_stroke();
+        (PaintOrder::FillAndStroke, false, true) => {
+            let (stroke_path, fill_path) = separate_path();
             render_func(&fill_path, path_bbox, writer, content, ctx, transform);
             render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
         }
-        (PaintOrder::StrokeAndFill, _) => {
-            let (stroke_path, fill_path) = separate_fill_stroke();
+        // Chrome and Adobe Acrobat will clip the fill so that it is not visible under the
+        // stroke if it has an opacity. For SVG, it should be visible. In order to achieve
+        // consistent behaviour we draw the stroke and fill separately if there is a stroke
+        // opacity.
+        (PaintOrder::FillAndStroke, true, _) => {
+            let (stroke_path, fill_path) = separate_path();
+            render_func(&fill_path, path_bbox, writer, content, ctx, transform);
+            render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
+        }
+        (PaintOrder::StrokeAndFill, _, _) => {
+            let (stroke_path, fill_path) = separate_path();
             render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
             render_func(&fill_path, path_bbox, writer, content, ctx, transform);
         }
@@ -80,16 +89,14 @@ pub fn render(
 }
 
 mod simple_path {
-    use crate::render::path::draw_path;
+    use crate::render::path::{draw_path, set_stroke_properties};
     use crate::render::{gradient, pattern};
     use crate::util::context::Context;
     use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
+    use pdf_writer::types::ColorSpaceOperand;
     use pdf_writer::types::ColorSpaceOperand::Pattern;
-    use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
     use pdf_writer::{Content, Finish, PdfWriter};
-    use usvg::{
-        Fill, FillRule, LineCap, LineJoin, NonZeroRect, Paint, Stroke, Transform,
-    };
+    use usvg::{Fill, FillRule, NonZeroRect, Paint, Stroke, Transform};
 
     pub fn render(
         path: &usvg::Path,
@@ -149,24 +156,7 @@ mod simple_path {
         ctx: &mut Context,
         accumulated_transform: Transform,
     ) {
-        content.set_line_width(stroke.width.get());
-        content.set_miter_limit(stroke.miterlimit.get());
-
-        match stroke.linecap {
-            LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
-            LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
-            LineCap::Square => content.set_line_cap(LineCapStyle::ProjectingSquareCap),
-        };
-
-        match stroke.linejoin {
-            LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
-            LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
-            LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
-        };
-
-        if let Some(dasharray) = &stroke.dasharray {
-            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
-        }
+        set_stroke_properties(content, stroke);
 
         let paint = &stroke.paint;
 
@@ -182,7 +172,7 @@ mod simple_path {
                     writer,
                     ctx,
                     accumulated_transform,
-                    None
+                    None,
                 );
                 content.set_stroke_color_space(Pattern);
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
@@ -229,7 +219,7 @@ mod simple_path {
                     writer,
                     ctx,
                     accumulated_transform,
-                    None
+                    None,
                 );
                 content.set_fill_color_space(Pattern);
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
@@ -248,22 +238,19 @@ mod simple_path {
                     content.set_fill_color_space(Pattern);
                     content.set_fill_pattern(None, pattern_name.to_pdf_name());
                 }
-            },
+            }
         }
     }
 }
 
 mod complex_path {
-    use crate::render::path::draw_path;
+    use crate::render::path::{draw_path, set_stroke_properties};
     use crate::render::{gradient, pattern};
     use crate::util::context::Context;
     use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
     use pdf_writer::types::ColorSpaceOperand::Pattern;
-    use pdf_writer::types::{ColorSpaceOperand, LineCapStyle, LineJoinStyle};
-    use pdf_writer::{Content, Finish, PdfWriter};
-    use usvg::{
-        Fill, FillRule, LineCap, LineJoin, NonZeroRect, Paint, Stroke, Transform,
-    };
+    use pdf_writer::{Content, PdfWriter};
+    use usvg::{Fill, FillRule, NonZeroRect, Paint, Stroke, Transform};
 
     pub fn render(
         path: &usvg::Path,
@@ -277,6 +264,7 @@ mod complex_path {
         content.transform(path.transform.to_pdf_transform());
         let accumulated_transform = accumulated_transform.pre_concat(path.transform);
 
+        // Paths passed to complex_path muster contain either only a stroke or fill.
         debug_assert!(path.stroke.is_none() || path.fill.is_none());
 
         if let Some(stroke) = &path.stroke {
@@ -312,25 +300,7 @@ mod complex_path {
         ctx: &mut Context,
         accumulated_transform: Transform,
     ) {
-        content.set_line_width(stroke.width.get());
-        content.set_miter_limit(stroke.miterlimit.get());
-
-        match stroke.linecap {
-            LineCap::Butt => content.set_line_cap(LineCapStyle::ButtCap),
-            LineCap::Round => content.set_line_cap(LineCapStyle::RoundCap),
-            LineCap::Square => content.set_line_cap(LineCapStyle::ProjectingSquareCap),
-        };
-
-        match stroke.linejoin {
-            LineJoin::Miter => content.set_line_join(LineJoinStyle::MiterJoin),
-            LineJoin::Round => content.set_line_join(LineJoinStyle::RoundJoin),
-            LineJoin::Bevel => content.set_line_join(LineJoinStyle::BevelJoin),
-        };
-
-        if let Some(dasharray) = &stroke.dasharray {
-            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
-        }
-
+        set_stroke_properties(content, stroke);
         let paint = &stroke.paint;
 
         match paint {
@@ -341,7 +311,7 @@ mod complex_path {
                     writer,
                     ctx,
                     accumulated_transform,
-                    Some(stroke.opacity.get())
+                    Some(stroke.opacity.get()),
                 );
                 content.set_stroke_color_space(Pattern);
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
@@ -363,10 +333,8 @@ mod complex_path {
                     content.set_stroke_pattern(None, pattern_name.to_pdf_name());
                 }
             }
-            Paint::Color(c) => {
-                content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
-                content.set_stroke_color(c.to_pdf_color());
-            }
+            // complex_path only handles gradients/patterns
+            _ => unreachable!()
         }
     }
 
@@ -381,10 +349,6 @@ mod complex_path {
         let paint = &fill.paint;
 
         match paint {
-            Paint::Color(c) => {
-                content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
-                content.set_fill_color(c.to_pdf_color());
-            }
             Paint::Pattern(p) => {
                 let pattern_name = pattern::create(
                     p.clone(),
@@ -392,7 +356,7 @@ mod complex_path {
                     writer,
                     ctx,
                     accumulated_transform,
-                    Some(fill.opacity.get())
+                    Some(fill.opacity.get()),
                 );
                 content.set_fill_color_space(Pattern);
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
@@ -411,7 +375,9 @@ mod complex_path {
                     content.set_fill_color_space(Pattern);
                     content.set_fill_pattern(None, pattern_name.to_pdf_name());
                 }
-            }
+            },
+            // complex_path only handles gradients/patterns
+            _ => unreachable!()
         }
     }
 }
@@ -456,5 +422,17 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
                 content.close_path();
             }
         };
+    }
+}
+
+fn set_stroke_properties(content: &mut Content, stroke: &Stroke) {
+    content.set_line_width(stroke.width.get());
+    content.set_miter_limit(stroke.miterlimit.get());
+
+    content.set_line_cap(stroke.linecap.to_pdf_line_cap());
+    content.set_line_join(stroke.linejoin.to_pdf_line_join());
+
+    if let Some(dasharray) = &stroke.dasharray {
+        content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
     }
 }

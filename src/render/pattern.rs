@@ -17,7 +17,7 @@ pub fn create(
     writer: &mut PdfWriter,
     ctx: &mut Context,
     matrix: Transform,
-    initial_opacity: Option<f32>
+    initial_opacity: Option<f32>,
 ) -> Rc<String> {
     let pattern_ref = ctx.alloc_ref();
     ctx.deferrer.push();
@@ -52,11 +52,12 @@ pub fn create(
             if let Some(initial_opacity) = initial_opacity {
                 let gs_ref = ctx.alloc_ref();
                 let mut gs = writer.ext_graphics(gs_ref);
-                gs.non_stroking_alpha(initial_opacity)
-                    .stroking_alpha(initial_opacity);
+                gs.non_stroking_alpha(initial_opacity).stroking_alpha(initial_opacity);
 
                 gs.finish();
-                content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+                content.set_parameters(
+                    ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name(),
+                );
             }
 
             if use_content_units_object_bounding_box {

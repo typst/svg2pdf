@@ -1,6 +1,8 @@
-use pdf_writer::types::{BlendMode, MaskType};
+use pdf_writer::types::{BlendMode, LineCapStyle, LineJoinStyle, MaskType};
 use pdf_writer::{Content, Name, Rect};
-use usvg::{BBox, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
+use usvg::{
+    BBox, LineCap, LineJoin, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform,
+};
 
 pub const SRGB: Name = Name(b"srgb");
 
@@ -85,6 +87,34 @@ impl MaskTypeExt for usvg::MaskType {
         match self {
             usvg::MaskType::Alpha => MaskType::Alpha,
             usvg::MaskType::Luminance => MaskType::Luminosity,
+        }
+    }
+}
+
+pub trait LineCapExt {
+    fn to_pdf_line_cap(&self) -> LineCapStyle;
+}
+
+impl LineCapExt for LineCap {
+    fn to_pdf_line_cap(&self) -> LineCapStyle {
+        match self {
+            LineCap::Butt => LineCapStyle::ButtCap,
+            LineCap::Round => LineCapStyle::RoundCap,
+            LineCap::Square => LineCapStyle::ProjectingSquareCap,
+        }
+    }
+}
+
+pub trait LineJoinExt {
+    fn to_pdf_line_join(&self) -> LineJoinStyle;
+}
+
+impl LineJoinExt for LineJoin {
+    fn to_pdf_line_join(&self) -> LineJoinStyle {
+        match self {
+            LineJoin::Miter => LineJoinStyle::MiterJoin,
+            LineJoin::Round => LineJoinStyle::RoundJoin,
+            LineJoin::Bevel => LineJoinStyle::BevelJoin,
         }
     }
 }
