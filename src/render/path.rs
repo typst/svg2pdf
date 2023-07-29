@@ -70,7 +70,7 @@ pub fn render(
 
     match (path.paint_order, has_stroke_opacity, is_complex_path(path)) {
         (PaintOrder::FillAndStroke, false, false) => {
-            simple_path::render(&path, path_bbox, writer, content, ctx, transform);
+            simple_path::render(path, path_bbox, writer, content, ctx, transform);
         }
         // Chrome and Adobe Acrobat will clip the fill so that it is not visible under the
         // stroke, even if it has an opacity. However, in SVG, it should be visible. In order to achieve
