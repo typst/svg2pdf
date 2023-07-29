@@ -1,7 +1,7 @@
 use pdf_writer::{Content, PdfWriter};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::Visibility;
 use usvg::{NonZeroRect, Paint, PaintOrder};
+use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
 
 use crate::util::context::Context;
@@ -33,7 +33,7 @@ pub fn render(
     let has_stroke_opacity =
         path.stroke.as_ref().is_some_and(|stroke| stroke.opacity.get() != 1.0);
 
-    let is_complex_path = {
+    let is_complex_path = |path: &Path| {
         let has_complex_stroke =
             path.stroke.as_ref().is_some_and(|stroke| match &stroke.paint {
                 Paint::Pattern(_) => stroke.opacity != 1.0,
@@ -60,30 +60,50 @@ pub fn render(
         has_complex_stroke || has_complex_fill
     };
 
-    let render_func = if is_complex_path {complex_path::render} else {simple_path::render};
-
-    match (path.paint_order, has_stroke_opacity, is_complex_path) {
-        (PaintOrder::FillAndStroke, false, false) => {
-            render_func(&path, path_bbox, writer, content, ctx, transform);
+    let render_func = |path| {
+        if is_complex_path(path) {
+            complex_path::render
+        } else {
+            simple_path::render
         }
-        (PaintOrder::FillAndStroke, false, true) => {
-            let (stroke_path, fill_path) = separate_path();
-            render_func(&fill_path, path_bbox, writer, content, ctx, transform);
-            render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
+    };
+
+    match (path.paint_order, has_stroke_opacity, is_complex_path(path)) {
+        (PaintOrder::FillAndStroke, false, false) => {
+            simple_path::render(&path, path_bbox, writer, content, ctx, transform);
         }
         // Chrome and Adobe Acrobat will clip the fill so that it is not visible under the
-        // stroke if it has an opacity. For SVG, it should be visible. In order to achieve
+        // stroke, even if it has an opacity. However, in SVG, it should be visible. In order to achieve
         // consistent behaviour we draw the stroke and fill separately if there is a stroke
         // opacity.
-        (PaintOrder::FillAndStroke, true, _) => {
+        (PaintOrder::FillAndStroke, true, _)
+        | (PaintOrder::FillAndStroke, false, true) => {
             let (stroke_path, fill_path) = separate_path();
-            render_func(&fill_path, path_bbox, writer, content, ctx, transform);
-            render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
+            render_func(&fill_path)(
+                &fill_path, path_bbox, writer, content, ctx, transform,
+            );
+            render_func(&stroke_path)(
+                &stroke_path,
+                path_bbox,
+                writer,
+                content,
+                ctx,
+                transform,
+            );
         }
         (PaintOrder::StrokeAndFill, _, _) => {
             let (stroke_path, fill_path) = separate_path();
-            render_func(&stroke_path, path_bbox, writer, content, ctx, transform);
-            render_func(&fill_path, path_bbox, writer, content, ctx, transform);
+            render_func(&stroke_path)(
+                &stroke_path,
+                path_bbox,
+                writer,
+                content,
+                ctx,
+                transform,
+            );
+            render_func(&fill_path)(
+                &fill_path, path_bbox, writer, content, ctx, transform,
+            );
         }
     }
 }
@@ -247,7 +267,7 @@ mod complex_path {
     use crate::render::path::{draw_path, set_stroke_properties};
     use crate::render::{gradient, pattern};
     use crate::util::context::Context;
-    use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
+    use crate::util::helper::{NameExt, TransformExt};
     use pdf_writer::types::ColorSpaceOperand::Pattern;
     use pdf_writer::{Content, PdfWriter};
     use usvg::{Fill, FillRule, NonZeroRect, Paint, Stroke, Transform};
@@ -334,7 +354,7 @@ mod complex_path {
                 }
             }
             // complex_path only handles gradients/patterns
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
@@ -375,9 +395,9 @@ mod complex_path {
                     content.set_fill_color_space(Pattern);
                     content.set_fill_pattern(None, pattern_name.to_pdf_name());
                 }
-            },
+            }
             // complex_path only handles gradients/patterns
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
