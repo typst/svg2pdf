@@ -71,11 +71,17 @@ pub fn create_shading_soft_mask(
 
 pub fn create_shading(
     paint: &Paint,
+    parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
-) -> Rc<String> {
+) -> (Rc<String>, Transform) {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
-    shading(&properties, writer, ctx, false)
+    let transform = (if properties.units == Units::ObjectBoundingBox {
+        Transform::from_bbox(*parent_bbox)
+    } else {
+        Transform::default()
+    }).pre_concat(properties.transform);
+    (shading(&properties, writer, ctx, false), transform)
 }
 
 fn shading_pattern(

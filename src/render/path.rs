@@ -24,10 +24,20 @@ pub fn render(
     }
 
     let separate_path = || {
-        let mut stroked_path = path.clone();
-        stroked_path.fill = None;
-        let mut filled_path = path.clone();
-        filled_path.stroke = None;
+        let stroked_path = if path.stroke.is_some() {
+            let mut path = path.clone();
+            path.fill = None;
+            Some(path)
+        } else {
+            None
+        };
+
+        let filled_path = if path.fill.is_some() {
+            let mut path = path.clone();
+            path.stroke = None;
+            Some(path)
+        } else { None };
+
         (stroked_path, filled_path)
     };
 
@@ -80,31 +90,39 @@ pub fn render(
         (PaintOrder::FillAndStroke, true, _)
         | (PaintOrder::FillAndStroke, false, true) => {
             let (stroke_path, fill_path) = separate_path();
-            render_func(&fill_path)(
-                &fill_path, node, writer, content, ctx, transform,
-            );
-            render_func(&stroke_path)(
-                &stroke_path,
-                node,
-                writer,
-                content,
-                ctx,
-                transform,
-            );
+            if let Some(fill_path) = fill_path.as_ref() {
+                render_func(fill_path)(
+                    fill_path, node, writer, content, ctx, transform,
+                );
+            }
+            if let Some(stroke_path) = stroke_path.as_ref() {
+                render_func(stroke_path)(
+                    stroke_path,
+                    node,
+                    writer,
+                    content,
+                    ctx,
+                    transform,
+                );
+            }
         }
         (PaintOrder::StrokeAndFill, _, _) => {
             let (stroke_path, fill_path) = separate_path();
-            render_func(&stroke_path)(
-                &stroke_path,
-                node,
-                writer,
-                content,
-                ctx,
-                transform,
-            );
-            render_func(&fill_path)(
-                &fill_path, node, writer, content, ctx, transform,
-            );
+            if let Some(stroke_path) = stroke_path.as_ref() {
+                render_func(stroke_path)(
+                    stroke_path,
+                    node,
+                    writer,
+                    content,
+                    ctx,
+                    transform,
+                );
+            }
+            if let Some(fill_path) = fill_path.as_ref() {
+                render_func(fill_path)(
+                    fill_path, node, writer, content, ctx, transform,
+                );
+            }
         }
     }
 }
@@ -423,12 +441,15 @@ mod complex_path {
                     writer,
                     ctx,
                 );
-                let shading_name = gradient::create_shading(
+                let (shading_name, transform) = gradient::create_shading(
                     paint,
+                    path_bbox,
                     writer,
                     ctx,
                 );
+
                 content.set_parameters(soft_mask_name.to_pdf_name());
+                content.transform(transform.to_pdf_transform());
                 content.shading(shading_name.to_pdf_name());
             }
             // complex_path only handles gradients/patterns
