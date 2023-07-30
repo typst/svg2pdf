@@ -3,6 +3,7 @@ use pdf_writer::{Content, Name, Rect};
 use usvg::{
     BBox, LineCap, LineJoin, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform,
 };
+use crate::render::gradient::Stop;
 
 pub const SRGB: Name = Name(b"srgb");
 
@@ -116,6 +117,21 @@ impl LineJoinExt for LineJoin {
             LineJoin::Round => LineJoinStyle::RoundJoin,
             LineJoin::Bevel => LineJoinStyle::BevelJoin,
         }
+    }
+}
+
+pub trait StopExt {
+    fn opacity_stops(&self) -> Stop<1>;
+    fn color_stops(&self) -> Stop<3>;
+}
+
+impl StopExt for usvg::Stop {
+    fn opacity_stops(&self) -> Stop<1> {
+        Stop {color: [self.opacity.get()], offset: self.offset.get()}
+    }
+
+    fn color_stops(&self) -> Stop<3> {
+        Stop {color: self.color.to_pdf_color(), offset: self.offset.get()}
     }
 }
 

@@ -3,12 +3,18 @@ use std::rc::Rc;
 use pdf_writer::types::{MaskType, ShadingType};
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use usvg::{
-    LinearGradient, NonZeroRect, NormalizedF32, Paint, RadialGradient, Stop, StopOffset,
+    LinearGradient, NonZeroRect, NormalizedF32, Paint, RadialGradient, StopOffset,
     Transform, Units,
 };
 
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, NameExt, RectExt, TransformExt};
+use crate::util::helper::{NameExt, RectExt, StopExt, TransformExt};
+
+#[derive(PartialEq, Clone, Debug)]
+pub struct Stop<const COUNT: usize> {
+    pub color: [f32; COUNT],
+    pub offset: f32,
+}
 
 /// Turn a group into an shading object (including a soft mask if the gradient contains stop opacities).
 /// Returns the name (= the name in the `Resources` dictionary) of the shading object and optionally
@@ -42,7 +48,7 @@ pub fn create(
 struct GradientProperties {
     coords: Vec<f32>,
     shading_type: ShadingType,
-    stops: Vec<Stop>,
+    stops: Vec<usvg::Stop>,
     transform: Transform,
     units: Units,
 }
@@ -112,7 +118,7 @@ fn create_shading_pattern(
         .pre_concat(properties.transform);
 
     let shading_function_ref =
-        get_shading_function(false, &properties.stops, writer, ctx);
+        get_function(&properties.stops, writer, ctx, false);
     let mut shading_pattern = writer.shading_pattern(pattern_ref);
     let mut shading = shading_pattern.shading();
     shading.shading_type(properties.shading_type);
@@ -149,7 +155,7 @@ fn get_soft_mask(
         },
     );
 
-    let shading_function_ref = get_shading_function(true, &properties.stops, writer, ctx);
+    let shading_function_ref = get_function(&properties.stops, writer, ctx, true);
     let mut shading = writer.shading(shading_ref);
     shading.shading_type(properties.shading_type);
     shading.color_space().d65_gray();
@@ -192,21 +198,17 @@ fn get_soft_mask(
     ctx.deferrer.add_graphics_state(gs_ref)
 }
 
-fn get_shading_function(
-    alpha: bool,
-    stops: &[Stop],
+fn get_function(
+    stops: &[usvg::Stop],
     writer: &mut PdfWriter,
     ctx: &mut Context,
+    use_opacities: bool
 ) -> Ref {
-    let reference = ctx.alloc_ref();
-    let mut stops = stops.to_owned();
     // Gradients with no stops and only one stop should automatically be converted by resvg
     // into no fill / plain fill, so there should be at least two stops
     debug_assert!(stops.len() > 1);
 
-    let mut functions = vec![];
-    let mut bounds = vec![];
-    let mut encode = vec![];
+    let mut stops = stops.to_owned();
 
     // We manually pad the stops if necessary so that they are always in the range from 0-1
     if let Some(first) = stops.first() {
@@ -225,56 +227,81 @@ fn get_shading_function(
         }
     }
 
-    for window in stops.windows(2) {
-        let (first, second) = (window[0], window[1]);
-        let (first_color, second_color) = if alpha {
-            (vec![first.opacity.get()], vec![second.opacity.get()])
-        } else {
-            (
-                Vec::from(first.color.to_pdf_color()),
-                Vec::from(second.color.to_pdf_color()),
-            )
-        };
 
-        bounds.push(second.offset.get());
-        functions.push(single_gradient(first_color, second_color, writer, ctx));
+    if use_opacities {
+        let stops = stops.iter().map(|s| s.opacity_stops()).collect::<Vec<Stop<1>>>();
+        function(&stops, writer, ctx)
+    }   else {
+        let stops = stops.iter().map(|s| s.color_stops()).collect::<Vec<Stop<3>>>();
+        function(&stops, writer, ctx)
+    }
+}
+
+fn function<const COUNT: usize>(
+    stops: &[Stop<COUNT>],
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+) -> Ref {
+    if stops.len() == 2 {
+        exponential_function(&stops[0], &stops[1], writer, ctx)
+    }   else {
+        stitching_function(stops, writer, ctx)
+    }
+}
+
+/// Create a stitching function for multiple gradient stops.
+fn stitching_function<const COUNT: usize>(
+    stops: &[Stop<COUNT>],
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+) -> Ref {
+    assert!(!stops.is_empty());
+
+    let reference = ctx.alloc_ref();
+
+    let mut functions = vec![];
+    let mut bounds = vec![];
+    let mut encode = vec![];
+
+    for window in stops.windows(2) {
+        let (first, second) = (&window[0], &window[1]);
+        bounds.push(second.offset);
+        functions.push(exponential_function(first, second, writer, ctx));
         encode.extend([0.0, 1.0]);
     }
 
-    // Remove the last bound since the bounds array only contains the points *in-between*
-    // the stops
     bounds.pop();
 
     let mut stitching_function = writer.stitching_function(reference);
     stitching_function.domain([0.0, 1.0]);
-    if alpha {
-        stitching_function.range([0.0, 1.0]);
-    } else {
-        stitching_function.range([0.0, 1.0, 0.0, 1.0, 0.0, 1.0]);
-    }
+    stitching_function.range(get_function_range(COUNT));
     stitching_function.functions(functions);
     stitching_function.bounds(bounds);
     stitching_function.encode(encode);
     reference
 }
 
-fn single_gradient(
-    c0: Vec<f32>,
-    c1: Vec<f32>,
+
+/// Create an exponential function for two gradient stops.
+fn exponential_function<const COUNT: usize>(
+    first_stop: &Stop<COUNT>,
+    second_stop: &Stop<COUNT>,
     writer: &mut PdfWriter,
     ctx: &mut Context,
 ) -> Ref {
-    assert_eq!(c0.len(), c1.len());
-
     let reference = ctx.alloc_ref();
     let mut exp = writer.exponential_function(reference);
-    let length = c0.len();
 
-    exp.range([0.0, 1.0].repeat(length));
-    exp.c0(c0);
-    exp.c1(c1);
+    exp.range(get_function_range(COUNT));
+    exp.c0(first_stop.color);
+    exp.c1(second_stop.color);
     exp.domain([0.0, 1.0]);
     exp.n(1.0);
     exp.finish();
     reference
 }
+
+fn get_function_range(count: usize) -> Vec<f32> {
+    [0.0, 1.0].repeat(count)
+}
+
