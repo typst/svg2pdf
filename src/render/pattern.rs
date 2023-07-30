@@ -1,10 +1,10 @@
 use std::ops::Mul;
 use std::rc::Rc;
 
-use pdf_writer::{Content, Filter, PdfWriter};
 use pdf_writer::types::{PaintType, TilingType};
-use usvg::{NodeKind, NonZeroRect, Opacity, Size, Transform, Units};
+use pdf_writer::{Content, Filter, PdfWriter};
 use usvg::utils::view_box_to_transform;
+use usvg::{NodeKind, NonZeroRect, Opacity, Size, Transform, Units};
 
 use crate::util::context::Context;
 use crate::util::helper::TransformExt;

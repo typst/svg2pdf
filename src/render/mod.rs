@@ -52,14 +52,9 @@ impl Render for Node {
         accumulated_transform: Transform,
     ) {
         match *self.borrow() {
-            NodeKind::Path(ref path) => path::render(
-                &self,
-                path,
-                writer,
-                content,
-                ctx,
-                accumulated_transform,
-            ),
+            NodeKind::Path(ref path) => {
+                path::render(self, path, writer, content, ctx, accumulated_transform)
+            }
             NodeKind::Group(ref group) => {
                 group::render(self, group, writer, content, ctx, accumulated_transform)
             }

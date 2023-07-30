@@ -1,11 +1,8 @@
 use std::rc::Rc;
 
-use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Ref};
 use pdf_writer::types::{MaskType, ShadingType};
-use usvg::{
-    NonZeroRect, NormalizedF32, Paint, StopOffset,
-    Transform, Units,
-};
+use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Ref};
+use usvg::{NonZeroRect, NormalizedF32, Paint, StopOffset, Transform, Units};
 
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, RectExt, StopExt, TransformExt};
@@ -80,7 +77,8 @@ pub fn create_shading(
         Transform::from_bbox(*parent_bbox)
     } else {
         Transform::default()
-    }).pre_concat(properties.transform);
+    })
+    .pre_concat(properties.transform);
     (shading(&properties, writer, ctx, false), transform)
 }
 
@@ -163,10 +161,11 @@ fn shading_soft_mask(
     ctx.deferrer.add_graphics_state(gs_ref)
 }
 
-fn shading(properties: &GradientProperties,
-           writer: &mut PdfWriter,
-           ctx: &mut Context,
-           use_opacities: bool,
+fn shading(
+    properties: &GradientProperties,
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+    use_opacities: bool,
 ) -> Rc<String> {
     let shading_function = shading_function(properties, writer, ctx, use_opacities);
     ctx.deferrer.add_shading(shading_function)

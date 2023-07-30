@@ -1,11 +1,11 @@
 use pdf_writer::{Content, PdfWriter};
+use usvg::tiny_skia_path::PathSegment;
 use usvg::{Node, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
-use usvg::tiny_skia_path::PathSegment;
 
 use crate::util::context::Context;
-use crate::util::helper::{LineCapExt, LineJoinExt, plain_bbox_without_default};
+use crate::util::helper::{plain_bbox_without_default, LineCapExt, LineJoinExt};
 
 /// Render a path into a content stream.
 pub fn render(
@@ -36,7 +36,9 @@ pub fn render(
             let mut path = path.clone();
             path.stroke = None;
             Some(path)
-        } else { None };
+        } else {
+            None
+        };
 
         (stroked_path, filled_path)
     };
@@ -91,9 +93,7 @@ pub fn render(
         | (PaintOrder::FillAndStroke, false, true) => {
             let (stroke_path, fill_path) = separate_path();
             if let Some(fill_path) = fill_path.as_ref() {
-                render_func(fill_path)(
-                    fill_path, node, writer, content, ctx, transform,
-                );
+                render_func(fill_path)(fill_path, node, writer, content, ctx, transform);
             }
             if let Some(stroke_path) = stroke_path.as_ref() {
                 render_func(stroke_path)(
@@ -119,24 +119,22 @@ pub fn render(
                 );
             }
             if let Some(fill_path) = fill_path.as_ref() {
-                render_func(fill_path)(
-                    fill_path, node, writer, content, ctx, transform,
-                );
+                render_func(fill_path)(fill_path, node, writer, content, ctx, transform);
             }
         }
     }
 }
 
 mod simple_path {
-    use pdf_writer::{Content, Finish, PdfWriter};
     use pdf_writer::types::ColorSpaceOperand;
     use pdf_writer::types::ColorSpaceOperand::Pattern;
+    use pdf_writer::{Content, Finish, PdfWriter};
     use usvg::{Fill, FillRule, Node, NonZeroRect, Paint, Stroke, Transform};
 
-    use crate::render::{gradient, pattern};
     use crate::render::path::{draw_path, set_stroke_properties};
+    use crate::render::{gradient, pattern};
     use crate::util::context::Context;
-    use crate::util::helper::{ColorExt, NameExt, plain_bbox, SRGB, TransformExt};
+    use crate::util::helper::{plain_bbox, ColorExt, NameExt, TransformExt, SRGB};
 
     pub fn render(
         path: &usvg::Path,
@@ -276,14 +274,14 @@ mod simple_path {
 }
 
 mod complex_path {
-    use pdf_writer::{Content, Finish, PdfWriter};
     use pdf_writer::types::ColorSpaceOperand::Pattern;
+    use pdf_writer::{Content, Finish, PdfWriter};
     use usvg::{Fill, FillRule, Node, NonZeroRect, Paint, Stroke, Transform};
 
-    use crate::render::{gradient, pattern};
     use crate::render::path::{draw_path, set_stroke_properties};
+    use crate::render::{gradient, pattern};
     use crate::util::context::Context;
-    use crate::util::helper::{NameExt, plain_bbox, TransformExt};
+    use crate::util::helper::{plain_bbox, NameExt, TransformExt};
 
     pub fn render(
         path: &usvg::Path,
@@ -303,9 +301,23 @@ mod complex_path {
         draw_path(path.data.segments(), content);
 
         if let Some(stroke) = &path.stroke {
-            render_stroke(stroke, &plain_bbox(node, true), writer, content, ctx, accumulated_transform);
+            render_stroke(
+                stroke,
+                &plain_bbox(node, true),
+                writer,
+                content,
+                ctx,
+                accumulated_transform,
+            );
         } else if let Some(fill) = &path.fill {
-            render_fill(fill, &plain_bbox(node, false), writer, content, ctx, accumulated_transform);
+            render_fill(
+                fill,
+                &plain_bbox(node, false),
+                writer,
+                content,
+                ctx,
+                accumulated_transform,
+            );
         }
 
         content.restore_state();
@@ -342,17 +354,14 @@ mod complex_path {
                 if stroke_opacity != 1.0 {
                     let gs_ref = ctx.alloc_ref();
                     let mut gs = writer.ext_graphics(gs_ref);
-                    gs.stroking_alpha(stroke_opacity)
-                        .finish();
-                    content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+                    gs.stroking_alpha(stroke_opacity).finish();
+                    content.set_parameters(
+                        ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name(),
+                    );
                 }
 
-                let soft_mask_name = gradient::create_shading_soft_mask(
-                    paint,
-                    path_bbox,
-                    writer,
-                    ctx,
-                );
+                let soft_mask_name =
+                    gradient::create_shading_soft_mask(paint, path_bbox, writer, ctx);
                 let pattern_name = gradient::create_shading_pattern(
                     paint,
                     path_bbox,
@@ -396,7 +405,7 @@ mod complex_path {
 
                 match fill.rule {
                     FillRule::EvenOdd => content.fill_even_odd(),
-                    FillRule::NonZero => content.fill_nonzero()
+                    FillRule::NonZero => content.fill_nonzero(),
                 };
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
@@ -409,23 +418,16 @@ mod complex_path {
                 if fill_opacity != 1.0 {
                     let gs_ref = ctx.alloc_ref();
                     let mut gs = writer.ext_graphics(gs_ref);
-                    gs.non_stroking_alpha(fill_opacity)
-                        .finish();
-                    content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+                    gs.non_stroking_alpha(fill_opacity).finish();
+                    content.set_parameters(
+                        ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name(),
+                    );
                 }
 
-                let soft_mask_name = gradient::create_shading_soft_mask(
-                    paint,
-                    path_bbox,
-                    writer,
-                    ctx,
-                );
-                let (shading_name, transform) = gradient::create_shading(
-                    paint,
-                    path_bbox,
-                    writer,
-                    ctx,
-                );
+                let soft_mask_name =
+                    gradient::create_shading_soft_mask(paint, path_bbox, writer, ctx);
+                let (shading_name, transform) =
+                    gradient::create_shading(paint, path_bbox, writer, ctx);
 
                 content.set_parameters(soft_mask_name.to_pdf_name());
                 content.transform(transform.to_pdf_transform());
@@ -437,7 +439,7 @@ mod complex_path {
     }
 }
 
-pub fn draw_path(path_data: impl Iterator<Item=PathSegment>, content: &mut Content) {
+pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
     // Taken from resvg
     fn calc(n1: f32, n2: f32) -> f32 {
         (n1 + n2 * 2.0) / 3.0
