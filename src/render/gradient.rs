@@ -230,14 +230,14 @@ fn get_function(
 
     if use_opacities {
         let stops = stops.iter().map(|s| s.opacity_stops()).collect::<Vec<Stop<1>>>();
-        function(&stops, writer, ctx)
+        select_function(&stops, writer, ctx)
     }   else {
         let stops = stops.iter().map(|s| s.color_stops()).collect::<Vec<Stop<3>>>();
-        function(&stops, writer, ctx)
+        select_function(&stops, writer, ctx)
     }
 }
 
-fn function<const COUNT: usize>(
+fn select_function<const COUNT: usize>(
     stops: &[Stop<COUNT>],
     writer: &mut PdfWriter,
     ctx: &mut Context,
