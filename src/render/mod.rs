@@ -1,3 +1,9 @@
+use pdf_writer::{Content, PdfWriter};
+use usvg::{Node, NodeKind, Transform, Tree};
+
+use crate::util::context::Context;
+use crate::util::helper::TransformExt;
+
 pub mod clip_path;
 pub mod gradient;
 pub mod group;
@@ -6,13 +12,6 @@ pub mod image;
 pub mod mask;
 pub mod path;
 pub mod pattern;
-
-use pdf_writer::{Content, PdfWriter};
-
-use usvg::{Node, NodeKind, Transform, Tree};
-
-use crate::util::context::Context;
-use crate::util::helper::{plain_bbox_without_default, TransformExt};
 
 /// Write a tree into a stream. Assumes that the stream belongs to transparency group and has the
 /// right bounding boxes.
@@ -54,8 +53,8 @@ impl Render for Node {
     ) {
         match *self.borrow() {
             NodeKind::Path(ref path) => path::render(
+                &self,
                 path,
-                plain_bbox_without_default(self, true).as_ref(),
                 writer,
                 content,
                 ctx,

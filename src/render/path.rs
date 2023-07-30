@@ -1,22 +1,23 @@
 use pdf_writer::{Content, PdfWriter};
-use usvg::tiny_skia_path::PathSegment;
-use usvg::{NonZeroRect, Paint, PaintOrder};
+use usvg::{Node, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
+use usvg::tiny_skia_path::PathSegment;
 
 use crate::util::context::Context;
-use crate::util::helper::{LineCapExt, LineJoinExt};
+use crate::util::helper::{LineCapExt, LineJoinExt, plain_bbox_without_default};
 
 /// Render a path into a content stream.
 pub fn render(
-    path: &usvg::Path,
-    path_bbox: Option<&NonZeroRect>,
+    node: &Node,
+    path: &Path,
     writer: &mut PdfWriter,
     content: &mut Content,
     ctx: &mut Context,
     transform: Transform,
 ) {
-    let Some(path_bbox) = path_bbox else { return };
+    // Check if the path has a bbox at all
+    let Some(_) = plain_bbox_without_default(node, true) else { return; };
 
     if path.visibility != Visibility::Visible {
         return;
@@ -70,7 +71,7 @@ pub fn render(
 
     match (path.paint_order, has_stroke_opacity, is_complex_path(path)) {
         (PaintOrder::FillAndStroke, false, false) => {
-            simple_path::render(path, path_bbox, writer, content, ctx, transform);
+            simple_path::render(path, node, writer, content, ctx, transform);
         }
         // Chrome and Adobe Acrobat will clip the fill so that it is not visible under the
         // stroke, even if it has an opacity. However, in SVG, it should be visible. In order to achieve
@@ -80,11 +81,11 @@ pub fn render(
         | (PaintOrder::FillAndStroke, false, true) => {
             let (stroke_path, fill_path) = separate_path();
             render_func(&fill_path)(
-                &fill_path, path_bbox, writer, content, ctx, transform,
+                &fill_path, node, writer, content, ctx, transform,
             );
             render_func(&stroke_path)(
                 &stroke_path,
-                path_bbox,
+                node,
                 writer,
                 content,
                 ctx,
@@ -95,37 +96,39 @@ pub fn render(
             let (stroke_path, fill_path) = separate_path();
             render_func(&stroke_path)(
                 &stroke_path,
-                path_bbox,
+                node,
                 writer,
                 content,
                 ctx,
                 transform,
             );
             render_func(&fill_path)(
-                &fill_path, path_bbox, writer, content, ctx, transform,
+                &fill_path, node, writer, content, ctx, transform,
             );
         }
     }
 }
 
 mod simple_path {
-    use crate::render::path::{draw_path, set_stroke_properties};
-    use crate::render::{gradient, pattern};
-    use crate::util::context::Context;
-    use crate::util::helper::{ColorExt, NameExt, TransformExt, SRGB};
+    use pdf_writer::{Content, Finish, PdfWriter};
     use pdf_writer::types::ColorSpaceOperand;
     use pdf_writer::types::ColorSpaceOperand::Pattern;
-    use pdf_writer::{Content, Finish, PdfWriter};
-    use usvg::{Fill, FillRule, NonZeroRect, Paint, Stroke, Transform};
+    use usvg::{Fill, FillRule, Node, NonZeroRect, Paint, Stroke, Transform};
+
+    use crate::render::{gradient, pattern};
+    use crate::render::path::{draw_path, set_stroke_properties};
+    use crate::util::context::Context;
+    use crate::util::helper::{ColorExt, NameExt, plain_bbox, SRGB, TransformExt};
 
     pub fn render(
         path: &usvg::Path,
-        path_bbox: &NonZeroRect,
+        node: &Node,
         writer: &mut PdfWriter,
         content: &mut Content,
         ctx: &mut Context,
         accumulated_transform: Transform,
     ) {
+        let path_bbox = plain_bbox(node, false);
         content.save_state();
         content.transform(path.transform.to_pdf_transform());
         let accumulated_transform = accumulated_transform.pre_concat(path.transform);
@@ -143,15 +146,16 @@ mod simple_path {
             content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
         }
 
+        draw_path(path.data.segments(), content);
+
         if let Some(stroke) = &path.stroke {
-            set_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
+            set_stroke(stroke, &path_bbox, content, writer, ctx, accumulated_transform);
         }
 
         if let Some(fill) = &path.fill {
-            set_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
+            set_fill(fill, &path_bbox, content, writer, ctx, accumulated_transform);
         }
 
-        draw_path(path.data.segments(), content);
         finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
 
         content.restore_state();
@@ -198,21 +202,15 @@ mod simple_path {
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                if let Some((pattern_name, mask)) = gradient::create(
+                let pattern_name = gradient::create_shading_pattern(
                     paint,
                     path_bbox,
                     writer,
                     ctx,
                     &accumulated_transform,
-                ) {
-                    // If the gradient contains stop with opacities, we need to write those separately
-                    // using a soft mask.
-                    if let Some(mask) = mask {
-                        content.set_parameters(mask.to_pdf_name());
-                    }
-                    content.set_stroke_color_space(Pattern);
-                    content.set_stroke_pattern(None, pattern_name.to_pdf_name());
-                }
+                );
+                content.set_stroke_color_space(Pattern);
+                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
         }
     }
@@ -245,36 +243,33 @@ mod simple_path {
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                if let Some((pattern_name, mask)) = gradient::create(
+                let pattern_name = gradient::create_shading_pattern(
                     paint,
                     path_bbox,
                     writer,
                     ctx,
                     &accumulated_transform,
-                ) {
-                    if let Some(mask) = mask {
-                        content.set_parameters(mask.to_pdf_name());
-                    }
-                    content.set_fill_color_space(Pattern);
-                    content.set_fill_pattern(None, pattern_name.to_pdf_name());
-                }
+                );
+                content.set_fill_color_space(Pattern);
+                content.set_fill_pattern(None, pattern_name.to_pdf_name());
             }
         }
     }
 }
 
 mod complex_path {
-    use crate::render::path::{draw_path, set_stroke_properties};
-    use crate::render::{gradient, pattern};
-    use crate::util::context::Context;
-    use crate::util::helper::{NameExt, TransformExt};
+    use pdf_writer::{Content, Finish, PdfWriter};
     use pdf_writer::types::ColorSpaceOperand::Pattern;
-    use pdf_writer::{Content, PdfWriter};
-    use usvg::{Fill, FillRule, NonZeroRect, Paint, Stroke, Transform};
+    use usvg::{Fill, FillRule, Node, NonZeroRect, Paint, Stroke, Transform};
+
+    use crate::render::{gradient, pattern};
+    use crate::render::path::{draw_path, set_stroke_properties};
+    use crate::util::context::Context;
+    use crate::util::helper::{NameExt, plain_bbox, TransformExt};
 
     pub fn render(
         path: &usvg::Path,
-        path_bbox: &NonZeroRect,
+        node: &Node,
         writer: &mut PdfWriter,
         content: &mut Content,
         ctx: &mut Context,
@@ -287,32 +282,61 @@ mod complex_path {
         // Paths passed to complex_path muster contain either only a stroke or fill.
         debug_assert!(path.stroke.is_none() || path.fill.is_none());
 
-        if let Some(stroke) = &path.stroke {
-            set_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
-        }
-
-        if let Some(fill) = &path.fill {
-            set_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
-        }
-
         draw_path(path.data.segments(), content);
-        finish_path(path.stroke.as_ref(), path.fill.as_ref(), content);
+
+        if let Some(stroke) = &path.stroke {
+            render_stroke(stroke, &plain_bbox(node, true), writer, content, ctx, accumulated_transform);
+        } else if let Some(fill) = &path.fill {
+            render_fill(fill, &plain_bbox(node, false), writer, content, ctx, accumulated_transform);
+        }
 
         content.restore_state();
     }
 
-    fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
-        match (stroke, fill.map(|f| f.rule)) {
-            (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
-            (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
-            (None, Some(FillRule::NonZero)) => content.fill_nonzero(),
-            (None, Some(FillRule::EvenOdd)) => content.fill_even_odd(),
-            (Some(_), None) => content.stroke(),
-            (None, None) => content.end_path(),
-        };
+    fn render_stroke(
+        stroke: &Stroke,
+        path_bbox: &NonZeroRect,
+        writer: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        let stroke_opacity = stroke.opacity.get();
+
+        // Only create a graphics state if at least one of the opacities is not 1.
+        if stroke_opacity != 1.0 {
+            let gs_ref = ctx.alloc_ref();
+            let mut gs = writer.ext_graphics(gs_ref);
+            gs.stroking_alpha(stroke_opacity)
+                .finish();
+            content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+        }
+        do_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
     }
 
-    fn set_stroke(
+    fn render_fill(
+        fill: &Fill,
+        path_bbox: &NonZeroRect,
+        writer: &mut PdfWriter,
+        content: &mut Content,
+        ctx: &mut Context,
+        accumulated_transform: Transform,
+    ) {
+        let fill_opacity = fill.opacity.get();
+
+        // Only create a graphics state if at least one of the opacities is not 1.
+        if fill_opacity != 1.0 {
+            let gs_ref = ctx.alloc_ref();
+            let mut gs = writer.ext_graphics(gs_ref);
+            gs.non_stroking_alpha(fill_opacity)
+                .finish();
+            content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+        }
+
+        do_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
+    }
+
+    fn do_stroke(
         stroke: &Stroke,
         path_bbox: &NonZeroRect,
         content: &mut Content,
@@ -337,28 +361,31 @@ mod complex_path {
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                if let Some((pattern_name, mask)) = gradient::create(
+                let soft_mask_name = gradient::create_shading_soft_mask(
+                    paint,
+                    path_bbox,
+                    writer,
+                    ctx,
+                );
+                let pattern_name = gradient::create_shading_pattern(
                     paint,
                     path_bbox,
                     writer,
                     ctx,
                     &accumulated_transform,
-                ) {
-                    // If the gradient contains stop with opacities, we need to write those separately
-                    // using a soft mask.
-                    if let Some(mask) = mask {
-                        content.set_parameters(mask.to_pdf_name());
-                    }
-                    content.set_stroke_color_space(Pattern);
-                    content.set_stroke_pattern(None, pattern_name.to_pdf_name());
-                }
+                );
+                content.set_parameters(soft_mask_name.to_pdf_name());
+                content.set_stroke_color_space(Pattern);
+                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
             // complex_path only handles gradients/patterns
             _ => unreachable!(),
         }
+
+        content.stroke();
     }
 
-    fn set_fill(
+    fn do_fill(
         fill: &Fill,
         path_bbox: &NonZeroRect,
         content: &mut Content,
@@ -380,21 +407,29 @@ mod complex_path {
                 );
                 content.set_fill_color_space(Pattern);
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
+
+                match fill.rule {
+                    FillRule::EvenOdd => content.fill_even_odd(),
+                    FillRule::NonZero => content.fill_nonzero()
+                };
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                if let Some((pattern_name, mask)) = gradient::create(
+                content.clip_nonzero();
+                content.end_path();
+
+                let soft_mask_name = gradient::create_shading_soft_mask(
                     paint,
                     path_bbox,
                     writer,
                     ctx,
-                    &accumulated_transform,
-                ) {
-                    if let Some(mask) = mask {
-                        content.set_parameters(mask.to_pdf_name());
-                    }
-                    content.set_fill_color_space(Pattern);
-                    content.set_fill_pattern(None, pattern_name.to_pdf_name());
-                }
+                );
+                let shading_name = gradient::create_shading(
+                    paint,
+                    writer,
+                    ctx,
+                );
+                content.set_parameters(soft_mask_name.to_pdf_name());
+                content.shading(shading_name.to_pdf_name());
             }
             // complex_path only handles gradients/patterns
             _ => unreachable!(),
@@ -402,7 +437,7 @@ mod complex_path {
     }
 }
 
-pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
+pub fn draw_path(path_data: impl Iterator<Item=PathSegment>, content: &mut Content) {
     // Taken from resvg
     fn calc(n1: f32, n2: f32) -> f32 {
         (n1 + n2 * 2.0) / 3.0
