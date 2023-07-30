@@ -141,7 +141,7 @@ fn shading_soft_mask(
     x_object
         .group()
         .transparency()
-        .isolated(false)
+        .isolated(true)
         .knockout(false)
         .color_space()
         .d65_gray();
