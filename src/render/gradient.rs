@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use pdf_writer::types::{MaskType, ShadingType};
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
+use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Ref};
 use usvg::{
     LinearGradient, NonZeroRect, NormalizedF32, Paint, RadialGradient, StopOffset,
     Transform, Units,
@@ -117,18 +117,9 @@ fn create_shading_pattern(
         })
         .pre_concat(properties.transform);
 
-    let shading_function_ref =
-        get_function(&properties.stops, writer, ctx, false);
+    let shading_ref = create_shading(properties, writer, ctx, false);
     let mut shading_pattern = writer.shading_pattern(pattern_ref);
-    let mut shading = shading_pattern.shading();
-    shading.shading_type(properties.shading_type);
-    shading.color_space().srgb();
-
-    shading.function(shading_function_ref);
-    shading.coords(properties.coords.iter().copied());
-    shading.extend([true, true]);
-    shading.finish();
-
+    shading_pattern.pair(Name(b"Shading"), shading_ref);
     shading_pattern.matrix(matrix.to_pdf_transform());
     shading_pattern.finish();
 
@@ -143,7 +134,7 @@ fn get_soft_mask(
 ) -> Rc<String> {
     ctx.deferrer.push();
     let x_object_id = ctx.alloc_ref();
-    let shading_ref = ctx.alloc_ref();
+    let shading_ref = create_shading(properties, writer, ctx, true);
     let shading_name = ctx.deferrer.add_shading(shading_ref);
     let bbox = ctx.get_rect().to_pdf_rect();
 
@@ -154,16 +145,6 @@ fn get_soft_mask(
             Transform::default()
         },
     );
-
-    let shading_function_ref = get_function(&properties.stops, writer, ctx, true);
-    let mut shading = writer.shading(shading_ref);
-    shading.shading_type(properties.shading_type);
-    shading.color_space().d65_gray();
-
-    shading.function(shading_function_ref);
-    shading.coords(properties.coords.iter().copied());
-    shading.extend([true, true]);
-    shading.finish();
 
     let mut content = Content::new();
     content.transform(transform.to_pdf_transform());
@@ -198,7 +179,31 @@ fn get_soft_mask(
     ctx.deferrer.add_graphics_state(gs_ref)
 }
 
-fn get_function(
+fn create_shading(
+    properties: &GradientProperties,
+    writer: &mut PdfWriter,
+    ctx: &mut Context,
+    use_opacities: bool
+) -> Ref {
+    let shading_ref = ctx.alloc_ref();
+    let function_ref = create_function(&properties.stops, writer, ctx, use_opacities);
+
+    let mut shading = writer.shading(shading_ref);
+    shading.shading_type(properties.shading_type);
+    if use_opacities {
+        shading.color_space().d65_gray();
+    }   else {
+        shading.color_space().srgb();
+    }
+
+    shading.function(function_ref);
+    shading.coords(properties.coords.iter().copied());
+    shading.extend([true, true]);
+    shading.finish();
+    shading_ref
+}
+
+fn create_function(
     stops: &[usvg::Stop],
     writer: &mut PdfWriter,
     ctx: &mut Context,
