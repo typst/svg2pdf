@@ -319,49 +319,6 @@ mod complex_path {
         ctx: &mut Context,
         accumulated_transform: Transform,
     ) {
-        let stroke_opacity = stroke.opacity.get();
-
-        // Only create a graphics state if at least one of the opacities is not 1.
-        if stroke_opacity != 1.0 {
-            let gs_ref = ctx.alloc_ref();
-            let mut gs = writer.ext_graphics(gs_ref);
-            gs.stroking_alpha(stroke_opacity)
-                .finish();
-            content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
-        }
-        do_stroke(stroke, path_bbox, content, writer, ctx, accumulated_transform);
-    }
-
-    fn render_fill(
-        fill: &Fill,
-        path_bbox: &NonZeroRect,
-        writer: &mut PdfWriter,
-        content: &mut Content,
-        ctx: &mut Context,
-        accumulated_transform: Transform,
-    ) {
-        let fill_opacity = fill.opacity.get();
-
-        // Only create a graphics state if at least one of the opacities is not 1.
-        if fill_opacity != 1.0 {
-            let gs_ref = ctx.alloc_ref();
-            let mut gs = writer.ext_graphics(gs_ref);
-            gs.non_stroking_alpha(fill_opacity)
-                .finish();
-            content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
-        }
-
-        do_fill(fill, path_bbox, content, writer, ctx, accumulated_transform);
-    }
-
-    fn do_stroke(
-        stroke: &Stroke,
-        path_bbox: &NonZeroRect,
-        content: &mut Content,
-        writer: &mut PdfWriter,
-        ctx: &mut Context,
-        accumulated_transform: Transform,
-    ) {
         set_stroke_properties(content, stroke);
         let paint = &stroke.paint;
 
@@ -373,12 +330,23 @@ mod complex_path {
                     writer,
                     ctx,
                     accumulated_transform,
-                    Some(stroke.opacity.get()),
+                    Some(stroke.opacity),
                 );
                 content.set_stroke_color_space(Pattern);
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
+                let stroke_opacity = stroke.opacity.get();
+
+                // Only create a graphics state if at least one of the opacities is not 1.
+                if stroke_opacity != 1.0 {
+                    let gs_ref = ctx.alloc_ref();
+                    let mut gs = writer.ext_graphics(gs_ref);
+                    gs.stroking_alpha(stroke_opacity)
+                        .finish();
+                    content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+                }
+
                 let soft_mask_name = gradient::create_shading_soft_mask(
                     paint,
                     path_bbox,
@@ -403,11 +371,11 @@ mod complex_path {
         content.stroke();
     }
 
-    fn do_fill(
+    fn render_fill(
         fill: &Fill,
         path_bbox: &NonZeroRect,
-        content: &mut Content,
         writer: &mut PdfWriter,
+        content: &mut Content,
         ctx: &mut Context,
         accumulated_transform: Transform,
     ) {
@@ -421,7 +389,7 @@ mod complex_path {
                     writer,
                     ctx,
                     accumulated_transform,
-                    Some(fill.opacity.get()),
+                    Some(fill.opacity),
                 );
                 content.set_fill_color_space(Pattern);
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
@@ -434,6 +402,17 @@ mod complex_path {
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
                 content.clip_nonzero();
                 content.end_path();
+
+                let fill_opacity = fill.opacity.get();
+
+                // Only create a graphics state if at least one of the opacities is not 1.
+                if fill_opacity != 1.0 {
+                    let gs_ref = ctx.alloc_ref();
+                    let mut gs = writer.ext_graphics(gs_ref);
+                    gs.non_stroking_alpha(fill_opacity)
+                        .finish();
+                    content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+                }
 
                 let soft_mask_name = gradient::create_shading_soft_mask(
                     paint,

@@ -1,13 +1,15 @@
+use std::ops::Mul;
 use std::rc::Rc;
 
+use pdf_writer::{Content, Filter, PdfWriter};
 use pdf_writer::types::{PaintType, TilingType};
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use usvg::{NodeKind, NonZeroRect, Opacity, Size, Transform, Units};
 use usvg::utils::view_box_to_transform;
-use usvg::{NodeKind, NonZeroRect, Size, Transform, Units};
+
+use crate::util::context::Context;
+use crate::util::helper::TransformExt;
 
 use super::group;
-use crate::util::context::Context;
-use crate::util::helper::{NameExt, TransformExt};
 
 /// Turn a pattern into a Pattern object. Returns the name (= the name in the `Resources` dictionary) of
 /// the pattern
@@ -17,7 +19,7 @@ pub fn create(
     writer: &mut PdfWriter,
     ctx: &mut Context,
     matrix: Transform,
-    initial_opacity: Option<f32>,
+    initial_opacity: Option<Opacity>,
 ) -> Rc<String> {
     let pattern_ref = ctx.alloc_ref();
     ctx.deferrer.push();
@@ -34,6 +36,12 @@ pub fn create(
         pattern.rect
     };
 
+    if let Some(initial_opacity) = initial_opacity {
+        if let NodeKind::Group(ref mut group) = *pattern.root.borrow_mut() {
+            group.opacity = group.opacity.mul(initial_opacity);
+        }
+    }
+
     match *pattern.root.borrow() {
         NodeKind::Group(ref group) => {
             let pattern_matrix =
@@ -48,17 +56,6 @@ pub fn create(
 
             let mut content = Content::new();
             content.save_state();
-
-            if let Some(initial_opacity) = initial_opacity {
-                let gs_ref = ctx.alloc_ref();
-                let mut gs = writer.ext_graphics(gs_ref);
-                gs.non_stroking_alpha(initial_opacity).stroking_alpha(initial_opacity);
-
-                gs.finish();
-                content.set_parameters(
-                    ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name(),
-                );
-            }
 
             if use_content_units_object_bounding_box {
                 // The x/y is already accounted for in the pattern matrix, so we only need to scale the height/width. Otherwise,
