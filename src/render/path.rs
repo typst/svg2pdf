@@ -1,14 +1,17 @@
-use pdf_writer::{Content, Finish, PdfWriter};
 use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
+use pdf_writer::{Content, Finish, PdfWriter};
+use usvg::tiny_skia_path::PathSegment;
 use usvg::{Fill, FillRule, Node, Opacity, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
-use usvg::tiny_skia_path::PathSegment;
 
 use crate::render::{gradient, pattern};
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, LineCapExt, LineJoinExt, NameExt, plain_bbox, plain_bbox_without_default, SRGB, TransformExt};
+use crate::util::helper::{
+    plain_bbox, plain_bbox_without_default, ColorExt, LineCapExt, LineJoinExt, NameExt,
+    TransformExt, SRGB,
+};
 
 /// Render a path into a content stream.
 pub fn render(
@@ -175,7 +178,7 @@ pub fn fill(
     }
 }
 
-pub fn draw_path(path_data: impl Iterator<Item=PathSegment>, content: &mut Content) {
+pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
     // Taken from resvg
     fn calc(n1: f32, n2: f32) -> f32 {
         (n1 + n2 * 2.0) / 3.0

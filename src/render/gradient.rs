@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use pdf_writer::types::{MaskType, ShadingType};
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Ref};
+use pdf_writer::types::{MaskType, ShadingType};
 use usvg::{NonZeroRect, NormalizedF32, Paint, StopOffset, Transform, Units};
 
 use crate::util::context::Context;
@@ -68,22 +68,6 @@ pub fn create_shading_soft_mask(
     } else {
         None
     }
-}
-
-pub fn create_shading(
-    paint: &Paint,
-    parent_bbox: &NonZeroRect,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-) -> (Rc<String>, Transform) {
-    let properties = GradientProperties::try_from_paint(paint).unwrap();
-    let transform = (if properties.units == Units::ObjectBoundingBox {
-        Transform::from_bbox(*parent_bbox)
-    } else {
-        Transform::default()
-    })
-    .pre_concat(properties.transform);
-    (shading(&properties, writer, ctx, false), transform)
 }
 
 fn shading_pattern(
@@ -163,16 +147,6 @@ fn shading_soft_mask(
         .finish();
 
     ctx.deferrer.add_graphics_state(gs_ref)
-}
-
-fn shading(
-    properties: &GradientProperties,
-    writer: &mut PdfWriter,
-    ctx: &mut Context,
-    use_opacities: bool,
-) -> Rc<String> {
-    let shading_function = shading_function(properties, writer, ctx, use_opacities);
-    ctx.deferrer.add_shading(shading_function)
 }
 
 fn shading_function(
