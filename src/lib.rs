@@ -42,18 +42,18 @@ Among the unsupported features are currently:
 - Blend modes
 - Raster images are not color managed but use PDF's DeviceRGB color space
 - A number of features that were added in SVG2
-*/
+ */
 
-mod render;
-mod util;
-
-use crate::render::tree_to_stream;
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect, Ref, TextStr};
 use usvg::utils::view_box_to_transform;
 use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, TreeParsing};
 
+use crate::render::tree_to_stream;
 use crate::util::context::Context;
 use crate::util::helper::dpi_ratio;
+
+mod render;
+mod util;
 
 /// Set size and scaling preferences for the conversion.
 #[derive(Copy, Clone)]
@@ -110,7 +110,7 @@ impl Default for Options {
             dpi: 72.0,
             viewport: None,
             aspect: None,
-            compress: false,
+            compress: true,
         }
     }
 }

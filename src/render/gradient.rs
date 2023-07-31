@@ -61,9 +61,13 @@ pub fn create_shading_soft_mask(
     parent_bbox: &NonZeroRect,
     writer: &mut PdfWriter,
     ctx: &mut Context,
-) -> Rc<String> {
+) -> Option<Rc<String>> {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
-    shading_soft_mask(&properties, parent_bbox, writer, ctx)
+    if properties.stops.iter().any(|stop| stop.opacity.get() < 1.0) {
+        Some(shading_soft_mask(&properties, parent_bbox, writer, ctx))
+    } else {
+        None
+    }
 }
 
 pub fn create_shading(
