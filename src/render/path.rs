@@ -1,11 +1,11 @@
 use pdf_writer::{Content, PdfWriter};
-use usvg::tiny_skia_path::PathSegment;
 use usvg::{Node, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
+use usvg::tiny_skia_path::PathSegment;
 
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox_without_default, LineCapExt, LineJoinExt};
+use crate::util::helper::{LineCapExt, LineJoinExt, plain_bbox_without_default};
 
 /// Render a path into a content stream.
 pub fn render(
@@ -126,15 +126,15 @@ pub fn render(
 }
 
 mod simple_path {
+    use pdf_writer::{Content, Finish, PdfWriter};
     use pdf_writer::types::ColorSpaceOperand;
     use pdf_writer::types::ColorSpaceOperand::Pattern;
-    use pdf_writer::{Content, Finish, PdfWriter};
     use usvg::{Fill, FillRule, Node, NonZeroRect, Paint, Stroke, Transform};
 
-    use crate::render::path::{draw_path, set_stroke_properties};
     use crate::render::{gradient, pattern};
+    use crate::render::path::{draw_path, set_stroke_properties};
     use crate::util::context::Context;
-    use crate::util::helper::{plain_bbox, ColorExt, NameExt, TransformExt, SRGB};
+    use crate::util::helper::{ColorExt, NameExt, plain_bbox, SRGB, TransformExt};
 
     pub fn render(
         path: &usvg::Path,
@@ -274,14 +274,14 @@ mod simple_path {
 }
 
 mod complex_path {
-    use pdf_writer::types::ColorSpaceOperand::Pattern;
     use pdf_writer::{Content, Finish, PdfWriter};
+    use pdf_writer::types::ColorSpaceOperand::Pattern;
     use usvg::{Fill, FillRule, Node, NonZeroRect, Paint, Stroke, Transform};
 
-    use crate::render::path::{draw_path, set_stroke_properties};
     use crate::render::{gradient, pattern};
+    use crate::render::path::{draw_path, set_stroke_properties};
     use crate::util::context::Context;
-    use crate::util::helper::{plain_bbox, NameExt, TransformExt};
+    use crate::util::helper::{NameExt, plain_bbox, TransformExt};
 
     pub fn render(
         path: &usvg::Path,
@@ -402,16 +402,8 @@ mod complex_path {
                 );
                 content.set_fill_color_space(Pattern);
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
-
-                match fill.rule {
-                    FillRule::EvenOdd => content.fill_even_odd(),
-                    FillRule::NonZero => content.fill_nonzero(),
-                };
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                content.clip_nonzero();
-                content.end_path();
-
                 let fill_opacity = fill.opacity.get();
 
                 // Only create a graphics state if at least one of the opacities is not 1.
@@ -426,20 +418,29 @@ mod complex_path {
 
                 let soft_mask_name =
                     gradient::create_shading_soft_mask(paint, path_bbox, writer, ctx);
-                let (shading_name, transform) =
-                    gradient::create_shading(paint, path_bbox, writer, ctx);
-
+                let pattern_name = gradient::create_shading_pattern(
+                    paint,
+                    path_bbox,
+                    writer,
+                    ctx,
+                    &accumulated_transform,
+                );
                 content.set_parameters(soft_mask_name.to_pdf_name());
-                content.transform(transform.to_pdf_transform());
-                content.shading(shading_name.to_pdf_name());
+                content.set_fill_color_space(Pattern);
+                content.set_fill_pattern(None, pattern_name.to_pdf_name());
             }
             // complex_path only handles gradients/patterns
             _ => unreachable!(),
         }
+
+        match fill.rule {
+            FillRule::EvenOdd => content.fill_even_odd(),
+            FillRule::NonZero => content.fill_nonzero(),
+        };
     }
 }
 
-pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Content) {
+pub fn draw_path(path_data: impl Iterator<Item=PathSegment>, content: &mut Content) {
     // Taken from resvg
     fn calc(n1: f32, n2: f32) -> f32 {
         (n1 + n2 * 2.0) / 3.0
