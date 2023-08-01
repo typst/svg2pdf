@@ -148,11 +148,12 @@ impl Runner {
         svg_string: &str,
         test_runner: &Runner,
     ) -> (Vec<u8>, RgbaImage) {
+        let scale_factor = 1.0;
         let tree = self.read_svg(svg_string);
         // We scale the images by 2.5 so that their resolution is 500 x 500
         let pdf = svg2pdf::convert_tree(
             &tree,
-            Options { dpi: 72.0 * 2.5, ..Options::default() },
+            Options { dpi: 72.0 * scale_factor, ..Options::default() },
         );
         let image = test_runner.render_pdf(pdf.as_slice());
         (pdf, image)
