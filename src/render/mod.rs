@@ -58,7 +58,7 @@ impl Render for Node {
             #[cfg(feature = "image")]
             NodeKind::Image(ref image) => image::render(image, writer, content, ctx),
             //Texts should be converted beforehand.
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
