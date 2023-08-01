@@ -141,7 +141,15 @@ fn stroke(
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                set_opacity_gs(writer, content, ctx, Some(stroke.opacity), None);
+                // In XPDF, the opacity will only be applied to the gradient if we also set the
+                // fill opacity. Unfortunately, in muPDF it still doesn't work.
+                set_opacity_gs(
+                    writer,
+                    content,
+                    ctx,
+                    Some(stroke.opacity),
+                    Some(stroke.opacity),
+                );
 
                 if let Some(soft_mask) = gradient::create_shading_soft_mask(
                     paint,

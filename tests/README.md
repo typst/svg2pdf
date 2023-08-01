@@ -116,4 +116,4 @@ not much we can do. Most of the test cases still display fine.
 - **muPDF**: Stroke opacities on linear gradients/patterns look different, 
 otherwise everything looks the same.
 - **xPDF**: Similarly to Firefox, stop opacities don't seem to be rendered
-well. Stroke opacities on linear gradients don't seem to render correctly.
+well. 
