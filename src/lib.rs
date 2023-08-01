@@ -109,6 +109,7 @@ impl Default for Options {
             dpi: 72.0,
             viewport: None,
             aspect: None,
+            // TODO: Set back to true
             compress: false,
         }
     }

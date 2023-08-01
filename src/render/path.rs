@@ -106,16 +106,6 @@ fn stroke(
 
         content.save_state();
         content.transform(path.transform.to_pdf_transform());
-        content.set_line_width(stroke.width.get());
-        content.set_miter_limit(stroke.miterlimit.get());
-        content.set_line_cap(stroke.linecap.to_pdf_line_cap());
-        content.set_line_join(stroke.linejoin.to_pdf_line_join());
-
-        if let Some(dasharray) = &stroke.dasharray {
-            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
-        }
-
-        draw_path(path.data.segments(), content);
 
         match paint {
             Paint::Color(c) => {
@@ -172,6 +162,16 @@ fn stroke(
             }
         }
 
+        content.set_line_width(stroke.width.get());
+        content.set_miter_limit(stroke.miterlimit.get());
+        content.set_line_cap(stroke.linecap.to_pdf_line_cap());
+        content.set_line_join(stroke.linejoin.to_pdf_line_join());
+
+        if let Some(dasharray) = &stroke.dasharray {
+            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
+        }
+
+        draw_path(path.data.segments(), content);
         finish_path(Some(stroke), None, content);
         content.restore_state();
     }
@@ -192,7 +192,6 @@ fn fill(
 
         content.save_state();
         content.transform(path.transform.to_pdf_transform());
-        draw_path(path.data.segments(), content);
 
         match paint {
             Paint::Color(c) => {
@@ -234,6 +233,7 @@ fn fill(
             }
         }
 
+        draw_path(path.data.segments(), content);
         finish_path(None, Some(fill), content);
         content.restore_state();
     }
