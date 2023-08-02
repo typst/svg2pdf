@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use pdf_writer::types::{MaskType, ShadingType};
+use pdf_writer::types::{FunctionShadingType, MaskType};
 use pdf_writer::{Content, Filter, Finish, PdfWriter, Ref};
 use usvg::{
     LinearGradient, NormalizedF64, Paint, RadialGradient, Stop, StopOffset, Transform,
@@ -32,7 +32,7 @@ pub fn create(
 
 struct GradientProperties {
     coords: Vec<f32>,
-    shading_type: ShadingType,
+    shading_type: FunctionShadingType,
     stops: Vec<Stop>,
     transform: Transform,
     units: Units,
@@ -51,7 +51,7 @@ fn create_linear_gradient(
             gradient.x2 as f32,
             gradient.y2 as f32,
         ],
-        shading_type: ShadingType::Axial,
+        shading_type: FunctionShadingType::Axial,
         stops: gradient.stops.clone(),
         transform: gradient.transform,
         units: gradient.units,
@@ -74,7 +74,7 @@ fn create_radial_gradient(
             gradient.cy as f32,
             gradient.r.get() as f32,
         ],
-        shading_type: ShadingType::Radial,
+        shading_type: FunctionShadingType::Radial,
         stops: gradient.stops.clone(),
         transform: gradient.transform,
         units: gradient.units,
@@ -107,7 +107,7 @@ fn create_shading_pattern(
     let shading_function_ref =
         get_shading_function(false, &properties.stops, writer, ctx);
     let mut shading_pattern = writer.shading_pattern(pattern_ref);
-    let mut shading = shading_pattern.shading();
+    let mut shading = shading_pattern.function_shading();
     shading.shading_type(properties.shading_type);
     shading.color_space().srgb();
 
@@ -142,7 +142,7 @@ fn get_soft_mask(
     });
 
     let shading_function_ref = get_shading_function(true, &properties.stops, writer, ctx);
-    let mut shading = writer.shading(shading_ref);
+    let mut shading = writer.function_shading(shading_ref);
     shading.shading_type(properties.shading_type);
     shading.color_space().d65_gray();
 
