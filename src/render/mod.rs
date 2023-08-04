@@ -47,7 +47,7 @@ pub fn tree_to_x_object(
 
     x_object.bbox(Rect::new(0.0, 0.0, ctx.size.width() as f32, ctx.size.height() as f32));
     // Apply the base transform
-    x_object.matrix(ctx.get_initial_transform().as_array());
+    x_object.matrix(ctx.initial_transform.as_array());
     x_object.finish();
 
     ctx.deferrer.add_x_object(x_ref)
