@@ -48,15 +48,9 @@ impl Context {
         self.deferrer.alloc_ref()
     }
 
-    /// Get the base transform that needs to be applied before rendering everything else (
-    /// i.e. the initial transform passed by the user + the view box transform to account for the
-    /// view box of the SVG).
-    pub fn get_base_transform(&self) -> Transform {
-        let mut base_transform = self.initial_transform;
-        let view_box_transform =
-            view_box_to_transform(self.view_box.rect, self.view_box.aspect, self.size);
-        base_transform.append(&view_box_transform);
-        base_transform
+    // Get the viewbox transform
+    pub fn get_viewbox_transform(&self) -> Transform {
+        view_box_to_transform(self.view_box.rect, self.view_box.aspect, self.size)
     }
 
     /// Returns a [`usvg` Rect](usvg::Rect) with the dimensions of the whole SVG.

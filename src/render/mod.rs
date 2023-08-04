@@ -26,11 +26,15 @@ pub fn tree_to_x_object(
     ctx.deferrer.push();
 
     let mut child_content = Content::new();
+    child_content.save_state();
+    child_content.transform(ctx.get_viewbox_transform().as_array());
 
     // The root of a tree is always a group, so we can directly iterate over the children
     for el in tree.root.children() {
         el.render(writer, &mut child_content, ctx);
     }
+
+    child_content.restore_state();
 
     let child_content_stream = ctx.finish_content(child_content);
 
@@ -43,7 +47,7 @@ pub fn tree_to_x_object(
 
     x_object.bbox(Rect::new(0.0, 0.0, ctx.size.width() as f32, ctx.size.height() as f32));
     // Apply the base transform
-    x_object.matrix(ctx.get_base_transform().as_array());
+    x_object.matrix(ctx.initial_transform.as_array());
     x_object.finish();
 
     ctx.deferrer.add_x_object(x_ref)
