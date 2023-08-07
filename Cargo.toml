@@ -36,7 +36,7 @@ required-features = ["cli"]
 
 [dependencies]
 miniz_oxide = "0.7"
-pdf-writer = "0.7"
+pdf-writer = "0.8"
 usvg = { version = "0.32", default-features = false }
 image = { version = "0.24", features = ["jpeg", "png", "gif"], optional = true }
 termcolor = { version = "1", optional = true }
@@ -45,6 +45,3 @@ fontdb = { version = "0.13", optional= true }
 
 [dev-dependencies]
 usvg = { version = "0.32" }
-
-[patch.crates-io]
-pdf-writer = { git = "https://github.com/typst/pdf-writer", branch = "main" }

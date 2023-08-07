@@ -34,7 +34,7 @@ usvg = "0.32"
 pdfium-render = "0.8.6"
 walkdir = "2.3.3"
 lazy_static = "1.4.0"
-pdf-writer = "0.7"
+pdf-writer = "0.8"
 image = "0.24"
 indicatif = "0.17.5"
 oxipng = { version = "8.0.0", default-features = false, features = ["filetime", "parallel", "zopfli"] }
