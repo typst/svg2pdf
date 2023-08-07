@@ -52,6 +52,9 @@ fn main() -> ExitCode {
 
     println!("Testing {} files in total.", svg_files.len());
 
+    #[cfg(debug_assertions)]
+    println!("Running the tests in debug mode may take a long time.");
+
     for svg_file in &svg_files {
         if !references.contains(svg_file) {
             let _ = print_test_case_result(TestStatus::Skipped, svg_file, args.verbose);
