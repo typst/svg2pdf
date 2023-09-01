@@ -9,7 +9,7 @@ named resources that needed to be created while generating the content stream fo
 
 Once we are done writing the whole content stream, we can just pop the deferrer and then
 add all of the named resources to the `Resources` dictionary of the XObject.
- */
+*/
 
 use std::rc::Rc;
 

@@ -148,6 +148,7 @@ pub trait GroupExt {
 
 impl GroupExt for usvg::Group {
     fn is_isolated(&self) -> bool {
+        // According to the SVG spec, any of these makes a group isolated.
         self.isolate
             || self.mask.is_some()
             || self.blend_mode != usvg::BlendMode::Normal
@@ -199,13 +200,13 @@ pub fn deflate(data: &[u8]) -> Vec<u8> {
     miniz_oxide::deflate::compress_to_vec_zlib(data, COMPRESSION_LEVEL)
 }
 
-/// Calculate the bbox of a node as a [Rect](usvg::Rect).
+/// Calculate the bbox of a node as a [Rect](NonZeroRect).
 pub fn plain_bbox(node: &Node, with_stroke: bool) -> NonZeroRect {
     plain_bbox_without_default(node, with_stroke)
         .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
 }
 
-/// Calculate the bbox of a node as a [Rect](usvg::Rect).
+/// Calculate the bbox of a node as a [Rect](NonZeroRect).
 pub fn plain_bbox_without_default(node: &Node, with_stroke: bool) -> Option<NonZeroRect> {
     calc_node_bbox(node, Transform::default(), with_stroke)
         .and_then(|b| b.to_non_zero_rect())

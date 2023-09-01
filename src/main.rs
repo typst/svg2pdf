@@ -15,7 +15,6 @@ struct Args {
     input: PathBuf,
     /// Path to write PDF file to.
     output: Option<PathBuf>,
-
     /// The number of SVG pixels per PDF points.
     #[clap(long, default_value = "72.0")]
     dpi: f32,

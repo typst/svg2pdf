@@ -2,7 +2,7 @@
 
 This includes information like for example what the size of the SVG is, whether content should be
 compressed and access to an instance of the deferrer + allocator.
- */
+*/
 
 use pdf_writer::{Content, Ref};
 use usvg::utils::view_box_to_transform;
