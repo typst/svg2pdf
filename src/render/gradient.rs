@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use pdf_writer::types::{MaskType, ShadingType};
+use pdf_writer::types::{MaskType, FunctionShadingType};
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Ref};
 use usvg::{NonZeroRect, NormalizedF32, Paint, StopOffset, Transform, Units};
 
@@ -16,7 +16,7 @@ pub struct Stop<const COUNT: usize> {
 
 struct GradientProperties {
     coords: Vec<f32>,
-    shading_type: ShadingType,
+    shading_type: FunctionShadingType,
     stops: Vec<usvg::Stop>,
     transform: Transform,
     units: Units,
@@ -27,14 +27,14 @@ impl GradientProperties {
         match paint {
             Paint::LinearGradient(l) => Some(Self {
                 coords: vec![l.x1, l.y1, l.x2, l.y2],
-                shading_type: ShadingType::Axial,
+                shading_type: FunctionShadingType::Axial,
                 stops: l.stops.clone(),
                 transform: l.transform,
                 units: l.units,
             }),
             Paint::RadialGradient(r) => Some(Self {
                 coords: vec![r.fx, r.fy, 0.0, r.cx, r.cy, r.r.get()],
-                shading_type: ShadingType::Radial,
+                shading_type: FunctionShadingType::Radial,
                 stops: r.stops.clone(),
                 transform: r.transform,
                 units: r.units,
@@ -163,7 +163,7 @@ fn shading_function(
     let shading_ref = ctx.alloc_ref();
     let function_ref = function(&properties.stops, writer, ctx, use_opacities);
 
-    let mut shading = writer.shading(shading_ref);
+    let mut shading = writer.function_shading(shading_ref);
     shading.shading_type(properties.shading_type);
     if use_opacities {
         shading.color_space().d65_gray();
