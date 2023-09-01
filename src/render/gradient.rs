@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use pdf_writer::types::{MaskType, FunctionShadingType};
+use pdf_writer::types::{FunctionShadingType, MaskType};
 use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Ref};
 use usvg::{NonZeroRect, NormalizedF32, Paint, StopOffset, Transform, Units};
 
