@@ -23,7 +23,9 @@ pub fn render(
     accumulated_transform: Transform,
 ) {
     // Check if the path has a bbox at all.
-    let Some(_) = plain_bbox_without_default(node, true) else { return; };
+    let Some(_) = plain_bbox_without_default(node, true) else {
+        return;
+    };
 
     if path.visibility != Visibility::Visible {
         return;
