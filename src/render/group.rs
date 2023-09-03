@@ -29,9 +29,12 @@ pub fn render(
         gs.finish();
         content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
 
+        // We don't need to pass the accumulated transform here because if a pattern appears in a
+        // XObject, it will be mapped to the coordinate space of where the XObject was invoked, meaning
+        // that it will also be affected by the transforms in the content stream. If we passed on the
+        // accumulated transform, they would be applied twice.
         content.x_object(
-            create_x_object(node, group, writer, ctx, accumulated_transform)
-                .to_pdf_name(),
+            create_x_object(node, group, writer, ctx, Transform::default()).to_pdf_name(),
         );
         content.restore_state();
     } else {
