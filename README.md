@@ -59,7 +59,7 @@ features like:
 Among the unsupported features are currently:
 - The `spreadMethod` attribute of gradients
 - Filters
-- Blend modes
+- Text will be converted into shapes before converting to PDF
 - Raster images are not color managed but use PDF's DeviceRGB color space
 - A number of features that were added in SVG2
 

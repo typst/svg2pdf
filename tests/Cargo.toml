@@ -28,9 +28,9 @@ path = "src/typst.rs"
 test = false
 
 [dependencies]
-fontdb = "0.13"
+fontdb = "0.14"
 svg2pdf = { path = ".." }
-usvg = "0.32"
+usvg = "0.35.0"
 pdfium-render = "0.8.6"
 walkdir = "2.3.3"
 lazy_static = "1.4.0"
