@@ -2,7 +2,7 @@
 members = ["tests"]
 
 [workspace.package]
-version = "0.7.0"
+version = "0.7.1"
 authors = ["Martin Haug <mhaug@live.de>", "Laurenz Stampfl <laurenz.stampfl@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/typst/svg2pdf"
