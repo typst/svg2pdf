@@ -2,7 +2,7 @@ use std::ops::Mul;
 use std::rc::Rc;
 
 use pdf_writer::types::{PaintType, TilingType};
-use pdf_writer::{Content, Filter, PdfWriter};
+use pdf_writer::{Chunk, Content, Filter};
 use usvg::utils::view_box_to_transform;
 use usvg::{NodeKind, NonZeroRect, Opacity, Size, Transform, Units};
 
@@ -15,7 +15,7 @@ use crate::util::helper::TransformExt;
 pub fn create(
     pattern: Rc<usvg::Pattern>,
     parent_bbox: &NonZeroRect,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
     matrix: Transform,
     initial_opacity: Option<Opacity>,
@@ -75,7 +75,7 @@ pub fn create(
             group::render(
                 &pattern.root,
                 group,
-                writer,
+                chunk,
                 &mut content,
                 ctx,
                 Transform::default(),
@@ -85,7 +85,7 @@ pub fn create(
 
             let content_stream = ctx.finish_content(content);
 
-            let mut tiling_pattern = writer.tiling_pattern(pattern_ref, &content_stream);
+            let mut tiling_pattern = chunk.tiling_pattern(pattern_ref, &content_stream);
 
             if ctx.options.compress {
                 tiling_pattern.filter(Filter::FlateDecode);

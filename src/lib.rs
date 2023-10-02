@@ -46,7 +46,7 @@ Among the unsupported features are currently:
 mod render;
 mod util;
 
-use pdf_writer::{Content, Filter, Finish, PdfWriter, Rect, Ref, TextStr};
+use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
 use usvg::utils::view_box_to_transform;
 use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, TreeParsing};
 
@@ -161,35 +161,35 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     let pdf_size = pdf_size(tree, options);
     let mut ctx = Context::new(tree, options, None);
-    let mut writer = PdfWriter::new();
+    let mut pdf = Pdf::new();
 
     let catalog_ref = ctx.alloc_ref();
     let page_tree_ref = ctx.alloc_ref();
     let page_ref = ctx.alloc_ref();
     let content_ref = ctx.alloc_ref();
 
-    writer.catalog(catalog_ref).pages(page_tree_ref);
-    writer.pages(page_tree_ref).count(1).kids([page_ref]);
+    pdf.catalog(catalog_ref).pages(page_tree_ref);
+    pdf.pages(page_tree_ref).count(1).kids([page_ref]);
 
     // Generate main content
     ctx.deferrer.push();
     let mut content = Content::new();
     tree_to_stream(
         tree,
-        &mut writer,
+        &mut pdf,
         &mut content,
         &mut ctx,
         initial_transform(options.aspect, tree, pdf_size),
     );
     let content_stream = ctx.finish_content(content);
-    let mut stream = writer.stream(content_ref, &content_stream);
+    let mut stream = pdf.stream(content_ref, &content_stream);
 
     if ctx.options.compress {
         stream.filter(Filter::FlateDecode);
     }
     stream.finish();
 
-    let mut page = writer.page(page_ref);
+    let mut page = pdf.page(page_ref);
     let mut page_resources = page.resources();
     ctx.deferrer.pop(&mut page_resources);
     page_resources.finish();
@@ -206,27 +206,27 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     page.finish();
 
     let document_info_id = ctx.alloc_ref();
-    writer.document_info(document_info_id).producer(TextStr("svg2pdf"));
+    pdf.document_info(document_info_id).producer(TextStr("svg2pdf"));
 
-    writer.finish()
+    pdf.finish()
 }
 
 /// Convert a [`usvg` tree](Tree) into a Form XObject that can be used as
 /// part of a larger document.
 ///
-/// This method is intended for use in an existing [`PdfWriter`] workflow. It
-/// will always return an XObject with the width and height of one printer's
+/// This method is intended for use in an existing [`pdf-writer`] workflow. It
+/// will always produce an XObject with the width and height of one printer's
 /// point, just like an [`ImageXObject`](pdf_writer::writers::ImageXObject)
 /// would.
 ///
-/// The resulting object can be used by registering a name and the `id` with a
-/// page's [`/XObject`](pdf_writer::writers::Resources::x_objects) resources
-/// dictionary and then invoking the [`Do`](Content::x_object) operator with the
-/// name in the page's content stream.
+/// The resulting object can be used by registering a name and the `start_ref`
+/// with a page's [`/XObject`](pdf_writer::writers::Resources::x_objects)
+/// resources dictionary and then invoking the [`Do`](Content::x_object)
+/// operator with the name in the page's content stream.
 ///
 /// As the conversion process may need to create multiple indirect objects in
-/// the PDF, this function allocates consecutive IDs starting at `id` for its
-/// objects and returns the next available ID for your future writing.
+/// the PDF, this function allocates consecutive IDs starting at `start_ref` for
+/// its objects and returns the next available ID for your future writing.
 ///
 /// ## Example
 /// Write a PDF file with some text and an SVG graphic.
@@ -248,12 +248,12 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// let svg_name = Name(b"S1");
 ///
 /// // Start writing a PDF.
-/// let mut writer = PdfWriter::new();
-/// writer.catalog(catalog_id).pages(page_tree_id);
-/// writer.pages(page_tree_id).kids([page_id]).count(1);
+/// let mut pdf = Pdf::new();
+/// pdf.catalog(catalog_id).pages(page_tree_id);
+/// pdf.pages(page_tree_id).kids([page_id]).count(1);
 ///
 /// // Set up a simple A4 page.
-/// let mut page = writer.page(page_id);
+/// let mut page = pdf.page(page_id);
 /// page.media_box(Rect::new(0.0, 0.0, 595.0, 842.0));
 /// page.parent(page_tree_id);
 /// page.contents(content_id);
@@ -267,7 +267,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// page.finish();
 ///
 /// // Set a predefined font, so we do not have to load anything extra.
-/// writer.type1_font(font_id).base_font(Name(b"Helvetica"));
+/// pdf.type1_font(font_id).base_font(Name(b"Helvetica"));
 ///
 /// // Let's add an SVG graphic to this file.
 /// // We need to load its source first and manually parse it into a usvg Tree.
@@ -280,7 +280,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// // This call allocates some indirect object reference IDs for itself. If we
 /// // wanted to write some more indirect objects afterwards, we could use the
 /// // return value as the next unused reference ID.
-/// svg2pdf::convert_tree_into(&tree, svg2pdf::Options::default(), &mut writer, svg_id);
+/// svg2pdf::convert_tree_into(&tree, svg2pdf::Options::default(), &mut pdf, svg_id);
 ///
 /// // Write a content stream with some text and our SVG.
 /// let mut content = Content::new();
@@ -297,14 +297,14 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 ///     .x_object(svg_name);
 ///
 /// // Write the file to the disk.
-/// writer.stream(content_id, &content.finish());
-/// std::fs::write("target/embedded.pdf", writer.finish())?;
+/// pdf.stream(content_id, &content.finish());
+/// std::fs::write("target/embedded.pdf", pdf.finish())?;
 /// # Ok(()) }
 /// ```
 pub fn convert_tree_into(
     tree: &Tree,
     options: Options,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     start_ref: Ref,
 ) -> Ref {
     let pdf_size = pdf_size(tree, options);
@@ -316,14 +316,14 @@ pub fn convert_tree_into(
     let mut content = Content::new();
     tree_to_stream(
         tree,
-        writer,
+        chunk,
         &mut content,
         &mut ctx,
         initial_transform(options.aspect, tree, pdf_size),
     );
     let content_stream = ctx.finish_content(content);
 
-    let mut x_object = writer.form_xobject(x_ref, &content_stream);
+    let mut x_object = chunk.form_xobject(x_ref, &content_stream);
     x_object.bbox(Rect::new(0.0, 0.0, pdf_size.width(), pdf_size.height()));
     x_object.matrix([
         1.0 / pdf_size.width(),

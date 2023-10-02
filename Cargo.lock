@@ -912,11 +912,11 @@ dependencies = [
 [[package]]
 name = "pdf-writer"
 version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d77bc47c8968aa63f86a7e6693e270a6cbd1e3b784c364f1711a0ddecc71447"
+source = "git+https://github.com/typst/pdf-writer?branch=chunks#1b03c04c9bc0e91bc956a7b30972cdc798cb65f8"
 dependencies = [
  "bitflags 1.3.2",
  "itoa",
+ "memchr",
  "ryu",
 ]
 

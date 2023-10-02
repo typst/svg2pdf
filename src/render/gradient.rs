@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use pdf_writer::types::{FunctionShadingType, MaskType};
-use pdf_writer::{Content, Filter, Finish, Name, PdfWriter, Ref};
+use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref};
 use usvg::{NonZeroRect, NormalizedF32, Paint, StopOffset, Transform, Units};
 
 use crate::util::context::Context;
@@ -51,12 +51,12 @@ impl GradientProperties {
 pub fn create_shading_pattern(
     paint: &Paint,
     parent_bbox: &NonZeroRect,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: &Transform,
 ) -> Rc<String> {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
-    shading_pattern(&properties, parent_bbox, writer, ctx, accumulated_transform)
+    shading_pattern(&properties, parent_bbox, chunk, ctx, accumulated_transform)
 }
 
 /// Return a soft mask that will render the stop opacities of a gradient into a gray scale
@@ -64,12 +64,12 @@ pub fn create_shading_pattern(
 pub fn create_shading_soft_mask(
     paint: &Paint,
     parent_bbox: &NonZeroRect,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Option<Rc<String>> {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
     if properties.stops.iter().any(|stop| stop.opacity.get() < 1.0) {
-        Some(shading_soft_mask(&properties, parent_bbox, writer, ctx))
+        Some(shading_soft_mask(&properties, parent_bbox, chunk, ctx))
     } else {
         None
     }
@@ -78,7 +78,7 @@ pub fn create_shading_soft_mask(
 fn shading_pattern(
     properties: &GradientProperties,
     parent_bbox: &NonZeroRect,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: &Transform,
 ) -> Rc<String> {
@@ -92,8 +92,8 @@ fn shading_pattern(
         })
         .pre_concat(properties.transform);
 
-    let shading_ref = shading_function(properties, writer, ctx, false);
-    let mut shading_pattern = writer.shading_pattern(pattern_ref);
+    let shading_ref = shading_function(properties, chunk, ctx, false);
+    let mut shading_pattern = chunk.shading_pattern(pattern_ref);
     shading_pattern.pair(Name(b"Shading"), shading_ref);
     shading_pattern.matrix(matrix.to_pdf_transform());
     shading_pattern.finish();
@@ -104,12 +104,12 @@ fn shading_pattern(
 fn shading_soft_mask(
     properties: &GradientProperties,
     parent_bbox: &NonZeroRect,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Rc<String> {
     ctx.deferrer.push();
     let x_object_id = ctx.alloc_ref();
-    let shading_ref = shading_function(properties, writer, ctx, true);
+    let shading_ref = shading_function(properties, chunk, ctx, true);
     let shading_name = ctx.deferrer.add_shading(shading_ref);
     let bbox = ctx.get_rect().to_pdf_rect();
 
@@ -126,7 +126,7 @@ fn shading_soft_mask(
     content.shading(shading_name.to_pdf_name());
     let content_stream = ctx.finish_content(content);
 
-    let mut x_object = writer.form_xobject(x_object_id, &content_stream);
+    let mut x_object = chunk.form_xobject(x_object_id, &content_stream);
     ctx.deferrer.pop(&mut x_object.resources());
 
     x_object
@@ -145,7 +145,7 @@ fn shading_soft_mask(
     x_object.finish();
 
     let gs_ref = ctx.alloc_ref();
-    let mut gs = writer.ext_graphics(gs_ref);
+    let mut gs = chunk.ext_graphics(gs_ref);
     gs.soft_mask()
         .subtype(MaskType::Luminosity)
         .group(x_object_id)
@@ -156,14 +156,14 @@ fn shading_soft_mask(
 
 fn shading_function(
     properties: &GradientProperties,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
     use_opacities: bool,
 ) -> Ref {
     let shading_ref = ctx.alloc_ref();
-    let function_ref = function(&properties.stops, writer, ctx, use_opacities);
+    let function_ref = function(&properties.stops, chunk, ctx, use_opacities);
 
-    let mut shading = writer.function_shading(shading_ref);
+    let mut shading = chunk.function_shading(shading_ref);
     shading.shading_type(properties.shading_type);
     if use_opacities {
         shading.color_space().d65_gray();
@@ -180,7 +180,7 @@ fn shading_function(
 
 fn function(
     stops: &[usvg::Stop],
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
     use_opacities: bool,
 ) -> Ref {
@@ -209,29 +209,29 @@ fn function(
 
     if use_opacities {
         let stops = stops.iter().map(|s| s.opacity_stops()).collect::<Vec<Stop<1>>>();
-        select_function(&stops, writer, ctx)
+        select_function(&stops, chunk, ctx)
     } else {
         let stops = stops.iter().map(|s| s.color_stops()).collect::<Vec<Stop<3>>>();
-        select_function(&stops, writer, ctx)
+        select_function(&stops, chunk, ctx)
     }
 }
 
 fn select_function<const COUNT: usize>(
     stops: &[Stop<COUNT>],
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Ref {
     if stops.len() == 2 {
-        exponential_function(&stops[0], &stops[1], writer, ctx)
+        exponential_function(&stops[0], &stops[1], chunk, ctx)
     } else {
-        stitching_function(stops, writer, ctx)
+        stitching_function(stops, chunk, ctx)
     }
 }
 
 /// Create a stitching function for multiple gradient stops.
 fn stitching_function<const COUNT: usize>(
     stops: &[Stop<COUNT>],
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Ref {
     assert!(!stops.is_empty());
@@ -245,13 +245,13 @@ fn stitching_function<const COUNT: usize>(
     for window in stops.windows(2) {
         let (first, second) = (&window[0], &window[1]);
         bounds.push(second.offset);
-        functions.push(exponential_function(first, second, writer, ctx));
+        functions.push(exponential_function(first, second, chunk, ctx));
         encode.extend([0.0, 1.0]);
     }
 
     bounds.pop();
 
-    let mut stitching_function = writer.stitching_function(reference);
+    let mut stitching_function = chunk.stitching_function(reference);
     stitching_function.domain([0.0, 1.0]);
     stitching_function.range(get_function_range(COUNT));
     stitching_function.functions(functions);
@@ -264,11 +264,11 @@ fn stitching_function<const COUNT: usize>(
 fn exponential_function<const COUNT: usize>(
     first_stop: &Stop<COUNT>,
     second_stop: &Stop<COUNT>,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Ref {
     let reference = ctx.alloc_ref();
-    let mut exp = writer.exponential_function(reference);
+    let mut exp = chunk.exponential_function(reference);
 
     exp.range(get_function_range(COUNT));
     exp.c0(first_stop.color);

@@ -1,4 +1,4 @@
-use pdf_writer::{Content, PdfWriter};
+use pdf_writer::{Chunk, Content};
 use usvg::{Node, NodeKind, Transform, Tree};
 
 use crate::util::context::Context;
@@ -17,7 +17,7 @@ pub mod pattern;
 /// right bounding boxes.
 pub fn tree_to_stream(
     tree: &Tree,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     initial_transform: Transform,
@@ -26,14 +26,14 @@ pub fn tree_to_stream(
     let initial_transform = initial_transform.pre_concat(ctx.get_view_box_transform());
     content.transform(initial_transform.to_pdf_transform());
 
-    tree.root.render(writer, content, ctx, initial_transform);
+    tree.root.render(chunk, content, ctx, initial_transform);
     content.restore_state();
 }
 
 trait Render {
     fn render(
         &self,
-        writer: &mut PdfWriter,
+        chunk: &mut Chunk,
         content: &mut Content,
         ctx: &mut Context,
         accumulated_transform: Transform,
@@ -43,20 +43,20 @@ trait Render {
 impl Render for Node {
     fn render(
         &self,
-        writer: &mut PdfWriter,
+        chunk: &mut Chunk,
         content: &mut Content,
         ctx: &mut Context,
         accumulated_transform: Transform,
     ) {
         match *self.borrow() {
             NodeKind::Path(ref path) => {
-                path::render(self, path, writer, content, ctx, accumulated_transform)
+                path::render(self, path, chunk, content, ctx, accumulated_transform)
             }
             NodeKind::Group(ref group) => {
-                group::render(self, group, writer, content, ctx, accumulated_transform)
+                group::render(self, group, chunk, content, ctx, accumulated_transform)
             }
             #[cfg(feature = "image")]
-            NodeKind::Image(ref image) => image::render(image, writer, content, ctx),
+            NodeKind::Image(ref image) => image::render(image, chunk, content, ctx),
             // Texts should be converted beforehand.
             _ => {}
         }

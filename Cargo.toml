@@ -45,3 +45,6 @@ fontdb = { version = "0.14", optional= true }
 
 [dev-dependencies]
 usvg = { version = "0.35.0" }
+
+[patch.crates-io]
+pdf-writer = { git = "https://github.com/typst/pdf-writer", branch = "chunks" }

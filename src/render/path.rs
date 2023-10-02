@@ -1,6 +1,6 @@
 use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
-use pdf_writer::{Content, Finish, PdfWriter};
+use pdf_writer::{Chunk, Content, Finish};
 use usvg::tiny_skia_path::PathSegment;
 use usvg::{Fill, FillRule, Node, Opacity, Paint, PaintOrder};
 use usvg::{Path, Visibility};
@@ -17,7 +17,7 @@ use crate::util::helper::{
 pub fn render(
     node: &Node,
     path: &Path,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
@@ -37,12 +37,12 @@ pub fn render(
     // higher file sizes depending on the SVG.
     match path.paint_order {
         PaintOrder::FillAndStroke => {
-            fill(path, node, writer, content, ctx, accumulated_transform);
-            stroke(path, node, writer, content, ctx, accumulated_transform);
+            fill(path, node, chunk, content, ctx, accumulated_transform);
+            stroke(path, node, chunk, content, ctx, accumulated_transform);
         }
         PaintOrder::StrokeAndFill => {
-            stroke(path, node, writer, content, ctx, accumulated_transform);
-            fill(path, node, writer, content, ctx, accumulated_transform);
+            stroke(path, node, chunk, content, ctx, accumulated_transform);
+            fill(path, node, chunk, content, ctx, accumulated_transform);
         }
     }
 }
@@ -95,7 +95,7 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
 fn stroke(
     path: &Path,
     node: &Node,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
@@ -111,7 +111,7 @@ fn stroke(
 
         match paint {
             Paint::Color(c) => {
-                set_opacity_gs(writer, content, ctx, Some(stroke.opacity), None);
+                set_opacity_gs(chunk, content, ctx, Some(stroke.opacity), None);
                 content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
                 content.set_stroke_color(c.to_pdf_color());
             }
@@ -124,7 +124,7 @@ fn stroke(
                 let pattern_name = pattern::create(
                     p.clone(),
                     &path_bbox_without_stroke,
-                    writer,
+                    chunk,
                     ctx,
                     accumulated_transform,
                     Some(stroke.opacity),
@@ -136,7 +136,7 @@ fn stroke(
                 // In XPDF, the opacity will only be applied to the gradient if we also set the
                 // fill opacity. Unfortunately, in muPDF it still doesn't work.
                 set_opacity_gs(
-                    writer,
+                    chunk,
                     content,
                     ctx,
                     Some(stroke.opacity),
@@ -146,7 +146,7 @@ fn stroke(
                 if let Some(soft_mask) = gradient::create_shading_soft_mask(
                     paint,
                     &path_bbox_with_stroke,
-                    writer,
+                    chunk,
                     ctx,
                 ) {
                     content.set_parameters(soft_mask.to_pdf_name());
@@ -155,7 +155,7 @@ fn stroke(
                 let pattern_name = gradient::create_shading_pattern(
                     paint,
                     &path_bbox_without_stroke,
-                    writer,
+                    chunk,
                     ctx,
                     &accumulated_transform,
                 );
@@ -182,7 +182,7 @@ fn stroke(
 fn fill(
     path: &Path,
     node: &Node,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
@@ -197,7 +197,7 @@ fn fill(
 
         match paint {
             Paint::Color(c) => {
-                set_opacity_gs(writer, content, ctx, None, Some(fill.opacity));
+                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity));
                 content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
                 content.set_fill_color(c.to_pdf_color());
             }
@@ -206,7 +206,7 @@ fn fill(
                 let pattern_name = pattern::create(
                     p.clone(),
                     &path_bbox,
-                    writer,
+                    chunk,
                     ctx,
                     accumulated_transform,
                     Some(fill.opacity),
@@ -215,10 +215,10 @@ fn fill(
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                set_opacity_gs(writer, content, ctx, None, Some(fill.opacity));
+                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity));
 
                 if let Some(soft_mask) =
-                    gradient::create_shading_soft_mask(paint, &path_bbox, writer, ctx)
+                    gradient::create_shading_soft_mask(paint, &path_bbox, chunk, ctx)
                 {
                     content.set_parameters(soft_mask.to_pdf_name());
                 };
@@ -226,7 +226,7 @@ fn fill(
                 let pattern_name = gradient::create_shading_pattern(
                     paint,
                     &path_bbox,
-                    writer,
+                    chunk,
                     ctx,
                     &accumulated_transform,
                 );
@@ -253,7 +253,7 @@ fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Conte
 }
 
 fn set_opacity_gs(
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     stroke_opacity: Option<Opacity>,
@@ -267,7 +267,7 @@ fn set_opacity_gs(
     }
 
     let gs_ref = ctx.alloc_ref();
-    let mut gs = writer.ext_graphics(gs_ref);
+    let mut gs = chunk.ext_graphics(gs_ref);
     gs.non_stroking_alpha(fill_opacity)
         .stroking_alpha(stroke_opacity)
         .finish();

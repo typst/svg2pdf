@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::{Node, Transform};
 
 use super::{clip_path, mask, Render};
@@ -13,7 +13,7 @@ use crate::util::helper::{
 pub fn render(
     node: &Node,
     group: &usvg::Group,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
@@ -21,7 +21,7 @@ pub fn render(
     if group.is_isolated() {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
-        let mut gs = writer.ext_graphics(gs_ref);
+        let mut gs = chunk.ext_graphics(gs_ref);
         gs.non_stroking_alpha(group.opacity.get())
             .stroking_alpha(group.opacity.get())
             .blend_mode(group.blend_mode.to_pdf_blend_mode());
@@ -34,11 +34,11 @@ pub fn render(
         // that it will also be affected by the transforms in the content stream. If we passed on the
         // accumulated transform, they would be applied twice.
         content.x_object(
-            create_x_object(node, group, writer, ctx, Transform::default()).to_pdf_name(),
+            create_x_object(node, group, chunk, ctx, Transform::default()).to_pdf_name(),
         );
         content.restore_state();
     } else {
-        create_to_stream(node, group, writer, content, ctx, accumulated_transform);
+        create_to_stream(node, group, chunk, content, ctx, accumulated_transform);
     }
 }
 
@@ -47,7 +47,7 @@ pub fn render(
 fn create_x_object(
     node: &Node,
     group: &usvg::Group,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) -> Rc<String> {
@@ -61,11 +61,11 @@ fn create_x_object(
 
     let mut content = Content::new();
 
-    create_to_stream(node, group, writer, &mut content, ctx, accumulated_transform);
+    create_to_stream(node, group, chunk, &mut content, ctx, accumulated_transform);
 
     let content_stream = ctx.finish_content(content);
 
-    let mut x_object = writer.form_xobject(x_ref, &content_stream);
+    let mut x_object = chunk.form_xobject(x_ref, &content_stream);
     ctx.deferrer.pop(&mut x_object.resources());
 
     if ctx.options.compress {
@@ -91,7 +91,7 @@ fn create_x_object(
 fn create_to_stream(
     node: &Node,
     group: &usvg::Group,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
@@ -101,15 +101,15 @@ fn create_to_stream(
     let accumulated_transform = accumulated_transform.pre_concat(group.transform);
 
     if let Some(mask) = &group.mask {
-        mask::render(node, mask.clone(), writer, content, ctx);
+        mask::render(node, mask.clone(), chunk, content, ctx);
     }
 
     if let Some(clip_path) = &group.clip_path {
-        clip_path::render(node, clip_path.clone(), writer, content, ctx);
+        clip_path::render(node, clip_path.clone(), chunk, content, ctx);
     }
 
     for child in node.children() {
-        child.render(writer, content, ctx, accumulated_transform);
+        child.render(chunk, content, ctx, accumulated_transform);
     }
 
     content.restore_state();
