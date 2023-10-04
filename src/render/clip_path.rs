@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use pdf_writer::types::MaskType;
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::tiny_skia_path::PathSegment;
 use usvg::{ClipPath, FillRule, Node, NodeKind, Transform, Units, Visibility};
 
@@ -14,7 +14,7 @@ use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
 pub fn render(
     node: &Node,
     clip_path: Rc<ClipPath>,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
 ) {
@@ -41,7 +41,7 @@ pub fn render(
         create_simple_clip_path(node, clip_path, content);
     } else {
         content.set_parameters(
-            create_complex_clip_path(node, clip_path, writer, ctx).to_pdf_name(),
+            create_complex_clip_path(node, clip_path, chunk, ctx).to_pdf_name(),
         );
     }
 }
@@ -139,7 +139,7 @@ fn extend_segments_from_node(
 fn create_complex_clip_path(
     parent: &Node,
     clip_path: Rc<ClipPath>,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Rc<String> {
     ctx.deferrer.push();
@@ -149,7 +149,7 @@ fn create_complex_clip_path(
     content.save_state();
 
     if let Some(recursive_clip_path) = &clip_path.clip_path {
-        render(parent, recursive_clip_path.clone(), writer, &mut content, ctx);
+        render(parent, recursive_clip_path.clone(), chunk, &mut content, ctx);
     }
 
     content.transform(clip_path.transform.to_pdf_transform());
@@ -166,7 +166,7 @@ fn create_complex_clip_path(
             group::render(
                 &clip_path.root,
                 group,
-                writer,
+                chunk,
                 &mut content,
                 ctx,
                 Transform::default(),
@@ -178,7 +178,7 @@ fn create_complex_clip_path(
     content.restore_state();
     let content_stream = ctx.finish_content(content);
 
-    let mut x_object = writer.form_xobject(x_object_reference, &content_stream);
+    let mut x_object = chunk.form_xobject(x_object_reference, &content_stream);
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
@@ -198,7 +198,7 @@ fn create_complex_clip_path(
     x_object.finish();
 
     let gs_ref = ctx.alloc_ref();
-    let mut gs = writer.ext_graphics(gs_ref);
+    let mut gs = chunk.ext_graphics(gs_ref);
     gs.soft_mask().subtype(MaskType::Alpha).group(x_object_reference);
 
     ctx.deferrer.add_graphics_state(gs_ref)

@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
-use pdf_writer::{Content, Filter, Finish, PdfWriter};
+use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::{ImageKind, Size, Transform, Tree, Visibility};
 
 use crate::util::context::Context;
@@ -13,7 +13,7 @@ use crate::{convert_tree_into, Options};
 /// Render an image into a content stream.
 pub fn render(
     image: &usvg::Image,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
 ) {
@@ -30,7 +30,7 @@ pub fn render(
                 image::load_from_memory_with_format(content, ImageFormat::Jpeg).unwrap();
             // JPEGs don't support alphas, so no extra processing is required.
             create_raster_image(
-                writer,
+                chunk,
                 ctx,
                 content,
                 Filter::DctDecode,
@@ -45,7 +45,7 @@ pub fn render(
             // step.
             let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
             create_raster_image(
-                writer,
+                chunk,
                 ctx,
                 &samples,
                 filter,
@@ -60,7 +60,7 @@ pub fn render(
             // step.
             let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
             create_raster_image(
-                writer,
+                chunk,
                 ctx,
                 &samples,
                 filter,
@@ -69,7 +69,7 @@ pub fn render(
             )
         }
         // SVGs just get rendered recursively.
-        ImageKind::SVG(tree) => create_svg_image(tree, writer, ctx),
+        ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx),
     };
 
     // Get the dimensions of the actual rect that is needed to scale the image into the image view
@@ -151,7 +151,7 @@ fn handle_transparent_image(image: &DynamicImage) -> (Vec<u8>, Filter, Option<Ve
 }
 
 fn create_raster_image(
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
     samples: &[u8],
     filter: Filter,
@@ -161,7 +161,7 @@ fn create_raster_image(
     let color = dynamic_image.color();
     let alpha_mask = alpha_mask.map(|mask_bytes| {
         let soft_mask_id = ctx.alloc_ref();
-        let mut s_mask = writer.image_xobject(soft_mask_id, mask_bytes);
+        let mut s_mask = chunk.image_xobject(soft_mask_id, mask_bytes);
         s_mask.filter(filter);
         s_mask.width(dynamic_image.width() as i32);
         s_mask.height(dynamic_image.height() as i32);
@@ -176,7 +176,7 @@ fn create_raster_image(
     let image_ref = ctx.alloc_ref();
     let image_name = ctx.deferrer.add_x_object(image_ref);
 
-    let mut image_x_object = writer.image_xobject(image_ref, samples);
+    let mut image_x_object = chunk.image_xobject(image_ref, samples);
     image_x_object.filter(filter);
     image_x_object.width(dynamic_image.width() as i32);
     image_x_object.height(dynamic_image.height() as i32);
@@ -202,14 +202,14 @@ fn calculate_bits_per_component(color_type: ColorType) -> i32 {
 
 fn create_svg_image(
     tree: &Tree,
-    writer: &mut PdfWriter,
+    chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> (Rc<String>, Size) {
     let image_ref = ctx.alloc_ref();
     let image_name = ctx.deferrer.add_x_object(image_ref);
     // convert_tree_into will automatically scale it in a way so that its dimensions are 1x1, like
     // regular ImageXObjects. So afterwards, we can just treat them the same.
-    let next_ref = convert_tree_into(tree, Options::default(), writer, image_ref);
+    let next_ref = convert_tree_into(tree, Options::default(), chunk, image_ref);
     ctx.deferrer.set_next_ref(next_ref.get());
     (image_name, tree.size)
 }
