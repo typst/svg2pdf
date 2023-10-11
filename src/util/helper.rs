@@ -115,7 +115,7 @@ impl LineJoinExt for LineJoin {
     fn to_pdf_line_join(&self) -> LineJoinStyle {
         match self {
             LineJoin::Miter => LineJoinStyle::MiterJoin,
-            //TODO
+            //TODO: is it possible to implement this in PDF?
             LineJoin::MiterClip => LineJoinStyle::MiterJoin,
             LineJoin::Round => LineJoinStyle::RoundJoin,
             LineJoin::Bevel => LineJoinStyle::BevelJoin,
