@@ -147,6 +147,8 @@ pub trait GroupExt {
 }
 
 impl GroupExt for usvg::Group {
+    // We use this instead of usvg's should_isolate method because that one also includes
+    // clip paths, which shouldn't strictly be necessary but only bloats the file size in PDF.
     fn is_isolated(&self) -> bool {
         // According to the SVG spec, any of these makes a group isolated.
         self.isolate
