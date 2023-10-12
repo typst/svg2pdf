@@ -115,6 +115,8 @@ impl LineJoinExt for LineJoin {
     fn to_pdf_line_join(&self) -> LineJoinStyle {
         match self {
             LineJoin::Miter => LineJoinStyle::MiterJoin,
+            //TODO: is it possible to implement this in PDF?
+            LineJoin::MiterClip => LineJoinStyle::MiterJoin,
             LineJoin::Round => LineJoinStyle::RoundJoin,
             LineJoin::Bevel => LineJoinStyle::BevelJoin,
         }
@@ -147,6 +149,8 @@ pub trait GroupExt {
 }
 
 impl GroupExt for usvg::Group {
+    // We use this instead of usvg's should_isolate method because that one also includes
+    // clip paths, which shouldn't strictly be necessary but only bloats the file size in PDF.
     fn is_isolated(&self) -> bool {
         // According to the SVG spec, any of these makes a group isolated.
         self.isolate
