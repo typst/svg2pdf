@@ -27,7 +27,7 @@ fn main() -> Result<(), std::io::Error> {
     man.render(&mut manpage_file)?;
 
     for shell in Shell::value_variants() {
-        generate_to(*shell, &mut cmd, "svg2pdf", &outdir_path).unwrap();
+        generate_to(*shell, &mut cmd, "svg2pdf", outdir_path).unwrap();
     }
 
     Ok(())
