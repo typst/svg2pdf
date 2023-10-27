@@ -1,6 +1,6 @@
 [workspace]
 members = ["crates/*", "tests"]
-default-members = ["crates/svg2pdf-cli"]
+default-members = ["crates/svg2pdf"]
 resolver = "2"
 
 [workspace.package]
