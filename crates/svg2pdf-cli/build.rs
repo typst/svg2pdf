@@ -8,10 +8,6 @@ mod args {
 }
 
 fn main() -> Result<(), std::io::Error> {
-    if !cfg!(feature = "cli") {
-        return Ok(());
-    }
-
     let outdir_str = match env::var_os("OUT_DIR") {
         None => return Ok(()),
         Some(outdir) => outdir,
