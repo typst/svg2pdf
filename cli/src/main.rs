@@ -1,13 +1,14 @@
-use std::io::{self, Write};
-use std::path::Path;
-use std::process;
-
-use clap::Parser;
-use svg2pdf::Options;
-use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
-use usvg::{TreeParsing, TreeTextToPath};
-
 mod args;
+mod convert;
+mod fonts;
+
+use crate::args::{CliArguments, Command};
+use clap::Parser;
+use std::{
+    io::{self, Write},
+    process,
+};
+use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
 
 fn main() {
     if let Err(msg) = run() {
@@ -17,26 +18,21 @@ fn main() {
 }
 
 fn run() -> Result<(), String> {
-    let args = args::Args::parse();
+    let args = CliArguments::parse();
 
-    let name =
-        Path::new(args.input.file_name().ok_or("Input path does not point to a file")?);
-    let output = args.output.unwrap_or_else(|| name.with_extension("pdf"));
+    // If an input argument was provided, convert the svg file to pdf.
+    if let Some(input) = args.input {
+        return convert::convert_(&input, args.output, args.dpi);
+    };
 
-    let svg =
-        std::fs::read_to_string(&args.input).map_err(|_| "Failed to load SVG file")?;
-
-    let options = usvg::Options::default();
-    let mut fontdb = fontdb::Database::new();
-    fontdb.load_system_fonts();
-
-    let mut tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
-    tree.convert_text(&fontdb);
-
-    let pdf =
-        svg2pdf::convert_tree(&tree, Options { dpi: args.dpi, ..Options::default() });
-
-    std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
+    // Otherwise execute the command provided if any.
+    if let Some(command) = args.command {
+        match command {
+            Command::Fonts(command) => crate::fonts::fonts(&command)?,
+        }
+    } else {
+        return Err("no command was provided".to_string());
+    };
 
     Ok(())
 }

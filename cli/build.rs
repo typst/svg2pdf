@@ -18,7 +18,7 @@ fn main() -> Result<(), std::io::Error> {
     let artifacts_path = outdir_path.join("artifacts");
     std::fs::create_dir_all(&artifacts_path)?;
 
-    let mut cmd = args::Args::command();
+    let mut cmd = args::CliArguments::command();
 
     let man = clap_mangen::Man::new(cmd.clone());
     let mut manpage_file = std::fs::File::create(artifacts_path.join("svg2pdf.1"))?;
