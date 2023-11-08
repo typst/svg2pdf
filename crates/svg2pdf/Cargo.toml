@@ -21,11 +21,8 @@ image = ["dep:image"]
 miniz_oxide = "0.7"
 pdf-writer = "0.9"
 usvg = { version = "0.36", default-features = false }
-image = { version = "0.24", default-features = false, features = [
-  "jpeg",
-  "png",
-  "gif",
-], optional = true }
+image = { version = "0.24", default-features = false, features = ["jpeg", "png", "gif"], optional = true }
 
 [dev-dependencies]
 usvg = { version = "0.36.0" }
+

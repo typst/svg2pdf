@@ -5,11 +5,9 @@ resolver = "2"
 
 [workspace.package]
 version = "0.9.0"
-authors = [
-  "Martin Haug <mhaug@live.de>",
-  "Laurenz Stampfl <laurenz.stampfl@gmail.com>",
-]
+authors = ["Martin Haug <mhaug@live.de>", "Laurenz Stampfl <laurenz.stampfl@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/typst/svg2pdf"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
+

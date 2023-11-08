@@ -23,11 +23,7 @@ svg2pdf = { path = "../svg2pdf" }
 miniz_oxide = "0.7"
 pdf-writer = "0.9"
 usvg = { version = "0.36", default-features = false, features = ["text"] }
-image = { version = "0.24", default-features = false, features = [
-  "jpeg",
-  "png",
-  "gif",
-] }
+image = { version = "0.24", default-features = false, features = ["jpeg", "png", "gif"] }
 termcolor = { version = "1" }
 clap = { version = "4.4.2", features = ["derive"] }
 fontdb = { version = "0.15" }
@@ -36,3 +32,4 @@ fontdb = { version = "0.15" }
 clap = { version = "4.4.2", features = ["derive", "string"] }
 clap_complete = "4.4.3"
 clap_mangen = "0.2.14"
+
