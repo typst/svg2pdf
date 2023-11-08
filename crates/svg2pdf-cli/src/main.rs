@@ -8,7 +8,7 @@ use usvg::{TreeParsing, TreeTextToPath};
 
 use svg2pdf::Options;
 
-mod cli;
+mod args;
 
 fn main() {
     if let Err(msg) = run() {
@@ -18,7 +18,7 @@ fn main() {
 }
 
 fn run() -> Result<(), String> {
-    let args = cli::Args::parse();
+    let args = args::Args::parse();
 
     let name =
         Path::new(args.input.file_name().ok_or("Input path does not point to a file")?);

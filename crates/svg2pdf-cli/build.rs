@@ -4,7 +4,7 @@ use clap::{CommandFactory, ValueEnum};
 use clap_complete::{generate_to, Shell};
 
 mod args {
-    include!("src/cli.rs");
+    include!("src/args.rs");
 }
 
 fn main() -> Result<(), std::io::Error> {
