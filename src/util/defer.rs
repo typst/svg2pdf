@@ -15,10 +15,13 @@ use std::rc::Rc;
 
 use pdf_writer::types::ProcSet;
 use pdf_writer::writers::{ColorSpace, Resources};
-use pdf_writer::{Dict, Finish, Ref};
+use pdf_writer::{Dict, Finish, Name, Ref};
 
 use super::allocate::Allocator;
-use super::helper::{NameExt, SRGB};
+use super::helper::NameExt;
+
+pub const SRGB: Name = Name(b"srgb");
+pub const D65_GRAY: Name<'static> = Name(b"d65gray");
 
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum PendingResourceType {
@@ -72,6 +75,8 @@ pub struct Deferrer {
     allocator: Allocator,
     /// The stack frames containing the deferred objects.
     pending_entries: Vec<Vec<PendingResource>>,
+    pub srgb_ref: Option<Ref>,
+    pub dgray_ref: Option<Ref>,
 }
 
 impl Deferrer {
@@ -95,6 +100,26 @@ impl Deferrer {
         self.allocator.alloc_ref()
     }
 
+    pub fn srgb_ref(&mut self) -> Ref {
+        if let Some(srgb_ref) = self.srgb_ref {
+            srgb_ref
+        } else {
+            let r = self.alloc_ref();
+            self.srgb_ref = Some(r);
+            r
+        }
+    }
+
+    pub fn dgray_ref(&mut self) -> Ref {
+        if let Some(sgrey_ref) = self.dgray_ref {
+            sgrey_ref
+        } else {
+            let r = self.alloc_ref();
+            self.dgray_ref = Some(r);
+            r
+        }
+    }
+
     /// Push a new stack frame.
     pub fn push(&mut self) {
         self.pending_entries.push(Vec::new());
@@ -102,7 +127,16 @@ impl Deferrer {
 
     /// Pop a stack frame and write the pending named resources into the `Resources` dictionary.
     pub fn pop(&mut self, resources: &mut Resources) {
-        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
+        let mut color_spaces = resources.color_spaces();
+        color_spaces
+            .insert(SRGB)
+            .start::<ColorSpace>()
+            .icc_based(self.srgb_ref());
+        color_spaces
+            .insert(D65_GRAY)
+            .start::<ColorSpace>()
+            .icc_based(self.dgray_ref());
+        color_spaces.finish();
         resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
 
         let entries = self.pending_entries.pop().unwrap();

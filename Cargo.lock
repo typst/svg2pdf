@@ -1264,6 +1264,7 @@ dependencies = [
  "fontdb",
  "image",
  "miniz_oxide",
+ "once_cell",
  "pdf-writer",
  "termcolor",
  "usvg",

@@ -8,7 +8,7 @@ use usvg::{ImageKind, Size, Transform, Tree, Visibility};
 use crate::util::context::Context;
 use crate::util::helper;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
-use crate::{convert_tree_into, Options};
+use crate::{convert_tree_into, write_color_spaces, Options};
 
 /// Render an image into a content stream.
 pub fn render(

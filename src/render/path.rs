@@ -8,9 +8,10 @@ use usvg::{Stroke, Transform};
 
 use super::{gradient, pattern};
 use crate::util::context::Context;
+use crate::util::defer::SRGB;
 use crate::util::helper::{
     plain_bbox, plain_bbox_without_default, ColorExt, LineCapExt, LineJoinExt, NameExt,
-    TransformExt, SRGB,
+    TransformExt,
 };
 
 /// Render a path into a content stream.

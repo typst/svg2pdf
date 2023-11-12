@@ -35,6 +35,14 @@ impl Context {
         }
     }
 
+    pub fn srgb_ref(&mut self) -> Ref {
+        self.deferrer.srgb_ref()
+    }
+
+    pub fn sgrey_ref(&mut self) -> Ref {
+        self.deferrer.dgray_ref()
+    }
+
     /// Allocate a new reference.
     pub fn alloc_ref(&mut self) -> Ref {
         self.deferrer.alloc_ref()
