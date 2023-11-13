@@ -1,5 +1,7 @@
 [workspace]
-members = ["tests"]
+members = ["crates/*", "tests"]
+default-members = ["crates/svg2pdf-cli"]
+resolver = "2"
 
 [workspace.package]
 version = "0.9.0"
@@ -9,39 +11,3 @@ repository = "https://github.com/typst/svg2pdf"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 
-[package]
-name = "svg2pdf"
-description = "Convert SVG files to PDFs."
-categories = ["encoding", "graphics", "multimedia"]
-keywords = ["svg", "pdf", "vector-graphics", "conversion"]
-version.workspace = true
-authors.workspace = true
-edition.workspace = true
-repository.workspace = true
-license.workspace = true
-
-[features]
-default = ["image"]
-image = ["dep:image"]
-cli = ["dep:clap", "dep:termcolor", "usvg/text", "dep:fontdb"]
-
-[lib]
-test = false
-doctest = false
-
-[[bin]]
-name = "svg2pdf"
-path = "src/main.rs"
-required-features = ["cli"]
-
-[dependencies]
-miniz_oxide = "0.7"
-pdf-writer = "0.9"
-usvg = { version = "0.36", default-features = false }
-image = { version = "0.24", default-features = false, features = ["jpeg", "png", "gif"], optional = true }
-termcolor = { version = "1", optional = true }
-clap = { version = "4.4.2", features = ["derive"], optional = true }
-fontdb = { version = "0.15", optional= true }
-
-[dev-dependencies]
-usvg = { version = "0.36.0" }

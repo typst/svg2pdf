@@ -34,7 +34,7 @@ std::fs::write("target/time_series.pdf", pdf)?;
 This crate also contains a command line interface. Install it by running the command below:
 
 ```bash
-cargo install svg2pdf --features cli
+cargo install svg2pdf-cli
 ```
 
 You can then convert SVGs to PDFs by running commands like these:

@@ -1,5 +1,5 @@
 use std::io::{self, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process;
 
 use clap::Parser;
@@ -8,17 +8,7 @@ use usvg::{TreeParsing, TreeTextToPath};
 
 use svg2pdf::Options;
 
-#[derive(Debug, Parser)]
-#[clap(about, version)]
-struct Args {
-    /// Path to read SVG file from.
-    input: PathBuf,
-    /// Path to write PDF file to.
-    output: Option<PathBuf>,
-    /// The number of SVG pixels per PDF points.
-    #[clap(long, default_value = "72.0")]
-    dpi: f32,
-}
+mod args;
 
 fn main() {
     if let Err(msg) = run() {
@@ -28,7 +18,7 @@ fn main() {
 }
 
 fn run() -> Result<(), String> {
-    let args = Args::parse();
+    let args = args::Args::parse();
 
     let name =
         Path::new(args.input.file_name().ok_or("Input path does not point to a file")?);
