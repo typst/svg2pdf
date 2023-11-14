@@ -212,7 +212,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
     page.contents(content_ref);
     page.finish();
 
-    write_color_spaces(&ctx, &mut pdf);
+    write_color_spaces(&mut ctx, &mut pdf);
 
     let document_info_id = ctx.alloc_ref();
     pdf.document_info(document_info_id).producer(TextStr("svg2pdf"));
@@ -353,23 +353,23 @@ pub fn convert_tree_into(
     resources.finish();
     x_object.finish();
 
-    write_color_spaces(&ctx, chunk);
+    write_color_spaces(&mut ctx, chunk);
 
     ctx.alloc_ref()
 }
 
-fn write_color_spaces(ctx: &Context, chunk: &mut Chunk) {
-    if let Some(srgb_ref) = ctx.deferrer.srgb_ref {
+fn write_color_spaces(ctx: &mut Context, chunk: &mut Chunk) {
+    if ctx.deferrer.used_srgb() {
         chunk
-            .icc_profile(srgb_ref, &SRGB_ICC_DEFLATED)
+            .icc_profile(ctx.deferrer.srgb_ref(), &SRGB_ICC_DEFLATED)
             .n(3)
             .range([0.0, 1.0, 0.0, 1.0, 0.0, 1.0])
             .filter(Filter::FlateDecode);
     }
 
-    if let Some(dgray_ref) = ctx.deferrer.dgray_ref {
+    if ctx.deferrer.used_sgray() {
         chunk
-            .icc_profile(dgray_ref, &GRAY_ICC_DEFLATED)
+            .icc_profile(ctx.deferrer.sgray_ref(), &GRAY_ICC_DEFLATED)
             .n(1)
             .range([0.0, 1.0])
             .filter(Filter::FlateDecode);

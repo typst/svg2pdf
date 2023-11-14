@@ -135,7 +135,7 @@ fn shading_soft_mask(
         .isolated(false)
         .knockout(false)
         .color_space()
-        .icc_based(ctx.sgrey_ref());
+        .icc_based(ctx.sgray_ref());
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
@@ -166,7 +166,7 @@ fn shading_function(
     let mut shading = chunk.function_shading(shading_ref);
     shading.shading_type(properties.shading_type);
     if use_opacities {
-        shading.color_space().icc_based(ctx.sgrey_ref());
+        shading.color_space().icc_based(ctx.sgray_ref());
     } else {
         shading.color_space().icc_based(ctx.srgb_ref());
     }

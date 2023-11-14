@@ -39,8 +39,8 @@ impl Context {
         self.deferrer.srgb_ref()
     }
 
-    pub fn sgrey_ref(&mut self) -> Ref {
-        self.deferrer.dgray_ref()
+    pub fn sgray_ref(&mut self) -> Ref {
+        self.deferrer.sgray_ref()
     }
 
     /// Allocate a new reference.

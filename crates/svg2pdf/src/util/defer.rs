@@ -21,7 +21,6 @@ use super::allocate::Allocator;
 use super::helper::NameExt;
 
 pub const SRGB: Name = Name(b"srgb");
-pub const D65_GRAY: Name<'static> = Name(b"d65gray");
 
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum PendingResourceType {
@@ -75,8 +74,10 @@ pub struct Deferrer {
     allocator: Allocator,
     /// The stack frames containing the deferred objects.
     pending_entries: Vec<Vec<PendingResource>>,
-    pub srgb_ref: Option<Ref>,
-    pub dgray_ref: Option<Ref>,
+    /// The reference to the icc profile for srgb.
+    srgb_ref: Option<Ref>,
+    // The reference to the icc profile for sgray
+    sgray_ref: Option<Ref>,
 }
 
 impl Deferrer {
@@ -100,24 +101,22 @@ impl Deferrer {
         self.allocator.alloc_ref()
     }
 
-    pub fn srgb_ref(&mut self) -> Ref {
-        if let Some(srgb_ref) = self.srgb_ref {
-            srgb_ref
-        } else {
-            let r = self.alloc_ref();
-            self.srgb_ref = Some(r);
-            r
-        }
+    pub fn used_srgb(&self) -> bool {
+        return self.srgb_ref.is_some();
     }
 
-    pub fn dgray_ref(&mut self) -> Ref {
-        if let Some(sgrey_ref) = self.dgray_ref {
-            sgrey_ref
-        } else {
-            let r = self.alloc_ref();
-            self.dgray_ref = Some(r);
-            r
-        }
+    pub fn used_sgray(&self) -> bool {
+        return self.sgray_ref.is_some();
+    }
+
+    pub fn srgb_ref(&mut self) -> Ref {
+        let allocator = &mut self.allocator;
+        *self.srgb_ref.get_or_insert_with(|| allocator.alloc_ref())
+    }
+
+    pub fn sgray_ref(&mut self) -> Ref {
+        let allocator = &mut self.allocator;
+        *self.sgray_ref.get_or_insert_with(|| allocator.alloc_ref())
     }
 
     /// Push a new stack frame.
@@ -132,10 +131,8 @@ impl Deferrer {
             .insert(SRGB)
             .start::<ColorSpace>()
             .icc_based(self.srgb_ref());
-        color_spaces
-            .insert(D65_GRAY)
-            .start::<ColorSpace>()
-            .icc_based(self.dgray_ref());
+        // SGRAY is currently only used for soft masks with alpha, so we never need to write
+        // it into the resources directly.
         color_spaces.finish();
         resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
 
