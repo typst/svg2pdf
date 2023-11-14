@@ -208,7 +208,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
         .isolated(true)
         .knockout(false)
         .color_space()
-        .icc_based(ctx.srgb_ref());
+        .icc_based(ctx.deferrer.srgb_ref());
     page.contents(content_ref);
     page.finish();
 

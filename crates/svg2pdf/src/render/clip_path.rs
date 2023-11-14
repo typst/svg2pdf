@@ -192,7 +192,7 @@ fn create_complex_clip_path(
         .isolated(false)
         .knockout(false)
         .color_space()
-        .icc_based(ctx.srgb_ref());
+        .icc_based(ctx.deferrer.srgb_ref());
 
     x_object.bbox(pdf_bbox);
     x_object.finish();

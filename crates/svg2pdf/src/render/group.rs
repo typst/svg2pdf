@@ -78,7 +78,7 @@ fn create_x_object(
         .isolated(group.is_isolated())
         .knockout(false)
         .color_space()
-        .icc_based(ctx.srgb_ref());
+        .icc_based(ctx.deferrer.srgb_ref());
 
     x_object.bbox(pdf_bbox);
     x_object.finish();
