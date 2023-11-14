@@ -102,11 +102,11 @@ impl Deferrer {
     }
 
     pub fn used_srgb(&self) -> bool {
-        return self.srgb_ref.is_some();
+        self.srgb_ref.is_some()
     }
 
     pub fn used_sgray(&self) -> bool {
-        return self.sgray_ref.is_some();
+        self.sgray_ref.is_some()
     }
 
     pub fn srgb_ref(&mut self) -> Ref {
