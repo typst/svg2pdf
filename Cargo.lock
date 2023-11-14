@@ -1287,6 +1287,7 @@ version = "0.9.0"
 dependencies = [
  "image",
  "miniz_oxide",
+ "once_cell",
  "pdf-writer",
  "usvg",
 ]
@@ -1301,7 +1302,6 @@ dependencies = [
  "fontdb",
  "image",
  "miniz_oxide",
- "once_cell",
  "pdf-writer",
  "svg2pdf",
  "termcolor",
