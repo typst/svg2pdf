@@ -29,7 +29,7 @@ test = false
 
 [dependencies]
 fontdb = "0.15"
-svg2pdf = { path = ".." }
+svg2pdf = { path = "../crates/svg2pdf" }
 usvg = "0.36.0"
 pdfium-render = "0.8.6"
 walkdir = "2.3.3"
