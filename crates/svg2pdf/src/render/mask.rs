@@ -87,7 +87,7 @@ pub fn create(
         .isolated(false)
         .knockout(false)
         .color_space()
-        .srgb();
+        .icc_based(ctx.deferrer.srgb_ref());
 
     x_object.bbox(actual_rect.to_pdf_rect());
     x_object.finish();

@@ -15,10 +15,12 @@ use std::rc::Rc;
 
 use pdf_writer::types::ProcSet;
 use pdf_writer::writers::{ColorSpace, Resources};
-use pdf_writer::{Dict, Finish, Ref};
+use pdf_writer::{Dict, Finish, Name, Ref};
 
 use super::allocate::Allocator;
-use super::helper::{NameExt, SRGB};
+use super::helper::NameExt;
+
+pub const SRGB: Name = Name(b"srgb");
 
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum PendingResourceType {
@@ -72,6 +74,10 @@ pub struct Deferrer {
     allocator: Allocator,
     /// The stack frames containing the deferred objects.
     pending_entries: Vec<Vec<PendingResource>>,
+    /// The reference to the icc profile for srgb.
+    srgb_ref: Option<Ref>,
+    // The reference to the icc profile for sgray
+    sgray_ref: Option<Ref>,
 }
 
 impl Deferrer {
@@ -95,6 +101,24 @@ impl Deferrer {
         self.allocator.alloc_ref()
     }
 
+    pub fn used_srgb(&self) -> bool {
+        self.srgb_ref.is_some()
+    }
+
+    pub fn used_sgray(&self) -> bool {
+        self.sgray_ref.is_some()
+    }
+
+    pub fn srgb_ref(&mut self) -> Ref {
+        let allocator = &mut self.allocator;
+        *self.srgb_ref.get_or_insert_with(|| allocator.alloc_ref())
+    }
+
+    pub fn sgray_ref(&mut self) -> Ref {
+        let allocator = &mut self.allocator;
+        *self.sgray_ref.get_or_insert_with(|| allocator.alloc_ref())
+    }
+
     /// Push a new stack frame.
     pub fn push(&mut self) {
         self.pending_entries.push(Vec::new());
@@ -102,7 +126,14 @@ impl Deferrer {
 
     /// Pop a stack frame and write the pending named resources into the `Resources` dictionary.
     pub fn pop(&mut self, resources: &mut Resources) {
-        resources.color_spaces().insert(SRGB).start::<ColorSpace>().srgb();
+        let mut color_spaces = resources.color_spaces();
+        color_spaces
+            .insert(SRGB)
+            .start::<ColorSpace>()
+            .icc_based(self.srgb_ref());
+        // SGRAY is currently only used for soft masks with alpha, so we never need to write
+        // it into the resources directly.
+        color_spaces.finish();
         resources.proc_sets([ProcSet::Pdf, ProcSet::ImageColor, ProcSet::ImageGrayscale]);
 
         let entries = self.pending_entries.pop().unwrap();

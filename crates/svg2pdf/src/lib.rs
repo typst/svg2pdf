@@ -46,13 +46,20 @@ Among the unsupported features are currently:
 mod render;
 mod util;
 
+use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
 use usvg::utils::view_box_to_transform;
 use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, TreeParsing};
 
 use crate::render::tree_to_stream;
 use crate::util::context::Context;
-use crate::util::helper::dpi_ratio;
+use crate::util::helper::{deflate, dpi_ratio};
+
+// The ICC profiles.
+static SRGB_ICC_DEFLATED: Lazy<Vec<u8>> =
+    Lazy::new(|| deflate(include_bytes!("icc/sRGB-v4.icc")));
+static GRAY_ICC_DEFLATED: Lazy<Vec<u8>> =
+    Lazy::new(|| deflate(include_bytes!("icc/sGrey-v4.icc")));
 
 /// Set size and scaling preferences for the conversion.
 #[derive(Copy, Clone)]
@@ -201,9 +208,11 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
         .isolated(true)
         .knockout(false)
         .color_space()
-        .srgb();
+        .icc_based(ctx.deferrer.srgb_ref());
     page.contents(content_ref);
     page.finish();
+
+    write_color_spaces(&mut ctx, &mut pdf);
 
     let document_info_id = ctx.alloc_ref();
     pdf.document_info(document_info_id).producer(TextStr("svg2pdf"));
@@ -341,7 +350,30 @@ pub fn convert_tree_into(
     let mut resources = x_object.resources();
     ctx.deferrer.pop(&mut resources);
 
+    resources.finish();
+    x_object.finish();
+
+    write_color_spaces(&mut ctx, chunk);
+
     ctx.alloc_ref()
+}
+
+fn write_color_spaces(ctx: &mut Context, chunk: &mut Chunk) {
+    if ctx.deferrer.used_srgb() {
+        chunk
+            .icc_profile(ctx.deferrer.srgb_ref(), &SRGB_ICC_DEFLATED)
+            .n(3)
+            .range([0.0, 1.0, 0.0, 1.0, 0.0, 1.0])
+            .filter(Filter::FlateDecode);
+    }
+
+    if ctx.deferrer.used_sgray() {
+        chunk
+            .icc_profile(ctx.deferrer.sgray_ref(), &GRAY_ICC_DEFLATED)
+            .n(1)
+            .range([0.0, 1.0])
+            .filter(Filter::FlateDecode);
+    }
 }
 
 /// Return the dimensions of the PDF page

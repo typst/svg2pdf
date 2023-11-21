@@ -6,8 +6,6 @@ use usvg::{
 
 use crate::render::gradient::Stop;
 
-pub const SRGB: Name = Name(b"srgb");
-
 /// Extension trait to convert [Colors](usvg::Color) into PDF colors.
 pub trait ColorExt {
     fn to_pdf_color(&self) -> [f32; 3];

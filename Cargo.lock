@@ -1287,6 +1287,7 @@ version = "0.9.0"
 dependencies = [
  "image",
  "miniz_oxide",
+ "once_cell",
  "pdf-writer",
  "usvg",
 ]
