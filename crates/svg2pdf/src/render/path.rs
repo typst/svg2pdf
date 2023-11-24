@@ -143,12 +143,9 @@ fn stroke(
                     Some(stroke.opacity),
                 );
 
-                if let Some(soft_mask) = gradient::create_shading_soft_mask(
-                    paint,
-                    &path_bbox,
-                    chunk,
-                    ctx,
-                ) {
+                if let Some(soft_mask) =
+                    gradient::create_shading_soft_mask(paint, &path_bbox, chunk, ctx)
+                {
                     content.set_parameters(soft_mask.to_pdf_name());
                 }
 
