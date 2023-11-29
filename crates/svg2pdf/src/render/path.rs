@@ -103,8 +103,7 @@ fn stroke(
 ) {
     if let Some(stroke) = path.stroke.as_ref() {
         let paint = &stroke.paint;
-        let path_bbox_with_stroke = plain_bbox(node, true);
-        let path_bbox_without_stroke = plain_bbox(node, false);
+        let path_bbox = plain_bbox(node, false);
         let accumulated_transform = accumulated_transform.pre_concat(path.transform);
 
         content.save_state();
@@ -124,7 +123,7 @@ fn stroke(
                 // the whole pattern itself. This is why we need to handle this case differently.
                 let pattern_name = pattern::create(
                     p.clone(),
-                    &path_bbox_without_stroke,
+                    &path_bbox,
                     chunk,
                     ctx,
                     accumulated_transform,
@@ -144,18 +143,15 @@ fn stroke(
                     Some(stroke.opacity),
                 );
 
-                if let Some(soft_mask) = gradient::create_shading_soft_mask(
-                    paint,
-                    &path_bbox_with_stroke,
-                    chunk,
-                    ctx,
-                ) {
+                if let Some(soft_mask) =
+                    gradient::create_shading_soft_mask(paint, &path_bbox, chunk, ctx)
+                {
                     content.set_parameters(soft_mask.to_pdf_name());
                 }
 
                 let pattern_name = gradient::create_shading_pattern(
                     paint,
-                    &path_bbox_without_stroke,
+                    &path_bbox,
                     chunk,
                     ctx,
                     &accumulated_transform,
