@@ -164,8 +164,8 @@ pub fn save_image(image: &RgbaImage, path: &Path) {
     image.save_with_format(path, image::ImageFormat::Png).unwrap();
 
     oxipng::optimize(
-        &InFile::Path(PathBuf::from(path)),
-        &OutFile::Path(Some(PathBuf::from(path))),
+        &InFile::Path(path.into()),
+        &OutFile::from_path(path.into()),
         &oxipng::Options::max_compression(),
     )
     .unwrap();

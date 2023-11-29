@@ -31,7 +31,8 @@ std::fs::write("target/time_series.pdf", pdf)?;
 
 ## CLI
 
-This crate also contains a command line interface. Install it by running the command below:
+This crate also contains a command line interface. Install it by running the
+command below:
 
 ```bash
 cargo install svg2pdf-cli

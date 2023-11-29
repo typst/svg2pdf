@@ -1,6 +1,6 @@
 ================================================================================
 The Creative Commons Zero v1.0 Universal License applies to:
-* The ICC profiles found in `crates/svg2pdf/src/icc/*`
+* The ICC profiles found in `src/icc/*`
 
 ================================================================================
 
@@ -560,7 +560,7 @@ Creative Commons may be contacted at creativecommons.org.
 The Mozilla Public License Version 2.0 applies to:
 
 * The `image_rect`, `fit_view_box` and `calc_node_bbox` functions in `src/util/helper.rs`
-and parts of the 'draw_path' method in 'src/render/path.rs'
+  and parts of the 'draw_path' method in 'src/render/path.rs'
   in the resvg repository (https://github.com/RazrFalcon/resvg)
 
 Mozilla Public License Version 2.0

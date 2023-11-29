@@ -1,0 +1,34 @@
+[package]
+name = "svg2pdf-cli"
+description = "The command line interface for svg2pdf."
+categories = ["encoding", "graphics", "multimedia", "command-line-utilities"]
+keywords = ["svg2pdf", "cli"]
+build = "build.rs"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+repository = { workspace = true }
+license = { workspace = true }
+
+[[bin]]
+name = "svg2pdf"
+path = "src/main.rs"
+test = false
+doctest = false
+bench = false
+doc = false
+
+[dependencies]
+clap = { workspace = true }
+fontdb = { workspace = true }
+image = { workspace = true }
+miniz_oxide = { workspace = true }
+pdf-writer = { workspace = true }
+svg2pdf = { workspace = true }
+termcolor = { workspace = true }
+usvg = { workspace = true, features = ["text"] }
+
+[build-dependencies]
+clap = { workspace = true, features = ["string"] }
+clap_complete = { workspace = true }
+clap_mangen = { workspace = true }

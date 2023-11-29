@@ -243,7 +243,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf;
-/// use pdf_writer::{Content, Finish, Name, PdfWriter, Rect, Ref, Str};
+/// use pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str};
 /// use usvg::TreeParsing;
 ///
 /// // Allocate the indirect reference IDs and names.
