@@ -100,24 +100,23 @@ fn extend_segments_from_node(
     match *node.borrow() {
         NodeKind::Path(ref path) => {
             if path.visibility != Visibility::Hidden {
-                let path_transform = transform.pre_concat(path.transform);
                 path.data.segments().for_each(|segment| match segment {
                     PathSegment::MoveTo(mut p) => {
-                        path_transform.map_point(&mut p);
+                        transform.map_point(&mut p);
                         segments.push(PathSegment::MoveTo(p));
                     }
                     PathSegment::LineTo(mut p) => {
-                        path_transform.map_point(&mut p);
+                        transform.map_point(&mut p);
                         segments.push(PathSegment::LineTo(p));
                     }
                     PathSegment::QuadTo(p1, p2) => {
                         let mut points = [p1, p2];
-                        path_transform.map_points(&mut points);
+                        transform.map_points(&mut points);
                         segments.push(PathSegment::QuadTo(points[0], points[1]));
                     }
                     PathSegment::CubicTo(p1, p2, p3) => {
                         let mut points = [p1, p2, p3];
-                        path_transform.map_points(&mut points);
+                        transform.map_points(&mut points);
                         segments
                             .push(PathSegment::CubicTo(points[0], points[1], points[2]));
                     }

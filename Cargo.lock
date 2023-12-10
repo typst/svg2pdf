@@ -1333,9 +1333,9 @@ dependencies = [
 
 [[package]]
 name = "svgtypes"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d71499ff2d42f59d26edb21369a308ede691421f79ebc0f001e2b1fd3a7c9e52"
+checksum = "6e44e288cd960318917cbd540340968b90becc8bc81f171345d706e7a89d9d70"
 dependencies = [
  "kurbo",
  "siphasher",
@@ -1391,9 +1391,9 @@ dependencies = [
 
 [[package]]
 name = "tiny-skia-path"
-version = "0.11.2"
+version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ac3865b9708fc7e1961a65c3a4fa55e984272f33092d3c859929f887fceb647"
+checksum = "5de35e8a90052baaaf61f171680ac2f8e925a1e43ea9d2e3a00514772250e541"
 dependencies = [
  "arrayref",
  "bytemuck",
@@ -1478,8 +1478,7 @@ checksum = "c0edd1e5b14653f783770bce4a4dabb4a5108a5370a5f5d8cfe8710c361f6c8b"
 [[package]]
 name = "usvg"
 version = "0.36.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c51daa774fe9ee5efcf7b4fec13019b8119cda764d9a8b5b06df02bb1445c656"
+source = "git+https://github.com/RazrFalcon/resvg#537dd26b3fd7bb7286efda97341dddcfe5f59c67"
 dependencies = [
  "base64",
  "log",
@@ -1493,8 +1492,7 @@ dependencies = [
 [[package]]
 name = "usvg-parser"
 version = "0.36.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45c88a5ffaa338f0e978ecf3d4e00d8f9f493e29bed0752e1a808a1db16afc40"
+source = "git+https://github.com/RazrFalcon/resvg#537dd26b3fd7bb7286efda97341dddcfe5f59c67"
 dependencies = [
  "data-url",
  "flate2",
@@ -1511,8 +1509,7 @@ dependencies = [
 [[package]]
 name = "usvg-text-layout"
 version = "0.36.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4d2374378cb7a3fb8f33894e0fdb8625e1bbc4f25312db8d91f862130b541593"
+source = "git+https://github.com/RazrFalcon/resvg#537dd26b3fd7bb7286efda97341dddcfe5f59c67"
 dependencies = [
  "fontdb",
  "kurbo",
@@ -1527,8 +1524,7 @@ dependencies = [
 [[package]]
 name = "usvg-tree"
 version = "0.36.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6cacb0c5edeaf3e80e5afcf5b0d4004cc1d36318befc9a7c6606507e5d0f4062"
+source = "git+https://github.com/RazrFalcon/resvg#537dd26b3fd7bb7286efda97341dddcfe5f59c67"
 dependencies = [
  "rctree",
  "strict-num",

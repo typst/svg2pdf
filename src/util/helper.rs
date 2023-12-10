@@ -1,8 +1,6 @@
 use pdf_writer::types::{BlendMode, LineCapStyle, LineJoinStyle, MaskType};
 use pdf_writer::{Content, Name, Rect};
-use usvg::{
-    BBox, LineCap, LineJoin, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform,
-};
+use usvg::{BBox, LineCap, LineJoin, Node, NodeKind, NonZeroRect, Size, Transform};
 
 use crate::render::gradient::Stop;
 
@@ -252,7 +250,11 @@ fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox>
             let mut bbox = BBox::default();
 
             for child in node.children() {
-                let child_transform = ts.pre_concat(child.transform());
+                let child_transform = if let NodeKind::Group(ref g) = *child.borrow() {
+                    ts.pre_concat(g.transform)
+                } else {
+                    ts
+                };
                 if let Some(c_bbox) = calc_node_bbox(&child, child_transform, with_stroke)
                 {
                     bbox = bbox.expand(c_bbox);

@@ -27,7 +27,7 @@ pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 regex = "1.8.4"
 termcolor = "1.2"
-usvg = { version = "0.36", default-features = false }
+usvg = { git="https://github.com/RazrFalcon/resvg", default-features = false }
 walkdir = "2.3.3"
 
 [package]
