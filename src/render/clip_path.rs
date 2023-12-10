@@ -55,7 +55,7 @@ fn is_simple_clip_path(node: &Node) -> bool {
         }
         NodeKind::Text(ref text) => {
             // TODO: Need to change this once unconverted text is supported
-            text.flattened.as_ref().map_or(true,  is_simple_clip_path)
+            text.flattened.as_ref().map_or(true, is_simple_clip_path)
         }
         NodeKind::Group(ref group) => {
             // We can only intersect one clipping path with another one, meaning that we
