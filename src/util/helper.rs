@@ -245,6 +245,10 @@ fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox>
                 }
             })
             .map(BBox::from),
+        NodeKind::Text(ref text) => text
+            .flattened
+            .as_ref()
+            .and_then(|node| calc_node_bbox(node, ts, with_stroke)),
         NodeKind::Image(ref img) => img.view_box.rect.transform(ts).map(BBox::from),
         NodeKind::Group(_) => {
             let mut bbox = BBox::default();
@@ -268,7 +272,6 @@ fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox>
 
             Some(bbox)
         }
-        NodeKind::Text(_) => None,
     }
 }
 
