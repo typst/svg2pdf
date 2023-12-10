@@ -1,5 +1,6 @@
 [workspace]
 members = ["cli", "tests"]
+default-members = ["cli"]
 resolver = "2"
 
 [workspace.package]
