@@ -37,7 +37,7 @@ pub fn render(
     // should suffice. But in order to conform with the SVG specification, we also handle the case
     // of more complex clipping paths, even if this means that Safari will in some cases not
     // display them correctly.
-    if is_simple_clip_path(clip_path.clone()) {
+    if is_simple_clip_path(&clip_path.root) {
         create_simple_clip_path(node, clip_path, content);
     } else {
         content.set_parameters(
@@ -46,12 +46,16 @@ pub fn render(
     }
 }
 
-fn is_simple_clip_path(clip_path: Rc<ClipPath>) -> bool {
-    clip_path.root.descendants().all(|n| match *n.borrow() {
+fn is_simple_clip_path(node: &Node) -> bool {
+    node.descendants().all(|n| match *n.borrow() {
         NodeKind::Path(ref path) => {
             // While there is a clipping path for EvenOdd, it will produce wrong results
             // if the clip-rule is defined on a group instead of on the children.
             path.fill.as_ref().map_or(true, |fill| fill.rule == FillRule::NonZero)
+        }
+        NodeKind::Text(ref text) => {
+            // TODO: Need to change this once unconverted text is supported
+            text.flattened.as_ref().map_or(true, |node| is_simple_clip_path(node))
         }
         NodeKind::Group(ref group) => {
             // We can only intersect one clipping path with another one, meaning that we
@@ -128,6 +132,12 @@ fn extend_segments_from_node(
             let group_transform = transform.pre_concat(group.transform);
             for child in node.children() {
                 extend_segments_from_node(&child, &group_transform, segments);
+            }
+        }
+        NodeKind::Text(ref text) => {
+            // TODO: Need to change this once unconverted text is supported
+            if let Some(ref node) = text.flattened {
+                extend_segments_from_node(node, transform, segments);
             }
         }
         // Images are not valid in a clip path. Text will be converted into shapes beforehand.

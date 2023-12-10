@@ -245,6 +245,7 @@ fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox>
                 }
             })
             .map(BBox::from),
+        // TODO: Need to change this once unconverted text is supported
         NodeKind::Text(ref text) => text
             .flattened
             .as_ref()
