@@ -16,7 +16,7 @@ svg2pdf = { path = ".", version = "0.9.1" }
 clap = { version = "4.4.2", features = ["derive"] }
 clap_complete = "4.4.3"
 clap_mangen = "0.2.14"
-fontdb = "0.15"
+fontdb = "0.16.0"
 image = { version = "0.24", default-features = false, features = ["jpeg", "png", "gif"] }
 indicatif = "0.17.5"
 lazy_static = "1.4.0"
@@ -27,7 +27,7 @@ pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 regex = "1.8.4"
 termcolor = "1.2"
-usvg = { git="https://github.com/RazrFalcon/resvg", default-features = false }
+usvg = "0.37.0"
 walkdir = "2.3.3"
 
 [package]
