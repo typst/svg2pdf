@@ -93,6 +93,10 @@ fn stroke(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    if path.data.bounds().width() == 0.0 && path.data.bounds().height() == 0.0 {
+        return;
+    }
+
     if let Some(stroke) = path.stroke.as_ref() {
         let paint = &stroke.paint;
         let path_bbox = node
