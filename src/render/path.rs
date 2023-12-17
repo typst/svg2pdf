@@ -20,11 +20,6 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    // Check if the path has a bbox at all.
-    let Some(_) = node.stroke_bounding_box() else {
-        return;
-    };
-
     if path.visibility != Visibility::Visible {
         return;
     }
@@ -182,6 +177,10 @@ fn fill(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    if path.data.bounds().width() == 0.0 || path.data.bounds().height() == 0.0 {
+        return;
+    }
+
     if let Some(fill) = path.fill.as_ref() {
         let paint = &fill.paint;
         let path_bbox = node
