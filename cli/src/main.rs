@@ -31,8 +31,8 @@ fn run() -> Result<(), String> {
     fontdb.load_system_fonts();
 
     let mut tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
-    tree.calculate_bounding_boxes();
     tree.convert_text(&fontdb);
+    tree.calculate_bounding_boxes();
 
     let pdf =
         svg2pdf::convert_tree(&tree, Options { dpi: args.dpi, ..Options::default() });
