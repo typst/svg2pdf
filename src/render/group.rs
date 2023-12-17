@@ -5,9 +5,7 @@ use usvg::{Node, NodeExt, NonZeroRect, Transform};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
-use crate::util::helper::{
-    BlendModeExt, GroupExt, NameExt, RectExt, TransformExt,
-};
+use crate::util::helper::{BlendModeExt, GroupExt, NameExt, RectExt, TransformExt};
 
 /// Render a group into a content stream.
 pub fn render(
@@ -54,7 +52,9 @@ fn create_x_object(
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
-    let pdf_bbox = node.stroke_bounding_box().and_then(|bb| bb.to_non_zero_rect())
+    let pdf_bbox = node
+        .stroke_bounding_box()
+        .and_then(|bb| bb.to_non_zero_rect())
         .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
         .transform(group.transform)
         .unwrap()
