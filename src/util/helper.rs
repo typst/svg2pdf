@@ -1,6 +1,6 @@
 use pdf_writer::types::{BlendMode, LineCapStyle, LineJoinStyle, MaskType};
 use pdf_writer::{Content, Name, Rect};
-use usvg::{BBox, LineCap, LineJoin, Node, NodeKind, NonZeroRect, Size, Transform};
+use usvg::{BBox, LineCap, LineJoin, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
 
 use crate::render::gradient::Stop;
 
@@ -154,6 +154,26 @@ impl GroupExt for usvg::Group {
             || self.blend_mode != usvg::BlendMode::Normal
             || !self.filters.is_empty()
             || self.opacity.get() != 1.0
+    }
+}
+
+pub trait NewNodeExt {
+    fn bbox_rect(&self) -> NonZeroRect;
+    fn stroke_bbox_rect(&self) -> NonZeroRect;
+}
+
+impl NewNodeExt for usvg::Node {
+    // Convenience method to not panic if bbox is not well-defined
+    fn bbox_rect(&self) -> NonZeroRect {
+        self.bounding_box()
+            .and_then(|bb| bb.to_non_zero_rect())
+            .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
+    }
+    // Convenience method to not panic if bbox is not well-defined
+    fn stroke_bbox_rect(&self) -> NonZeroRect {
+        self.stroke_bounding_box()
+            .and_then(|bb| bb.to_non_zero_rect())
+            .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
     }
 }
 

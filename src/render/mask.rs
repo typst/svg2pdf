@@ -5,7 +5,7 @@ use usvg::{Mask, Node, NodeExt, NodeKind, NonZeroRect, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{clip_to_rect, MaskTypeExt, NameExt, RectExt, TransformExt};
+use crate::util::helper::{clip_to_rect, MaskTypeExt, NameExt, NewNodeExt, RectExt, TransformExt};
 
 /// Render a mask into a content stream.
 pub fn render(
@@ -37,9 +37,7 @@ pub fn create(
     }
 
     let parent_svg_bbox = parent
-        .bounding_box()
-        .and_then(|bb| bb.to_non_zero_rect())
-        .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap());
+        .bbox_rect();
 
     let actual_rect = match mask.units {
         Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),
