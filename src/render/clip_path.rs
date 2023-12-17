@@ -3,7 +3,7 @@ use std::rc::Rc;
 use pdf_writer::types::MaskType;
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{ClipPath, FillRule, Node, NodeExt, NodeKind, Transform, Units, Visibility};
+use usvg::{ClipPath, FillRule, Node, NodeExt, NodeKind, NonZeroRect, Transform, Units, Visibility};
 
 use super::group;
 use super::path::draw_path;
@@ -86,7 +86,7 @@ fn create_simple_clip_path(
             .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(parent.bounding_box().and_then(|bb| bb.to_non_zero_rect()).unwrap())
+                Transform::from_bbox(parent.bounding_box().and_then(|bb| bb.to_non_zero_rect()).unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap()))
             });
 
     let mut segments = vec![];

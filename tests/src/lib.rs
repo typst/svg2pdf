@@ -139,6 +139,7 @@ impl Runner {
     pub fn read_svg(&self, svg_string: &str) -> Tree {
         let options = usvg::Options::default();
         let mut tree = Tree::from_str(svg_string, &options).unwrap();
+        tree.calculate_bounding_boxes();
         tree.convert_text(&self.fontdb);
         tree
     }

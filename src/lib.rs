@@ -159,6 +159,7 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 ///
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
+/// tree.calculate_bounding_boxes();
 /// tree.convert_text(&db);
 ///
 /// let pdf = svg2pdf::convert_tree(&tree, Options::default());

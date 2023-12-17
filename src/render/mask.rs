@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Mask, Node, NodeExt, NodeKind, Transform, Units};
+use usvg::{Mask, Node, NodeExt, NodeKind, NonZeroRect, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
@@ -41,7 +41,7 @@ pub fn create(
     let parent_svg_bbox = parent
         .bounding_box()
         .and_then(|bb| bb.to_non_zero_rect())
-        .unwrap();
+        .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap());
 
     let actual_rect = match mask.units {
         Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Node, NodeExt, Transform};
+use usvg::{Node, NodeExt, NonZeroRect, Transform};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
@@ -55,7 +55,7 @@ fn create_x_object(
     ctx.deferrer.push();
 
     let pdf_bbox = node.stroke_bounding_box().and_then(|bb| bb.to_non_zero_rect())
-        .unwrap()
+        .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
         .transform(group.transform)
         .unwrap()
         .to_pdf_rect();

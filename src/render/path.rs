@@ -2,7 +2,7 @@ use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::{Chunk, Content, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{Fill, FillRule, Node, NodeExt, Opacity, Paint, PaintOrder};
+use usvg::{Fill, FillRule, Node, NodeExt, NonZeroRect, Opacity, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
 
@@ -102,7 +102,7 @@ fn stroke(
     if let Some(stroke) = path.stroke.as_ref() {
         let paint = &stroke.paint;
         let path_bbox = node.bounding_box().and_then(|bb| bb.to_non_zero_rect())
-            .unwrap();
+            .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap());
 
         content.save_state();
 
@@ -184,7 +184,7 @@ fn fill(
     if let Some(fill) = path.fill.as_ref() {
         let paint = &fill.paint;
         let path_bbox = node.bounding_box().and_then(|bb| bb.to_non_zero_rect())
-            .unwrap();
+            .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap());
 
         content.save_state();
 
