@@ -27,7 +27,7 @@ pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 regex = "1.8.4"
 termcolor = "1.2"
-usvg = { git="https://github.com/RazrFalcon/resvg", default-features = false }
+usvg = { git="https://github.com/RazrFalcon/resvg", default-features = false, features = ["text"] }
 walkdir = "2.3.3"
 
 [package]
@@ -54,6 +54,3 @@ once_cell = { workspace = true }
 pdf-writer = { workspace = true }
 usvg = { workspace = true }
 image = { workspace = true, optional = true }
-
-[dev-dependencies]
-usvg = { workspace = true, features = ["text", "system-fonts"] }

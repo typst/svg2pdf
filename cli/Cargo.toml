@@ -26,7 +26,7 @@ miniz_oxide = { workspace = true }
 pdf-writer = { workspace = true }
 svg2pdf = { workspace = true }
 termcolor = { workspace = true }
-usvg = { workspace = true, features = ["text"] }
+usvg = { workspace = true}
 
 [build-dependencies]
 clap = { workspace = true, features = ["string"] }
