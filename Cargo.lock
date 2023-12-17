@@ -1433,8 +1433,7 @@ checksum = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
 [[package]]
 name = "usvg"
 version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38b0a51b72ab80ca511d126b77feeeb4fb1e972764653e61feac30adc161a756"
+source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
 dependencies = [
  "base64",
  "log",
@@ -1448,8 +1447,7 @@ dependencies = [
 [[package]]
 name = "usvg-parser"
 version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bd4e3c291f45d152929a31f0f6c819245e2921bfd01e7bd91201a9af39a2bdc"
+source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
 dependencies = [
  "data-url",
  "flate2",
@@ -1466,8 +1464,7 @@ dependencies = [
 [[package]]
 name = "usvg-text-layout"
 version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d383a3965de199d7f96d4e11a44dd859f46e86de7f3dca9a39bf82605da0a37c"
+source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
 dependencies = [
  "fontdb",
  "kurbo",
@@ -1482,8 +1479,7 @@ dependencies = [
 [[package]]
 name = "usvg-tree"
 version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ee3d202ebdb97a6215604b8f5b4d6ef9024efd623cf2e373a6416ba976ec7d3"
+source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
 dependencies = [
  "rctree",
  "strict-num",

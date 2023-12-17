@@ -2,15 +2,14 @@ use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::{Chunk, Content, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{Fill, FillRule, Node, Opacity, Paint, PaintOrder};
+use usvg::{Fill, FillRule, Node, NodeExt, Opacity, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
 
 use super::{gradient, pattern};
 use crate::util::context::Context;
 use crate::util::defer::SRGB;
-use crate::util::helper::{
-    plain_bbox, plain_bbox_without_default, ColorExt, LineCapExt, LineJoinExt, NameExt,
+use crate::util::helper::{ColorExt, LineCapExt, LineJoinExt, NameExt,
 };
 
 /// Render a path into a content stream.
@@ -23,7 +22,7 @@ pub fn render(
     accumulated_transform: Transform,
 ) {
     // Check if the path has a bbox at all.
-    let Some(_) = plain_bbox_without_default(node, true) else {
+    let Some(_) = node.stroke_bounding_box() else {
         return;
     };
 
@@ -102,7 +101,8 @@ fn stroke(
 ) {
     if let Some(stroke) = path.stroke.as_ref() {
         let paint = &stroke.paint;
-        let path_bbox = plain_bbox(node, false);
+        let path_bbox = node.bounding_box().and_then(|bb| bb.to_non_zero_rect())
+            .unwrap();
 
         content.save_state();
 
@@ -183,7 +183,8 @@ fn fill(
 ) {
     if let Some(fill) = path.fill.as_ref() {
         let paint = &fill.paint;
-        let path_bbox = plain_bbox(node, false);
+        let path_bbox = node.bounding_box().and_then(|bb| bb.to_non_zero_rect())
+            .unwrap();
 
         content.save_state();
 

@@ -1,12 +1,12 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Mask, Node, NodeKind, Transform, Units};
+use usvg::{Mask, Node, NodeExt, NodeKind, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;
 use crate::util::helper::{
-    clip_to_rect, plain_bbox, MaskTypeExt, NameExt, RectExt, TransformExt,
+    clip_to_rect, MaskTypeExt, NameExt, RectExt, TransformExt,
 };
 
 /// Render a mask into a content stream.
@@ -38,7 +38,10 @@ pub fn create(
         render(parent, recursive_mask.clone(), chunk, &mut content, ctx);
     }
 
-    let parent_svg_bbox = plain_bbox(parent, false);
+    let parent_svg_bbox = parent
+        .bounding_box()
+        .and_then(|bb| bb.to_non_zero_rect())
+        .unwrap();
 
     let actual_rect = match mask.units {
         Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),

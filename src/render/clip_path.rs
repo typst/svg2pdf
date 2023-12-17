@@ -3,12 +3,12 @@ use std::rc::Rc;
 use pdf_writer::types::MaskType;
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{ClipPath, FillRule, Node, NodeKind, Transform, Units, Visibility};
+use usvg::{ClipPath, FillRule, Node, NodeExt, NodeKind, Transform, Units, Visibility};
 
 use super::group;
 use super::path::draw_path;
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
+use crate::util::helper::{NameExt, RectExt, TransformExt};
 
 /// Render a clip path into a content stream.
 pub fn render(
@@ -86,7 +86,7 @@ fn create_simple_clip_path(
             .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(plain_bbox(parent, false))
+                Transform::from_bbox(parent.bounding_box().and_then(|bb| bb.to_non_zero_rect()).unwrap())
             });
 
     let mut segments = vec![];
@@ -163,12 +163,14 @@ fn create_complex_clip_path(
 
     content.transform(clip_path.transform.to_pdf_transform());
 
-    let pdf_bbox = plain_bbox(parent, false).to_pdf_rect();
+    let pdf_bbox = parent.bounding_box().and_then(|bb| bb.to_non_zero_rect())
+        .unwrap().to_pdf_rect();
 
     match *clip_path.root.borrow() {
         NodeKind::Group(ref group) => {
             if clip_path.units == Units::ObjectBoundingBox {
-                let parent_svg_bbox = plain_bbox(parent, false);
+                let parent_svg_bbox = parent.bounding_box().and_then(|bb| bb.to_non_zero_rect())
+                    .unwrap();
                 content
                     .transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
             }

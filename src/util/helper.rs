@@ -200,81 +200,81 @@ pub fn deflate(data: &[u8]) -> Vec<u8> {
     miniz_oxide::deflate::compress_to_vec_zlib(data, COMPRESSION_LEVEL)
 }
 
-/// Calculate the bbox of a node as a [Rect](NonZeroRect).
-pub fn plain_bbox(node: &Node, with_stroke: bool) -> NonZeroRect {
-    plain_bbox_without_default(node, with_stroke)
-        .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
-}
-
-/// Calculate the bbox of a node as a [Rect](NonZeroRect).
-pub fn plain_bbox_without_default(node: &Node, with_stroke: bool) -> Option<NonZeroRect> {
-    calc_node_bbox(node, Transform::default(), with_stroke)
-        .and_then(|b| b.to_non_zero_rect())
-}
-
-// Taken from resvg
-/// Calculate the bbox of a node with a given transform.
-fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox> {
-    match *node.borrow() {
-        NodeKind::Path(ref path) => path
-            .data
-            .bounds()
-            .transform(ts)
-            .map(|old_rect| {
-                // Adapted from resvg
-                if let Some(stroke) = &path.stroke {
-                    if with_stroke {
-                        let w = stroke.width.get()
-                            / if ts.is_identity() {
-                                2.0
-                            } else {
-                                2.0 / (ts.sx * ts.sy - ts.ky * ts.kx).abs().sqrt()
-                            };
-                        usvg::Rect::from_xywh(
-                            old_rect.x() - w,
-                            old_rect.y() - w,
-                            old_rect.width() + 2.0 * w,
-                            old_rect.height() + 2.0 * w,
-                        )
-                        .unwrap_or(usvg::Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
-                    } else {
-                        old_rect
-                    }
-                } else {
-                    old_rect
-                }
-            })
-            .map(BBox::from),
-        // TODO: Need to change this once unconverted text is supported
-        NodeKind::Text(ref text) => text
-            .flattened
-            .as_ref()
-            .and_then(|node| calc_node_bbox(node, ts, with_stroke)),
-        NodeKind::Image(ref img) => img.view_box.rect.transform(ts).map(BBox::from),
-        NodeKind::Group(_) => {
-            let mut bbox = BBox::default();
-
-            for child in node.children() {
-                let child_transform = if let NodeKind::Group(ref g) = *child.borrow() {
-                    ts.pre_concat(g.transform)
-                } else {
-                    ts
-                };
-                if let Some(c_bbox) = calc_node_bbox(&child, child_transform, with_stroke)
-                {
-                    bbox = bbox.expand(c_bbox);
-                }
-            }
-
-            // Make sure bbox was changed.
-            if bbox.is_default() {
-                return None;
-            }
-
-            Some(bbox)
-        }
-    }
-}
+// /// Calculate the bbox of a node as a [Rect](NonZeroRect).
+// pub fn plain_bbox(node: &Node, with_stroke: bool) -> NonZeroRect {
+//     plain_bbox_without_default(node, with_stroke)
+//         .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
+// }
+//
+// /// Calculate the bbox of a node as a [Rect](NonZeroRect).
+// pub fn plain_bbox_without_default(node: &Node, with_stroke: bool) -> Option<NonZeroRect> {
+//     calc_node_bbox(node, Transform::default(), with_stroke)
+//         .and_then(|b| b.to_non_zero_rect())
+// }
+//
+// // Taken from resvg
+// /// Calculate the bbox of a node with a given transform.
+// fn calc_node_bbox(node: &Node, ts: Transform, with_stroke: bool) -> Option<BBox> {
+//     match *node.borrow() {
+//         NodeKind::Path(ref path) => path
+//             .data
+//             .bounds()
+//             .transform(ts)
+//             .map(|old_rect| {
+//                 // Adapted from resvg
+//                 if let Some(stroke) = &path.stroke {
+//                     if with_stroke {
+//                         let w = stroke.width.get()
+//                             / if ts.is_identity() {
+//                                 2.0
+//                             } else {
+//                                 2.0 / (ts.sx * ts.sy - ts.ky * ts.kx).abs().sqrt()
+//                             };
+//                         usvg::Rect::from_xywh(
+//                             old_rect.x() - w,
+//                             old_rect.y() - w,
+//                             old_rect.width() + 2.0 * w,
+//                             old_rect.height() + 2.0 * w,
+//                         )
+//                         .unwrap_or(usvg::Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
+//                     } else {
+//                         old_rect
+//                     }
+//                 } else {
+//                     old_rect
+//                 }
+//             })
+//             .map(BBox::from),
+//         // TODO: Need to change this once unconverted text is supported
+//         NodeKind::Text(ref text) => text
+//             .flattened
+//             .as_ref()
+//             .and_then(|node| calc_node_bbox(node, ts, with_stroke)),
+//         NodeKind::Image(ref img) => img.view_box.rect.transform(ts).map(BBox::from),
+//         NodeKind::Group(_) => {
+//             let mut bbox = BBox::default();
+//
+//             for child in node.children() {
+//                 let child_transform = if let NodeKind::Group(ref g) = *child.borrow() {
+//                     ts.pre_concat(g.transform)
+//                 } else {
+//                     ts
+//                 };
+//                 if let Some(c_bbox) = calc_node_bbox(&child, child_transform, with_stroke)
+//                 {
+//                     bbox = bbox.expand(c_bbox);
+//                 }
+//             }
+//
+//             // Make sure bbox was changed.
+//             if bbox.is_default() {
+//                 return None;
+//             }
+//
+//             Some(bbox)
+//         }
+//     }
+// }
 
 pub fn clip_to_rect(rect: NonZeroRect, content: &mut Content) {
     content.rect(rect.x(), rect.y(), rect.width(), rect.height());

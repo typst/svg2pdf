@@ -1,12 +1,12 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Node, Transform};
+use usvg::{Node, NodeExt, Transform};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
 use crate::util::helper::{
-    plain_bbox, BlendModeExt, GroupExt, NameExt, RectExt, TransformExt,
+    BlendModeExt, GroupExt, NameExt, RectExt, TransformExt,
 };
 
 /// Render a group into a content stream.
@@ -54,7 +54,8 @@ fn create_x_object(
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
-    let pdf_bbox = plain_bbox(node, true)
+    let pdf_bbox = node.stroke_bounding_box().and_then(|bb| bb.to_non_zero_rect())
+        .unwrap()
         .transform(group.transform)
         .unwrap()
         .to_pdf_rect();
