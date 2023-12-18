@@ -58,7 +58,11 @@ impl Render for Node {
             #[cfg(feature = "image")]
             NodeKind::Image(ref image) => image::render(image, chunk, content, ctx),
             // Texts should be converted beforehand.
-            _ => {}
+            NodeKind::Text(ref text) => {
+                if let Some(ref node) = text.flattened {
+                    node.render(chunk, content, ctx, accumulated_transform);
+                }
+            }
         }
     }
 }

@@ -11,7 +11,6 @@ use crate::util::context::Context;
 use crate::util::defer::SRGB;
 use crate::util::helper::{
     plain_bbox, plain_bbox_without_default, ColorExt, LineCapExt, LineJoinExt, NameExt,
-    TransformExt,
 };
 
 /// Render a path into a content stream.
@@ -104,10 +103,8 @@ fn stroke(
     if let Some(stroke) = path.stroke.as_ref() {
         let paint = &stroke.paint;
         let path_bbox = plain_bbox(node, false);
-        let accumulated_transform = accumulated_transform.pre_concat(path.transform);
 
         content.save_state();
-        content.transform(path.transform.to_pdf_transform());
 
         match paint {
             Paint::Color(c) => {
@@ -187,10 +184,8 @@ fn fill(
     if let Some(fill) = path.fill.as_ref() {
         let paint = &fill.paint;
         let path_bbox = plain_bbox(node, false);
-        let accumulated_transform = accumulated_transform.pre_concat(path.transform);
 
         content.save_state();
-        content.transform(path.transform.to_pdf_transform());
 
         match paint {
             Paint::Color(c) => {

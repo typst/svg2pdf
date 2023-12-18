@@ -79,7 +79,6 @@ pub fn render(
     let image_rect = image_rect(&image.view_box, image_size);
 
     content.save_state();
-    content.transform(image.transform.to_pdf_transform());
     // Clip the image so just the part inside of the view box is actually visible.
     helper::clip_to_rect(image.view_box.rect, content);
 
