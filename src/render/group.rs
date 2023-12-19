@@ -1,7 +1,10 @@
+use std::cmp::max;
 use std::rc::Rc;
+use std::sync::Arc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Node, NodeExt, NonZeroRect, Transform};
+use pdf_writer::writers::Group;
+use usvg::{AspectRatio, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform, Tree, ViewBox, Visibility};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
@@ -16,7 +19,9 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if group.is_isolated() {
+    if !group.filters.is_empty() {
+        render_group_with_filters(node, chunk, content, ctx, accumulated_transform);
+    } else if group.is_isolated() {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
         let mut gs = chunk.ext_graphics(gs_ref);
@@ -37,6 +42,38 @@ pub fn render(
         content.restore_state();
     } else {
         create_to_stream(node, group, chunk, content, ctx, accumulated_transform);
+    }
+}
+
+fn render_group_with_filters(
+    node: &Node,
+    chunk: &mut Chunk,
+    content: &mut Content,
+    ctx: &mut Context,
+    accumulated_transform: Transform,
+) {
+    if let Some(bbox) = node
+        .stroke_bounding_box()
+        .and_then(|r| r.to_non_zero_rect()) {
+        let size  = bbox.size();
+
+        let mut pixmap = tiny_skia::Pixmap::new(max(1, size.width().ceil() as u32), max(1, size.height().ceil() as u32)).unwrap();
+        if let Some(rtree) = resvg::Tree::from_usvg_node(node){
+            rtree.render(Transform::default(), &mut pixmap.as_mut());
+
+            let encoded_image = pixmap.encode_png().unwrap();
+            let img_node = Node::new(NodeKind::Image(usvg::Image {
+                id: "".to_string(),
+                visibility: Visibility::Visible,
+                view_box: ViewBox { rect: bbox, aspect: AspectRatio::default() },
+                rendering_mode: Default::default(),
+                kind: ImageKind::PNG(Arc::new(encoded_image)),
+                abs_transform: Default::default(),
+                bounding_box: None,
+            }));
+
+            img_node.render(chunk, content, ctx, accumulated_transform);
+        }
     }
 }
 

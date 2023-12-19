@@ -1085,6 +1085,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 
 [[package]]
+name = "resvg"
+version = "0.37.0"
+source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
+dependencies = [
+ "gif",
+ "jpeg-decoder",
+ "log",
+ "pico-args",
+ "png",
+ "rgb",
+ "svgtypes",
+ "tiny-skia",
+ "usvg",
+]
+
+[[package]]
 name = "rgb"
 version = "0.8.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1259,6 +1275,8 @@ dependencies = [
  "miniz_oxide",
  "once_cell",
  "pdf-writer",
+ "resvg",
+ "tiny-skia",
  "usvg",
 ]
 
@@ -1342,6 +1360,21 @@ dependencies = [
  "flate2",
  "jpeg-decoder",
  "weezl",
+]
+
+[[package]]
+name = "tiny-skia"
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6a067b809476893fce6a254cf285850ff69c847e6cfbade6a20b655b6c7e80d"
+dependencies = [
+ "arrayref",
+ "arrayvec",
+ "bytemuck",
+ "cfg-if",
+ "log",
+ "png",
+ "tiny-skia-path",
 ]
 
 [[package]]
