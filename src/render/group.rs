@@ -2,13 +2,18 @@ use std::cmp::max;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use pdf_writer::{Chunk, Content, Filter, Finish};
 use pdf_writer::writers::Group;
-use usvg::{AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform, Tree, ViewBox, Visibility};
+use pdf_writer::{Chunk, Content, Filter, Finish};
+use usvg::{
+    AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform,
+    Tree, ViewBox, Visibility,
+};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
-use crate::util::helper::{BlendModeExt, GroupExt, NameExt, NewNodeExt, RectExt, TransformExt};
+use crate::util::helper::{
+    BlendModeExt, GroupExt, NameExt, NewNodeExt, RectExt, TransformExt,
+};
 
 /// Render a group into a content stream.
 pub fn render(
@@ -52,31 +57,26 @@ fn render_group_with_filters(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    if let Some(mut bbox) = node.stroke_bounding_box().and_then(|r| r.to_non_zero_rect())
+    {
+        let size = bbox
+            .size()
+            .to_int_size()
+            .scale_by(ctx.options.raster_effects as f32)
+            .unwrap();
 
-    // let new_node = Node::new(NodeKind::Group(usvg::Group {
-    //     // transform: Transform::from_translate(20.0, 20.0),
-    //     ..usvg::Group::default()
-    // }));
-    // new_node.append(node.make_deep_copy());
+        let ts = Transform::from_scale(
+            ctx.options.raster_effects as f32,
+            ctx.options.raster_effects as f32,
+        );
 
-    if let Some(mut bbox) = node
-        .stroke_bounding_box()
-        .and_then(|r| r.to_non_zero_rect()) {
-
-        // let bbox = NonZeroRect::from_xywh(
-        //     bbox.x() - 20.0,
-        //         bbox.y() - 20.0,
-        //     bbox.width() + 40.0,
-        //     bbox.height() + 40.0
-        // ).unwrap();
-
-        let size  = bbox.size();
-
-        let mut pixmap = tiny_skia::Pixmap::new(max(1, size.width().ceil() as u32), max(1, size.height().ceil() as u32)).unwrap();
-        if let Some(rtree) = resvg::Tree::from_usvg_node(&node){
-            rtree.render(Transform::default(), &mut pixmap.as_mut());
+        let mut pixmap =
+            tiny_skia::Pixmap::new(max(1, size.width()), max(1, size.height())).unwrap();
+        if let Some(rtree) = resvg::Tree::from_usvg_node(&node) {
+            rtree.render(ts, &mut pixmap.as_mut());
 
             let encoded_image = pixmap.encode_png().unwrap();
+            pixmap.save_png("./out.png").unwrap();
             let img_node = Node::new(NodeKind::Image(usvg::Image {
                 id: "".to_string(),
                 visibility: Visibility::Visible,

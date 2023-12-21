@@ -108,6 +108,14 @@ pub struct Options {
     ///
     /// _Default:_ `true`.
     pub compress: bool,
+
+    /// How much raster images of rasterized effects should be scaled up.
+    ///
+    /// Higher values will lead to better quality, but will increase the size of
+    /// the pdf.
+    ///
+    /// _Default:_ 1
+    pub raster_effects: u16,
 }
 
 impl Default for Options {
@@ -117,6 +125,7 @@ impl Default for Options {
             viewport: None,
             aspect: None,
             compress: true,
+            raster_effects: 1,
         }
     }
 }

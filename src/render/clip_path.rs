@@ -4,7 +4,7 @@ use pdf_writer::types::MaskType;
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::tiny_skia_path::PathSegment;
 use usvg::{
-    ClipPath, FillRule, Node, NodeExt, NodeKind, NonZeroRect, Transform, Units,
+    ClipPath, FillRule, Node, NodeKind, Transform, Units,
     Visibility,
 };
 
@@ -89,10 +89,7 @@ fn create_simple_clip_path(
             .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(
-                    parent
-                        .bbox_rect(),
-                )
+                Transform::from_bbox(parent.bbox_rect())
             });
 
     let mut segments = vec![];
@@ -169,15 +166,12 @@ fn create_complex_clip_path(
 
     content.transform(clip_path.transform.to_pdf_transform());
 
-    let pdf_bbox = parent
-        .bbox_rect()
-        .to_pdf_rect();
+    let pdf_bbox = parent.bbox_rect().to_pdf_rect();
 
     match *clip_path.root.borrow() {
         NodeKind::Group(ref group) => {
             if clip_path.units == Units::ObjectBoundingBox {
-                let parent_svg_bbox =
-                    parent.bbox_rect();
+                let parent_svg_bbox = parent.bbox_rect();
                 content
                     .transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
             }

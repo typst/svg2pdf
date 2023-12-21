@@ -184,8 +184,7 @@ fn fill(
 
     if let Some(fill) = path.fill.as_ref() {
         let paint = &fill.paint;
-        let path_bbox = node
-            .bbox_rect();
+        let path_bbox = node.bbox_rect();
 
         content.save_state();
 

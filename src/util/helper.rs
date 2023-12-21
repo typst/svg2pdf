@@ -1,6 +1,8 @@
 use pdf_writer::types::{BlendMode, LineCapStyle, LineJoinStyle, MaskType};
 use pdf_writer::{Content, Name, Rect};
-use usvg::{BBox, LineCap, LineJoin, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform};
+use usvg::{
+    BBox, LineCap, LineJoin, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform,
+};
 
 use crate::render::gradient::Stop;
 
