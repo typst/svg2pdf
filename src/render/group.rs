@@ -59,24 +59,24 @@ fn render_group_with_filters(
 ) {
     if let Some(mut bbox) = node.stroke_bounding_box().and_then(|r| r.to_non_zero_rect())
     {
-        let size = bbox
-            .size()
-            .to_int_size()
-            .scale_by(ctx.options.raster_effects as f32)
-            .unwrap();
+        let size = Size::from_wh(
+            bbox.width() * ctx.options.raster_effects,
+            bbox.height() * ctx.options.raster_effects,
+        )
+        .unwrap();
 
-        let ts = Transform::from_scale(
-            ctx.options.raster_effects as f32,
-            ctx.options.raster_effects as f32,
-        );
+        let ts =
+            Transform::from_scale(ctx.options.raster_effects, ctx.options.raster_effects);
 
-        let mut pixmap =
-            tiny_skia::Pixmap::new(max(1, size.width()), max(1, size.height())).unwrap();
+        let mut pixmap = tiny_skia::Pixmap::new(
+            max(1, size.width().round() as u32),
+            max(1, size.height().round() as u32),
+        )
+        .unwrap();
         if let Some(rtree) = resvg::Tree::from_usvg_node(&node) {
             rtree.render(ts, &mut pixmap.as_mut());
 
             let encoded_image = pixmap.encode_png().unwrap();
-            pixmap.save_png("./out.png").unwrap();
             let img_node = Node::new(NodeKind::Image(usvg::Image {
                 id: "".to_string(),
                 visibility: Visibility::Visible,

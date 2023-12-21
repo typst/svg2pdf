@@ -3,10 +3,7 @@ use std::rc::Rc;
 use pdf_writer::types::MaskType;
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{
-    ClipPath, FillRule, Node, NodeKind, Transform, Units,
-    Visibility,
-};
+use usvg::{ClipPath, FillRule, Node, NodeKind, Transform, Units, Visibility};
 
 use super::group;
 use super::path::draw_path;

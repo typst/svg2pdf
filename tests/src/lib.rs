@@ -153,7 +153,11 @@ impl Runner {
         let tree = self.read_svg(svg_string);
         let pdf = svg2pdf::convert_tree(
             &tree,
-            Options { dpi: 72.0 * scale_factor, raster_effects: 1, ..Options::default() },
+            Options {
+                dpi: 72.0 * scale_factor,
+                raster_effects: 1.5,
+                ..Options::default()
+            },
         );
         let image = test_runner.render_pdf(pdf.as_slice());
         (pdf, image)

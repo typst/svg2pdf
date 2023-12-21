@@ -34,8 +34,13 @@ fn run() -> Result<(), String> {
     tree.convert_text(&fontdb);
     tree.calculate_bounding_boxes();
 
-    let pdf =
-        svg2pdf::convert_tree(&tree, Options { dpi: args.dpi, ..Options::default() });
+    let pdf = svg2pdf::convert_tree(
+        &tree,
+        Options {
+            dpi: args.dpi,
+            ..Options::default()
+        },
+    );
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 
