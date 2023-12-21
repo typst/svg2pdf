@@ -66,6 +66,7 @@ pub fn render(
         pixmap_size.width().round() as u32,
         pixmap_size.height().round() as u32,
     )?;
+
     if let Some(rtree) = resvg::Tree::from_usvg_node(&node) {
         rtree.render(ts, &mut pixmap.as_mut());
 
