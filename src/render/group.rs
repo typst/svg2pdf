@@ -59,14 +59,16 @@ fn render_group_with_filters(
 ) {
     if let Some(mut bbox) = node.stroke_bounding_box().and_then(|r| r.to_non_zero_rect())
     {
+        let (w_padding, h_padding) = (bbox.width() * 0.25, bbox.height() * 0.25);
         let size = Size::from_wh(
-            bbox.width() * ctx.options.raster_effects,
-            bbox.height() * ctx.options.raster_effects,
+            (bbox.width() + 2.0 * w_padding) * ctx.options.raster_effects,
+            (bbox.height() + 2.0 * h_padding) * ctx.options.raster_effects,
         )
         .unwrap();
 
         let ts =
-            Transform::from_scale(ctx.options.raster_effects, ctx.options.raster_effects);
+            Transform::from_scale(ctx.options.raster_effects, ctx.options.raster_effects)
+                .pre_translate(w_padding, h_padding);
 
         let mut pixmap = tiny_skia::Pixmap::new(
             max(1, size.width().round() as u32),
@@ -80,7 +82,12 @@ fn render_group_with_filters(
             let img_node = Node::new(NodeKind::Image(usvg::Image {
                 id: "".to_string(),
                 visibility: Visibility::Visible,
-                view_box: ViewBox { rect: bbox, aspect: AspectRatio::default() },
+                view_box: ViewBox { rect: NonZeroRect::from_xywh(
+                    bbox.x() - w_padding,
+                    bbox.y() - h_padding,
+                    bbox.width() + w_padding * 2.0,
+                    bbox.width() + h_padding * 2.0,
+                ).unwrap(), aspect: AspectRatio::default() },
                 rendering_mode: Default::default(),
                 kind: ImageKind::PNG(Arc::new(encoded_image)),
                 abs_transform: Default::default(),
