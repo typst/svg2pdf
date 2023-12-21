@@ -1,11 +1,13 @@
-use usvg::{AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, Units, ViewBox, Visibility};
-use std::rc::Rc;
-use pdf_writer::{Chunk, Content};
-use tiny_skia::{Size, Transform};
-use std::cmp::max;
-use std::sync::Arc;
 use crate::render::Render;
 use crate::util::context::Context;
+use pdf_writer::{Chunk, Content};
+use std::cmp::max;
+use std::rc::Rc;
+use std::sync::Arc;
+use tiny_skia::{Size, Transform};
+use usvg::{
+    AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, Units, ViewBox, Visibility,
+};
 
 pub fn render(
     node: &Node,
@@ -30,10 +32,15 @@ pub fn render(
     // TODO: In theory, this is not sufficient, as it is possible that a filter in a child
     // group is even bigger, and thus the bbox would have to be expanded even more. But
     // for the vast majority of SVGs, this shouldn't matter.
+
+    // Also, this will only work reliably for groups that are not isolated (i.e. they are
+    // written directly into the page stream instead of an XObject), the reason being that
+    // otherwise, the bounding box of the surrounding XObject might not be big enough, since
+    // calculating the bbox of a group does not take filters into account.
     for filter in filters {
         let filter_region = if filter.units == Units::UserSpaceOnUse {
             filter.rect
-        }   else {
+        } else {
             filter.rect.bbox_transform(bbox.to_non_zero_rect()?)
         };
         actual_bbox = actual_bbox.expand(filter_region)
@@ -41,14 +48,14 @@ pub fn render(
 
     let actual_bbox_rect = actual_bbox.to_non_zero_rect()?;
 
-    let (left_delta, top_delta) =  (
+    let (left_delta, top_delta) = (
         bbox_rect.left() - actual_bbox_rect.left(),
-        bbox_rect.top() - actual_bbox_rect.top()
+        bbox_rect.top() - actual_bbox_rect.top(),
     );
 
     let pixmap_size = Size::from_wh(
         actual_bbox_rect.width() * ctx.options.raster_effects,
-        actual_bbox_rect.height() * ctx.options.raster_effects
+        actual_bbox_rect.height() * ctx.options.raster_effects,
     )?;
 
     let ts =
@@ -57,7 +64,7 @@ pub fn render(
 
     let mut pixmap = tiny_skia::Pixmap::new(
         pixmap_size.width().round() as u32,
-        pixmap_size.height().round() as u32
+        pixmap_size.height().round() as u32,
     )?;
     if let Some(rtree) = resvg::Tree::from_usvg_node(&node) {
         rtree.render(ts, &mut pixmap.as_mut());
@@ -67,7 +74,10 @@ pub fn render(
         let img_node = Node::new(NodeKind::Image(usvg::Image {
             id: "".to_string(),
             visibility: Visibility::Visible,
-            view_box: ViewBox { rect: actual_bbox_rect, aspect: AspectRatio::default() },
+            view_box: ViewBox {
+                rect: actual_bbox_rect,
+                aspect: AspectRatio::default(),
+            },
             rendering_mode: Default::default(),
             kind: ImageKind::PNG(Arc::new(encoded_image)),
             abs_transform: Default::default(),

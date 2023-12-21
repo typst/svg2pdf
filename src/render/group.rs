@@ -1,10 +1,10 @@
-use std::rc::Rc;
 use pdf_writer::{Chunk, Content, Filter, Finish};
+use std::rc::Rc;
 use usvg::{Node, Transform};
 
-use super::{clip_path, mask, Render};
 #[cfg(feature = "filters")]
 use super::filter;
+use super::{clip_path, mask, Render};
 use crate::util::context::Context;
 use crate::util::helper::{
     BlendModeExt, GroupExt, NameExt, NewNodeExt, RectExt, TransformExt,

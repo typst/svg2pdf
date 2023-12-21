@@ -5,6 +5,8 @@ use crate::util::context::Context;
 use crate::util::helper::TransformExt;
 
 pub mod clip_path;
+#[cfg(feature = "filters")]
+pub mod filter;
 pub mod gradient;
 pub mod group;
 #[cfg(feature = "image")]
@@ -12,8 +14,6 @@ pub mod image;
 pub mod mask;
 pub mod path;
 pub mod pattern;
-#[cfg(feature = "filters")]
-pub mod filter;
 
 /// Write a tree into a stream. Assumes that the stream belongs to transparency group and has the
 /// right bounding boxes.
