@@ -4,61 +4,7 @@ use pdf_writer::{Chunk, Content};
 use std::rc::Rc;
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
-use usvg::{AspectRatio, BBox, Group, ImageKind, Node, NodeExt, NodeKind, Units, ViewBox, Visibility};
-
-fn calculate_bounding_box(node: &Node) {
-    if node.has_children() {
-        let mut bbox = BBox::default();
-        let mut stroke_bbox = BBox::default();
-        for child in node.children() {
-            calculate_bounding_box(&child);
-
-            if let Some(mut c_bbox) = child.bounding_box() {
-                if let NodeKind::Group(ref group) = *child.borrow() {
-                    if let Some(r) = c_bbox.transform(group.transform) {
-                        c_bbox = r;
-                    }
-                }
-
-                bbox = bbox.expand(c_bbox);
-            }
-
-            if let Some(mut c_bbox) = child.stroke_bounding_box() {
-                if let NodeKind::Group(ref group) = *child.borrow() {
-                    if let Some(r) = c_bbox.transform(group.transform) {
-                        c_bbox = r;
-                    }
-                }
-
-                stroke_bbox = stroke_bbox.expand(c_bbox);
-            }
-        }
-
-        if let NodeKind::Group(ref mut group) = *node.borrow_mut() {
-            group.bounding_box = bbox.to_rect();
-            group.stroke_bounding_box = stroke_bbox.to_rect();
-        }
-    }
-
-    match *node.borrow_mut() {
-        NodeKind::Path(ref mut path) => {
-            path.bounding_box = path.data.compute_tight_bounds();
-            path.stroke_bounding_box = path.calculate_stroke_bounding_box();
-            if path.stroke_bounding_box.is_none() {
-                path.stroke_bounding_box = path.bounding_box;
-            }
-        }
-        // TODO: should we account for `preserveAspectRatio`?
-        NodeKind::Image(ref mut image) => image.bounding_box = Some(image.view_box.rect),
-        // Have to be handled separately to prevent multiple mutable reference to the tree.
-        NodeKind::Group(_) => {}
-        // Will be set only during text-to-path conversion.
-        NodeKind::Text(_) => {}
-    }
-
-    // Yes, subroots are not affected by the node's transform.
-    node.subroots(|root| calculate_bounding_box(&root));
-}
+use usvg::{AspectRatio, BBox, Group, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Units, ViewBox, Visibility};
 
 pub fn render(
     node: &Node,
@@ -68,10 +14,23 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) -> Option<()> {
-    let new_node = Node::new(NodeKind::Group(Group::default()));
-    new_node.append(node.make_deep_copy());
-    calculate_bounding_box(&new_node);
-    let bbox = new_node.bounding_box().map(BBox::from)?;
+
+    let mut tree = {
+        let root = Node::new(NodeKind::Group(Group::default()));
+        root.append(node.make_deep_copy());
+        let mut tree = usvg::Tree {
+            size: Size::from_wh(1.0, 1.0).unwrap(),
+            view_box: ViewBox {
+                rect: NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap(),
+                aspect: Default::default()
+            },
+            root,
+        };
+        tree.calculate_bounding_boxes();
+        tree
+    };
+
+    let bbox = tree.root.bounding_box().map(BBox::from)?;
 
     // Basic idea: We calculate the bounding box so that all filter effects are contained.
     // Then, we create a new pixmap with that size (optionally bigger if raster effects are set
@@ -121,26 +80,31 @@ pub fn render(
         pixmap_size.height().round() as u32,
     )?;
 
-    if let Some(rtree) = resvg::Tree::from_usvg_node(&new_node) {
-        rtree.render(ts, &mut pixmap.as_mut());
+    tree.size = pixmap_size;
+    tree.view_box = ViewBox {
+        rect: pixmap_size.to_non_zero_rect(bbox_rect.x(), bbox_rect.y()),
+        aspect: Default::default(),
+    };
 
-        let encoded_image = pixmap.encode_png().ok()?;
+    let rtree = resvg::Tree::from_usvg(&tree);
+    rtree.render(ts, &mut pixmap.as_mut());
 
-        let img_node = Node::new(NodeKind::Image(usvg::Image {
-            id: "".to_string(),
-            visibility: Visibility::Visible,
-            view_box: ViewBox {
-                rect: actual_bbox_rect,
-                aspect: AspectRatio::default(),
-            },
-            rendering_mode: Default::default(),
-            kind: ImageKind::PNG(Arc::new(encoded_image)),
-            abs_transform: Default::default(),
-            bounding_box: None,
-        }));
+    let encoded_image = pixmap.encode_png().ok()?;
 
-        img_node.render(chunk, content, ctx, accumulated_transform);
-    }
+    let img_node = Node::new(NodeKind::Image(usvg::Image {
+        id: "".to_string(),
+        visibility: Visibility::Visible,
+        view_box: ViewBox {
+            rect: actual_bbox_rect,
+            aspect: AspectRatio::default(),
+        },
+        rendering_mode: Default::default(),
+        kind: ImageKind::PNG(Arc::new(encoded_image)),
+        abs_transform: Default::default(),
+        bounding_box: None,
+    }));
+
+    img_node.render(chunk, content, ctx, accumulated_transform);
 
     Some(())
 }
