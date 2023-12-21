@@ -47,8 +47,9 @@ license = { workspace = true }
 bench = false
 
 [features]
-default = ["image"]
+default = ["image", "filters"]
 image = ["dep:image"]
+filters = ["dep:tiny-skia", "dep:resvg"]
 
 [dependencies]
 miniz_oxide = { workspace = true }
@@ -56,5 +57,5 @@ once_cell = { workspace = true }
 pdf-writer = { workspace = true }
 usvg = { workspace = true }
 image = { workspace = true, optional = true }
-tiny-skia = {workspace = true}
-resvg = {workspace = true}
+tiny-skia = {workspace = true, optional = true}
+resvg = {workspace = true, optional = true}
