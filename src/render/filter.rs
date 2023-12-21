@@ -4,7 +4,61 @@ use pdf_writer::{Chunk, Content};
 use std::rc::Rc;
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
-use usvg::{AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, Units, ViewBox, Visibility};
+use usvg::{AspectRatio, BBox, Group, ImageKind, Node, NodeExt, NodeKind, Units, ViewBox, Visibility};
+
+fn calculate_bounding_box(node: &Node) {
+    if node.has_children() {
+        let mut bbox = BBox::default();
+        let mut stroke_bbox = BBox::default();
+        for child in node.children() {
+            calculate_bounding_box(&child);
+
+            if let Some(mut c_bbox) = child.bounding_box() {
+                if let NodeKind::Group(ref group) = *child.borrow() {
+                    if let Some(r) = c_bbox.transform(group.transform) {
+                        c_bbox = r;
+                    }
+                }
+
+                bbox = bbox.expand(c_bbox);
+            }
+
+            if let Some(mut c_bbox) = child.stroke_bounding_box() {
+                if let NodeKind::Group(ref group) = *child.borrow() {
+                    if let Some(r) = c_bbox.transform(group.transform) {
+                        c_bbox = r;
+                    }
+                }
+
+                stroke_bbox = stroke_bbox.expand(c_bbox);
+            }
+        }
+
+        if let NodeKind::Group(ref mut group) = *node.borrow_mut() {
+            group.bounding_box = bbox.to_rect();
+            group.stroke_bounding_box = stroke_bbox.to_rect();
+        }
+    }
+
+    match *node.borrow_mut() {
+        NodeKind::Path(ref mut path) => {
+            path.bounding_box = path.data.compute_tight_bounds();
+            path.stroke_bounding_box = path.calculate_stroke_bounding_box();
+            if path.stroke_bounding_box.is_none() {
+                path.stroke_bounding_box = path.bounding_box;
+            }
+        }
+        // TODO: should we account for `preserveAspectRatio`?
+        NodeKind::Image(ref mut image) => image.bounding_box = Some(image.view_box.rect),
+        // Have to be handled separately to prevent multiple mutable reference to the tree.
+        NodeKind::Group(_) => {}
+        // Will be set only during text-to-path conversion.
+        NodeKind::Text(_) => {}
+    }
+
+    // Yes, subroots are not affected by the node's transform.
+    node.subroots(|root| calculate_bounding_box(&root));
+}
 
 pub fn render(
     node: &Node,
@@ -14,7 +68,10 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) -> Option<()> {
-    let bbox = node.stroke_bounding_box().map(BBox::from)?;
+    let new_node = Node::new(NodeKind::Group(Group::default()));
+    new_node.append(node.make_deep_copy());
+    calculate_bounding_box(&new_node);
+    let bbox = new_node.bounding_box().map(BBox::from)?;
 
     // Basic idea: We calculate the bounding box so that all filter effects are contained.
     // Then, we create a new pixmap with that size (optionally bigger if raster effects are set
@@ -64,7 +121,7 @@ pub fn render(
         pixmap_size.height().round() as u32,
     )?;
 
-    if let Some(rtree) = resvg::Tree::from_usvg_node(&node) {
+    if let Some(rtree) = resvg::Tree::from_usvg_node(&new_node) {
         rtree.render(ts, &mut pixmap.as_mut());
 
         let encoded_image = pixmap.encode_png().ok()?;
