@@ -69,7 +69,6 @@ fn main() {
     progress_bar.set_style(progress_style);
 
     for svg_file in &svg_files {
-        print!("{:?}", svg_file.as_svg_path());
         let input_path = svg_file.as_svg_path();
         let output_path = svg_file.as_ref_path();
 

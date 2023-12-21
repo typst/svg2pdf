@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use pdf_writer::writers::Group;
-use usvg::{AspectRatio, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform, Tree, ViewBox, Visibility};
+use usvg::{AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform, Tree, ViewBox, Visibility};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
@@ -52,13 +52,28 @@ fn render_group_with_filters(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if let Some(bbox) = node
+
+    // let new_node = Node::new(NodeKind::Group(usvg::Group {
+    //     // transform: Transform::from_translate(20.0, 20.0),
+    //     ..usvg::Group::default()
+    // }));
+    // new_node.append(node.make_deep_copy());
+
+    if let Some(mut bbox) = node
         .stroke_bounding_box()
         .and_then(|r| r.to_non_zero_rect()) {
+
+        // let bbox = NonZeroRect::from_xywh(
+        //     bbox.x() - 20.0,
+        //         bbox.y() - 20.0,
+        //     bbox.width() + 40.0,
+        //     bbox.height() + 40.0
+        // ).unwrap();
+
         let size  = bbox.size();
 
         let mut pixmap = tiny_skia::Pixmap::new(max(1, size.width().ceil() as u32), max(1, size.height().ceil() as u32)).unwrap();
-        if let Some(rtree) = resvg::Tree::from_usvg_node(node){
+        if let Some(rtree) = resvg::Tree::from_usvg_node(&node){
             rtree.render(Transform::default(), &mut pixmap.as_mut());
 
             let encoded_image = pixmap.encode_png().unwrap();
