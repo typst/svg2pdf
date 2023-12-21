@@ -4,10 +4,7 @@ use std::sync::Arc;
 
 use pdf_writer::writers::Group;
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{
-    AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform,
-    Tree, ViewBox, Visibility,
-};
+use usvg::{AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Size, Transform, Tree, Units, ViewBox, Visibility};
 
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
@@ -25,7 +22,7 @@ pub fn render(
     accumulated_transform: Transform,
 ) {
     if !group.filters.is_empty() {
-        render_group_with_filters(node, chunk, content, ctx, accumulated_transform);
+        render_group_with_filters(node, &group.filters, chunk, content, ctx, accumulated_transform);
     } else if group.is_isolated() {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
@@ -52,42 +49,58 @@ pub fn render(
 
 fn render_group_with_filters(
     node: &Node,
+    filters: &Vec<Rc<usvg::filter::Filter>>,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if let Some(mut bbox) = node.stroke_bounding_box().and_then(|r| r.to_non_zero_rect())
+    if let Some(bbox) = node.stroke_bounding_box().map(BBox::from)
     {
-        let (w_padding, h_padding) = (bbox.width() * 0.25, bbox.height() * 0.25);
-        let size = Size::from_wh(
-            (bbox.width() + 2.0 * w_padding) * ctx.options.raster_effects,
-            (bbox.height() + 2.0 * h_padding) * ctx.options.raster_effects,
+        let bbox_rect = bbox.to_non_zero_rect().unwrap();
+        let mut actual_bbox = bbox;
+
+        for filter in filters {
+            let filter_region = if filter.units == Units::UserSpaceOnUse {
+                filter.rect
+            }   else {
+                filter.rect.bbox_transform(bbox.to_non_zero_rect().unwrap())
+            };
+            actual_bbox = actual_bbox.expand(filter_region)
+        }
+
+        let actual_bbox_rect = actual_bbox.to_non_zero_rect().unwrap();
+
+        let (ld, td, rd, bd) =  (
+            bbox_rect.left() - actual_bbox_rect.left(),
+            bbox_rect.top() - actual_bbox_rect.top(),
+            actual_bbox_rect.right() - bbox_rect.right(),
+            actual_bbox_rect.bottom() - bbox_rect.bottom(),
+        );
+
+        let pixmap_size = Size::from_wh(
+            actual_bbox_rect.width() * ctx.options.raster_effects,
+            actual_bbox_rect.height() * ctx.options.raster_effects
         )
         .unwrap();
 
         let ts =
             Transform::from_scale(ctx.options.raster_effects, ctx.options.raster_effects)
-                .pre_translate(w_padding, h_padding);
+                .pre_translate(ld, td);
 
         let mut pixmap = tiny_skia::Pixmap::new(
-            max(1, size.width().round() as u32),
-            max(1, size.height().round() as u32),
-        )
-        .unwrap();
+            max(1, pixmap_size.width().round() as u32),
+            max(1, pixmap_size.height().round() as u32),
+        ).unwrap();
         if let Some(rtree) = resvg::Tree::from_usvg_node(&node) {
             rtree.render(ts, &mut pixmap.as_mut());
 
             let encoded_image = pixmap.encode_png().unwrap();
+            pixmap.save_png("./out.png").unwrap();
             let img_node = Node::new(NodeKind::Image(usvg::Image {
                 id: "".to_string(),
                 visibility: Visibility::Visible,
-                view_box: ViewBox { rect: NonZeroRect::from_xywh(
-                    bbox.x() - w_padding,
-                    bbox.y() - h_padding,
-                    bbox.width() + w_padding * 2.0,
-                    bbox.width() + h_padding * 2.0,
-                ).unwrap(), aspect: AspectRatio::default() },
+                view_box: ViewBox { rect: actual_bbox_rect, aspect: AspectRatio::default() },
                 rendering_mode: Default::default(),
                 kind: ImageKind::PNG(Arc::new(encoded_image)),
                 abs_transform: Default::default(),
