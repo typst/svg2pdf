@@ -4,9 +4,7 @@ use pdf_writer::{Chunk, Content};
 use std::rc::Rc;
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
-use usvg::{
-    AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, Units, ViewBox, Visibility,
-};
+use usvg::{AspectRatio, BBox, ImageKind, Node, NodeExt, NodeKind, Rect, Units, ViewBox, Visibility};
 
 pub fn render(
     node: &Node,
