@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Mask, Node, NodeExt, NodeKind, NonZeroRect, Transform, Units};
+use usvg::{Mask, Node, NodeKind, Transform, Units};
 
 use super::group;
 use crate::util::context::Context;

@@ -1,7 +1,6 @@
 use crate::render::Render;
 use crate::util::context::Context;
 use pdf_writer::{Chunk, Content};
-use std::cmp::max;
 use std::rc::Rc;
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};

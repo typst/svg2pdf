@@ -2,7 +2,7 @@ use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::{Chunk, Content, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{Fill, FillRule, Node, NodeExt, NonZeroRect, Opacity, Paint, PaintOrder};
+use usvg::{Fill, FillRule, Node, Opacity, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
 
