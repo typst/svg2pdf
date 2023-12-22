@@ -155,7 +155,7 @@ impl Runner {
             &tree,
             Options {
                 dpi: 72.0 * scale_factor,
-                raster_effects: 1.5,
+                raster_scale: 1.5,
                 ..Options::default()
             },
         );

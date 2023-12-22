@@ -115,7 +115,7 @@ pub struct Options {
     /// the pdf.
     ///
     /// _Default:_ 1
-    pub raster_effects: f32,
+    pub raster_scale: f32,
 }
 
 impl Default for Options {
@@ -125,7 +125,7 @@ impl Default for Options {
             viewport: None,
             aspect: None,
             compress: true,
-            raster_effects: 1.0,
+            raster_scale: 1.0,
         }
     }
 }

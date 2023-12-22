@@ -4,7 +4,10 @@ use pdf_writer::{Chunk, Content};
 use std::rc::Rc;
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
-use usvg::{AspectRatio, BBox, Group, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Units, ViewBox, Visibility};
+use usvg::{
+    AspectRatio, BBox, Group, ImageKind, Node, NodeExt, NodeKind, NonZeroRect, Units,
+    ViewBox, Visibility,
+};
 
 pub fn render(
     node: &Node,
@@ -14,15 +17,23 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) -> Option<()> {
+    let ts = Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale);
 
+    // We have somewhat of a chicken-and-egg problem here: We need to create a new empty
+    // group and append the current node as a child, so that bounding boxes take
+    // transformations of the original node into account. However, resvg only allows
+    // calculation of bounding boxes from a tree, so we need to wrap it in a tree.
+    // But we don't know the size of the tree yet, so we initialize it with some
+    // dummy values in the beginning and then set the proper values afterwards.
     let mut tree = {
-        let root = Node::new(NodeKind::Group(Group::default()));
+        let root =
+            Node::new(NodeKind::Group(Group { transform: ts, ..Group::default() }));
         root.append(node.make_deep_copy());
         let mut tree = usvg::Tree {
             size: Size::from_wh(1.0, 1.0).unwrap(),
             view_box: ViewBox {
                 rect: NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap(),
-                aspect: Default::default()
+                aspect: Default::default(),
             },
             root,
         };
@@ -30,22 +41,19 @@ pub fn render(
         tree
     };
 
-    let bbox = tree.root.bounding_box().map(BBox::from)?;
+    let mut bbox = tree.root.bounding_box().map(BBox::from)?;
 
-    // Basic idea: We calculate the bounding box so that all filter effects are contained.
+    // Basic idea: We calculate the bounding box so that all filter effects are contained
+    // by taking the filter rects into considerations.
     // Then, we create a new pixmap with that size (optionally bigger if raster effects are set
     // to a higher resolution). Then, we translate by the top/left to make sure that the whole
     // group is actually contained within the visible area of the pixmap. Finally, we render it
     // into an image and place the image into the PDF so that it is aligned correctly.
-    let bbox_rect = bbox.to_non_zero_rect()?;
-    let mut actual_bbox = bbox;
 
-    // TODO: Add a check so that huge regions don't crash svg2pdf? (see huge-region.svg test case)
-
-    // TODO: In theory, this is not sufficient, as it is possible that a filter in a child
+    // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
+    // In theory, this is not sufficient, as it is possible that a filter in a child
     // group is even bigger, and thus the bbox would have to be expanded even more. But
     // for the vast majority of SVGs, this shouldn't matter.
-
     // Also, this will only work reliably for groups that are not isolated (i.e. they are
     // written directly into the page stream instead of an XObject), the reason being that
     // otherwise, the bounding box of the surrounding XObject might not be big enough, since
@@ -56,24 +64,15 @@ pub fn render(
         } else {
             filter.rect.bbox_transform(bbox.to_non_zero_rect()?)
         };
-        actual_bbox = actual_bbox.expand(filter_region)
+        bbox = bbox.expand(filter_region)
     }
 
-    let actual_bbox_rect = actual_bbox.to_non_zero_rect()?;
-
-    let (left_delta, top_delta) = (
-        bbox_rect.left() - actual_bbox_rect.left(),
-        bbox_rect.top() - actual_bbox_rect.top(),
-    );
+    let bbox_rect = bbox.to_non_zero_rect()?;
 
     let pixmap_size = Size::from_wh(
-        actual_bbox_rect.width() * ctx.options.raster_effects,
-        actual_bbox_rect.height() * ctx.options.raster_effects,
+        bbox_rect.width() * ctx.options.raster_scale,
+        bbox_rect.height() * ctx.options.raster_scale,
     )?;
-
-    let ts =
-        Transform::from_scale(ctx.options.raster_effects, ctx.options.raster_effects)
-            .pre_translate(left_delta, top_delta);
 
     let mut pixmap = tiny_skia::Pixmap::new(
         pixmap_size.width().round() as u32,
@@ -82,22 +81,20 @@ pub fn render(
 
     tree.size = pixmap_size;
     tree.view_box = ViewBox {
-        rect: pixmap_size.to_non_zero_rect(bbox_rect.x(), bbox_rect.y()),
+        rect: bbox_rect.transform(ts)?,
         aspect: Default::default(),
     };
 
     let rtree = resvg::Tree::from_usvg(&tree);
-    rtree.render(ts, &mut pixmap.as_mut());
+    rtree.render(Transform::default(), &mut pixmap.as_mut());
+    pixmap.save_png("./out.png").unwrap();
 
     let encoded_image = pixmap.encode_png().ok()?;
 
     let img_node = Node::new(NodeKind::Image(usvg::Image {
         id: "".to_string(),
         visibility: Visibility::Visible,
-        view_box: ViewBox {
-            rect: actual_bbox_rect,
-            aspect: AspectRatio::default(),
-        },
+        view_box: ViewBox { rect: bbox_rect, aspect: AspectRatio::default() },
         rendering_mode: Default::default(),
         kind: ImageKind::PNG(Arc::new(encoded_image)),
         abs_transform: Default::default(),
