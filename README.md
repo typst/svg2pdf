@@ -10,8 +10,8 @@ This crate allows to convert static (i.e. non-interactive) SVG files to
 either standalone PDF files or Form XObjects that can be embedded in another
 PDF file and used just like images.
 
-The conversion will translate the SVG content to PDF without rasterizing it,
-so no quality is lost.
+Apart from groups with filters on them, the conversion will translate 
+the SVG content to PDF without rasterizing it, so no quality is lost.
 
 ## Example
 
@@ -52,6 +52,7 @@ features like:
 - Patterns
 - Clip paths
 - Masks
+- Filters
 - Transformation matrices
 - Respecting the `keepAspectRatio` attribute
 - Raster images and nested SVGs
@@ -59,19 +60,16 @@ features like:
 ## Unsupported features
 Among the unsupported features are currently:
 - The `spreadMethod` attribute of gradients
-- Filters
-- Text will be converted into shapes before converting to PDF
+- Text will be converted into shapes before converting to PDF. It is planned
+to add support for text preservation in a future update.
 - Raster images are not color managed but use PDF's DeviceRGB color space
-- A number of features that were added in SVG2
+- A number of features that were added in SVG2 
+(see [here](https://github.com/RazrFalcon/resvg/blob/master/docs/svg2-changelog.md))
 
 ## Contributing
 We are looking forward to receiving your bugs and feature requests in the Issues
 tab. We would also be very happy to accept PRs for bug fixes, features, or
-refactorings!
-
-If you want to contribute but are uncertain where to start, yo could look into
-filters like `feBlend` and `feColorMatrix` that can be implemented with
-transparency groups and color spaces, respectively. We'd be happy to assist you
+refactorings! We'd be happy to assist you
 with your PR's, so feel free to post Work in Progress PRs if marked as such.
 Please be kind to the maintainers and other contributors. If you feel that there
 are any problems, please feel free to reach out to us privately.
