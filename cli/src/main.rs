@@ -38,7 +38,7 @@ fn run() -> Result<(), String> {
         &tree,
         Options {
             dpi: args.dpi,
-            raster_scale: 2.0,
+            raster_scale: args.raster_scale,
             ..Options::default()
         },
     );
