@@ -14,5 +14,5 @@ pub struct Args {
     pub dpi: f32,
     // How much rasterized effects should be scaled up.
     #[clap(long, default_value = "1.0")]
-    pub raster_scale: f32
+    pub raster_scale: f32,
 }
