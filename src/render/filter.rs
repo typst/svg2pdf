@@ -9,6 +9,7 @@ use usvg::{
     ViewBox, Visibility,
 };
 
+/// Render a group with filters as an image
 pub fn render(
     node: &Node,
     filters: &Vec<Rc<usvg::filter::Filter>>,
@@ -43,21 +44,18 @@ pub fn render(
 
     let mut bbox = tree.root.bounding_box().map(BBox::from)?;
 
+    // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
     // Basic idea: We calculate the bounding box so that all filter effects are contained
     // by taking the filter rects into considerations.
-    // Then, we create a new pixmap with that size (optionally bigger if raster effects are set
-    // to a higher resolution). Then, we translate by the top/left to make sure that the whole
-    // group is actually contained within the visible area of the pixmap. Finally, we render it
-    // into an image and place the image into the PDF so that it is aligned correctly.
-
-    // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
     // In theory, this is not sufficient, as it is possible that a filter in a child
     // group is even bigger, and thus the bbox would have to be expanded even more. But
     // for the vast majority of SVGs, this shouldn't matter.
     // Also, this will only work reliably for groups that are not isolated (i.e. they are
     // written directly into the page stream instead of an XObject), the reason being that
     // otherwise, the bounding box of the surrounding XObject might not be big enough, since
-    // calculating the bbox of a group does not take filters into account.
+    // calculating the bbox of a group does not take filters into account. If we ever have
+    // a way of taking filters into consideration when calling tree.calculate_bounding_boxes,
+    // we can fix that.
     for filter in filters {
         let filter_region = if filter.units == Units::UserSpaceOnUse {
             filter.rect
@@ -87,10 +85,8 @@ pub fn render(
 
     let rtree = resvg::Tree::from_usvg(&tree);
     rtree.render(Transform::default(), &mut pixmap.as_mut());
-    pixmap.save_png("./out.png").unwrap();
 
     let encoded_image = pixmap.encode_png().ok()?;
-
     let img_node = Node::new(NodeKind::Image(usvg::Image {
         id: "".to_string(),
         visibility: Visibility::Visible,
