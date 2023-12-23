@@ -3,9 +3,7 @@ use crate::util::context::Context;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
-use usvg::{
-    AspectRatio, BBox, Group, ImageKind, Node, NonZeroRect, Units, ViewBox, Visibility,
-};
+use usvg::{AspectRatio, Group, ImageKind, Node, NonZeroRect, ViewBox, Visibility};
 
 /// Render a group with filters as an image
 pub fn render(
@@ -23,7 +21,7 @@ pub fn render(
     // calculation of bounding boxes from a tree, so we need to wrap it in a tree.
     // But we don't know the size of the tree yet, so we initialize it with some
     // dummy values in the beginning and then set the proper values afterwards.
-    let mut tree = {
+    let (mut tree, bbox, scaled_bbox) = {
         let mut root = Group::default();
         let mut sub_root = Group::default();
         sub_root.transform = ts;
@@ -35,15 +33,21 @@ pub fn render(
                 rect: NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap(),
                 aspect: Default::default(),
             },
-            root
+            root,
         };
         tree.calculate_bounding_boxes();
-        tree
+        (
+            tree,
+            group.filters_bounding_box()?.transform(group.transform)?,
+            group
+                .filters_bounding_box()?
+                .transform(group.transform)?
+                .transform(ts)?,
+        )
     };
 
-    let mut bbox = tree.root.bounding_box.map(BBox::from)?;
-
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
+    // TODO: Update the comment below
     // Basic idea: We calculate the bounding box so that all filter effects are contained
     // by taking the filter rects into considerations.
     // In theory, this is not sufficient, as it is possible that a filter in a child
@@ -55,22 +59,8 @@ pub fn render(
     // calculating the bbox of a group does not take filters into account. If we ever have
     // a way of taking filters into consideration when calling tree.calculate_bounding_boxes,
     // we can fix that.
-    for filter in &group.filters {
-        let filter = filter.borrow();
-        let filter_region = if filter.units == Units::UserSpaceOnUse {
-            filter.rect
-        } else {
-            filter.rect.bbox_transform(bbox.to_non_zero_rect()?)
-        };
-        bbox = bbox.expand(filter_region)
-    }
 
-    let bbox_rect = bbox.to_non_zero_rect()?;
-
-    let pixmap_size = Size::from_wh(
-        bbox_rect.width() * ctx.options.raster_scale,
-        bbox_rect.height() * ctx.options.raster_scale,
-    )?;
+    let pixmap_size = scaled_bbox.size();
 
     let mut pixmap = tiny_skia::Pixmap::new(
         pixmap_size.width().round() as u32,
@@ -78,10 +68,7 @@ pub fn render(
     )?;
 
     tree.size = pixmap_size;
-    tree.view_box = ViewBox {
-        rect: bbox_rect.transform(ts)?,
-        aspect: Default::default(),
-    };
+    tree.view_box = ViewBox { rect: scaled_bbox, aspect: Default::default() };
 
     let rtree = resvg::Tree::from_usvg(&tree);
     rtree.render(Transform::default(), &mut pixmap.as_mut());
@@ -90,7 +77,7 @@ pub fn render(
     let img_node = Node::Image(Box::from(usvg::Image {
         id: "".to_string(),
         visibility: Visibility::Visible,
-        view_box: ViewBox { rect: bbox_rect, aspect: AspectRatio::default() },
+        view_box: ViewBox { rect: bbox, aspect: AspectRatio::default() },
         rendering_mode: Default::default(),
         kind: ImageKind::PNG(Arc::new(encoded_image)),
         abs_transform: Default::default(),
