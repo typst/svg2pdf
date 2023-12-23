@@ -1,29 +1,29 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Node, SharedMask, Transform, Units};
+use usvg::{Group, SharedMask, Transform, Units};
 
-use super::Render;
+use super::group;
 use crate::util::context::Context;
 use crate::util::helper::{
-    clip_to_rect, MaskTypeExt, NameExt, NewNodeExt, RectExt, TransformExt,
+    bbox_to_non_zero_rect, clip_to_rect, MaskTypeExt, NameExt, RectExt, TransformExt,
 };
 
 /// Render a mask into a content stream.
 pub fn render(
-    node: &Node,
+    group: &Group,
     mask: SharedMask,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
 ) {
-    content.set_parameters(create(node, mask, chunk, ctx).to_pdf_name());
+    content.set_parameters(create(group, mask, chunk, ctx).to_pdf_name());
 }
 
 /// Turn a mask into an graphics state object. Returns the name (= the name in the `Resources` dictionary) of
 /// the mask
 pub fn create(
-    parent: &Node,
+    parent: &Group,
     mask: SharedMask,
     chunk: &mut Chunk,
     ctx: &mut Context,
@@ -40,7 +40,7 @@ pub fn create(
         render(parent, recursive_mask.clone(), chunk, &mut content, ctx);
     }
 
-    let parent_svg_bbox = parent.bbox_rect();
+    let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box);
 
     let actual_rect = match mask.units {
         Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),
@@ -58,9 +58,7 @@ pub fn create(
         accumulated_transform = Transform::from_bbox(parent_svg_bbox);
     }
 
-    for child in &mask.root.children {
-        child.render(chunk, &mut content, ctx, accumulated_transform);
-    }
+    group::render(&mask.root, chunk, &mut content, ctx, accumulated_transform);
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);

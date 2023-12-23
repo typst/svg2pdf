@@ -9,7 +9,9 @@ use usvg::{Stroke, Transform};
 use super::{gradient, pattern};
 use crate::util::context::Context;
 use crate::util::defer::SRGB;
-use crate::util::helper::{ColorExt, LineCapExt, LineJoinExt, NameExt, NewNodeExt};
+use crate::util::helper::{
+    bbox_to_non_zero_rect, ColorExt, LineCapExt, LineJoinExt, NameExt,
+};
 
 /// Render a path into a content stream.
 pub fn render(
@@ -99,7 +101,7 @@ fn stroke(
 
     if let Some(stroke) = path.stroke.as_ref() {
         let paint = &stroke.paint;
-        let path_bbox = node.bbox_rect();
+        let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
 
         content.save_state();
 
@@ -184,7 +186,7 @@ fn fill(
 
     if let Some(fill) = path.fill.as_ref() {
         let paint = &fill.paint;
-        let path_bbox = node.bbox_rect();
+        let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
 
         content.save_state();
 

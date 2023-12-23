@@ -5,14 +5,14 @@ use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::tiny_skia_path::PathSegment;
 use usvg::{FillRule, Group, Node, SharedClipPath, Transform, Units, Visibility};
 
+use super::group;
 use super::path::draw_path;
-use super::Render;
 use crate::util::context::Context;
-use crate::util::helper::{NameExt, NewNodeExt, RectExt, TransformExt};
+use crate::util::helper::{bbox_to_non_zero_rect, NameExt, RectExt, TransformExt};
 
 /// Render a clip path into a content stream.
 pub fn render(
-    node: &Node,
+    group: &Group,
     clip_path: SharedClipPath,
     chunk: &mut Chunk,
     content: &mut Content,
@@ -38,10 +38,10 @@ pub fn render(
     // of more complex clipping paths, even if this means that Safari will in some cases not
     // display them correctly.
     if is_simple_clip_path(&clip_path.borrow().root) {
-        create_simple_clip_path(node, clip_path, content);
+        create_simple_clip_path(group, clip_path, content);
     } else {
         content.set_parameters(
-            create_complex_clip_path(node, clip_path, chunk, ctx).to_pdf_name(),
+            create_complex_clip_path(group, clip_path, chunk, ctx).to_pdf_name(),
         );
     }
 }
@@ -70,7 +70,7 @@ fn is_simple_clip_path(group: &Group) -> bool {
 }
 
 fn create_simple_clip_path(
-    parent: &Node,
+    parent: &Group,
     clip_path: SharedClipPath,
     content: &mut Content,
 ) {
@@ -90,71 +90,68 @@ fn create_simple_clip_path(
             .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(parent.bbox_rect())
+                Transform::from_bbox(bbox_to_non_zero_rect(parent.bounding_box))
             });
 
     let mut segments = vec![];
-    for child in &clip_path.root.children {
-        extend_segments_from_node(&child, &base_transform, &mut segments);
-    }
+    extend_segments_from_group(&clip_path.root, &base_transform, &mut segments);
     draw_path(segments.into_iter(), content);
     content.clip_nonzero();
     content.end_path();
 }
 
-fn extend_segments_from_node(
-    node: &Node,
+fn extend_segments_from_group(
+    group: &Group,
     transform: &Transform,
     segments: &mut Vec<PathSegment>,
 ) {
-    match node {
-        Node::Path(ref path) => {
-            if path.visibility != Visibility::Hidden {
-                path.data.segments().for_each(|segment| match segment {
-                    PathSegment::MoveTo(mut p) => {
-                        transform.map_point(&mut p);
-                        segments.push(PathSegment::MoveTo(p));
-                    }
-                    PathSegment::LineTo(mut p) => {
-                        transform.map_point(&mut p);
-                        segments.push(PathSegment::LineTo(p));
-                    }
-                    PathSegment::QuadTo(p1, p2) => {
-                        let mut points = [p1, p2];
-                        transform.map_points(&mut points);
-                        segments.push(PathSegment::QuadTo(points[0], points[1]));
-                    }
-                    PathSegment::CubicTo(p1, p2, p3) => {
-                        let mut points = [p1, p2, p3];
-                        transform.map_points(&mut points);
-                        segments
-                            .push(PathSegment::CubicTo(points[0], points[1], points[2]));
-                    }
-                    PathSegment::Close => segments.push(PathSegment::Close),
-                })
-            }
-        }
-        Node::Group(ref group) => {
-            let group_transform = transform.pre_concat(group.transform);
-            for child in &group.children {
-                extend_segments_from_node(&child, &group_transform, segments);
-            }
-        }
-        Node::Text(ref text) => {
-            // TODO: Need to change this once unconverted text is supported
-            if let Some(ref group) = text.flattened {
-                for child in &group.children {
-                    extend_segments_from_node(&child, transform, segments);
+    for child in &group.children {
+        match child {
+            Node::Path(ref path) => {
+                if path.visibility != Visibility::Hidden {
+                    path.data.segments().for_each(|segment| match segment {
+                        PathSegment::MoveTo(mut p) => {
+                            transform.map_point(&mut p);
+                            segments.push(PathSegment::MoveTo(p));
+                        }
+                        PathSegment::LineTo(mut p) => {
+                            transform.map_point(&mut p);
+                            segments.push(PathSegment::LineTo(p));
+                        }
+                        PathSegment::QuadTo(p1, p2) => {
+                            let mut points = [p1, p2];
+                            transform.map_points(&mut points);
+                            segments.push(PathSegment::QuadTo(points[0], points[1]));
+                        }
+                        PathSegment::CubicTo(p1, p2, p3) => {
+                            let mut points = [p1, p2, p3];
+                            transform.map_points(&mut points);
+                            segments.push(PathSegment::CubicTo(
+                                points[0], points[1], points[2],
+                            ));
+                        }
+                        PathSegment::Close => segments.push(PathSegment::Close),
+                    })
                 }
             }
+            Node::Group(ref group) => {
+                let group_transform = transform.pre_concat(group.transform);
+                extend_segments_from_group(group, &group_transform, segments);
+            }
+            Node::Text(ref text) => {
+                // TODO: Need to change this once unconverted text is supported
+                if let Some(ref group) = text.flattened {
+                    extend_segments_from_group(group, transform, segments);
+                }
+            }
+            // Images are not valid in a clip path. Text will be converted into shapes beforehand.
+            _ => {}
         }
-        // Images are not valid in a clip path. Text will be converted into shapes beforehand.
-        _ => {}
     }
 }
 
 fn create_complex_clip_path(
-    parent: &Node,
+    parent: &Group,
     clip_path: SharedClipPath,
     chunk: &mut Chunk,
     ctx: &mut Context,
@@ -173,16 +170,14 @@ fn create_complex_clip_path(
 
     content.transform(clip_path.transform.to_pdf_transform());
 
-    let pdf_bbox = parent.bbox_rect().to_pdf_rect();
+    let pdf_bbox = bbox_to_non_zero_rect(parent.bounding_box).to_pdf_rect();
 
     if clip_path.units == Units::ObjectBoundingBox {
-        let parent_svg_bbox = parent.bbox_rect();
+        let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box);
         content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
     }
 
-    for child in &clip_path.root.children {
-        child.render(chunk, &mut content, ctx, Transform::default());
-    }
+    group::render(&clip_path.root, chunk, &mut content, ctx, Transform::default());
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);

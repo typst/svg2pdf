@@ -7,7 +7,7 @@ use pdf_writer::{Chunk, Content, Filter};
 use usvg::utils::view_box_to_transform;
 use usvg::{NonZeroRect, Opacity, Pattern, Size, Transform, Units};
 
-use super::Render;
+use super::group;
 use crate::util::context::Context;
 use crate::util::helper::TransformExt;
 
@@ -64,9 +64,7 @@ pub fn create(
         content.transform(view_box_transform.to_pdf_transform());
     }
 
-    for child in &pattern.root.children {
-        child.render(chunk, &mut content, ctx, Transform::default());
-    }
+    group::render(&pattern.root, chunk, &mut content, ctx, Transform::default());
 
     content.restore_state();
 
