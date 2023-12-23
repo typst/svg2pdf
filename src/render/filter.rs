@@ -44,19 +44,6 @@ pub fn render(
     };
 
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
-    // TODO: Update the comment below
-    // Basic idea: We calculate the bounding box so that all filter effects are contained
-    // by taking the filter rects into considerations.
-    // In theory, this is not sufficient, as it is possible that a filter in a child
-    // group is even bigger, and thus the bbox would have to be expanded even more. But
-    // for the vast majority of SVGs, this shouldn't matter.
-    // Also, this will only work reliably for groups that are not isolated (i.e. they are
-    // written directly into the page stream instead of an XObject), the reason being that
-    // otherwise, the bounding box of the surrounding XObject might not be big enough, since
-    // calculating the bbox of a group does not take filters into account. If we ever have
-    // a way of taking filters into consideration when calling tree.calculate_bounding_boxes,
-    // we can fix that.
-
     let pixmap_size = scaled_bbox.size();
 
     let mut pixmap = tiny_skia::Pixmap::new(

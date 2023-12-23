@@ -37,8 +37,23 @@ pub fn render(
     // should suffice. But in order to conform with the SVG specification, we also handle the case
     // of more complex clipping paths, even if this means that Safari will in some cases not
     // display them correctly.
-    if is_simple_clip_path(&clip_path.borrow().root) {
-        create_simple_clip_path(group, clip_path, content);
+
+    let is_simple_clip_path = is_simple_clip_path(&clip_path.borrow().root);
+    let clip_rules = collect_clip_rules(&clip_path.borrow().root);
+
+    if is_simple_clip_path
+        && (clip_rules.iter().all(|f| *f == FillRule::NonZero)
+        // For even odd, there must be at most one shape in the group, because
+        // overlapping shapes with evenodd render wrongly in PDF
+            || (clip_rules.iter().all(|f| *f == FillRule::EvenOdd)
+                && clip_rules.len() == 1))
+    {
+        create_simple_clip_path(
+            group,
+            clip_path,
+            content,
+            clip_rules.get(0).copied().unwrap_or(FillRule::NonZero),
+        );
     } else {
         content.set_parameters(
             create_complex_clip_path(group, clip_path, chunk, ctx).to_pdf_name(),
@@ -49,35 +64,49 @@ pub fn render(
 fn is_simple_clip_path(group: &Group) -> bool {
     group.children.iter().all(|n| {
         match n {
-            Node::Path(ref path) => {
-                // While there is a clipping path for EvenOdd, it will produce wrong results
-                // if the clip-rule is defined on a group instead of on the children.
-                path.fill.as_ref().map_or(true, |fill| fill.rule == FillRule::NonZero)
-            }
-            Node::Text(ref text) => {
-                // TODO: Need to change this once unconverted text is supported
-                text.flattened.as_deref().map_or(true, is_simple_clip_path)
-            }
             Node::Group(ref group) => {
                 // We can only intersect one clipping path with another one, meaning that we
                 // can convert nested clip paths if a second clip path is defined on the clip
                 // path itself, but not if it is defined on a child.
                 group.clip_path.is_none() && is_simple_clip_path(group)
             }
-            _ => false,
+            _ => true,
         }
     })
+}
+
+fn collect_clip_rules(group: &Group) -> Vec<FillRule> {
+    let mut clip_rules = vec![];
+    group.children.iter().for_each(|n| match n {
+        Node::Path(ref path) => {
+            if let Some(fill) = &path.fill {
+                clip_rules.push(fill.rule);
+            }
+        }
+        Node::Text(ref text) => {
+            text.flattened
+                .as_deref()
+                .map(|group| clip_rules.extend(collect_clip_rules(group)));
+        }
+        Node::Group(ref group) => {
+            clip_rules.extend(collect_clip_rules(group));
+        }
+        _ => {}
+    });
+
+    clip_rules
 }
 
 fn create_simple_clip_path(
     parent: &Group,
     clip_path: SharedClipPath,
     content: &mut Content,
+    clip_rule: FillRule,
 ) {
     let clip_path = clip_path.borrow();
 
     if let Some(clip_path) = &clip_path.clip_path {
-        create_simple_clip_path(parent, clip_path.clone(), content);
+        create_simple_clip_path(parent, clip_path.clone(), content, clip_rule);
     }
 
     // Just a dummy operation, so that in case the clip path only has hidden children the clip
@@ -96,7 +125,12 @@ fn create_simple_clip_path(
     let mut segments = vec![];
     extend_segments_from_group(&clip_path.root, &base_transform, &mut segments);
     draw_path(segments.into_iter(), content);
-    content.clip_nonzero();
+
+    if clip_rule == FillRule::NonZero {
+        content.clip_nonzero();
+    } else {
+        content.clip_even_odd();
+    }
     content.end_path();
 }
 
