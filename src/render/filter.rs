@@ -25,9 +25,10 @@ pub fn render(
     // dummy values in the beginning and then set the proper values afterwards.
     let mut tree = {
         let mut root = Group::default();
-        let mut child = group.clone();
-        child.transform = child.transform.post_concat(ts);
-        root.children.push(Node::Group(Box::from(child)));
+        let mut sub_root = Group::default();
+        sub_root.transform = ts;
+        sub_root.children.push(Node::Group(Box::from(group.clone())));
+        root.children.push(Node::Group(Box::from(sub_root)));
         let mut tree = usvg::Tree {
             size: Size::from_wh(1.0, 1.0).unwrap(),
             view_box: ViewBox {
