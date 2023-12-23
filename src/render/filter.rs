@@ -3,7 +3,6 @@ use crate::util::context::Context;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
-use usvg::filter::SharedFilter;
 use usvg::{
     AspectRatio, BBox, Group, ImageKind, Node, NonZeroRect, Units, ViewBox, Visibility,
 };
@@ -11,7 +10,6 @@ use usvg::{
 /// Render a group with filters as an image
 pub fn render(
     group: &Group,
-    filters: &Vec<SharedFilter>,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
@@ -26,13 +24,17 @@ pub fn render(
     // But we don't know the size of the tree yet, so we initialize it with some
     // dummy values in the beginning and then set the proper values afterwards.
     let mut tree = {
+        let mut root = Group::default();
+        let mut child = group.clone();
+        child.transform = child.transform.post_concat(ts);
+        root.children.push(Node::Group(Box::from(child)));
         let mut tree = usvg::Tree {
             size: Size::from_wh(1.0, 1.0).unwrap(),
             view_box: ViewBox {
                 rect: NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap(),
                 aspect: Default::default(),
             },
-            root: group.clone(),
+            root
         };
         tree.calculate_bounding_boxes();
         tree
@@ -52,7 +54,7 @@ pub fn render(
     // calculating the bbox of a group does not take filters into account. If we ever have
     // a way of taking filters into consideration when calling tree.calculate_bounding_boxes,
     // we can fix that.
-    for filter in filters {
+    for filter in &group.filters {
         let filter = filter.borrow();
         let filter_region = if filter.units == Units::UserSpaceOnUse {
             filter.rect
