@@ -1081,7 +1081,7 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 [[package]]
 name = "resvg"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
+source = "git+https://github.com/RazrFalcon/resvg#701539c715b97452ed2a10b59504d9f45c1a7e3b"
 dependencies = [
  "gif",
  "jpeg-decoder",
@@ -1460,7 +1460,7 @@ checksum = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
 [[package]]
 name = "usvg"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
+source = "git+https://github.com/RazrFalcon/resvg#701539c715b97452ed2a10b59504d9f45c1a7e3b"
 dependencies = [
  "base64",
  "log",
@@ -1474,7 +1474,7 @@ dependencies = [
 [[package]]
 name = "usvg-parser"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
+source = "git+https://github.com/RazrFalcon/resvg#701539c715b97452ed2a10b59504d9f45c1a7e3b"
 dependencies = [
  "data-url",
  "flate2",
@@ -1491,7 +1491,7 @@ dependencies = [
 [[package]]
 name = "usvg-text-layout"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
+source = "git+https://github.com/RazrFalcon/resvg#701539c715b97452ed2a10b59504d9f45c1a7e3b"
 dependencies = [
  "fontdb",
  "kurbo",
@@ -1506,7 +1506,7 @@ dependencies = [
 [[package]]
 name = "usvg-tree"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
+source = "git+https://github.com/RazrFalcon/resvg#701539c715b97452ed2a10b59504d9f45c1a7e3b"
 dependencies = [
  "strict-num",
  "svgtypes",

@@ -1,14 +1,13 @@
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use std::rc::Rc;
+use tiny_skia::NonZeroRect;
 use usvg::Transform;
 
 #[cfg(feature = "filters")]
 use super::filter;
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
-use crate::util::helper::{
-    bbox_to_non_zero_rect, BlendModeExt, GroupExt, NameExt, RectExt, TransformExt,
-};
+use crate::util::helper::{BlendModeExt, GroupExt, NameExt, RectExt, TransformExt};
 
 /// Render a group into a content stream.
 pub fn render(
@@ -56,7 +55,9 @@ fn create_x_object(
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
-    let pdf_bbox = bbox_to_non_zero_rect(group.stroke_bounding_box)
+    let pdf_bbox = group
+        .layer_bounding_box
+        .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
         .transform(group.transform)
         .unwrap()
         .to_pdf_rect();

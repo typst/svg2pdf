@@ -36,14 +36,11 @@ pub fn render(
             root,
         };
         tree.calculate_bounding_boxes();
-        (
-            tree,
-            group.filters_bounding_box()?.transform(group.transform)?,
-            group
-                .filters_bounding_box()?
-                .transform(group.transform)?
-                .transform(ts)?,
-        )
+
+        let bbox = group.layer_bounding_box?.transform(group.transform)?;
+        let scaled_bbox = tree.root.layer_bounding_box?;
+
+        (tree, bbox, scaled_bbox)
     };
 
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
@@ -70,8 +67,7 @@ pub fn render(
     tree.size = pixmap_size;
     tree.view_box = ViewBox { rect: scaled_bbox, aspect: Default::default() };
 
-    let rtree = resvg::Tree::from_usvg(&tree);
-    rtree.render(Transform::default(), &mut pixmap.as_mut());
+    resvg::render(&tree, Transform::default(), &mut pixmap.as_mut());
 
     let encoded_image = pixmap.encode_png().ok()?;
     let img_node = Node::Image(Box::from(usvg::Image {
