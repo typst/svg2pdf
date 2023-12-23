@@ -1,9 +1,9 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Mask, Node, NodeKind, Transform, Units};
+use usvg::{Node, SharedMask, Transform, Units};
 
-use super::group;
+use super::Render;
 use crate::util::context::Context;
 use crate::util::helper::{
     clip_to_rect, MaskTypeExt, NameExt, NewNodeExt, RectExt, TransformExt,
@@ -12,7 +12,7 @@ use crate::util::helper::{
 /// Render a mask into a content stream.
 pub fn render(
     node: &Node,
-    mask: Rc<Mask>,
+    mask: SharedMask,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
@@ -24,10 +24,12 @@ pub fn render(
 /// the mask
 pub fn create(
     parent: &Node,
-    mask: Rc<Mask>,
+    mask: SharedMask,
     chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Rc<String> {
+    let mask = mask.borrow();
+
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
@@ -50,26 +52,15 @@ pub fn create(
     // If we don't do this, the "half-width-region-with-rotation.svg" test case won't render properly.
     clip_to_rect(actual_rect, &mut content);
 
-    match *mask.root.borrow() {
-        NodeKind::Group(ref group) => {
-            let mut accumulated_transform = Transform::default();
-            if mask.content_units == Units::ObjectBoundingBox {
-                content
-                    .transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
-                accumulated_transform = Transform::from_bbox(parent_svg_bbox);
-            }
+    let mut accumulated_transform = Transform::default();
+    if mask.content_units == Units::ObjectBoundingBox {
+        content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
+        accumulated_transform = Transform::from_bbox(parent_svg_bbox);
+    }
 
-            group::render(
-                &mask.root,
-                group,
-                chunk,
-                &mut content,
-                ctx,
-                accumulated_transform,
-            );
-        }
-        _ => unreachable!(),
-    };
+    for child in &mask.root.children {
+        child.render(chunk, &mut content, ctx, accumulated_transform);
+    }
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);

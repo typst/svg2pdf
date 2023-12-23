@@ -1,5 +1,5 @@
 use pdf_writer::{Chunk, Content};
-use usvg::{Node, NodeKind, Transform, Tree};
+use usvg::{Node, Transform, Tree};
 
 use crate::util::context::Context;
 use crate::util::helper::TransformExt;
@@ -28,7 +28,9 @@ pub fn tree_to_stream(
     let initial_transform = initial_transform.pre_concat(ctx.get_view_box_transform());
     content.transform(initial_transform.to_pdf_transform());
 
-    tree.root.render(chunk, content, ctx, initial_transform);
+    for child in &tree.root.children {
+        child.render(chunk, content, ctx, initial_transform);
+    }
     content.restore_state();
 }
 
@@ -50,19 +52,21 @@ impl Render for Node {
         ctx: &mut Context,
         accumulated_transform: Transform,
     ) {
-        match *self.borrow() {
-            NodeKind::Path(ref path) => {
+        match self {
+            Node::Path(ref path) => {
                 path::render(self, path, chunk, content, ctx, accumulated_transform)
             }
-            NodeKind::Group(ref group) => {
+            Node::Group(ref group) => {
                 group::render(self, group, chunk, content, ctx, accumulated_transform)
             }
             #[cfg(feature = "image")]
-            NodeKind::Image(ref image) => image::render(image, chunk, content, ctx),
-            // Texts should be converted beforehand.
-            NodeKind::Text(ref text) => {
-                if let Some(ref node) = text.flattened {
-                    node.render(chunk, content, ctx, accumulated_transform);
+            Node::Image(ref image) => image::render(image, chunk, content, ctx),
+            Node::Text(ref text) => {
+                // Texts should be flattened beforehand.
+                if let Some(ref root) = text.flattened {
+                    for child in &root.children {
+                        child.render(chunk, content, ctx, accumulated_transform);
+                    }
                 }
             }
         }

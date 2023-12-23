@@ -798,9 +798,9 @@ checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
 
 [[package]]
 name = "memmap2"
-version = "0.9.1"
+version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f850157af41022bbb1b04ed15c011ce4d59520be82a4e3718b10c34b02cb85e"
+checksum = "45fd3a57831bf88bc63f8cebc0cf956116276e97fef3966103e96416209f7c92"
 dependencies = [
  "libc",
 ]
@@ -989,9 +989,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.70"
+version = "1.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39278fbbf5fb4f646ce651690877f89d1c5811a3d4acb27700c1cb3cdb78fd3b"
+checksum = "75cb1540fadbd5b8fbccc4dddad2734eba435053f725621c070711a14bb5f4b8"
 dependencies = [
  "unicode-ident",
 ]
@@ -1041,12 +1041,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rctree"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b42e27ef78c35d3998403c1d26f3efd9e135d3e5121b0a4845cc5cc27547f4f"
-
-[[package]]
 name = "redox_syscall"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1087,7 +1081,7 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 [[package]]
 name = "resvg"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
+source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
 dependencies = [
  "gif",
  "jpeg-decoder",
@@ -1327,9 +1321,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.41"
+version = "2.0.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44c8b28c477cc3bf0e7966561e3460130e1255f7a1cf71931075f1c5e7a7e269"
+checksum = "5b7d0a2c048d661a1a59fcd7355baa232f7ed34e0ee4df2eef3c1c1c0d3852d8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1466,7 +1460,7 @@ checksum = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
 [[package]]
 name = "usvg"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
+source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
 dependencies = [
  "base64",
  "log",
@@ -1480,7 +1474,7 @@ dependencies = [
 [[package]]
 name = "usvg-parser"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
+source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
 dependencies = [
  "data-url",
  "flate2",
@@ -1497,7 +1491,7 @@ dependencies = [
 [[package]]
 name = "usvg-text-layout"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
+source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
 dependencies = [
  "fontdb",
  "kurbo",
@@ -1512,9 +1506,8 @@ dependencies = [
 [[package]]
 name = "usvg-tree"
 version = "0.37.0"
-source = "git+https://github.com/RazrFalcon/resvg#b882871ec654e12f89fde21d613b08b1ba70b494"
+source = "git+https://github.com/RazrFalcon/resvg#39e592a69364155440814d95719cce8b823bdae9"
 dependencies = [
- "rctree",
  "strict-num",
  "svgtypes",
  "tiny-skia-path",

@@ -21,7 +21,7 @@ pub fn render(
 ) {
     if !group.filters.is_empty() {
         #[cfg(feature = "filters")]
-        filter::render(node, &group.filters, chunk, content, ctx, accumulated_transform);
+        filter::render(group, &group.filters, chunk, content, ctx, accumulated_transform);
     } else if group.is_isolated() {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
@@ -113,7 +113,7 @@ fn create_to_stream(
         clip_path::render(node, clip_path.clone(), chunk, content, ctx);
     }
 
-    for child in node.children() {
+    for child in &group.children {
         child.render(chunk, content, ctx, accumulated_transform);
     }
 
