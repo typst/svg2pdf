@@ -164,6 +164,8 @@ fn stroke(
 
         if let Some(dasharray) = &stroke.dasharray {
             content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
+        }   else {
+            content.set_dash_pattern(vec![], 0.0);
         }
 
         draw_path(path.data.segments(), content);
