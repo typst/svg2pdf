@@ -135,7 +135,7 @@ impl Default for Options {
 /// Does not load any fonts and consequently cannot convert `text` elements. To
 /// convert text, you should convert your source string to a
 /// [`usvg` tree](Tree) manually,
-/// [convert text with usvg](usvg::Tree::postprocess) and then use
+/// [convert text with usvg](usvg::TreePostProc::postprocess) and then use
 /// [`convert_tree`].
 ///
 /// Returns an error if the SVG string is malformed.
