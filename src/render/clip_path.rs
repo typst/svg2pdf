@@ -52,7 +52,7 @@ pub fn render(
             group,
             clip_path,
             content,
-            clip_rules.get(0).copied().unwrap_or(FillRule::NonZero),
+            clip_rules.first().copied().unwrap_or(FillRule::NonZero),
         );
     } else {
         content.set_parameters(
