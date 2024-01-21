@@ -23,8 +23,8 @@ pub fn render(
     // dummy values in the beginning and then set the proper values afterwards.
     let (mut tree, bbox, scaled_bbox) = {
         let mut root = Group::default();
-        let mut sub_root = Group::default();
-        sub_root.transform = ts;
+        let mut sub_root = Group { transform: ts, ..Default::default() };
+
         sub_root.children.push(Node::Group(Box::from(group.clone())));
         root.children.push(Node::Group(Box::from(sub_root)));
         let mut tree = usvg::Tree {

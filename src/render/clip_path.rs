@@ -84,9 +84,9 @@ fn collect_clip_rules(group: &Group) -> Vec<FillRule> {
             }
         }
         Node::Text(ref text) => {
-            text.flattened
-                .as_deref()
-                .map(|group| clip_rules.extend(collect_clip_rules(group)));
+            if let Some(group) = text.flattened.as_deref() {
+                clip_rules.extend(collect_clip_rules(group))
+            }
         }
         Node::Group(ref group) => {
             clip_rules.extend(collect_clip_rules(group));
