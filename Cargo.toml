@@ -27,10 +27,10 @@ pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 regex = "1.8.4"
 termcolor = "1.2"
-usvg = { git="https://github.com/RazrFalcon/resvg", default-features = false, features = ["text"] }
+usvg = { version = "0.38.0", default-features = false, features = ["text"] }
 walkdir = "2.3.3"
 tiny-skia = "0.11.3"
-resvg = { git="https://github.com/RazrFalcon/resvg"}
+resvg = { version = "0.38.0" }
 
 [package]
 name = "svg2pdf"

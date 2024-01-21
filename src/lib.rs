@@ -135,7 +135,7 @@ impl Default for Options {
 /// Does not load any fonts and consequently cannot convert `text` elements. To
 /// convert text, you should convert your source string to a
 /// [`usvg` tree](Tree) manually,
-/// [convert text with usvg](usvg::TreeTextToPath::convert_text) and then use
+/// [convert text with usvg](usvg::Tree::postprocess) and then use
 /// [`convert_tree`].
 ///
 /// Returns an error if the SVG string is malformed.
@@ -156,7 +156,7 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// use usvg::{fontdb, TreeParsing, TreeTextToPath};
+/// use usvg::{fontdb, PostProcessingSteps, TreeParsing, TreePostProc};
 /// use svg2pdf::Options;
 ///
 /// let input = "tests/svg/custom/integration/matplotlib/step.svg";
@@ -168,8 +168,7 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 ///
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
-/// tree.convert_text(&db);
-/// tree.calculate_bounding_boxes();
+/// tree.postprocess(PostProcessingSteps::default(), &db);
 ///
 ///
 /// let pdf = svg2pdf::convert_tree(&tree, Options::default());

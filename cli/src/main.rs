@@ -5,7 +5,7 @@ use std::process;
 use clap::Parser;
 use svg2pdf::Options;
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
-use usvg::{TreeParsing, TreeTextToPath};
+use usvg::{PostProcessingSteps, TreeParsing, TreePostProc};
 
 mod args;
 
@@ -31,7 +31,7 @@ fn run() -> Result<(), String> {
     fontdb.load_system_fonts();
 
     let mut tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
-    tree.convert_text(&fontdb);
+    tree.postprocess(PostProcessingSteps::default(), &fontdb);
     tree.calculate_bounding_boxes();
 
     let pdf = svg2pdf::convert_tree(
