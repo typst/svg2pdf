@@ -9,9 +9,6 @@ use std::{
     process,
 };
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
-use usvg::{PostProcessingSteps, TreeParsing, TreePostProc};
-
-mod args;
 
 fn main() {
     if let Err(msg) = run() {
