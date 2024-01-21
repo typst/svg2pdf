@@ -17,10 +17,14 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    #[cfg(feature = "filters")]
     if !group.filters.is_empty() {
-        #[cfg(feature = "filters")]
         filter::render(group, chunk, content, ctx, accumulated_transform);
-    } else if group.is_isolated() {
+        return;
+    }
+
+    // Filters will be ignored
+    if group.is_isolated() {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
         let mut gs = chunk.ext_graphics(gs_ref);
