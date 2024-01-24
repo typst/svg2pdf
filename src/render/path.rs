@@ -10,7 +10,7 @@ use super::{gradient, pattern};
 use crate::util::context::Context;
 use crate::util::defer::SRGB;
 use crate::util::helper::{
-    plain_bbox, plain_bbox_without_default, ColorExt, LineCapExt, LineJoinExt, NameExt,
+    bbox_to_non_zero_rect, ColorExt, LineCapExt, LineJoinExt, NameExt,
 };
 
 /// Render a path into a content stream.
@@ -22,11 +22,6 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    // Check if the path has a bbox at all.
-    let Some(_) = plain_bbox_without_default(node, true) else {
-        return;
-    };
-
     if path.visibility != Visibility::Visible {
         return;
     }
@@ -100,9 +95,13 @@ fn stroke(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    if path.data.bounds().width() == 0.0 && path.data.bounds().height() == 0.0 {
+        return;
+    }
+
     if let Some(stroke) = path.stroke.as_ref() {
         let paint = &stroke.paint;
-        let path_bbox = plain_bbox(node, false);
+        let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
 
         content.save_state();
 
@@ -165,6 +164,8 @@ fn stroke(
 
         if let Some(dasharray) = &stroke.dasharray {
             content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
+        } else {
+            content.set_dash_pattern(vec![], 0.0);
         }
 
         draw_path(path.data.segments(), content);
@@ -181,9 +182,13 @@ fn fill(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
+    if path.data.bounds().width() == 0.0 || path.data.bounds().height() == 0.0 {
+        return;
+    }
+
     if let Some(fill) = path.fill.as_ref() {
         let paint = &fill.paint;
-        let path_bbox = plain_bbox(node, false);
+        let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
 
         content.save_state();
 

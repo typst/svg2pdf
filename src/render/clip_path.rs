@@ -3,17 +3,17 @@ use std::rc::Rc;
 use pdf_writer::types::MaskType;
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{ClipPath, FillRule, Node, NodeKind, Transform, Units, Visibility};
+use usvg::{FillRule, Group, Node, SharedClipPath, Transform, Units, Visibility};
 
 use super::group;
 use super::path::draw_path;
 use crate::util::context::Context;
-use crate::util::helper::{plain_bbox, NameExt, RectExt, TransformExt};
+use crate::util::helper::{bbox_to_non_zero_rect, NameExt, RectExt, TransformExt};
 
 /// Render a clip path into a content stream.
 pub fn render(
-    node: &Node,
-    clip_path: Rc<ClipPath>,
+    group: &Group,
+    clip_path: SharedClipPath,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
@@ -37,43 +37,76 @@ pub fn render(
     // should suffice. But in order to conform with the SVG specification, we also handle the case
     // of more complex clipping paths, even if this means that Safari will in some cases not
     // display them correctly.
-    if is_simple_clip_path(&clip_path.root) {
-        create_simple_clip_path(node, clip_path, content);
+
+    let is_simple_clip_path = is_simple_clip_path(&clip_path.borrow().root);
+    let clip_rules = collect_clip_rules(&clip_path.borrow().root);
+
+    if is_simple_clip_path
+        && (clip_rules.iter().all(|f| *f == FillRule::NonZero)
+        // For even odd, there must be at most one shape in the group, because
+        // overlapping shapes with evenodd render wrongly in PDF
+            || (clip_rules.iter().all(|f| *f == FillRule::EvenOdd)
+                && clip_rules.len() == 1))
+    {
+        create_simple_clip_path(
+            group,
+            clip_path,
+            content,
+            clip_rules.first().copied().unwrap_or(FillRule::NonZero),
+        );
     } else {
         content.set_parameters(
-            create_complex_clip_path(node, clip_path, chunk, ctx).to_pdf_name(),
+            create_complex_clip_path(group, clip_path, chunk, ctx).to_pdf_name(),
         );
     }
 }
 
-fn is_simple_clip_path(node: &Node) -> bool {
-    node.descendants().all(|n| match *n.borrow() {
-        NodeKind::Path(ref path) => {
-            // While there is a clipping path for EvenOdd, it will produce wrong results
-            // if the clip-rule is defined on a group instead of on the children.
-            path.fill.as_ref().map_or(true, |fill| fill.rule == FillRule::NonZero)
+fn is_simple_clip_path(group: &Group) -> bool {
+    group.children.iter().all(|n| {
+        match n {
+            Node::Group(ref group) => {
+                // We can only intersect one clipping path with another one, meaning that we
+                // can convert nested clip paths if a second clip path is defined on the clip
+                // path itself, but not if it is defined on a child.
+                group.clip_path.is_none() && is_simple_clip_path(group)
+            }
+            _ => true,
         }
-        NodeKind::Text(ref text) => {
-            // TODO: Need to change this once unconverted text is supported
-            text.flattened.as_ref().map_or(true, is_simple_clip_path)
-        }
-        NodeKind::Group(ref group) => {
-            // We can only intersect one clipping path with another one, meaning that we
-            // can convert nested clip paths if a second clip path is defined on the clip
-            // path itself, but not if it is defined on a child.
-            group.clip_path.is_none()
-        }
-        _ => false,
     })
 }
 
+fn collect_clip_rules(group: &Group) -> Vec<FillRule> {
+    let mut clip_rules = vec![];
+    group.children.iter().for_each(|n| match n {
+        Node::Path(ref path) => {
+            if let Some(fill) = &path.fill {
+                clip_rules.push(fill.rule);
+            }
+        }
+        Node::Text(ref text) => {
+            if let Some(group) = text.flattened.as_deref() {
+                clip_rules.extend(collect_clip_rules(group))
+            }
+        }
+        Node::Group(ref group) => {
+            clip_rules.extend(collect_clip_rules(group));
+        }
+        _ => {}
+    });
+
+    clip_rules
+}
+
 fn create_simple_clip_path(
-    parent: &Node,
-    clip_path: Rc<ClipPath>,
+    parent: &Group,
+    clip_path: SharedClipPath,
     content: &mut Content,
+    clip_rule: FillRule,
 ) {
+    let clip_path = clip_path.borrow();
+
     if let Some(clip_path) = &clip_path.clip_path {
-        create_simple_clip_path(parent, clip_path.clone(), content);
+        create_simple_clip_path(parent, clip_path.clone(), content, clip_rule);
     }
 
     // Just a dummy operation, so that in case the clip path only has hidden children the clip
@@ -86,71 +119,79 @@ fn create_simple_clip_path(
             .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(plain_bbox(parent, false))
+                Transform::from_bbox(bbox_to_non_zero_rect(parent.bounding_box))
             });
 
     let mut segments = vec![];
-    extend_segments_from_node(&clip_path.root, &base_transform, &mut segments);
+    extend_segments_from_group(&clip_path.root, &base_transform, &mut segments);
     draw_path(segments.into_iter(), content);
-    content.clip_nonzero();
+
+    if clip_rule == FillRule::NonZero {
+        content.clip_nonzero();
+    } else {
+        content.clip_even_odd();
+    }
     content.end_path();
 }
 
-fn extend_segments_from_node(
-    node: &Node,
+fn extend_segments_from_group(
+    group: &Group,
     transform: &Transform,
     segments: &mut Vec<PathSegment>,
 ) {
-    match *node.borrow() {
-        NodeKind::Path(ref path) => {
-            if path.visibility != Visibility::Hidden {
-                path.data.segments().for_each(|segment| match segment {
-                    PathSegment::MoveTo(mut p) => {
-                        transform.map_point(&mut p);
-                        segments.push(PathSegment::MoveTo(p));
-                    }
-                    PathSegment::LineTo(mut p) => {
-                        transform.map_point(&mut p);
-                        segments.push(PathSegment::LineTo(p));
-                    }
-                    PathSegment::QuadTo(p1, p2) => {
-                        let mut points = [p1, p2];
-                        transform.map_points(&mut points);
-                        segments.push(PathSegment::QuadTo(points[0], points[1]));
-                    }
-                    PathSegment::CubicTo(p1, p2, p3) => {
-                        let mut points = [p1, p2, p3];
-                        transform.map_points(&mut points);
-                        segments
-                            .push(PathSegment::CubicTo(points[0], points[1], points[2]));
-                    }
-                    PathSegment::Close => segments.push(PathSegment::Close),
-                })
+    for child in &group.children {
+        match child {
+            Node::Path(ref path) => {
+                if path.visibility != Visibility::Hidden {
+                    path.data.segments().for_each(|segment| match segment {
+                        PathSegment::MoveTo(mut p) => {
+                            transform.map_point(&mut p);
+                            segments.push(PathSegment::MoveTo(p));
+                        }
+                        PathSegment::LineTo(mut p) => {
+                            transform.map_point(&mut p);
+                            segments.push(PathSegment::LineTo(p));
+                        }
+                        PathSegment::QuadTo(p1, p2) => {
+                            let mut points = [p1, p2];
+                            transform.map_points(&mut points);
+                            segments.push(PathSegment::QuadTo(points[0], points[1]));
+                        }
+                        PathSegment::CubicTo(p1, p2, p3) => {
+                            let mut points = [p1, p2, p3];
+                            transform.map_points(&mut points);
+                            segments.push(PathSegment::CubicTo(
+                                points[0], points[1], points[2],
+                            ));
+                        }
+                        PathSegment::Close => segments.push(PathSegment::Close),
+                    })
+                }
             }
-        }
-        NodeKind::Group(ref group) => {
-            let group_transform = transform.pre_concat(group.transform);
-            for child in node.children() {
-                extend_segments_from_node(&child, &group_transform, segments);
+            Node::Group(ref group) => {
+                let group_transform = transform.pre_concat(group.transform);
+                extend_segments_from_group(group, &group_transform, segments);
             }
-        }
-        NodeKind::Text(ref text) => {
-            // TODO: Need to change this once unconverted text is supported
-            if let Some(ref node) = text.flattened {
-                extend_segments_from_node(node, transform, segments);
+            Node::Text(ref text) => {
+                // TODO: Need to change this once unconverted text is supported
+                if let Some(ref group) = text.flattened {
+                    extend_segments_from_group(group, transform, segments);
+                }
             }
+            // Images are not valid in a clip path. Text will be converted into shapes beforehand.
+            _ => {}
         }
-        // Images are not valid in a clip path. Text will be converted into shapes beforehand.
-        _ => {}
     }
 }
 
 fn create_complex_clip_path(
-    parent: &Node,
-    clip_path: Rc<ClipPath>,
+    parent: &Group,
+    clip_path: SharedClipPath,
     chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Rc<String> {
+    let clip_path = clip_path.borrow();
+
     ctx.deferrer.push();
     let x_object_reference = ctx.alloc_ref();
 
@@ -163,26 +204,14 @@ fn create_complex_clip_path(
 
     content.transform(clip_path.transform.to_pdf_transform());
 
-    let pdf_bbox = plain_bbox(parent, false).to_pdf_rect();
+    let pdf_bbox = bbox_to_non_zero_rect(parent.bounding_box).to_pdf_rect();
 
-    match *clip_path.root.borrow() {
-        NodeKind::Group(ref group) => {
-            if clip_path.units == Units::ObjectBoundingBox {
-                let parent_svg_bbox = plain_bbox(parent, false);
-                content
-                    .transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
-            }
-            group::render(
-                &clip_path.root,
-                group,
-                chunk,
-                &mut content,
-                ctx,
-                Transform::default(),
-            );
-        }
-        _ => unreachable!(),
-    };
+    if clip_path.units == Units::ObjectBoundingBox {
+        let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box);
+        content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
+    }
+
+    group::render(&clip_path.root, chunk, &mut content, ctx, Transform::default());
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);

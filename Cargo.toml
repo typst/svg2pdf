@@ -27,8 +27,10 @@ pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 regex = "1.8.4"
 termcolor = "1.2"
-usvg = { version = "0.37.0", default-features = false }
+usvg = { version = "0.38.0", default-features = false, features = ["text"] }
 walkdir = "2.3.3"
+tiny-skia = "0.11.3"
+resvg = { version = "0.38.0" }
 
 [package]
 name = "svg2pdf"
@@ -45,8 +47,9 @@ license = { workspace = true }
 bench = false
 
 [features]
-default = ["image"]
+default = ["image", "filters"]
 image = ["dep:image"]
+filters = ["dep:tiny-skia", "dep:resvg"]
 
 [dependencies]
 miniz_oxide = { workspace = true }
@@ -54,6 +57,5 @@ once_cell = { workspace = true }
 pdf-writer = { workspace = true }
 usvg = { workspace = true }
 image = { workspace = true, optional = true }
-
-[dev-dependencies]
-usvg = { workspace = true, features = ["text", "system-fonts"] }
+tiny-skia = {workspace = true, optional = true}
+resvg = {workspace = true, optional = true}

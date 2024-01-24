@@ -108,6 +108,14 @@ pub struct Options {
     ///
     /// _Default:_ `true`.
     pub compress: bool,
+
+    /// How much raster images of rasterized effects should be scaled up.
+    ///
+    /// Higher values will lead to better quality, but will increase the size of
+    /// the pdf.
+    ///
+    /// _Default:_ 1
+    pub raster_scale: f32,
 }
 
 impl Default for Options {
@@ -117,6 +125,7 @@ impl Default for Options {
             viewport: None,
             aspect: None,
             compress: true,
+            raster_scale: 1.0,
         }
     }
 }
@@ -126,7 +135,7 @@ impl Default for Options {
 /// Does not load any fonts and consequently cannot convert `text` elements. To
 /// convert text, you should convert your source string to a
 /// [`usvg` tree](Tree) manually,
-/// [convert text with usvg](usvg::TreeTextToPath::convert_text) and then use
+/// [convert text with usvg](usvg::TreePostProc::postprocess) and then use
 /// [`convert_tree`].
 ///
 /// Returns an error if the SVG string is malformed.
@@ -147,7 +156,7 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// use usvg::{fontdb, TreeParsing, TreeTextToPath};
+/// use usvg::{fontdb, PostProcessingSteps, TreeParsing, TreePostProc};
 /// use svg2pdf::Options;
 ///
 /// let input = "tests/svg/custom/integration/matplotlib/step.svg";
@@ -159,7 +168,8 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 ///
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
-/// tree.convert_text(&db);
+/// tree.postprocess(PostProcessingSteps::default(), &db);
+///
 ///
 /// let pdf = svg2pdf::convert_tree(&tree, Options::default());
 /// std::fs::write(output, pdf)?;
