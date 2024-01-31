@@ -46,6 +46,8 @@ Among the unsupported features are currently:
 mod render;
 mod util;
 
+pub use usvg;
+
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
 use usvg::utils::view_box_to_transform;
@@ -156,15 +158,15 @@ pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> 
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// use usvg::{fontdb, PostProcessingSteps, TreeParsing, TreePostProc};
+/// use svg2pdf::usvg::{fontdb, PostProcessingSteps, TreeParsing, TreePostProc};
 /// use svg2pdf::Options;
 ///
 /// let input = "tests/svg/custom/integration/matplotlib/step.svg";
 /// let output = "target/step.pdf";
 ///
 /// let svg = std::fs::read_to_string(input)?;
-/// let options = usvg::Options::default();
-/// let mut tree = usvg::Tree::from_str(&svg, &options)?;
+/// let options = svg2pdf::usvg::Options::default();
+/// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 ///
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
@@ -254,7 +256,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf;
 /// use pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str};
-/// use usvg::TreeParsing;
+/// use svg2pdf::usvg::TreeParsing;
 ///
 /// // Allocate the indirect reference IDs and names.
 /// let catalog_id = Ref::new(1);
@@ -292,7 +294,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// // We need to load its source first and manually parse it into a usvg Tree.
 /// let path = "tests/svg/custom/integration/matplotlib/step.svg";
 /// let svg = std::fs::read_to_string(path)?;
-/// let tree = usvg::Tree::from_str(&svg, &usvg::Options::default())?;
+/// let tree = svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default())?;
 ///
 /// // Then, we will write it to the page as the 6th indirect object.
 /// //
