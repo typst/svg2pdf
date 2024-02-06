@@ -3,8 +3,7 @@ use crate::util::context::Context;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
 use tiny_skia::{Rect, Size, Transform};
-use usvg::utils::view_box_to_transform;
-use usvg::{AspectRatio, Group, ImageKind, Node, NonZeroRect, ViewBox, Visibility};
+use usvg::{AspectRatio, Group, ImageKind, Node, ViewBox, Visibility};
 
 fn print_tree(group: &Group, level: u32) {
     println!("Level {}", level);
@@ -27,8 +26,16 @@ pub fn render(
     accumulated_transform: Transform,
 ) -> Option<()> {
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
-    let layer_bbox = group.filters_bounding_box()?;
-    let group_bbox = group.bounding_box.unwrap_or(Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap());
+
+    let mut root_group = Group {
+        children: vec![Node::Group(Box::new(group.clone()))],
+        ..Group::default()
+    };
+    root_group.calculate_bounding_boxes();
+    root_group.calculate_abs_transforms(Transform::default());
+
+    let layer_bbox = root_group.layer_bounding_box?;
+    let group_bbox = root_group.bounding_box.unwrap_or(Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap());
     let initial_transform = Transform::from_translate(
         group_bbox.x() - layer_bbox.x(),
         group_bbox.y() - layer_bbox.y(),
@@ -43,19 +50,11 @@ pub fn render(
         pixmap_size.height().round() as u32,
     )?;
 
-    let mut root_group = Group {
-        children: vec![Node::Group(Box::new(group.clone()))],
-        ..Group::default()
-    };
-    root_group.calculate_bounding_boxes();
-
     resvg::render_node(
         &Node::Group(Box::new(root_group)),
         Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale).pre_concat(initial_transform),
         &mut pixmap.as_mut(),
     );
-
-    pixmap.save_png("out.png");
 
     let encoded_image = pixmap.encode_png().ok()?;
 
