@@ -196,6 +196,7 @@ pub fn fit_view_box(size: Size, vb: &usvg::ViewBox) -> usvg::Size {
 }
 
 /// Calculate the scale ratio of a DPI value.
+/// Turns a DPI in a dot per user unit (1/72nd of an inch by default)
 pub fn dpi_ratio(dpi: f32) -> f32 {
     dpi / 72.0
 }

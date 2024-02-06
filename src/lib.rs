@@ -393,8 +393,9 @@ fn pdf_size(tree: &Tree, options: Options) -> Size {
     // If no custom viewport is defined, we use the size of the tree.
     let viewport_size = options.viewport.unwrap_or(tree.size);
     Size::from_wh(
-        viewport_size.width() * dpi_ratio(options.dpi),
-        viewport_size.height() * dpi_ratio(options.dpi),
+        // dpi_ratio is in dot per user unit so dividing by it gave user unit
+        viewport_size.width() / dpi_ratio(options.dpi),
+        viewport_size.height() / dpi_ratio(options.dpi),
     )
     .unwrap()
 }
