@@ -2,7 +2,7 @@ use crate::render::Render;
 use crate::util::context::Context;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
-use tiny_skia::{Size, Transform};
+use tiny_skia::{Rect, Size, Transform};
 use usvg::utils::view_box_to_transform;
 use usvg::{AspectRatio, Group, ImageKind, Node, NonZeroRect, ViewBox, Visibility};
 
@@ -28,7 +28,7 @@ pub fn render(
 ) -> Option<()> {
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
     let layer_bbox = group.filters_bounding_box()?;
-    let group_bbox = group.bounding_box?;
+    let group_bbox = group.bounding_box.unwrap_or(Rect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap());
     let initial_transform = Transform::from_translate(
         group_bbox.x() - layer_bbox.x(),
         group_bbox.y() - layer_bbox.y(),
@@ -43,15 +43,23 @@ pub fn render(
         pixmap_size.height().round() as u32,
     )?;
 
+    let mut root_group = Group {
+        children: vec![Node::Group(Box::new(group.clone()))],
+        ..Group::default()
+    };
+    root_group.calculate_bounding_boxes();
+
     resvg::render_node(
-        &Node::Group(Box::new(group.clone())),
-        initial_transform,
+        &Node::Group(Box::new(root_group)),
+        Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale).pre_concat(initial_transform),
         &mut pixmap.as_mut(),
     );
 
+    pixmap.save_png("out.png");
+
     let encoded_image = pixmap.encode_png().ok()?;
 
-    let image = usvg::Image {
+    let image_node = Node::Image(Box::new(usvg::Image {
         id: "".to_string(),
         visibility: Visibility::Visible,
         view_box: ViewBox { rect: layer_bbox, aspect: AspectRatio::default() },
@@ -59,15 +67,9 @@ pub fn render(
         kind: ImageKind::PNG(Arc::new(encoded_image)),
         abs_transform: Default::default(),
         bounding_box: None,
-    };
-
-    let group_node = Node::Group(Box::new(Group {
-        transform: Transform::from_scale(1.0, 1.0),
-        children: vec![Node::Image(Box::new(image))],
-        ..Group::default()
     }));
 
-    group_node.render(chunk, content, ctx, accumulated_transform);
+    image_node.render(chunk, content, ctx, accumulated_transform);
 
     Some(())
 }
