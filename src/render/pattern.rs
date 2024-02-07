@@ -1,5 +1,4 @@
 use std::cell::RefCell;
-use std::ops::Mul;
 use std::rc::Rc;
 
 use pdf_writer::types::{PaintType, TilingType};
@@ -21,25 +20,22 @@ pub fn create(
     matrix: Transform,
     initial_opacity: Option<Opacity>,
 ) -> Rc<String> {
-    let mut pattern = pattern.borrow_mut();
+    let pattern = pattern.borrow();
     let pattern_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
     // Content units object bounding box should only be used if no view box is declared.
     let content_units_obb =
-        pattern.content_units == Units::ObjectBoundingBox && pattern.view_box.is_none();
+        pattern.content_units() == Units::ObjectBoundingBox && pattern.view_box().is_none();
 
-    let pattern_rect = if pattern.units == Units::ObjectBoundingBox || content_units_obb {
-        pattern.rect.bbox_transform(*parent_bbox)
+    let pattern_rect = if pattern.units() == Units::ObjectBoundingBox || content_units_obb {
+        pattern.rect().bbox_transform(*parent_bbox)
     } else {
-        pattern.rect
+        pattern.rect()
     };
 
-    if let Some(initial_opacity) = initial_opacity {
-        pattern.root.opacity = pattern.root.opacity.mul(initial_opacity);
-    }
 
-    let pattern_matrix = matrix.pre_concat(pattern.transform).pre_concat(
+    let pattern_matrix = matrix.pre_concat(pattern.transform()).pre_concat(
         Transform::from_row(1.0, 0.0, 0.0, 1.0, pattern_rect.x(), pattern_rect.y()),
     );
 
@@ -55,7 +51,7 @@ pub fn create(
         );
     }
 
-    if let Some(view_box) = pattern.view_box {
+    if let Some(view_box) = pattern.view_box() {
         let view_box_transform = view_box_to_transform(
             view_box.rect,
             view_box.aspect,
@@ -64,7 +60,7 @@ pub fn create(
         content.transform(view_box_transform.to_pdf_transform());
     }
 
-    group::render(&pattern.root, chunk, &mut content, ctx, Transform::default());
+    group::render(&pattern.root(), chunk, &mut content, ctx, Transform::default(), initial_opacity);
 
     content.restore_state();
 

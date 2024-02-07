@@ -38,8 +38,8 @@ pub fn render(
     // of more complex clipping paths, even if this means that Safari will in some cases not
     // display them correctly.
 
-    let is_simple_clip_path = is_simple_clip_path(&clip_path.borrow().root);
-    let clip_rules = collect_clip_rules(&clip_path.borrow().root);
+    let is_simple_clip_path = is_simple_clip_path(&clip_path.borrow().root());
+    let clip_rules = collect_clip_rules(&clip_path.borrow().root());
 
     if is_simple_clip_path
         && (clip_rules.iter().all(|f| *f == FillRule::NonZero)
@@ -62,13 +62,13 @@ pub fn render(
 }
 
 fn is_simple_clip_path(group: &Group) -> bool {
-    group.children.iter().all(|n| {
+    group.children().iter().all(|n| {
         match n {
             Node::Group(ref group) => {
                 // We can only intersect one clipping path with another one, meaning that we
                 // can convert nested clip paths if a second clip path is defined on the clip
                 // path itself, but not if it is defined on a child.
-                group.clip_path.is_none() && is_simple_clip_path(group)
+                group.clip_path().is_none() && is_simple_clip_path(group)
             }
             _ => true,
         }
@@ -77,14 +77,14 @@ fn is_simple_clip_path(group: &Group) -> bool {
 
 fn collect_clip_rules(group: &Group) -> Vec<FillRule> {
     let mut clip_rules = vec![];
-    group.children.iter().for_each(|n| match n {
+    group.children().iter().for_each(|n| match n {
         Node::Path(ref path) => {
-            if let Some(fill) = &path.fill {
-                clip_rules.push(fill.rule);
+            if let Some(fill) = &path.fill() {
+                clip_rules.push(fill.rule());
             }
         }
         Node::Text(ref text) => {
-            if let Some(group) = text.flattened.as_deref() {
+            if let Some(group) = text.flattened().as_deref() {
                 clip_rules.extend(collect_clip_rules(group))
             }
         }
@@ -105,7 +105,7 @@ fn create_simple_clip_path(
 ) {
     let clip_path = clip_path.borrow();
 
-    if let Some(clip_path) = &clip_path.clip_path {
+    if let Some(clip_path) = &clip_path.clip_path() {
         create_simple_clip_path(parent, clip_path.clone(), content, clip_rule);
     }
 
@@ -115,15 +115,15 @@ fn create_simple_clip_path(
 
     let base_transform =
         clip_path
-            .transform
-            .pre_concat(if clip_path.units == Units::UserSpaceOnUse {
+            .transform()
+            .pre_concat(if clip_path.units() == Units::UserSpaceOnUse {
                 Transform::default()
             } else {
-                Transform::from_bbox(bbox_to_non_zero_rect(parent.bounding_box))
+                Transform::from_bbox(bbox_to_non_zero_rect(parent.bounding_box()))
             });
 
     let mut segments = vec![];
-    extend_segments_from_group(&clip_path.root, &base_transform, &mut segments);
+    extend_segments_from_group(&clip_path.root(), &base_transform, &mut segments);
     draw_path(segments.into_iter(), content);
 
     if clip_rule == FillRule::NonZero {
@@ -139,11 +139,11 @@ fn extend_segments_from_group(
     transform: &Transform,
     segments: &mut Vec<PathSegment>,
 ) {
-    for child in &group.children {
+    for child in group.children() {
         match child {
             Node::Path(ref path) => {
-                if path.visibility != Visibility::Hidden {
-                    path.data.segments().for_each(|segment| match segment {
+                if path.visibility() != Visibility::Hidden {
+                    path.data().segments().for_each(|segment| match segment {
                         PathSegment::MoveTo(mut p) => {
                             transform.map_point(&mut p);
                             segments.push(PathSegment::MoveTo(p));
@@ -169,12 +169,12 @@ fn extend_segments_from_group(
                 }
             }
             Node::Group(ref group) => {
-                let group_transform = transform.pre_concat(group.transform);
+                let group_transform = transform.pre_concat(group.transform());
                 extend_segments_from_group(group, &group_transform, segments);
             }
             Node::Text(ref text) => {
                 // TODO: Need to change this once unconverted text is supported
-                if let Some(ref group) = text.flattened {
+                if let Some(ref group) = text.flattened() {
                     extend_segments_from_group(group, transform, segments);
                 }
             }
@@ -198,20 +198,20 @@ fn create_complex_clip_path(
     let mut content = Content::new();
     content.save_state();
 
-    if let Some(recursive_clip_path) = &clip_path.clip_path {
+    if let Some(recursive_clip_path) = &clip_path.clip_path() {
         render(parent, recursive_clip_path.clone(), chunk, &mut content, ctx);
     }
 
-    content.transform(clip_path.transform.to_pdf_transform());
+    content.transform(clip_path.transform().to_pdf_transform());
 
-    let pdf_bbox = bbox_to_non_zero_rect(parent.bounding_box).to_pdf_rect();
+    let pdf_bbox = bbox_to_non_zero_rect(parent.bounding_box()).to_pdf_rect();
 
-    if clip_path.units == Units::ObjectBoundingBox {
-        let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box);
+    if clip_path.units() == Units::ObjectBoundingBox {
+        let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box());
         content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
     }
 
-    group::render(&clip_path.root, chunk, &mut content, ctx, Transform::default());
+    group::render(&clip_path.root(), chunk, &mut content, ctx, Transform::default(), None);
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);

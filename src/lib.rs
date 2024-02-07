@@ -51,7 +51,7 @@ pub use usvg;
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
 use usvg::utils::view_box_to_transform;
-use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, TreeParsing};
+use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree};
 
 use crate::render::tree_to_stream;
 use crate::util::context::Context;
@@ -391,7 +391,7 @@ fn write_color_spaces(ctx: &mut Context, chunk: &mut Chunk) {
 /// Return the dimensions of the PDF page
 fn pdf_size(tree: &Tree, options: Options) -> Size {
     // If no custom viewport is defined, we use the size of the tree.
-    let viewport_size = options.viewport.unwrap_or(tree.size);
+    let viewport_size = options.viewport.unwrap_or(tree.size());
     Size::from_wh(
         viewport_size.width() * dpi_ratio(options.dpi),
         viewport_size.height() * dpi_ratio(options.dpi),
@@ -410,7 +410,7 @@ fn initial_transform(
     // been passed, pdf_size should be the same as tree.size, so the transform will just be the
     // default transform.
     let custom_viewport_transform = view_box_to_transform(
-        NonZeroRect::from_xywh(0.0, 0.0, tree.size.width(), tree.size.height()).unwrap(),
+        NonZeroRect::from_xywh(0.0, 0.0, tree.size().width(), tree.size().height()).unwrap(),
         aspect.unwrap_or(AspectRatio { defer: false, align: Align::None, slice: false }),
         pdf_size,
     );

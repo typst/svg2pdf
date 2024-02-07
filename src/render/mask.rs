@@ -36,15 +36,15 @@ pub fn create(
     let mut content = Content::new();
     content.save_state();
 
-    if let Some(recursive_mask) = &mask.mask {
+    if let Some(recursive_mask) = &mask.mask() {
         render(parent, recursive_mask.clone(), chunk, &mut content, ctx);
     }
 
-    let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box);
+    let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box());
 
-    let actual_rect = match mask.units {
-        Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),
-        Units::UserSpaceOnUse => mask.rect,
+    let actual_rect = match mask.units() {
+        Units::ObjectBoundingBox => mask.rect().bbox_transform(parent_svg_bbox),
+        Units::UserSpaceOnUse => mask.rect(),
     };
 
     // In addition to setting the bounding box, we also apply a clip path to the mask rect to
@@ -53,12 +53,12 @@ pub fn create(
     clip_to_rect(actual_rect, &mut content);
 
     let mut accumulated_transform = Transform::default();
-    if mask.content_units == Units::ObjectBoundingBox {
+    if mask.content_units() == Units::ObjectBoundingBox {
         content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
         accumulated_transform = Transform::from_bbox(parent_svg_bbox);
     }
 
-    group::render(&mask.root, chunk, &mut content, ctx, accumulated_transform);
+    group::render(&mask.root(), chunk, &mut content, ctx, accumulated_transform, None);
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);
@@ -83,7 +83,7 @@ pub fn create(
 
     let gs_ref = ctx.alloc_ref();
     let mut gs = chunk.ext_graphics(gs_ref);
-    gs.soft_mask().subtype(mask.kind.to_pdf_mask_type()).group(x_ref);
+    gs.soft_mask().subtype(mask.kind().to_pdf_mask_type()).group(x_ref);
 
     ctx.deferrer.add_graphics_state(gs_ref)
 }

@@ -28,8 +28,8 @@ impl Context {
     /// Create a new context.
     pub fn new(tree: &Tree, options: Options, start_ref: Option<i32>) -> Self {
         Self {
-            view_box: tree.view_box,
-            size: tree.size,
+            view_box: tree.view_box(),
+            size: tree.size(),
             deferrer: Deferrer::new_with_start_ref(start_ref.unwrap_or(1)),
             options,
         }

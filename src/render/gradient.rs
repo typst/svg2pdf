@@ -2,13 +2,14 @@ use std::rc::Rc;
 
 use pdf_writer::types::{FunctionShadingType, MaskType};
 use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref};
-use usvg::{NonZeroRect, NormalizedF32, Paint, StopOffset, Transform, Units};
+use usvg::{NonZeroRect, Paint, Transform, Units};
 
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, RectExt, StopExt, TransformExt};
 
 /// An alternative representation of a usvg::Stop that allows us to store
 /// both, RGB gradients and grayscale gradients.
+#[derive(Copy, Clone)]
 pub struct Stop<const COUNT: usize> {
     pub color: [f32; COUNT],
     pub offset: f32,
@@ -26,18 +27,18 @@ impl GradientProperties {
     fn try_from_paint(paint: &Paint) -> Option<Self> {
         match paint {
             Paint::LinearGradient(l) => Some(Self {
-                coords: vec![l.x1, l.y1, l.x2, l.y2],
+                coords: vec![l.x1(), l.y1(), l.x2(), l.y2()],
                 shading_type: FunctionShadingType::Axial,
-                stops: l.stops.clone(),
-                transform: l.transform,
-                units: l.units,
+                stops: Vec::from(l.stops()),
+                transform: l.transform(),
+                units: l.units(),
             }),
             Paint::RadialGradient(r) => Some(Self {
-                coords: vec![r.fx, r.fy, 0.0, r.cx, r.cy, r.r.get()],
+                coords: vec![r.fx(), r.fy(), 0.0, r.cx(), r.cy(), r.r().get()],
                 shading_type: FunctionShadingType::Radial,
-                stops: r.stops.clone(),
-                transform: r.transform,
-                units: r.units,
+                stops: Vec::from(r.stops()),
+                transform: r.transform(),
+                units: r.units(),
             }),
             _ => None,
         }
@@ -68,7 +69,7 @@ pub fn create_shading_soft_mask(
     ctx: &mut Context,
 ) -> Option<Rc<String>> {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
-    if properties.stops.iter().any(|stop| stop.opacity.get() < 1.0) {
+    if properties.stops.iter().any(|stop| stop.opacity().get() < 1.0) {
         Some(shading_soft_mask(&properties, parent_bbox, chunk, ctx))
     } else {
         None
@@ -188,30 +189,32 @@ fn function(
     // into no fill / plain fill, so there should be at least two stops
     debug_assert!(stops.len() > 1);
 
-    let mut stops = stops.to_owned();
-
-    // We manually pad the stops if necessary so that they are always in the range from 0-1
-    if let Some(first) = stops.first() {
-        if first.offset != NormalizedF32::ZERO {
-            let mut new_stop = *first;
-            new_stop.offset = StopOffset::new(0.0).unwrap();
-            stops.insert(0, new_stop);
+    fn pad_stops<const COUNT: usize>(mut stops: Vec<Stop<COUNT>>) -> Vec<Stop<COUNT>> {
+        // We manually pad the stops if necessary so that they are always in the range from 0-1
+        if let Some(first) = stops.first() {
+            if first.offset != 0.0 {
+                let mut new_stop = first.clone();
+                new_stop.offset = 0.0;
+                stops.insert(0, new_stop);
+            }
         }
-    }
 
-    if let Some(last) = stops.last() {
-        if last.offset != NormalizedF32::ONE {
-            let mut new_stop = *last;
-            new_stop.offset = StopOffset::new(1.0).unwrap();
-            stops.push(new_stop);
+        if let Some(last) = stops.last() {
+            if last.offset != 1.0 {
+                let mut new_stop = last.clone();
+                new_stop.offset = 1.0;
+                stops.push(new_stop);
+            }
         }
+
+        stops
     }
 
     if use_opacities {
-        let stops = stops.iter().map(|s| s.opacity_stops()).collect::<Vec<Stop<1>>>();
+        let stops = pad_stops(stops.iter().map(|s| s.opacity_stops()).collect::<Vec<Stop<1>>>());
         select_function(&stops, chunk, ctx)
     } else {
-        let stops = stops.iter().map(|s| s.color_stops()).collect::<Vec<Stop<3>>>();
+        let stops = pad_stops(stops.iter().map(|s| s.color_stops()).collect::<Vec<Stop<3>>>());
         select_function(&stops, chunk, ctx)
     }
 }

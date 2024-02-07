@@ -22,7 +22,7 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if path.visibility != Visibility::Visible {
+    if path.visibility() != Visibility::Visible {
         return;
     }
 
@@ -30,7 +30,7 @@ pub fn render(
     // such as pattern fills/strokes with opacities and linear gradient strokes/fills with
     // stop opacities, we always render strokes and fills separately, at the cost of slightly
     // higher file sizes depending on the SVG.
-    match path.paint_order {
+    match path.paint_order() {
         PaintOrder::FillAndStroke => {
             fill(path, node, chunk, content, ctx, accumulated_transform);
             stroke(path, node, chunk, content, ctx, accumulated_transform);
@@ -95,19 +95,19 @@ fn stroke(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if path.data.bounds().width() == 0.0 && path.data.bounds().height() == 0.0 {
+    if path.data().bounds().width() == 0.0 && path.data().bounds().height() == 0.0 {
         return;
     }
 
-    if let Some(stroke) = path.stroke.as_ref() {
-        let paint = &stroke.paint;
+    if let Some(stroke) = path.stroke().as_ref() {
+        let paint = &stroke.paint();
         let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
 
         content.save_state();
 
         match paint {
             Paint::Color(c) => {
-                set_opacity_gs(chunk, content, ctx, Some(stroke.opacity), None);
+                set_opacity_gs(chunk, content, ctx, Some(stroke.opacity()), None);
                 content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
                 content.set_stroke_color(c.to_pdf_color());
             }
@@ -123,7 +123,7 @@ fn stroke(
                     chunk,
                     ctx,
                     accumulated_transform,
-                    Some(stroke.opacity),
+                    Some(stroke.opacity()),
                 );
                 content.set_stroke_color_space(Pattern);
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
@@ -135,8 +135,8 @@ fn stroke(
                     chunk,
                     content,
                     ctx,
-                    Some(stroke.opacity),
-                    Some(stroke.opacity),
+                    Some(stroke.opacity()),
+                    Some(stroke.opacity()),
                 );
 
                 if let Some(soft_mask) =
@@ -157,18 +157,18 @@ fn stroke(
             }
         }
 
-        content.set_line_width(stroke.width.get());
-        content.set_miter_limit(stroke.miterlimit.get());
-        content.set_line_cap(stroke.linecap.to_pdf_line_cap());
-        content.set_line_join(stroke.linejoin.to_pdf_line_join());
+        content.set_line_width(stroke.width().get());
+        content.set_miter_limit(stroke.miterlimit().get());
+        content.set_line_cap(stroke.linecap().to_pdf_line_cap());
+        content.set_line_join(stroke.linejoin().to_pdf_line_join());
 
-        if let Some(dasharray) = &stroke.dasharray {
-            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset);
+        if let Some(dasharray) = &stroke.dasharray() {
+            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset());
         } else {
             content.set_dash_pattern(vec![], 0.0);
         }
 
-        draw_path(path.data.segments(), content);
+        draw_path(path.data().segments(), content);
         finish_path(Some(stroke), None, content);
         content.restore_state();
     }
@@ -182,19 +182,19 @@ fn fill(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if path.data.bounds().width() == 0.0 || path.data.bounds().height() == 0.0 {
+    if path.data().bounds().width() == 0.0 || path.data().bounds().height() == 0.0 {
         return;
     }
 
-    if let Some(fill) = path.fill.as_ref() {
-        let paint = &fill.paint;
+    if let Some(fill) = path.fill().as_ref() {
+        let paint = &fill.paint();
         let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
 
         content.save_state();
 
         match paint {
             Paint::Color(c) => {
-                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity));
+                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity()));
                 content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
                 content.set_fill_color(c.to_pdf_color());
             }
@@ -206,13 +206,13 @@ fn fill(
                     chunk,
                     ctx,
                     accumulated_transform,
-                    Some(fill.opacity),
+                    Some(fill.opacity()),
                 );
                 content.set_fill_color_space(Pattern);
                 content.set_fill_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity));
+                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity()));
 
                 if let Some(soft_mask) =
                     gradient::create_shading_soft_mask(paint, &path_bbox, chunk, ctx)
@@ -232,14 +232,14 @@ fn fill(
             }
         }
 
-        draw_path(path.data.segments(), content);
+        draw_path(path.data().segments(), content);
         finish_path(None, Some(fill), content);
         content.restore_state();
     }
 }
 
 fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
-    match (stroke, fill.map(|f| f.rule)) {
+    match (stroke, fill.map(|f| f.rule())) {
         (Some(_), Some(FillRule::NonZero)) => content.fill_nonzero_and_stroke(),
         (Some(_), Some(FillRule::EvenOdd)) => content.fill_even_odd_and_stroke(),
         (None, Some(FillRule::NonZero)) => content.fill_nonzero(),

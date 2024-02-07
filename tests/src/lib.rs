@@ -6,7 +6,7 @@ use lazy_static::lazy_static;
 use oxipng::{InFile, OutFile};
 use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
-use usvg::{PostProcessingSteps, Tree, TreeParsing, TreePostProc};
+use usvg::{PostProcessingSteps, Tree};
 use walkdir::WalkDir;
 
 use svg2pdf::Options;
@@ -140,7 +140,6 @@ impl Runner {
         let options = usvg::Options::default();
         let mut tree = Tree::from_str(svg_string, &options).unwrap();
         tree.postprocess(PostProcessingSteps::default(), &self.fontdb);
-        tree.calculate_bounding_boxes();
         tree
     }
 

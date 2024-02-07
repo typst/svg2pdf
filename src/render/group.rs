@@ -1,7 +1,8 @@
+use std::ops::Mul;
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use std::rc::Rc;
 use tiny_skia::NonZeroRect;
-use usvg::Transform;
+use usvg::{Opacity, Transform};
 
 #[cfg(feature = "filters")]
 use super::filter;
@@ -16,21 +17,24 @@ pub fn render(
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
+    initial_opacity: Option<Opacity>
 ) {
     #[cfg(feature = "filters")]
-    if !group.filters.is_empty() {
-        filter::render(group, chunk, content, ctx, accumulated_transform);
+    if !group.filters().is_empty() {
+        filter::render(group, chunk, content, ctx);
         return;
     }
 
+    let initial_opacity = initial_opacity.unwrap_or(Opacity::ONE);
+
     // Filters will be ignored
-    if group.is_isolated() {
+    if group.is_isolated() || initial_opacity.get() != 1.0 {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
         let mut gs = chunk.ext_graphics(gs_ref);
-        gs.non_stroking_alpha(group.opacity.get())
-            .stroking_alpha(group.opacity.get())
-            .blend_mode(group.blend_mode.to_pdf_blend_mode());
+        gs.non_stroking_alpha(group.opacity().mul(initial_opacity).get())
+            .stroking_alpha(group.opacity().mul(initial_opacity).get())
+            .blend_mode(group.blend_mode().to_pdf_blend_mode());
 
         gs.finish();
         content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
@@ -60,9 +64,9 @@ fn create_x_object(
     ctx.deferrer.push();
 
     let pdf_bbox = group
-        .layer_bounding_box
+        .layer_bounding_box()
         .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
-        .transform(group.transform)
+        .transform(group.transform())
         .unwrap()
         .to_pdf_rect();
 
@@ -103,18 +107,18 @@ fn create_to_stream(
     accumulated_transform: Transform,
 ) {
     content.save_state();
-    content.transform(group.transform.to_pdf_transform());
-    let accumulated_transform = accumulated_transform.pre_concat(group.transform);
+    content.transform(group.transform().to_pdf_transform());
+    let accumulated_transform = accumulated_transform.pre_concat(group.transform());
 
-    if let Some(mask) = &group.mask {
+    if let Some(mask) = &group.mask() {
         mask::render(group, mask.clone(), chunk, content, ctx);
     }
 
-    if let Some(clip_path) = &group.clip_path {
+    if let Some(clip_path) = &group.clip_path() {
         clip_path::render(group, clip_path.clone(), chunk, content, ctx);
     }
 
-    for child in &group.children {
+    for child in group.children() {
         child.render(chunk, content, ctx, accumulated_transform);
     }
 

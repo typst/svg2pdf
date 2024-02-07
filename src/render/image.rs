@@ -3,7 +3,7 @@ use std::rc::Rc;
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{ImageKind, Size, Transform, Tree, Visibility};
+use usvg::{ImageKind, Size, Transform, Tree, ViewBox, Visibility};
 
 use crate::util::context::Context;
 use crate::util::helper;
@@ -12,19 +12,21 @@ use crate::{convert_tree_into, Options};
 
 /// Render an image into a content stream.
 pub fn render(
-    image: &usvg::Image,
+    visibility: Visibility,
+    kind: &ImageKind,
+    view_box: ViewBox,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
 ) {
-    if image.visibility != Visibility::Visible {
+    if visibility != Visibility::Visible {
         return;
     }
 
     // Will return the name of the image (in the Resources dictionary) and the dimensions of the
     // actual image (i.e. the actual image size, not the size in the PDF, which will always be 1x1
     // because that's how ImageXObjects are scaled by default.
-    let (image_name, image_size) = match &image.kind {
+    let (image_name, image_size) = match kind {
         ImageKind::JPEG(content) => {
             let dynamic_image =
                 image::load_from_memory_with_format(content, ImageFormat::Jpeg).unwrap();
@@ -76,11 +78,11 @@ pub fn render(
     // box. If the keepAspectRatio is slice, this rect will exceed the actual image view box, but
     // it will be clipped further below so that it always stays within the bounds of the actual image
     // rect.
-    let image_rect = image_rect(&image.view_box, image_size);
+    let image_rect = image_rect(&view_box, image_size);
 
     content.save_state();
     // Clip the image so just the part inside of the view box is actually visible.
-    helper::clip_to_rect(image.view_box.rect, content);
+    helper::clip_to_rect(view_box.rect, content);
 
     // Account for the x/y of the viewbox.
     content.transform(
@@ -210,5 +212,5 @@ fn create_svg_image(
     // regular ImageXObjects. So afterwards, we can just treat them the same.
     let next_ref = convert_tree_into(tree, Options::default(), chunk, image_ref);
     ctx.deferrer.set_next_ref(next_ref.get());
-    (image_name, tree.size)
+    (image_name, tree.size())
 }

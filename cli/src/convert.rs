@@ -1,7 +1,7 @@
 use crate::args::ConvertCommand;
 use std::path::{Path, PathBuf};
 use svg2pdf::Options;
-use usvg::{PostProcessingSteps, TreeParsing, TreePostProc};
+use usvg::{PostProcessingSteps};
 
 /// Execute a font listing command.
 pub fn _convert(command: ConvertCommand) -> Result<(), String> {
