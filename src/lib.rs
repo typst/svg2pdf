@@ -127,7 +127,7 @@ impl Default for Options {
             viewport: None,
             aspect: None,
             compress: true,
-            raster_scale: 1.5,
+            raster_scale: 1.0,
         }
     }
 }
