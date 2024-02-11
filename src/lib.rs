@@ -148,11 +148,9 @@ impl Default for Options {
 ///
 /// let svg = std::fs::read_to_string(input)?;
 /// let options = svg2pdf::usvg::Options::default();
-/// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
-///
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
-/// tree.postprocess(PostProcessingSteps::default(), &db);
+/// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options, &db)?;
 ///
 ///
 /// let pdf = svg2pdf::convert_tree(&tree, Options::default());
@@ -238,7 +236,6 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf;
 /// use pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str};
-/// use svg2pdf::usvg::TreeParsing;
 ///
 /// // Allocate the indirect reference IDs and names.
 /// let catalog_id = Ref::new(1);

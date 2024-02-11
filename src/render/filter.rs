@@ -15,7 +15,7 @@ pub fn render(
 ) -> Option<()> {
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
 
-    let layer_bbox = group.layer_bounding_box();
+    let layer_bbox = group.layer_bounding_box().transform(group.transform())?;
     let initial_transform = Transform::from_translate(-layer_bbox.x(), -layer_bbox.y());
     let pixmap_size = Size::from_wh(
         layer_bbox.width() * ctx.options.raster_scale,
@@ -27,7 +27,7 @@ pub fn render(
         pixmap_size.height().round() as u32,
     )?;
 
-    resvg::render_node(
+    resvg::render_node2(
         &Node::Group(Box::new(group.clone())),
         Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale)
             .pre_concat(initial_transform),
@@ -37,10 +37,6 @@ pub fn render(
     let encoded_image = pixmap.encode_png().ok()?;
 
     content.save_state();
-    content.transform(
-        Transform::from_translate(-layer_bbox.x(), -layer_bbox.y()).to_pdf_transform(),
-    );
-
     image::render(
         Visibility::Visible,
         &ImageKind::PNG(Arc::new(encoded_image)),
@@ -49,7 +45,6 @@ pub fn render(
         content,
         ctx,
     );
-
     content.restore_state();
 
     Some(())
