@@ -2,7 +2,7 @@ use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::{Chunk, Content, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{Fill, FillRule, Node, Opacity, Paint, PaintOrder};
+use usvg::{Fill, FillRule, Opacity, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
 
@@ -10,12 +10,11 @@ use super::{gradient, pattern};
 use crate::util::context::Context;
 use crate::util::defer::SRGB;
 use crate::util::helper::{
-    bbox_to_non_zero_rect, ColorExt, LineCapExt, LineJoinExt, NameExt,
+    ColorExt, LineCapExt, LineJoinExt, NameExt,
 };
 
 /// Render a path into a content stream.
 pub fn render(
-    node: &Node,
     path: &Path,
     chunk: &mut Chunk,
     content: &mut Content,
@@ -32,12 +31,12 @@ pub fn render(
     // higher file sizes depending on the SVG.
     match path.paint_order() {
         PaintOrder::FillAndStroke => {
-            fill(path, node, chunk, content, ctx, accumulated_transform);
-            stroke(path, node, chunk, content, ctx, accumulated_transform);
+            fill(path, chunk, content, ctx, accumulated_transform);
+            stroke(path, chunk, content, ctx, accumulated_transform);
         }
         PaintOrder::StrokeAndFill => {
-            stroke(path, node, chunk, content, ctx, accumulated_transform);
-            fill(path, node, chunk, content, ctx, accumulated_transform);
+            stroke(path, chunk, content, ctx, accumulated_transform);
+            fill(path, chunk, content, ctx, accumulated_transform);
         }
     }
 }
@@ -89,7 +88,6 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
 
 fn stroke(
     path: &Path,
-    node: &Node,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
@@ -101,7 +99,6 @@ fn stroke(
 
     if let Some(stroke) = path.stroke().as_ref() {
         let paint = &stroke.paint();
-        let path_bbox = bbox_to_non_zero_rect(Some(node.bounding_box()));
 
         content.save_state();
 
@@ -119,7 +116,6 @@ fn stroke(
                 // the whole pattern itself. This is why we need to handle this case differently.
                 let pattern_name = pattern::create(
                     p.clone(),
-                    &path_bbox,
                     chunk,
                     ctx,
                     accumulated_transform,
@@ -140,14 +136,13 @@ fn stroke(
                 );
 
                 if let Some(soft_mask) =
-                    gradient::create_shading_soft_mask(paint, &path_bbox, chunk, ctx)
+                    gradient::create_shading_soft_mask(paint, chunk, ctx)
                 {
                     content.set_parameters(soft_mask.to_pdf_name());
                 }
 
                 let pattern_name = gradient::create_shading_pattern(
                     paint,
-                    &path_bbox,
                     chunk,
                     ctx,
                     &accumulated_transform,
@@ -176,7 +171,6 @@ fn stroke(
 
 fn fill(
     path: &Path,
-    node: &Node,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
@@ -188,7 +182,6 @@ fn fill(
 
     if let Some(fill) = path.fill().as_ref() {
         let paint = &fill.paint();
-        let path_bbox = bbox_to_non_zero_rect(Some(node.bounding_box()));
 
         content.save_state();
 
@@ -202,7 +195,6 @@ fn fill(
                 // See note in the `stroke` function.
                 let pattern_name = pattern::create(
                     p.clone(),
-                    &path_bbox,
                     chunk,
                     ctx,
                     accumulated_transform,
@@ -215,14 +207,13 @@ fn fill(
                 set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity()));
 
                 if let Some(soft_mask) =
-                    gradient::create_shading_soft_mask(paint, &path_bbox, chunk, ctx)
+                    gradient::create_shading_soft_mask(paint, chunk, ctx)
                 {
                     content.set_parameters(soft_mask.to_pdf_name());
                 };
 
                 let pattern_name = gradient::create_shading_pattern(
                     paint,
-                    &path_bbox,
                     chunk,
                     ctx,
                     &accumulated_transform,

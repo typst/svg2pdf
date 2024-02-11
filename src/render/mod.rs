@@ -52,7 +52,7 @@ impl Render for Node {
     ) {
         match self {
             Node::Path(ref path) => {
-                path::render(self, path, chunk, content, ctx, accumulated_transform)
+                path::render(path, chunk, content, ctx, accumulated_transform)
             }
             Node::Group(ref group) => {
                 group::render(group, chunk, content, ctx, accumulated_transform, None)

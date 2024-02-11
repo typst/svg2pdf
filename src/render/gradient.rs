@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use pdf_writer::types::{FunctionShadingType, MaskType};
 use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref};
-use usvg::{NonZeroRect, Paint, Transform, Units};
+use usvg::{Paint, Transform};
 
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, RectExt, StopExt, TransformExt};
@@ -19,8 +19,7 @@ struct GradientProperties {
     coords: Vec<f32>,
     shading_type: FunctionShadingType,
     stops: Vec<usvg::Stop>,
-    transform: Transform,
-    units: Units,
+    transform: Transform
 }
 
 impl GradientProperties {
@@ -31,14 +30,12 @@ impl GradientProperties {
                 shading_type: FunctionShadingType::Axial,
                 stops: Vec::from(l.stops()),
                 transform: l.transform(),
-                units: l.units(),
             }),
             Paint::RadialGradient(r) => Some(Self {
                 coords: vec![r.fx(), r.fy(), 0.0, r.cx(), r.cy(), r.r().get()],
                 shading_type: FunctionShadingType::Radial,
                 stops: Vec::from(r.stops()),
                 transform: r.transform(),
-                units: r.units(),
             }),
             _ => None,
         }
@@ -51,26 +48,24 @@ impl GradientProperties {
 /// needs to be either a linear gradient or a radial gradient.
 pub fn create_shading_pattern(
     paint: &Paint,
-    parent_bbox: &NonZeroRect,
     chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: &Transform,
 ) -> Rc<String> {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
-    shading_pattern(&properties, parent_bbox, chunk, ctx, accumulated_transform)
+    shading_pattern(&properties, chunk, ctx, accumulated_transform)
 }
 
 /// Return a soft mask that will render the stop opacities of a gradient into a gray scale
 /// shading.
 pub fn create_shading_soft_mask(
     paint: &Paint,
-    parent_bbox: &NonZeroRect,
     chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Option<Rc<String>> {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
     if properties.stops.iter().any(|stop| stop.opacity().get() < 1.0) {
-        Some(shading_soft_mask(&properties, parent_bbox, chunk, ctx))
+        Some(shading_soft_mask(&properties, chunk, ctx))
     } else {
         None
     }
@@ -78,20 +73,13 @@ pub fn create_shading_soft_mask(
 
 fn shading_pattern(
     properties: &GradientProperties,
-    parent_bbox: &NonZeroRect,
     chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: &Transform,
 ) -> Rc<String> {
     let pattern_ref = ctx.alloc_ref();
 
-    let matrix = accumulated_transform
-        .pre_concat(if properties.units == Units::ObjectBoundingBox {
-            Transform::from_bbox(*parent_bbox)
-        } else {
-            Transform::default()
-        })
-        .pre_concat(properties.transform);
+    let matrix = accumulated_transform.pre_concat(properties.transform);
 
     let shading_ref = shading_function(properties, chunk, ctx, false);
     let mut shading_pattern = chunk.shading_pattern(pattern_ref);
@@ -104,7 +92,6 @@ fn shading_pattern(
 
 fn shading_soft_mask(
     properties: &GradientProperties,
-    parent_bbox: &NonZeroRect,
     chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Rc<String> {
@@ -114,13 +101,7 @@ fn shading_soft_mask(
     let shading_name = ctx.deferrer.add_shading(shading_ref);
     let bbox = ctx.get_rect().to_pdf_rect();
 
-    let transform = properties.transform.pre_concat(
-        if properties.units == Units::ObjectBoundingBox {
-            Transform::from_bbox(*parent_bbox)
-        } else {
-            Transform::default()
-        },
-    );
+    let transform = properties.transform;
 
     let mut content = Content::new();
     content.transform(transform.to_pdf_transform());
