@@ -8,7 +8,7 @@ OUT_PATH = ROOT / "src" / "render.rs"
 
 def main():
     test_string = "#![allow(non_snake_case)]\n\n"
-    test_string += "use crate::render;\n\n"
+    test_string += "#[allow(unused_imports)]\nuse crate::render;\n\n"
 
     for p in SVG_DIR.rglob("*"):
         if p.is_file() and p.suffix == ".svg":
@@ -30,7 +30,7 @@ def main():
 
             test_string += "#[test] "
 
-            test_string += f'fn {function_name}() {{assert_eq!(render("{svg_path}", "{ref_path}"), 0)}}\n'
+            test_string += f'fn {function_name}() {{assert_eq!(render("{svg_path.relative_to(ROOT)}", "{ref_path.relative_to(ROOT)}"), 0)}}\n'
 
     with open(Path(OUT_PATH), "w") as file:
         file.write(test_string)

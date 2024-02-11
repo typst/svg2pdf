@@ -59,6 +59,3 @@ usvg = { workspace = true }
 image = { workspace = true, optional = true }
 tiny-skia = {workspace = true, optional = true}
 resvg = {workspace = true, optional = true}
-
-[env]
-RUST_TEST_THREADS = "1"

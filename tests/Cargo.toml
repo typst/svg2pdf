@@ -27,6 +27,3 @@ oxipng = { workspace = true }
 clap = { workspace = true }
 termcolor = { workspace = true }
 regex = { workspace = true }
-
-[env]
-RUST_TEST_THREADS = 1
