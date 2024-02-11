@@ -8,18 +8,9 @@ repository.workspace = true
 license.workspace = true
 publish = false
 
-#[[test]]
-#name = "tests"
-#path = "src/render.rs"
-
 #[[bin]]
 #name = "generate"
 #path = "src/generate.rs"
-#test = false
-#
-#[[bin]]
-#name = "typst"
-#path = "src/typst.rs"
 #test = false
 
 [dependencies]
@@ -36,7 +27,6 @@ oxipng = { workspace = true }
 clap = { workspace = true }
 termcolor = { workspace = true }
 regex = { workspace = true }
-once_cell = "1.19.0"
 
 [env]
 RUST_TEST_THREADS = 1

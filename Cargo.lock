@@ -1300,7 +1300,6 @@ dependencies = [
  "image",
  "indicatif",
  "lazy_static",
- "once_cell",
  "oxipng",
  "pdf-writer",
  "pdfium-render",
