@@ -1,8 +1,15 @@
+mod render;
+
+use std::cmp::max;
+use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 use fontdb::Database;
-use image::RgbaImage;
+use image::io::Reader;
+use image::{Rgba, RgbaImage};
 use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 use oxipng::{InFile, OutFile};
 use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
@@ -40,6 +47,15 @@ lazy_static! {
             })
             .map(|e| e.into_path())
             .collect()
+    };
+
+    pub static ref PDFIUM: Pdfium = {
+        Pdfium::new(
+                Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
+                    "./pdfium_lib/",
+                ))
+                .unwrap(),
+            )
     };
 }
 
@@ -93,7 +109,6 @@ impl TestFile {
 }
 
 pub struct Runner {
-    pdfium: Pdfium,
     fontdb: Database,
 }
 
@@ -105,21 +120,13 @@ impl Default for Runner {
         fontdb.load_font_file("fonts/NotoSans-Bold.ttf").unwrap();
         fontdb.load_font_file("fonts/NotoSans-Italic.ttf").unwrap();
 
-        Self {
-            pdfium: Pdfium::new(
-                Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
-                    "./pdfium_lib/",
-                ))
-                .unwrap(),
-            ),
-            fontdb,
-        }
+        Self { fontdb }
     }
 }
 
 impl Runner {
     pub fn render_pdf(&self, pdf: &[u8]) -> RgbaImage {
-        let document = self.pdfium.load_pdf_from_byte_slice(pdf, None);
+        let document = PDFIUM.load_pdf_from_byte_slice(pdf, None);
 
         let render_config = PdfRenderConfig::new()
             .clear_before_rendering(true)
@@ -173,4 +180,47 @@ pub fn save_image(image: &RgbaImage, path: &Path) {
         &oxipng::Options::max_compression(),
     )
     .unwrap();
+}
+
+fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
+    if pixel1.0[3] == 0 && pixel2.0[3] == 0 {
+        return false;
+    }
+
+    pixel1.0[0] != pixel2.0[0]
+        || pixel1.0[1] != pixel2.0[1]
+        || pixel1.0[2] != pixel2.0[2]
+        || pixel1.0[3] != pixel2.0[3]
+}
+
+pub fn render(svg_path: &str, ref_path: &str) -> i32 {
+    let runner = Runner::default();
+
+    let expected_image = Reader::open(ref_path).unwrap().decode().unwrap().into_rgba8();
+
+    let (_, actual_image) =
+        runner.convert_svg(&fs::read_to_string(svg_path).unwrap(), &runner);
+
+    let width = max(expected_image.width(), actual_image.width());
+    let height = max(expected_image.height(), actual_image.height());
+
+    let mut pixel_diff = 0;
+
+    for x in 0..width {
+        for y in 0..height {
+            let actual_pixel = actual_image.get_pixel_checked(x, y);
+            let expected_pixel = expected_image.get_pixel_checked(x, y);
+
+            match (actual_pixel, expected_pixel) {
+                (Some(actual), Some(expected)) => {
+                    if is_pix_diff(expected, actual) {
+                        pixel_diff += 1;
+                    }
+                }
+                _ => pixel_diff += 1,
+            }
+        }
+    }
+
+    pixel_diff
 }
