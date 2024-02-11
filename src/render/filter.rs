@@ -14,9 +14,7 @@ pub fn render(
     ctx: &mut Context,
 ) -> Option<()> {
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
-
     let layer_bbox = group.layer_bounding_box().transform(group.transform())?;
-    let initial_transform = Transform::from_translate(-layer_bbox.x(), -layer_bbox.y());
     let pixmap_size = Size::from_wh(
         layer_bbox.width() * ctx.options.raster_scale,
         layer_bbox.height() * ctx.options.raster_scale,
@@ -27,16 +25,21 @@ pub fn render(
         pixmap_size.height().round() as u32,
     )?;
 
-    resvg::render_node2(
+    let initial_transform = Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale)
+        .pre_concat(Transform::from_translate(-layer_bbox.x(), -layer_bbox.y()))
+        // This one is a hack because resvg::render_node will take the absolute layer bbox into consideration
+        // and translate by -layer_bbox.x() and -layer_bbox.y(), but we don't want that, so we
+        // inverse it.
+        .pre_concat(Transform::from_translate(group.abs_layer_bounding_box().x(), group.abs_layer_bounding_box().y()));
+
+    resvg::render_node(
         &Node::Group(Box::new(group.clone())),
-        Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale)
-            .pre_concat(initial_transform),
+        initial_transform,
         &mut pixmap.as_mut(),
     );
 
     let encoded_image = pixmap.encode_png().ok()?;
 
-    content.save_state();
     image::render(
         Visibility::Visible,
         &ImageKind::PNG(Arc::new(encoded_image)),
@@ -45,7 +48,6 @@ pub fn render(
         content,
         ctx,
     );
-    content.restore_state();
 
     Some(())
 }
