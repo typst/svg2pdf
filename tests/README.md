@@ -12,7 +12,7 @@ targets for testing the PDF outputs of this library, however, since the Adobe PD
 not available as a library that can be linked to a program, we can't really test this. Because
 of this, the next best option was chosen: `pdfium`, which is the library that powers the
 PDF viewer in Chrome. In order to run the tests, you will have to get a copy of the [pdfium library](https://github.com/bblanchon/pdfium-binaries/releases)
-for your operating system and put it into the "pdfium_lib" folder. For full reproducibility,
+for your operating system and put it into the "pdfium" folder. For full reproducibility,
 use [this version](https://github.com/bblanchon/pdfium-binaries/releases/tag/chromium%2F5880),
 which is the one the CI uses.
 
