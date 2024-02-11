@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-ROOT = Path(".")
+ROOT = Path(__file__).parent.parent
 SVG_DIR = ROOT / "svg"
 REF_DIR = ROOT / "ref"
 
