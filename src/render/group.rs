@@ -1,7 +1,6 @@
-use std::ops::Mul;
 use pdf_writer::{Chunk, Content, Filter, Finish};
+use std::ops::Mul;
 use std::rc::Rc;
-use tiny_skia::NonZeroRect;
 use usvg::{Opacity, Transform};
 
 #[cfg(feature = "filters")]
@@ -17,7 +16,7 @@ pub fn render(
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
-    initial_opacity: Option<Opacity>
+    initial_opacity: Option<Opacity>,
 ) {
     #[cfg(feature = "filters")]
     if !group.filters().is_empty() {
@@ -65,7 +64,6 @@ fn create_x_object(
 
     let pdf_bbox = group
         .layer_bounding_box()
-        .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
         .transform(group.transform())
         .unwrap()
         .to_pdf_rect();
@@ -111,11 +109,11 @@ fn create_to_stream(
     let accumulated_transform = accumulated_transform.pre_concat(group.transform());
 
     if let Some(mask) = &group.mask() {
-        mask::render(group, mask.clone(), chunk, content, ctx);
+        mask::render(group, mask, chunk, content, ctx);
     }
 
     if let Some(clip_path) = &group.clip_path() {
-        clip_path::render(group, clip_path.clone(), chunk, content, ctx);
+        clip_path::render(group, clip_path, chunk, content, ctx);
     }
 
     for child in group.children() {

@@ -16,7 +16,7 @@ svg2pdf = { path = ".", version = "0.9.1" }
 clap = { version = "4.4.2", features = ["derive"] }
 clap_complete = "4.4.3"
 clap_mangen = "0.2.14"
-fontdb = "0.16.0"
+fontdb = "0.16.1"
 image = { version = "0.24", default-features = false, features = ["jpeg", "png", "gif"] }
 indicatif = "0.17.5"
 lazy_static = "1.4.0"

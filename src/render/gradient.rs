@@ -211,10 +211,12 @@ fn function(
     }
 
     if use_opacities {
-        let stops = pad_stops(stops.iter().map(|s| s.opacity_stops()).collect::<Vec<Stop<1>>>());
+        let stops =
+            pad_stops(stops.iter().map(|s| s.opacity_stops()).collect::<Vec<Stop<1>>>());
         select_function(&stops, chunk, ctx)
     } else {
-        let stops = pad_stops(stops.iter().map(|s| s.color_stops()).collect::<Vec<Stop<3>>>());
+        let stops =
+            pad_stops(stops.iter().map(|s| s.color_stops()).collect::<Vec<Stop<3>>>());
         select_function(&stops, chunk, ctx)
     }
 }

@@ -1,10 +1,10 @@
 use crate::render::image;
 use crate::util::context::Context;
+use crate::util::helper::TransformExt;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
-use tiny_skia::{Rect, Size, Transform};
+use tiny_skia::{Size, Transform};
 use usvg::{AspectRatio, Group, ImageKind, Node, ViewBox, Visibility};
-use crate::util::helper::TransformExt;
 
 /// Render a group with filters as an image
 pub fn render(
@@ -15,11 +15,8 @@ pub fn render(
 ) -> Option<()> {
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
 
-    let layer_bbox = group.layer_bounding_box()?;
-    let initial_transform = Transform::from_translate(
-        -layer_bbox.x(),
-        -layer_bbox.y(),
-    );
+    let layer_bbox = group.layer_bounding_box();
+    let initial_transform = Transform::from_translate(-layer_bbox.x(), -layer_bbox.y());
     let pixmap_size = Size::from_wh(
         layer_bbox.width() * ctx.options.raster_scale,
         layer_bbox.height() * ctx.options.raster_scale,
@@ -37,18 +34,20 @@ pub fn render(
         &mut pixmap.as_mut(),
     );
 
-    pixmap.save_png("out.png");
-
     let encoded_image = pixmap.encode_png().ok()?;
 
     content.save_state();
-    content.transform(Transform::from_translate(-layer_bbox.x(), -layer_bbox.y()).to_pdf_transform());
+    content.transform(
+        Transform::from_translate(-layer_bbox.x(), -layer_bbox.y()).to_pdf_transform(),
+    );
 
     image::render(
         Visibility::Visible,
         &ImageKind::PNG(Arc::new(encoded_image)),
         ViewBox { rect: layer_bbox, aspect: AspectRatio::default() },
-        chunk, content, ctx
+        chunk,
+        content,
+        ctx,
     );
 
     content.restore_state();

@@ -1,5 +1,5 @@
-use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::Arc;
 
 use pdf_writer::types::{PaintType, TilingType};
 use pdf_writer::{Chunk, Content, Filter};
@@ -13,27 +13,26 @@ use crate::util::helper::TransformExt;
 /// Turn a pattern into a tiling pattern. Returns the name (= the name in the `Resources` dictionary) of
 /// the pattern
 pub fn create(
-    pattern: Rc<RefCell<Pattern>>,
+    pattern: Arc<Pattern>,
     parent_bbox: &NonZeroRect,
     chunk: &mut Chunk,
     ctx: &mut Context,
     matrix: Transform,
     initial_opacity: Option<Opacity>,
 ) -> Rc<String> {
-    let pattern = pattern.borrow();
     let pattern_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
     // Content units object bounding box should only be used if no view box is declared.
-    let content_units_obb =
-        pattern.content_units() == Units::ObjectBoundingBox && pattern.view_box().is_none();
+    let content_units_obb = pattern.content_units() == Units::ObjectBoundingBox
+        && pattern.view_box().is_none();
 
-    let pattern_rect = if pattern.units() == Units::ObjectBoundingBox || content_units_obb {
+    let pattern_rect = if pattern.units() == Units::ObjectBoundingBox || content_units_obb
+    {
         pattern.rect().bbox_transform(*parent_bbox)
     } else {
         pattern.rect()
     };
-
 
     let pattern_matrix = matrix.pre_concat(pattern.transform()).pre_concat(
         Transform::from_row(1.0, 0.0, 0.0, 1.0, pattern_rect.x(), pattern_rect.y()),
@@ -60,7 +59,14 @@ pub fn create(
         content.transform(view_box_transform.to_pdf_transform());
     }
 
-    group::render(&pattern.root(), chunk, &mut content, ctx, Transform::default(), initial_opacity);
+    group::render(
+        &pattern.root(),
+        chunk,
+        &mut content,
+        ctx,
+        Transform::default(),
+        initial_opacity,
+    );
 
     content.restore_state();
 

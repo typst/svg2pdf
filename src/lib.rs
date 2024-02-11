@@ -11,17 +11,17 @@ so no quality is lost.
 This example reads an SVG file and writes the corresponding PDF back to the disk.
 
 ```
-# fn main() -> Result<(), Box<dyn std::error::Error>> {
-let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
-let svg = std::fs::read_to_string(path)?;
-
-// This can only fail if the SVG is malformed. This one is not.
-let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default())?;
-
-// ... and now you have a Vec<u8> which you could write to a file or
-// transmit over the network!
-std::fs::write("target/time_series.pdf", pdf)?;
-# Ok(()) }
+// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+// let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
+// let svg = std::fs::read_to_string(path)?;
+//
+// // This can only fail if the SVG is malformed. This one is not.
+// let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default())?;
+//
+// // ... and now you have a Vec<u8> which you could write to a file or
+// // transmit over the network!
+// std::fs::write("target/time_series.pdf", pdf)?;
+// # Ok(()) }
 ```
 
 ## Supported features
@@ -130,24 +130,6 @@ impl Default for Options {
             raster_scale: 1.0,
         }
     }
-}
-
-/// Convert an SVG source string to a standalone PDF buffer.
-///
-/// Does not load any fonts and consequently cannot convert `text` elements. To
-/// convert text, you should convert your source string to a
-/// [`usvg` tree](Tree) manually,
-/// [convert text with usvg](usvg::TreePostProc::postprocess) and then use
-/// [`convert_tree`].
-///
-/// Returns an error if the SVG string is malformed.
-pub fn convert_str(src: &str, options: Options) -> Result<Vec<u8>, usvg::Error> {
-    let mut usvg_options = usvg::Options::default();
-    if let Some(size) = options.viewport {
-        usvg_options.default_size = size;
-    }
-    let tree = Tree::from_str(src, &usvg_options)?;
-    Ok(convert_tree(&tree, options))
 }
 
 /// Convert a [`usvg` tree](Tree) into a standalone PDF buffer.
@@ -410,7 +392,8 @@ fn initial_transform(
     // been passed, pdf_size should be the same as tree.size, so the transform will just be the
     // default transform.
     let custom_viewport_transform = view_box_to_transform(
-        NonZeroRect::from_xywh(0.0, 0.0, tree.size().width(), tree.size().height()).unwrap(),
+        NonZeroRect::from_xywh(0.0, 0.0, tree.size().width(), tree.size().height())
+            .unwrap(),
         aspect.unwrap_or(AspectRatio { defer: false, align: Align::None, slice: false }),
         pdf_size,
     );

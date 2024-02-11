@@ -58,13 +58,23 @@ impl Render for Node {
                 group::render(group, chunk, content, ctx, accumulated_transform, None)
             }
             #[cfg(feature = "image")]
-            Node::Image(ref image) => image::render(image.visibility(), image.kind(), image.view_box(),
-                                                    chunk, content, ctx),
+            Node::Image(ref image) => image::render(
+                image.visibility(),
+                image.kind(),
+                image.view_box(),
+                chunk,
+                content,
+                ctx,
+            ),
             Node::Text(ref text) => {
-                // Texts should be flattened beforehand.
-                if let Some(ref root) = text.flattened() {
-                    group::render(root, chunk, content, ctx, accumulated_transform, None);
-                }
+                group::render(
+                    text.flattened(),
+                    chunk,
+                    content,
+                    ctx,
+                    accumulated_transform,
+                    None,
+                );
             }
         }
     }

@@ -101,7 +101,7 @@ fn stroke(
 
     if let Some(stroke) = path.stroke().as_ref() {
         let paint = &stroke.paint();
-        let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
+        let path_bbox = bbox_to_non_zero_rect(Some(node.bounding_box()));
 
         content.save_state();
 
@@ -188,7 +188,7 @@ fn fill(
 
     if let Some(fill) = path.fill().as_ref() {
         let paint = &fill.paint();
-        let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
+        let path_bbox = bbox_to_non_zero_rect(Some(node.bounding_box()));
 
         content.save_state();
 
