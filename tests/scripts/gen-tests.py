@@ -2,8 +2,11 @@
 
 from pathlib import Path
 
-SVG_DIR = "svg"
-REF_DIR = "ref"
+ROOT = Path(".")
+SVG_DIR = ROOT / "svg"
+REF_DIR = ROOT / "ref"
+
+print(SVG_DIR.resolve())
 
 
 class TestFile:
@@ -16,23 +19,19 @@ class TestFile:
         self.ref_path = Path(*parts)
 
 
+OUT_PATH = (ROOT / "src" / "render.rs")
+
+
 def main():
 
     test_string = "#![allow(non_snake_case)]\n\n"
     test_string += "use crate::render;\n\n"
 
-    counter = 0
-
-    for p in Path(SVG_DIR).rglob("*"):
+    for p in SVG_DIR.rglob("*"):
         if p.is_file() and p.suffix == ".svg":
             test_file = TestFile(p)
 
-            # counter += 1
-            #
-            # if counter == 100:
-            #     break
-
-            function_name = str(test_file.svg_path.with_suffix("")) \
+            function_name = str(test_file.svg_path.relative_to(SVG_DIR).with_suffix("")) \
                 .replace("/", "_") \
                 .replace("-", "_") \
                 .replace("=", "_") \
@@ -42,13 +41,14 @@ def main():
             ref_path = test_file.ref_path
 
             if not ref_path.is_file():
-                test_string += "#[ignore]\n"
+                test_string += "#[ignore] "
 
             test_string += "#[test] "
 
             test_string += f"fn {function_name}() {{assert_eq!(render(\"{svg_path}\", \"{ref_path}\"), 0)}}\n"
 
-    print(test_string)
+    with open(Path(OUT_PATH), "w") as file:
+        file.write(test_string)
 
 
 if __name__ == '__main__':

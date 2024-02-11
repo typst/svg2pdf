@@ -4,13 +4,11 @@ mod render;
 use std::cmp::max;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
 
 use fontdb::Database;
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
 use lazy_static::lazy_static;
-use once_cell::sync::Lazy;
 use oxipng::{InFile, OutFile};
 use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
