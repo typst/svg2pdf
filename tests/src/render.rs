@@ -2,10 +2,13 @@
 
 use crate::render;
 
-// #[test] fn svg_resvg_filters_feDisplacementMap_simple_case() {assert_eq!(render("svg/resvg/filters/feDisplacementMap/simple-case.svg", "ref/resvg/filters/feDisplacementMap/simple-case.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feDisplacementMap_simple_case() {assert_eq!(render("svg/resvg/filters/feDisplacementMap/simple-case.svg", "ref/resvg/filters/feDisplacementMap/simple-case.png"), 0)}
 #[test] fn svg_resvg_filters_feOffset_negative_offset() {assert_eq!(render("svg/resvg/filters/feOffset/negative-offset.svg", "ref/resvg/filters/feOffset/negative-offset.png"), 0)}
-// #[test] fn svg_resvg_filters_feOffset_fractional_offset() {assert_eq!(render("svg/resvg/filters/feOffset/fractional-offset.svg", "ref/resvg/filters/feOffset/fractional-offset.png"), 0)}
-// #[test] fn svg_resvg_filters_feOffset_complex_transform() {assert_eq!(render("svg/resvg/filters/feOffset/complex-transform.svg", "ref/resvg/filters/feOffset/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feOffset_fractional_offset() {assert_eq!(render("svg/resvg/filters/feOffset/fractional-offset.svg", "ref/resvg/filters/feOffset/fractional-offset.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feOffset_complex_transform() {assert_eq!(render("svg/resvg/filters/feOffset/complex-transform.svg", "ref/resvg/filters/feOffset/complex-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feOffset_no_offset() {assert_eq!(render("svg/resvg/filters/feOffset/no-offset.svg", "ref/resvg/filters/feOffset/no-offset.png"), 0)}
 #[test] fn svg_resvg_filters_feOffset_with_primitiveUnits_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/feOffset/with-primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feOffset/with-primitiveUnits=objectBoundingBox.png"), 0)}
 #[test] fn svg_resvg_filters_feOffset_simple_case() {assert_eq!(render("svg/resvg/filters/feOffset/simple-case.svg", "ref/resvg/filters/feOffset/simple-case.png"), 0)}
@@ -143,7 +146,8 @@ use crate::render;
 #[test] fn svg_resvg_filters_feGaussianBlur_stdDeviation_with_two_values() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/stdDeviation-with-two-values.svg", "ref/resvg/filters/feGaussianBlur/stdDeviation-with-two-values.png"), 0)}
 #[test] fn svg_resvg_filters_feGaussianBlur_small_stdDeviation() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/small-stdDeviation.svg", "ref/resvg/filters/feGaussianBlur/small-stdDeviation.png"), 0)}
 #[test] fn svg_resvg_filters_feGaussianBlur_stdDeviation_5_0() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/stdDeviation=5-0.svg", "ref/resvg/filters/feGaussianBlur/stdDeviation=5-0.png"), 0)}
-// #[test] fn svg_resvg_filters_feGaussianBlur_complex_transform() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/complex-transform.svg", "ref/resvg/filters/feGaussianBlur/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feGaussianBlur_complex_transform() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/complex-transform.svg", "ref/resvg/filters/feGaussianBlur/complex-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feGaussianBlur_stdDeviation_0_5() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/stdDeviation=0-5.svg", "ref/resvg/filters/feGaussianBlur/stdDeviation=0-5.png"), 0)}
 #[test] fn svg_resvg_filters_feGaussianBlur_negative_stdDeviation() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/negative-stdDeviation.svg", "ref/resvg/filters/feGaussianBlur/negative-stdDeviation.png"), 0)}
 #[test] fn svg_resvg_filters_feGaussianBlur_simple_case() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/simple-case.svg", "ref/resvg/filters/feGaussianBlur/simple-case.png"), 0)}
@@ -154,7 +158,8 @@ use crate::render;
 #[test] fn svg_resvg_filters_feGaussianBlur_tiny_stdDeviation() {assert_eq!(render("svg/resvg/filters/feGaussianBlur/tiny-stdDeviation.svg", "ref/resvg/filters/feGaussianBlur/tiny-stdDeviation.png"), 0)}
 #[test] fn svg_resvg_filters_feTurbulence_baseFrequency__0_05() {assert_eq!(render("svg/resvg/filters/feTurbulence/baseFrequency=-0.05.svg", "ref/resvg/filters/feTurbulence/baseFrequency=-0.05.png"), 0)}
 #[test] fn svg_resvg_filters_feTurbulence_type_fractalNoise() {assert_eq!(render("svg/resvg/filters/feTurbulence/type=fractalNoise.svg", "ref/resvg/filters/feTurbulence/type=fractalNoise.png"), 0)}
-// #[test] fn svg_resvg_filters_feTurbulence_complex_transform() {assert_eq!(render("svg/resvg/filters/feTurbulence/complex-transform.svg", "ref/resvg/filters/feTurbulence/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feTurbulence_complex_transform() {assert_eq!(render("svg/resvg/filters/feTurbulence/complex-transform.svg", "ref/resvg/filters/feTurbulence/complex-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feTurbulence_numOctaves__1() {assert_eq!(render("svg/resvg/filters/feTurbulence/numOctaves=-1.svg", "ref/resvg/filters/feTurbulence/numOctaves=-1.png"), 0)}
 #[test] fn svg_resvg_filters_feTurbulence_seed_1_5() {assert_eq!(render("svg/resvg/filters/feTurbulence/seed=1.5.svg", "ref/resvg/filters/feTurbulence/seed=1.5.png"), 0)}
 #[test] fn svg_resvg_filters_feTurbulence_no_attributes() {assert_eq!(render("svg/resvg/filters/feTurbulence/no-attributes.svg", "ref/resvg/filters/feTurbulence/no-attributes.png"), 0)}
@@ -170,33 +175,55 @@ use crate::render;
 #[test] fn svg_resvg_filters_feTurbulence_baseFrequency_0_01() {assert_eq!(render("svg/resvg/filters/feTurbulence/baseFrequency=0.01.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.01.png"), 0)}
 #[test] fn svg_resvg_filters_feTurbulence_baseFrequency_0_05_0_01() {assert_eq!(render("svg/resvg/filters/feTurbulence/baseFrequency=0.05-0.01.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.05-0.01.png"), 0)}
 #[test] fn svg_resvg_filters_feTurbulence_baseFrequency_0_05__0_01() {assert_eq!(render("svg/resvg/filters/feTurbulence/baseFrequency=0.05--0.01.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.05--0.01.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_filter() {assert_eq!(render("svg/resvg/filters/enable-background/with-filter.svg", "ref/resvg/filters/enable-background/with-filter.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_filter_on_the_same_element() {assert_eq!(render("svg/resvg/filters/enable-background/with-filter-on-the-same-element.svg", "ref/resvg/filters/enable-background/with-filter-on-the-same-element.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_opacity_1() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-1.svg", "ref/resvg/filters/enable-background/with-opacity-1.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_accumulate() {assert_eq!(render("svg/resvg/filters/enable-background/accumulate.svg", "ref/resvg/filters/enable-background/accumulate.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_opacity_2() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-2.svg", "ref/resvg/filters/enable-background/with-opacity-2.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_opacity_3() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-3.svg", "ref/resvg/filters/enable-background/with-opacity-3.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_stop_on_the_first_new_1() {assert_eq!(render("svg/resvg/filters/enable-background/stop-on-the-first-new-1.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-1.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_stop_on_the_first_new_2() {assert_eq!(render("svg/resvg/filters/enable-background/stop-on-the-first-new-2.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-2.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_opacity_4() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-4.svg", "ref/resvg/filters/enable-background/with-opacity-4.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_accumulate_with_new() {assert_eq!(render("svg/resvg/filters/enable-background/accumulate-with-new.svg", "ref/resvg/filters/enable-background/accumulate-with-new.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_new_with_invalid_region_1() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-invalid-region-1.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-1.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_new_with_invalid_region_2() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-invalid-region-2.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-2.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_new_with_invalid_region_3() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-invalid-region-3.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-3.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_mask() {assert_eq!(render("svg/resvg/filters/enable-background/with-mask.svg", "ref/resvg/filters/enable-background/with-mask.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_inherit() {assert_eq!(render("svg/resvg/filters/enable-background/inherit.svg", "ref/resvg/filters/enable-background/inherit.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_clip_path() {assert_eq!(render("svg/resvg/filters/enable-background/with-clip-path.svg", "ref/resvg/filters/enable-background/with-clip-path.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_new() {assert_eq!(render("svg/resvg/filters/enable-background/new.svg", "ref/resvg/filters/enable-background/new.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_filter_on_shape() {assert_eq!(render("svg/resvg/filters/enable-background/filter-on-shape.svg", "ref/resvg/filters/enable-background/filter-on-shape.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_shapes_after_filter() {assert_eq!(render("svg/resvg/filters/enable-background/shapes-after-filter.svg", "ref/resvg/filters/enable-background/shapes-after-filter.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_with_transform() {assert_eq!(render("svg/resvg/filters/enable-background/with-transform.svg", "ref/resvg/filters/enable-background/with-transform.png"), 0)}
-// #[test] fn svg_resvg_filters_enable_background_new_with_region() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-region.svg", "ref/resvg/filters/enable-background/new-with-region.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_filter() {assert_eq!(render("svg/resvg/filters/enable-background/with-filter.svg", "ref/resvg/filters/enable-background/with-filter.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_filter_on_the_same_element() {assert_eq!(render("svg/resvg/filters/enable-background/with-filter-on-the-same-element.svg", "ref/resvg/filters/enable-background/with-filter-on-the-same-element.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_opacity_1() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-1.svg", "ref/resvg/filters/enable-background/with-opacity-1.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_accumulate() {assert_eq!(render("svg/resvg/filters/enable-background/accumulate.svg", "ref/resvg/filters/enable-background/accumulate.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_opacity_2() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-2.svg", "ref/resvg/filters/enable-background/with-opacity-2.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_opacity_3() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-3.svg", "ref/resvg/filters/enable-background/with-opacity-3.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_stop_on_the_first_new_1() {assert_eq!(render("svg/resvg/filters/enable-background/stop-on-the-first-new-1.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-1.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_stop_on_the_first_new_2() {assert_eq!(render("svg/resvg/filters/enable-background/stop-on-the-first-new-2.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-2.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_opacity_4() {assert_eq!(render("svg/resvg/filters/enable-background/with-opacity-4.svg", "ref/resvg/filters/enable-background/with-opacity-4.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_accumulate_with_new() {assert_eq!(render("svg/resvg/filters/enable-background/accumulate-with-new.svg", "ref/resvg/filters/enable-background/accumulate-with-new.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_new_with_invalid_region_1() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-invalid-region-1.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-1.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_new_with_invalid_region_2() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-invalid-region-2.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-2.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_new_with_invalid_region_3() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-invalid-region-3.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-3.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_mask() {assert_eq!(render("svg/resvg/filters/enable-background/with-mask.svg", "ref/resvg/filters/enable-background/with-mask.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_inherit() {assert_eq!(render("svg/resvg/filters/enable-background/inherit.svg", "ref/resvg/filters/enable-background/inherit.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_clip_path() {assert_eq!(render("svg/resvg/filters/enable-background/with-clip-path.svg", "ref/resvg/filters/enable-background/with-clip-path.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_new() {assert_eq!(render("svg/resvg/filters/enable-background/new.svg", "ref/resvg/filters/enable-background/new.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_filter_on_shape() {assert_eq!(render("svg/resvg/filters/enable-background/filter-on-shape.svg", "ref/resvg/filters/enable-background/filter-on-shape.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_shapes_after_filter() {assert_eq!(render("svg/resvg/filters/enable-background/shapes-after-filter.svg", "ref/resvg/filters/enable-background/shapes-after-filter.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_with_transform() {assert_eq!(render("svg/resvg/filters/enable-background/with-transform.svg", "ref/resvg/filters/enable-background/with-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_enable_background_new_with_region() {assert_eq!(render("svg/resvg/filters/enable-background/new-with-region.svg", "ref/resvg/filters/enable-background/new-with-region.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_radius_10_1() {assert_eq!(render("svg/resvg/filters/feMorphology/radius=10-1.svg", "ref/resvg/filters/feMorphology/radius=10-1.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_source_with_opacity() {assert_eq!(render("svg/resvg/filters/feMorphology/source-with-opacity.svg", "ref/resvg/filters/feMorphology/source-with-opacity.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_radius_10_0() {assert_eq!(render("svg/resvg/filters/feMorphology/radius=10-0.svg", "ref/resvg/filters/feMorphology/radius=10-0.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_empty_radius() {assert_eq!(render("svg/resvg/filters/feMorphology/empty-radius.svg", "ref/resvg/filters/feMorphology/empty-radius.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_radius_0_5_with_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/feMorphology/radius=0.5-with-objectBoundingBox.svg", "ref/resvg/filters/feMorphology/radius=0.5-with-objectBoundingBox.png"), 0)}
-// #[test] fn svg_resvg_filters_feMorphology_huge_radius() {assert_eq!(render("svg/resvg/filters/feMorphology/huge-radius.svg", "ref/resvg/filters/feMorphology/huge-radius.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feMorphology_huge_radius() {assert_eq!(render("svg/resvg/filters/feMorphology/huge-radius.svg", "ref/resvg/filters/feMorphology/huge-radius.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_operator_dilate() {assert_eq!(render("svg/resvg/filters/feMorphology/operator=dilate.svg", "ref/resvg/filters/feMorphology/operator=dilate.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_simple_case() {assert_eq!(render("svg/resvg/filters/feMorphology/simple-case.svg", "ref/resvg/filters/feMorphology/simple-case.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_radius_1_10() {assert_eq!(render("svg/resvg/filters/feMorphology/radius=1-10.svg", "ref/resvg/filters/feMorphology/radius=1-10.png"), 0)}
@@ -205,7 +232,8 @@ use crate::render;
 #[test] fn svg_resvg_filters_feMorphology_radius_with_too_many_values() {assert_eq!(render("svg/resvg/filters/feMorphology/radius-with-too-many-values.svg", "ref/resvg/filters/feMorphology/radius-with-too-many-values.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_negative_radius() {assert_eq!(render("svg/resvg/filters/feMorphology/negative-radius.svg", "ref/resvg/filters/feMorphology/negative-radius.png"), 0)}
 #[test] fn svg_resvg_filters_feMorphology_zero_radius() {assert_eq!(render("svg/resvg/filters/feMorphology/zero-radius.svg", "ref/resvg/filters/feMorphology/zero-radius.png"), 0)}
-// #[test] fn svg_resvg_filters_feMerge_complex_transform() {assert_eq!(render("svg/resvg/filters/feMerge/complex-transform.svg", "ref/resvg/filters/feMerge/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feMerge_complex_transform() {assert_eq!(render("svg/resvg/filters/feMerge/complex-transform.svg", "ref/resvg/filters/feMerge/complex-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feMerge_color_interpolation_filters_linearRGB() {assert_eq!(render("svg/resvg/filters/feMerge/color-interpolation-filters=linearRGB.svg", "ref/resvg/filters/feMerge/color-interpolation-filters=linearRGB.png"), 0)}
 #[test] fn svg_resvg_filters_feMerge_color_interpolation_filters_sRGB() {assert_eq!(render("svg/resvg/filters/feMerge/color-interpolation-filters=sRGB.svg", "ref/resvg/filters/feMerge/color-interpolation-filters=sRGB.png"), 0)}
 #[test] fn svg_resvg_filters_feDropShadow_hsla_color() {assert_eq!(render("svg/resvg/filters/feDropShadow/hsla-color.svg", "ref/resvg/filters/feDropShadow/hsla-color.png"), 0)}
@@ -243,26 +271,32 @@ use crate::render;
 #[test] fn svg_resvg_filters_feDistantLight_only_azimuth() {assert_eq!(render("svg/resvg/filters/feDistantLight/only-azimuth.svg", "ref/resvg/filters/feDistantLight/only-azimuth.png"), 0)}
 #[test] fn svg_resvg_filters_feDistantLight_only_elevation() {assert_eq!(render("svg/resvg/filters/feDistantLight/only-elevation.svg", "ref/resvg/filters/feDistantLight/only-elevation.png"), 0)}
 #[test] fn svg_resvg_filters_feDistantLight_default_attributes() {assert_eq!(render("svg/resvg/filters/feDistantLight/default-attributes.svg", "ref/resvg/filters/feDistantLight/default-attributes.png"), 0)}
-// #[test] fn svg_resvg_filters_fePointLight_complex_transform() {assert_eq!(render("svg/resvg/filters/fePointLight/complex-transform.svg", "ref/resvg/filters/fePointLight/complex-transform.png"), 0)}
-// #[test] fn svg_resvg_filters_fePointLight_primitiveUnits_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_fePointLight_complex_transform() {assert_eq!(render("svg/resvg/filters/fePointLight/complex-transform.svg", "ref/resvg/filters/fePointLight/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_fePointLight_primitiveUnits_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.png"), 0)}
 #[test] fn svg_resvg_filters_fePointLight_custom_attributes() {assert_eq!(render("svg/resvg/filters/fePointLight/custom-attributes.svg", "ref/resvg/filters/fePointLight/custom-attributes.png"), 0)}
 #[test] fn svg_resvg_filters_fePointLight_default_attributes() {assert_eq!(render("svg/resvg/filters/fePointLight/default-attributes.svg", "ref/resvg/filters/fePointLight/default-attributes.png"), 0)}
 #[test] fn svg_resvg_filters_filter_in_to_invalid_1() {assert_eq!(render("svg/resvg/filters/filter/in-to-invalid-1.svg", "ref/resvg/filters/filter/in-to-invalid-1.png"), 0)}
 #[test] fn svg_resvg_filters_filter_invalid_primitive_2() {assert_eq!(render("svg/resvg/filters/filter/invalid-primitive-2.svg", "ref/resvg/filters/filter/invalid-primitive-2.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_transform_on_shape_with_filter_region() {assert_eq!(render("svg/resvg/filters/filter/transform-on-shape-with-filter-region.svg", "ref/resvg/filters/filter/transform-on-shape-with-filter-region.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_transform_on_shape_with_filter_region() {assert_eq!(render("svg/resvg/filters/filter/transform-on-shape-with-filter-region.svg", "ref/resvg/filters/filter/transform-on-shape-with-filter-region.png"), 0)}
 #[test] fn svg_resvg_filters_filter_region_with_stroke() {assert_eq!(render("svg/resvg/filters/filter/region-with-stroke.svg", "ref/resvg/filters/filter/region-with-stroke.png"), 0)}
 #[test] fn svg_resvg_filters_filter_in_SourceAlpha() {assert_eq!(render("svg/resvg/filters/filter/in=SourceAlpha.svg", "ref/resvg/filters/filter/in=SourceAlpha.png"), 0)}
 #[test] fn svg_resvg_filters_filter_on_a_vertical_line() {assert_eq!(render("svg/resvg/filters/filter/on-a-vertical-line.svg", "ref/resvg/filters/filter/on-a-vertical-line.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_huge_region() {assert_eq!(render("svg/resvg/filters/filter/huge-region.svg", "ref/resvg/filters/filter/huge-region.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_huge_region() {assert_eq!(render("svg/resvg/filters/filter/huge-region.svg", "ref/resvg/filters/filter/huge-region.png"), 0)}
 #[test] fn svg_resvg_filters_filter_invalid_primitive_1() {assert_eq!(render("svg/resvg/filters/filter/invalid-primitive-1.svg", "ref/resvg/filters/filter/invalid-primitive-1.png"), 0)}
 #[test] fn svg_resvg_filters_filter_in_to_invalid_2() {assert_eq!(render("svg/resvg/filters/filter/in-to-invalid-2.svg", "ref/resvg/filters/filter/in-to-invalid-2.png"), 0)}
 #[test] fn svg_resvg_filters_filter_content_outside_the_canvas() {assert_eq!(render("svg/resvg/filters/filter/content-outside-the-canvas.svg", "ref/resvg/filters/filter/content-outside-the-canvas.png"), 0)}
 #[test] fn svg_resvg_filters_filter_transform_on_filter() {assert_eq!(render("svg/resvg/filters/filter/transform-on-filter.svg", "ref/resvg/filters/filter/transform-on-filter.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_region_and_subregion() {assert_eq!(render("svg/resvg/filters/filter/with-region-and-subregion.svg", "ref/resvg/filters/filter/with-region-and-subregion.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_region_and_filterUnits_userSpaceOnUse() {assert_eq!(render("svg/resvg/filters/filter/with-region-and-filterUnits=userSpaceOnUse.svg", "ref/resvg/filters/filter/with-region-and-filterUnits=userSpaceOnUse.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_in_BackgroundAlpha_with_enable_background() {assert_eq!(render("svg/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_in_BackgroundAlpha_with_enable_background() {assert_eq!(render("svg/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.png"), 0)}
 #[test] fn svg_resvg_filters_filter_no_children() {assert_eq!(render("svg/resvg/filters/filter/no-children.svg", "ref/resvg/filters/filter/no-children.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_on_an_empty_group_1() {assert_eq!(render("svg/resvg/filters/filter/on-an-empty-group-1.svg", "ref/resvg/filters/filter/on-an-empty-group-1.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_on_an_empty_group_1() {assert_eq!(render("svg/resvg/filters/filter/on-an-empty-group-1.svg", "ref/resvg/filters/filter/on-an-empty-group-1.png"), 0)}
 #[test] fn svg_resvg_filters_filter_invalid_subregion() {assert_eq!(render("svg/resvg/filters/filter/invalid-subregion.svg", "ref/resvg/filters/filter/invalid-subregion.png"), 0)}
 #[test] fn svg_resvg_filters_filter_everything_via_xlink_href() {assert_eq!(render("svg/resvg/filters/filter/everything-via-xlink-href.svg", "ref/resvg/filters/filter/everything-via-xlink-href.png"), 0)}
 #[test] fn svg_resvg_filters_filter_zero_sized_subregion() {assert_eq!(render("svg/resvg/filters/filter/zero-sized-subregion.svg", "ref/resvg/filters/filter/zero-sized-subregion.png"), 0)}
@@ -271,27 +305,33 @@ use crate::render;
 #[test] fn svg_resvg_filters_filter_on_an_empty_group_2() {assert_eq!(render("svg/resvg/filters/filter/on-an-empty-group-2.svg", "ref/resvg/filters/filter/on-an-empty-group-2.png"), 0)}
 #[test] fn svg_resvg_filters_filter_in_BackgroundAlpha() {assert_eq!(render("svg/resvg/filters/filter/in=BackgroundAlpha.svg", "ref/resvg/filters/filter/in=BackgroundAlpha.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_clip_path_and_mask() {assert_eq!(render("svg/resvg/filters/filter/with-clip-path-and-mask.svg", "ref/resvg/filters/filter/with-clip-path-and-mask.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_with_mask_on_parent() {assert_eq!(render("svg/resvg/filters/filter/with-mask-on-parent.svg", "ref/resvg/filters/filter/with-mask-on-parent.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_with_mask_on_parent() {assert_eq!(render("svg/resvg/filters/filter/with-mask-on-parent.svg", "ref/resvg/filters/filter/with-mask-on-parent.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_region_outside_the_canvas() {assert_eq!(render("svg/resvg/filters/filter/with-region-outside-the-canvas.svg", "ref/resvg/filters/filter/with-region-outside-the-canvas.png"), 0)}
 #[test] fn svg_resvg_filters_filter_transform_on_shape() {assert_eq!(render("svg/resvg/filters/filter/transform-on-shape.svg", "ref/resvg/filters/filter/transform-on-shape.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_in_BackgroundImage_with_enable_background() {assert_eq!(render("svg/resvg/filters/filter/in=BackgroundImage-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundImage-with-enable-background.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_in_BackgroundImage_with_enable_background() {assert_eq!(render("svg/resvg/filters/filter/in=BackgroundImage-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundImage-with-enable-background.png"), 0)}
 #[test] fn svg_resvg_filters_filter_subregion_bigger_that_region() {assert_eq!(render("svg/resvg/filters/filter/subregion-bigger-that-region.svg", "ref/resvg/filters/filter/subregion-bigger-that-region.png"), 0)}
 #[test] fn svg_resvg_filters_filter_global_transform() {assert_eq!(render("svg/resvg/filters/filter/global-transform.svg", "ref/resvg/filters/filter/global-transform.png"), 0)}
 #[test] fn svg_resvg_filters_filter_simple_case() {assert_eq!(render("svg/resvg/filters/filter/simple-case.svg", "ref/resvg/filters/filter/simple-case.png"), 0)}
 #[test] fn svg_resvg_filters_filter_some_attributes_via_xlink_href() {assert_eq!(render("svg/resvg/filters/filter/some-attributes-via-xlink-href.svg", "ref/resvg/filters/filter/some-attributes-via-xlink-href.png"), 0)}
 #[test] fn svg_resvg_filters_filter_invalid_region() {assert_eq!(render("svg/resvg/filters/filter/invalid-region.svg", "ref/resvg/filters/filter/invalid-region.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_2() {assert_eq!(render("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_2() {assert_eq!(render("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.png"), 0)}
 #[test] fn svg_resvg_filters_filter_content_outside_the_canvas_2() {assert_eq!(render("svg/resvg/filters/filter/content-outside-the-canvas-2.svg", "ref/resvg/filters/filter/content-outside-the-canvas-2.png"), 0)}
 #[test] fn svg_resvg_filters_filter_primitiveUnits_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/filter/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/filter/primitiveUnits=objectBoundingBox.png"), 0)}
 #[test] fn svg_resvg_filters_filter_color_interpolation_filters_sRGB() {assert_eq!(render("svg/resvg/filters/filter/color-interpolation-filters=sRGB.svg", "ref/resvg/filters/filter/color-interpolation-filters=sRGB.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_region() {assert_eq!(render("svg/resvg/filters/filter/with-region.svg", "ref/resvg/filters/filter/with-region.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_1() {assert_eq!(render("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_1() {assert_eq!(render("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.png"), 0)}
 #[test] fn svg_resvg_filters_filter_negative_subregion() {assert_eq!(render("svg/resvg/filters/filter/negative-subregion.svg", "ref/resvg/filters/filter/negative-subregion.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_with_mask() {assert_eq!(render("svg/resvg/filters/filter/with-mask.svg", "ref/resvg/filters/filter/with-mask.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_with_mask() {assert_eq!(render("svg/resvg/filters/filter/with-mask.svg", "ref/resvg/filters/filter/with-mask.png"), 0)}
 #[test] fn svg_resvg_filters_filter_invalid_filterUnits() {assert_eq!(render("svg/resvg/filters/filter/invalid-filterUnits.svg", "ref/resvg/filters/filter/invalid-filterUnits.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_multiple_transforms_1() {assert_eq!(render("svg/resvg/filters/filter/with-multiple-transforms-1.svg", "ref/resvg/filters/filter/with-multiple-transforms-1.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_subregion_1() {assert_eq!(render("svg/resvg/filters/filter/with-subregion-1.svg", "ref/resvg/filters/filter/with-subregion-1.png"), 0)}
-// #[test] fn svg_resvg_filters_filter_on_a_thin_rect() {assert_eq!(render("svg/resvg/filters/filter/on-a-thin-rect.svg", "ref/resvg/filters/filter/on-a-thin-rect.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_filter_on_a_thin_rect() {assert_eq!(render("svg/resvg/filters/filter/on-a-thin-rect.svg", "ref/resvg/filters/filter/on-a-thin-rect.png"), 0)}
 #[test] fn svg_resvg_filters_filter_default_color_interpolation_filters() {assert_eq!(render("svg/resvg/filters/filter/default-color-interpolation-filters.svg", "ref/resvg/filters/filter/default-color-interpolation-filters.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_clip_path() {assert_eq!(render("svg/resvg/filters/filter/with-clip-path.svg", "ref/resvg/filters/filter/with-clip-path.png"), 0)}
 #[test] fn svg_resvg_filters_filter_with_subregion_3() {assert_eq!(render("svg/resvg/filters/filter/with-subregion-3.svg", "ref/resvg/filters/filter/with-subregion-3.png"), 0)}
@@ -318,13 +358,15 @@ use crate::render;
 #[test] fn svg_resvg_filters_feImage_link_to_an_invalid_element() {assert_eq!(render("svg/resvg/filters/feImage/link-to-an-invalid-element.svg", "ref/resvg/filters/feImage/link-to-an-invalid-element.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_link_on_an_element_with_transform() {assert_eq!(render("svg/resvg/filters/feImage/link-on-an-element-with-transform.svg", "ref/resvg/filters/feImage/link-on-an-element-with-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_embedded_png() {assert_eq!(render("svg/resvg/filters/feImage/embedded-png.svg", "ref/resvg/filters/feImage/embedded-png.png"), 0)}
-// #[test] fn svg_resvg_filters_feImage_with_subregion_5() {assert_eq!(render("svg/resvg/filters/feImage/with-subregion-5.svg", "ref/resvg/filters/feImage/with-subregion-5.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feImage_with_subregion_5() {assert_eq!(render("svg/resvg/filters/feImage/with-subregion-5.svg", "ref/resvg/filters/feImage/with-subregion-5.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_link_to_an_element_with_opacity() {assert_eq!(render("svg/resvg/filters/feImage/link-to-an-element-with-opacity.svg", "ref/resvg/filters/feImage/link-to-an-element-with-opacity.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_preserveAspectRatio_none() {assert_eq!(render("svg/resvg/filters/feImage/preserveAspectRatio=none.svg", "ref/resvg/filters/feImage/preserveAspectRatio=none.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_with_subregion_4() {assert_eq!(render("svg/resvg/filters/feImage/with-subregion-4.svg", "ref/resvg/filters/feImage/with-subregion-4.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_svg() {assert_eq!(render("svg/resvg/filters/feImage/svg.svg", "ref/resvg/filters/feImage/svg.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_with_subregion_1() {assert_eq!(render("svg/resvg/filters/feImage/with-subregion-1.svg", "ref/resvg/filters/feImage/with-subregion-1.png"), 0)}
-// #[test] fn svg_resvg_filters_feImage_link_on_an_element_with_complex_transform() {assert_eq!(render("svg/resvg/filters/feImage/link-on-an-element-with-complex-transform.svg", "ref/resvg/filters/feImage/link-on-an-element-with-complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feImage_link_on_an_element_with_complex_transform() {assert_eq!(render("svg/resvg/filters/feImage/link-on-an-element-with-complex-transform.svg", "ref/resvg/filters/feImage/link-on-an-element-with-complex-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_with_subregion_3() {assert_eq!(render("svg/resvg/filters/feImage/with-subregion-3.svg", "ref/resvg/filters/feImage/with-subregion-3.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_link_to_an_element() {assert_eq!(render("svg/resvg/filters/feImage/link-to-an-element.svg", "ref/resvg/filters/feImage/link-to-an-element.png"), 0)}
 #[test] fn svg_resvg_filters_feImage_with_subregion_2() {assert_eq!(render("svg/resvg/filters/feImage/with-subregion-2.svg", "ref/resvg/filters/feImage/with-subregion-2.png"), 0)}
@@ -340,7 +382,8 @@ use crate::render;
 #[test] fn svg_resvg_filters_feDiffuseLighting_lighting_color_hsla() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/lighting-color=hsla.svg", "ref/resvg/filters/feDiffuseLighting/lighting-color=hsla.png"), 0)}
 #[test] fn svg_resvg_filters_feDiffuseLighting_single_light_source_with_title_and_desc() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/single-light-source-with-title-and-desc.svg", "ref/resvg/filters/feDiffuseLighting/single-light-source-with-title-and-desc.png"), 0)}
 #[test] fn svg_resvg_filters_feDiffuseLighting_single_light_source_with_invalid_child() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/single-light-source-with-invalid-child.svg", "ref/resvg/filters/feDiffuseLighting/single-light-source-with-invalid-child.png"), 0)}
-// #[test] fn svg_resvg_filters_feDiffuseLighting_complex_transform() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/complex-transform.svg", "ref/resvg/filters/feDiffuseLighting/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feDiffuseLighting_complex_transform() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/complex-transform.svg", "ref/resvg/filters/feDiffuseLighting/complex-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feDiffuseLighting_lighting_color_currentColor() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/lighting-color=currentColor.svg", "ref/resvg/filters/feDiffuseLighting/lighting-color=currentColor.png"), 0)}
 #[test] fn svg_resvg_filters_feDiffuseLighting_surfaceScale_1_33() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/surfaceScale=1.33.svg", "ref/resvg/filters/feDiffuseLighting/surfaceScale=1.33.png"), 0)}
 #[test] fn svg_resvg_filters_feDiffuseLighting_no_light_source() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/no-light-source.svg", "ref/resvg/filters/feDiffuseLighting/no-light-source.png"), 0)}
@@ -356,18 +399,23 @@ use crate::render;
 #[test] fn svg_resvg_filters_feDiffuseLighting_lighting_color_currentColor_without_color() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/lighting-color=currentColor-without-color.svg", "ref/resvg/filters/feDiffuseLighting/lighting-color=currentColor-without-color.png"), 0)}
 #[test] fn svg_resvg_filters_feDiffuseLighting_multiple_light_sources() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/multiple-light-sources.svg", "ref/resvg/filters/feDiffuseLighting/multiple-light-sources.png"), 0)}
 #[test] fn svg_resvg_filters_feDiffuseLighting_diffuseConstant_5() {assert_eq!(render("svg/resvg/filters/feDiffuseLighting/diffuseConstant=5.svg", "ref/resvg/filters/feDiffuseLighting/diffuseConstant=5.png"), 0)}
-// #[test] fn svg_resvg_filters_feFlood_complex_transform() {assert_eq!(render("svg/resvg/filters/feFlood/complex-transform.svg", "ref/resvg/filters/feFlood/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feFlood_complex_transform() {assert_eq!(render("svg/resvg/filters/feFlood/complex-transform.svg", "ref/resvg/filters/feFlood/complex-transform.png"), 0)}
 #[test] fn svg_resvg_filters_feFlood_with_opacity_on_target_element() {assert_eq!(render("svg/resvg/filters/feFlood/with-opacity-on-target-element.svg", "ref/resvg/filters/feFlood/with-opacity-on-target-element.png"), 0)}
 #[test] fn svg_resvg_filters_feFlood_with_opacity() {assert_eq!(render("svg/resvg/filters/feFlood/with-opacity.svg", "ref/resvg/filters/feFlood/with-opacity.png"), 0)}
 #[test] fn svg_resvg_filters_feFlood_subregion_with_primitiveUnits_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/feFlood/subregion-with-primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feFlood/subregion-with-primitiveUnits=objectBoundingBox.png"), 0)}
 #[test] fn svg_resvg_filters_feFlood_default_values() {assert_eq!(render("svg/resvg/filters/feFlood/default-values.svg", "ref/resvg/filters/feFlood/default-values.png"), 0)}
-// #[test] fn svg_resvg_filters_feFlood_partial_subregion() {assert_eq!(render("svg/resvg/filters/feFlood/partial-subregion.svg", "ref/resvg/filters/feFlood/partial-subregion.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feFlood_partial_subregion() {assert_eq!(render("svg/resvg/filters/feFlood/partial-subregion.svg", "ref/resvg/filters/feFlood/partial-subregion.png"), 0)}
 #[test] fn svg_resvg_filters_feFlood_seagreen() {assert_eq!(render("svg/resvg/filters/feFlood/seagreen.svg", "ref/resvg/filters/feFlood/seagreen.png"), 0)}
 #[test] fn svg_resvg_filters_feFlood_subregion_inheritance() {assert_eq!(render("svg/resvg/filters/feFlood/subregion-inheritance.svg", "ref/resvg/filters/feFlood/subregion-inheritance.png"), 0)}
 #[test] fn svg_resvg_filters_feSpotLight_with_all_pointsAt() {assert_eq!(render("svg/resvg/filters/feSpotLight/with-all-pointsAt.svg", "ref/resvg/filters/feSpotLight/with-all-pointsAt.png"), 0)}
-// #[test] fn svg_resvg_filters_feSpotLight_complex_transform() {assert_eq!(render("svg/resvg/filters/feSpotLight/complex-transform.svg", "ref/resvg/filters/feSpotLight/complex-transform.png"), 0)}
-// #[test] fn svg_resvg_filters_feSpotLight_limitingConeAngle_0() {assert_eq!(render("svg/resvg/filters/feSpotLight/limitingConeAngle=0.svg", "ref/resvg/filters/feSpotLight/limitingConeAngle=0.png"), 0)}
-// #[test] fn svg_resvg_filters_feSpotLight_primitiveUnits_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feSpotLight_complex_transform() {assert_eq!(render("svg/resvg/filters/feSpotLight/complex-transform.svg", "ref/resvg/filters/feSpotLight/complex-transform.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feSpotLight_limitingConeAngle_0() {assert_eq!(render("svg/resvg/filters/feSpotLight/limitingConeAngle=0.svg", "ref/resvg/filters/feSpotLight/limitingConeAngle=0.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_filters_feSpotLight_primitiveUnits_objectBoundingBox() {assert_eq!(render("svg/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.png"), 0)}
 #[test] fn svg_resvg_filters_feSpotLight_limitingConeAngle_anti_aliasing() {assert_eq!(render("svg/resvg/filters/feSpotLight/limitingConeAngle-anti-aliasing.svg", "ref/resvg/filters/feSpotLight/limitingConeAngle-anti-aliasing.png"), 0)}
 #[test] fn svg_resvg_filters_feSpotLight_specularExponent_10() {assert_eq!(render("svg/resvg/filters/feSpotLight/specularExponent=10.svg", "ref/resvg/filters/feSpotLight/specularExponent=10.png"), 0)}
 #[test] fn svg_resvg_filters_feSpotLight_specularExponent__10() {assert_eq!(render("svg/resvg/filters/feSpotLight/specularExponent=-10.svg", "ref/resvg/filters/feSpotLight/specularExponent=-10.png"), 0)}
@@ -396,7 +444,8 @@ use crate::render;
 #[test] fn svg_resvg_paint_servers_radialGradient_gradientTransform() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/gradientTransform.svg", "ref/resvg/paint-servers/radialGradient/gradientTransform.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse.svg", "ref/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_2() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-2.svg", "ref/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-2.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_linearGradient() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_linearGradient() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_1() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-1.svg", "ref/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-1.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_stops_via_xlink_href_complex_order() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/stops-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/radialGradient/stops-via-xlink-href-complex-order.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_single_stop() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/single-stop.svg", "ref/resvg/paint-servers/radialGradient/single-stop.png"), 0)}
@@ -404,15 +453,18 @@ use crate::render;
 #[test] fn svg_resvg_paint_servers_radialGradient_zero_r() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/zero-r.svg", "ref/resvg/paint-servers/radialGradient/zero-r.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_recursive_xlink_href() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/recursive-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/recursive-xlink-href.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_focal_point_correction() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/focal-point-correction.svg", "ref/resvg/paint-servers/radialGradient/focal-point-correction.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_radialGradient_spreadMethod_repeat() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg", "ref/resvg/paint-servers/radialGradient/spreadMethod=repeat.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_radialGradient_spreadMethod_repeat() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg", "ref/resvg/paint-servers/radialGradient/spreadMethod=repeat.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_unresolved_xlink_href() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/unresolved-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/unresolved-xlink-href.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_invalid_xlink_href() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/invalid-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/invalid-xlink-href.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_rect() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-rect.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-rect.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_radialGradient_attributes_via_xlink_href_complex_order() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_radialGradient_attributes_via_xlink_href_complex_order() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_xlink_href_not_to_gradient() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/xlink-href-not-to-gradient.svg", "ref/resvg/paint-servers/radialGradient/xlink-href-not-to-gradient.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse-with-percent.svg", "ref/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse-with-percent.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_self_recursive_xlink_href() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/self-recursive-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/self-recursive-xlink-href.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_radialGradient_spreadMethod_reflect() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/spreadMethod=reflect.svg", "ref/resvg/paint-servers/radialGradient/spreadMethod=reflect.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_radialGradient_spreadMethod_reflect() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/spreadMethod=reflect.svg", "ref/resvg/paint-servers/radialGradient/spreadMethod=reflect.png"), 0)}
 #[test] fn svg_resvg_paint_servers_radialGradient_default_attributes() {assert_eq!(render("svg/resvg/paint-servers/radialGradient/default-attributes.svg", "ref/resvg/paint-servers/radialGradient/default-attributes.png"), 0)}
 #[test] fn svg_resvg_paint_servers_stop_opacity_simple_case() {assert_eq!(render("svg/resvg/paint-servers/stop-opacity/simple-case.svg", "ref/resvg/paint-servers/stop-opacity/simple-case.png"), 0)}
 #[test] fn svg_resvg_paint_servers_stop_opacity_50percent() {assert_eq!(render("svg/resvg/paint-servers/stop-opacity/50percent.svg", "ref/resvg/paint-servers/stop-opacity/50percent.png"), 0)}
@@ -467,21 +519,26 @@ use crate::render;
 #[test] fn svg_resvg_paint_servers_linearGradient_gradientTransform() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/gradientTransform.svg", "ref/resvg/paint-servers/linearGradient/gradientTransform.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse.svg", "ref/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_recursive_xlink_href_3() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/recursive-xlink-href-3.svg", "ref/resvg/paint-servers/linearGradient/recursive-xlink-href-3.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_radialGradient() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_radialGradient() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_recursive_xlink_href_2() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/recursive-xlink-href-2.svg", "ref/resvg/paint-servers/linearGradient/recursive-xlink-href-2.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_recursive_xlink_href_1() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/recursive-xlink-href-1.svg", "ref/resvg/paint-servers/linearGradient/recursive-xlink-href-1.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_stroke() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-stroke.svg", "ref/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-stroke.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_single_stop() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/single-stop.svg", "ref/resvg/paint-servers/linearGradient/single-stop.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_stops_via_xlink_href_from_rect() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/stops-via-xlink-href-from-rect.svg", "ref/resvg/paint-servers/linearGradient/stops-via-xlink-href-from-rect.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_linearGradient_spreadMethod_repeat() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/spreadMethod=repeat.svg", "ref/resvg/paint-servers/linearGradient/spreadMethod=repeat.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_linearGradient_spreadMethod_repeat() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/spreadMethod=repeat.svg", "ref/resvg/paint-servers/linearGradient/spreadMethod=repeat.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_unresolved_xlink_href() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/unresolved-xlink-href.svg", "ref/resvg/paint-servers/linearGradient/unresolved-xlink-href.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_invalid_xlink_href() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/invalid-xlink-href.svg", "ref/resvg/paint-servers/linearGradient/invalid-xlink-href.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_rect() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-rect.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-rect.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill_and_stroke() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.svg", "ref/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_linearGradient_attributes_via_xlink_href_complex_order() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill_and_stroke() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.svg", "ref/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_linearGradient_attributes_via_xlink_href_complex_order() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse-with-percent.svg", "ref/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse-with-percent.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_self_recursive_xlink_href() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/self-recursive-xlink-href.svg", "ref/resvg/paint-servers/linearGradient/self-recursive-xlink-href.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_linearGradient_spreadMethod_reflect() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/spreadMethod=reflect.svg", "ref/resvg/paint-servers/linearGradient/spreadMethod=reflect.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_linearGradient_spreadMethod_reflect() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/spreadMethod=reflect.svg", "ref/resvg/paint-servers/linearGradient/spreadMethod=reflect.png"), 0)}
 #[test] fn svg_resvg_paint_servers_linearGradient_default_attributes() {assert_eq!(render("svg/resvg/paint-servers/linearGradient/default-attributes.svg", "ref/resvg/paint-servers/linearGradient/default-attributes.png"), 0)}
 #[test] fn svg_resvg_paint_servers_stop_color_simple_case() {assert_eq!(render("svg/resvg/paint-servers/stop-color/simple-case.svg", "ref/resvg/paint-servers/stop-color/simple-case.png"), 0)}
 #[test] fn svg_resvg_paint_servers_pattern_display_none_on_child() {assert_eq!(render("svg/resvg/paint-servers/pattern/display=none-on-child.svg", "ref/resvg/paint-servers/pattern/display=none-on-child.png"), 0)}
@@ -499,7 +556,8 @@ use crate::render;
 #[test] fn svg_resvg_paint_servers_pattern_out_of_order_referencing() {assert_eq!(render("svg/resvg/paint-servers/pattern/out-of-order-referencing.svg", "ref/resvg/paint-servers/pattern/out-of-order-referencing.png"), 0)}
 #[test] fn svg_resvg_paint_servers_pattern_with_patternTransform() {assert_eq!(render("svg/resvg/paint-servers/pattern/with-patternTransform.svg", "ref/resvg/paint-servers/pattern/with-patternTransform.png"), 0)}
 #[test] fn svg_resvg_paint_servers_pattern_with_x_and_y() {assert_eq!(render("svg/resvg/paint-servers/pattern/with-x-and-y.svg", "ref/resvg/paint-servers/pattern/with-x-and-y.png"), 0)}
-// #[test] fn svg_resvg_paint_servers_pattern_nested_objectBoundingBox() {assert_eq!(render("svg/resvg/paint-servers/pattern/nested-objectBoundingBox.svg", "ref/resvg/paint-servers/pattern/nested-objectBoundingBox.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_paint_servers_pattern_nested_objectBoundingBox() {assert_eq!(render("svg/resvg/paint-servers/pattern/nested-objectBoundingBox.svg", "ref/resvg/paint-servers/pattern/nested-objectBoundingBox.png"), 0)}
 #[test] fn svg_resvg_paint_servers_pattern_preserveAspectRatio() {assert_eq!(render("svg/resvg/paint-servers/pattern/preserveAspectRatio.svg", "ref/resvg/paint-servers/pattern/preserveAspectRatio.png"), 0)}
 #[test] fn svg_resvg_paint_servers_pattern_simple_case() {assert_eq!(render("svg/resvg/paint-servers/pattern/simple-case.svg", "ref/resvg/paint-servers/pattern/simple-case.png"), 0)}
 #[test] fn svg_resvg_paint_servers_pattern_missing_width() {assert_eq!(render("svg/resvg/paint-servers/pattern/missing-width.svg", "ref/resvg/paint-servers/pattern/missing-width.png"), 0)}
@@ -756,11 +814,14 @@ use crate::render;
 #[test] fn svg_resvg_painting_stroke_linecap_butt() {assert_eq!(render("svg/resvg/painting/stroke-linecap/butt.svg", "ref/resvg/painting/stroke-linecap/butt.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_linecap_open_path_with_square() {assert_eq!(render("svg/resvg/painting/stroke-linecap/open-path-with-square.svg", "ref/resvg/painting/stroke-linecap/open-path-with-square.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_linecap_round() {assert_eq!(render("svg/resvg/painting/stroke-linecap/round.svg", "ref/resvg/painting/stroke-linecap/round.png"), 0)}
-// #[test] fn svg_resvg_painting_stroke_linecap_zero_length_path_with_square() {assert_eq!(render("svg/resvg/painting/stroke-linecap/zero-length-path-with-square.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-square.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_painting_stroke_linecap_zero_length_path_with_square() {assert_eq!(render("svg/resvg/painting/stroke-linecap/zero-length-path-with-square.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-square.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_linecap_square() {assert_eq!(render("svg/resvg/painting/stroke-linecap/square.svg", "ref/resvg/painting/stroke-linecap/square.png"), 0)}
-// #[test] fn svg_resvg_painting_stroke_linecap_zero_length_path_with_round() {assert_eq!(render("svg/resvg/painting/stroke-linecap/zero-length-path-with-round.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-round.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_painting_stroke_linecap_zero_length_path_with_round() {assert_eq!(render("svg/resvg/painting/stroke-linecap/zero-length-path-with-round.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-round.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_linecap_open_path_with_butt() {assert_eq!(render("svg/resvg/painting/stroke-linecap/open-path-with-butt.svg", "ref/resvg/painting/stroke-linecap/open-path-with-butt.png"), 0)}
-// #[test] fn svg_resvg_painting_stroke_linecap_zero_length_path_with_butt() {assert_eq!(render("svg/resvg/painting/stroke-linecap/zero-length-path-with-butt.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-butt.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_painting_stroke_linecap_zero_length_path_with_butt() {assert_eq!(render("svg/resvg/painting/stroke-linecap/zero-length-path-with-butt.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-butt.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_linecap_open_path_with_round() {assert_eq!(render("svg/resvg/painting/stroke-linecap/open-path-with-round.svg", "ref/resvg/painting/stroke-linecap/open-path-with-round.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_width_zero() {assert_eq!(render("svg/resvg/painting/stroke-width/zero.svg", "ref/resvg/painting/stroke-width/zero.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_width_percentage() {assert_eq!(render("svg/resvg/painting/stroke-width/percentage.svg", "ref/resvg/painting/stroke-width/percentage.png"), 0)}
@@ -785,7 +846,8 @@ use crate::render;
 #[test] fn svg_resvg_painting_stroke_linejoin_miter() {assert_eq!(render("svg/resvg/painting/stroke-linejoin/miter.svg", "ref/resvg/painting/stroke-linejoin/miter.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_linejoin_round() {assert_eq!(render("svg/resvg/painting/stroke-linejoin/round.svg", "ref/resvg/painting/stroke-linejoin/round.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_linejoin_bevel() {assert_eq!(render("svg/resvg/painting/stroke-linejoin/bevel.svg", "ref/resvg/painting/stroke-linejoin/bevel.png"), 0)}
-// #[test] fn svg_resvg_painting_stroke_linejoin_miter_clip() {assert_eq!(render("svg/resvg/painting/stroke-linejoin/miter-clip.svg", "ref/resvg/painting/stroke-linejoin/miter-clip.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_painting_stroke_linejoin_miter_clip() {assert_eq!(render("svg/resvg/painting/stroke-linejoin/miter-clip.svg", "ref/resvg/painting/stroke-linejoin/miter-clip.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_miterlimit_valid_value() {assert_eq!(render("svg/resvg/painting/stroke-miterlimit/valid-value.svg", "ref/resvg/painting/stroke-miterlimit/valid-value.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_miterlimit_value_with_mm() {assert_eq!(render("svg/resvg/painting/stroke-miterlimit/value-with-mm.svg", "ref/resvg/painting/stroke-miterlimit/value-with-mm.png"), 0)}
 #[test] fn svg_resvg_painting_stroke_miterlimit_invalid_value() {assert_eq!(render("svg/resvg/painting/stroke-miterlimit/invalid-value.svg", "ref/resvg/painting/stroke-miterlimit/invalid-value.png"), 0)}
@@ -880,7 +942,8 @@ use crate::render;
 #[test] fn svg_resvg_painting_marker_zero_sized() {assert_eq!(render("svg/resvg/painting/marker/zero-sized.svg", "ref/resvg/painting/marker/zero-sized.png"), 0)}
 #[test] fn svg_resvg_painting_marker_marker_on_polyline() {assert_eq!(render("svg/resvg/painting/marker/marker-on-polyline.svg", "ref/resvg/painting/marker/marker-on-polyline.png"), 0)}
 #[test] fn svg_resvg_painting_image_rendering_optimizeSpeed_on_SVG() {assert_eq!(render("svg/resvg/painting/image-rendering/optimizeSpeed-on-SVG.svg", "ref/resvg/painting/image-rendering/optimizeSpeed-on-SVG.png"), 0)}
-// #[test] fn svg_resvg_painting_image_rendering_on_feImage() {assert_eq!(render("svg/resvg/painting/image-rendering/on-feImage.svg", "ref/resvg/painting/image-rendering/on-feImage.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_painting_image_rendering_on_feImage() {assert_eq!(render("svg/resvg/painting/image-rendering/on-feImage.svg", "ref/resvg/painting/image-rendering/on-feImage.png"), 0)}
 #[test] fn svg_resvg_painting_image_rendering_optimizeSpeed() {assert_eq!(render("svg/resvg/painting/image-rendering/optimizeSpeed.svg", "ref/resvg/painting/image-rendering/optimizeSpeed.png"), 0)}
 #[test] fn svg_resvg_painting_fill_rule_nonzero() {assert_eq!(render("svg/resvg/painting/fill-rule/nonzero.svg", "ref/resvg/painting/fill-rule/nonzero.png"), 0)}
 #[test] fn svg_resvg_painting_fill_rule_evenodd() {assert_eq!(render("svg/resvg/painting/fill-rule/evenodd.svg", "ref/resvg/painting/fill-rule/evenodd.png"), 0)}
@@ -896,7 +959,8 @@ use crate::render;
 #[test] fn svg_resvg_painting_mix_blend_mode_opacity_on_element() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/opacity-on-element.svg", "ref/resvg/painting/mix-blend-mode/opacity-on-element.png"), 0)}
 #[test] fn svg_resvg_painting_mix_blend_mode_saturation() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/saturation.svg", "ref/resvg/painting/mix-blend-mode/saturation.png"), 0)}
 #[test] fn svg_resvg_painting_mix_blend_mode_luminosity() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/luminosity.svg", "ref/resvg/painting/mix-blend-mode/luminosity.png"), 0)}
-// #[test] fn svg_resvg_painting_mix_blend_mode_color_dodge() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/color-dodge.svg", "ref/resvg/painting/mix-blend-mode/color-dodge.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_painting_mix_blend_mode_color_dodge() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/color-dodge.svg", "ref/resvg/painting/mix-blend-mode/color-dodge.png"), 0)}
 #[test] fn svg_resvg_painting_mix_blend_mode_overlay() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/overlay.svg", "ref/resvg/painting/mix-blend-mode/overlay.png"), 0)}
 #[test] fn svg_resvg_painting_mix_blend_mode_lighten() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/lighten.svg", "ref/resvg/painting/mix-blend-mode/lighten.png"), 0)}
 #[test] fn svg_resvg_painting_mix_blend_mode_normal() {assert_eq!(render("svg/resvg/painting/mix-blend-mode/normal.svg", "ref/resvg/painting/mix-blend-mode/normal.png"), 0)}
@@ -920,11 +984,13 @@ use crate::render;
 #[test] fn svg_resvg_text_alignment_baseline_central() {assert_eq!(render("svg/resvg/text/alignment-baseline/central.svg", "ref/resvg/text/alignment-baseline/central.png"), 0)}
 #[test] fn svg_resvg_text_tspan_style_override() {assert_eq!(render("svg/resvg/text/tspan/style-override.svg", "ref/resvg/text/tspan/style-override.png"), 0)}
 #[test] fn svg_resvg_text_tspan_multiple_coordinates() {assert_eq!(render("svg/resvg/text/tspan/multiple-coordinates.svg", "ref/resvg/text/tspan/multiple-coordinates.png"), 0)}
-// #[test] fn svg_resvg_text_tspan_with_filter() {assert_eq!(render("svg/resvg/text/tspan/with-filter.svg", "ref/resvg/text/tspan/with-filter.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_tspan_with_filter() {assert_eq!(render("svg/resvg/text/tspan/with-filter.svg", "ref/resvg/text/tspan/with-filter.png"), 0)}
 #[test] fn svg_resvg_text_tspan_transform() {assert_eq!(render("svg/resvg/text/tspan/transform.svg", "ref/resvg/text/tspan/transform.png"), 0)}
 #[test] fn svg_resvg_text_tspan_pseudo_multi_line() {assert_eq!(render("svg/resvg/text/tspan/pseudo-multi-line.svg", "ref/resvg/text/tspan/pseudo-multi-line.png"), 0)}
 #[test] fn svg_resvg_text_tspan_nested_rotate() {assert_eq!(render("svg/resvg/text/tspan/nested-rotate.svg", "ref/resvg/text/tspan/nested-rotate.png"), 0)}
-// #[test] fn svg_resvg_text_tspan_bidi_reordering() {assert_eq!(render("svg/resvg/text/tspan/bidi-reordering.svg", "ref/resvg/text/tspan/bidi-reordering.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_tspan_bidi_reordering() {assert_eq!(render("svg/resvg/text/tspan/bidi-reordering.svg", "ref/resvg/text/tspan/bidi-reordering.png"), 0)}
 #[test] fn svg_resvg_text_tspan_nested() {assert_eq!(render("svg/resvg/text/tspan/nested.svg", "ref/resvg/text/tspan/nested.png"), 0)}
 #[test] fn svg_resvg_text_tspan_without_attributes() {assert_eq!(render("svg/resvg/text/tspan/without-attributes.svg", "ref/resvg/text/tspan/without-attributes.png"), 0)}
 #[test] fn svg_resvg_text_tspan_text_shaping_across_multiple_tspan_2() {assert_eq!(render("svg/resvg/text/tspan/text-shaping-across-multiple-tspan-2.svg", "ref/resvg/text/tspan/text-shaping-across-multiple-tspan-2.png"), 0)}
@@ -934,10 +1000,12 @@ use crate::render;
 #[test] fn svg_resvg_text_tspan_outside_the_text() {assert_eq!(render("svg/resvg/text/tspan/outside-the-text.svg", "ref/resvg/text/tspan/outside-the-text.png"), 0)}
 #[test] fn svg_resvg_text_tspan_with_dy() {assert_eq!(render("svg/resvg/text/tspan/with-dy.svg", "ref/resvg/text/tspan/with-dy.png"), 0)}
 #[test] fn svg_resvg_text_tspan_xml_space_2() {assert_eq!(render("svg/resvg/text/tspan/xml-space-2.svg", "ref/resvg/text/tspan/xml-space-2.png"), 0)}
-// #[test] fn svg_resvg_text_tspan_tspan_bbox_2() {assert_eq!(render("svg/resvg/text/tspan/tspan-bbox-2.svg", "ref/resvg/text/tspan/tspan-bbox-2.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_tspan_tspan_bbox_2() {assert_eq!(render("svg/resvg/text/tspan/tspan-bbox-2.svg", "ref/resvg/text/tspan/tspan-bbox-2.png"), 0)}
 #[test] fn svg_resvg_text_tspan_xml_space_1() {assert_eq!(render("svg/resvg/text/tspan/xml-space-1.svg", "ref/resvg/text/tspan/xml-space-1.png"), 0)}
 #[test] fn svg_resvg_text_tspan_nested_whitespaces() {assert_eq!(render("svg/resvg/text/tspan/nested-whitespaces.svg", "ref/resvg/text/tspan/nested-whitespaces.png"), 0)}
-// #[test] fn svg_resvg_text_tspan_tspan_bbox_1() {assert_eq!(render("svg/resvg/text/tspan/tspan-bbox-1.svg", "ref/resvg/text/tspan/tspan-bbox-1.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_tspan_tspan_bbox_1() {assert_eq!(render("svg/resvg/text/tspan/tspan-bbox-1.svg", "ref/resvg/text/tspan/tspan-bbox-1.png"), 0)}
 #[test] fn svg_resvg_text_tspan_rotate_and_display_none() {assert_eq!(render("svg/resvg/text/tspan/rotate-and-display-none.svg", "ref/resvg/text/tspan/rotate-and-display-none.png"), 0)}
 #[test] fn svg_resvg_text_tspan_only_with_y() {assert_eq!(render("svg/resvg/text/tspan/only-with-y.svg", "ref/resvg/text/tspan/only-with-y.png"), 0)}
 #[test] fn svg_resvg_text_tspan_mixed_xml_space_2() {assert_eq!(render("svg/resvg/text/tspan/mixed-xml-space-2.svg", "ref/resvg/text/tspan/mixed-xml-space-2.png"), 0)}
@@ -950,33 +1018,43 @@ use crate::render;
 #[test] fn svg_resvg_text_writing_mode_tb_rl() {assert_eq!(render("svg/resvg/text/writing-mode/tb-rl.svg", "ref/resvg/text/writing-mode/tb-rl.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_tb_with_dx_on_second_tspan() {assert_eq!(render("svg/resvg/text/writing-mode/tb-with-dx-on-second-tspan.svg", "ref/resvg/text/writing-mode/tb-with-dx-on-second-tspan.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_lr_tb() {assert_eq!(render("svg/resvg/text/writing-mode/lr-tb.svg", "ref/resvg/text/writing-mode/lr-tb.png"), 0)}
-// #[test] fn svg_resvg_text_writing_mode_mixed_languages_with_tb_and_underline() {assert_eq!(render("svg/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_writing_mode_mixed_languages_with_tb_and_underline() {assert_eq!(render("svg/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_rl_tb() {assert_eq!(render("svg/resvg/text/writing-mode/rl-tb.svg", "ref/resvg/text/writing-mode/rl-tb.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_lr() {assert_eq!(render("svg/resvg/text/writing-mode/lr.svg", "ref/resvg/text/writing-mode/lr.png"), 0)}
-// #[test] fn svg_resvg_text_writing_mode_japanese_with_tb() {assert_eq!(render("svg/resvg/text/writing-mode/japanese-with-tb.svg", "ref/resvg/text/writing-mode/japanese-with-tb.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_writing_mode_japanese_with_tb() {assert_eq!(render("svg/resvg/text/writing-mode/japanese-with-tb.svg", "ref/resvg/text/writing-mode/japanese-with-tb.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_tb() {assert_eq!(render("svg/resvg/text/writing-mode/tb.svg", "ref/resvg/text/writing-mode/tb.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_invalid_value() {assert_eq!(render("svg/resvg/text/writing-mode/invalid-value.svg", "ref/resvg/text/writing-mode/invalid-value.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_tb_with_alignment() {assert_eq!(render("svg/resvg/text/writing-mode/tb-with-alignment.svg", "ref/resvg/text/writing-mode/tb-with-alignment.png"), 0)}
-// #[test] fn svg_resvg_text_writing_mode_vertical_rl() {assert_eq!(render("svg/resvg/text/writing-mode/vertical-rl.svg", "ref/resvg/text/writing-mode/vertical-rl.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_writing_mode_vertical_rl() {assert_eq!(render("svg/resvg/text/writing-mode/vertical-rl.svg", "ref/resvg/text/writing-mode/vertical-rl.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_tb_with_dx_on_tspan() {assert_eq!(render("svg/resvg/text/writing-mode/tb-with-dx-on-tspan.svg", "ref/resvg/text/writing-mode/tb-with-dx-on-tspan.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_inheritance() {assert_eq!(render("svg/resvg/text/writing-mode/inheritance.svg", "ref/resvg/text/writing-mode/inheritance.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_on_tspan() {assert_eq!(render("svg/resvg/text/writing-mode/on-tspan.svg", "ref/resvg/text/writing-mode/on-tspan.png"), 0)}
-// #[test] fn svg_resvg_text_writing_mode_mixed_languages_with_tb() {assert_eq!(render("svg/resvg/text/writing-mode/mixed-languages-with-tb.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb.png"), 0)}
-// #[test] fn svg_resvg_text_writing_mode_arabic_with_rl() {assert_eq!(render("svg/resvg/text/writing-mode/arabic-with-rl.svg", "ref/resvg/text/writing-mode/arabic-with-rl.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_writing_mode_mixed_languages_with_tb() {assert_eq!(render("svg/resvg/text/writing-mode/mixed-languages-with-tb.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_writing_mode_arabic_with_rl() {assert_eq!(render("svg/resvg/text/writing-mode/arabic-with-rl.svg", "ref/resvg/text/writing-mode/arabic-with-rl.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_horizontal_tb() {assert_eq!(render("svg/resvg/text/writing-mode/horizontal-tb.svg", "ref/resvg/text/writing-mode/horizontal-tb.png"), 0)}
-// #[test] fn svg_resvg_text_writing_mode_vertical_lr() {assert_eq!(render("svg/resvg/text/writing-mode/vertical-lr.svg", "ref/resvg/text/writing-mode/vertical-lr.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_writing_mode_vertical_lr() {assert_eq!(render("svg/resvg/text/writing-mode/vertical-lr.svg", "ref/resvg/text/writing-mode/vertical-lr.png"), 0)}
 #[test] fn svg_resvg_text_writing_mode_rl() {assert_eq!(render("svg/resvg/text/writing-mode/rl.svg", "ref/resvg/text/writing-mode/rl.png"), 0)}
-// #[test] fn svg_resvg_text_letter_spacing_non_ASCII_character() {assert_eq!(render("svg/resvg/text/letter-spacing/non-ASCII-character.svg", "ref/resvg/text/letter-spacing/non-ASCII-character.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_letter_spacing_non_ASCII_character() {assert_eq!(render("svg/resvg/text/letter-spacing/non-ASCII-character.svg", "ref/resvg/text/letter-spacing/non-ASCII-character.png"), 0)}
 #[test] fn svg_resvg_text_letter_spacing_0() {assert_eq!(render("svg/resvg/text/letter-spacing/0.svg", "ref/resvg/text/letter-spacing/0.png"), 0)}
 #[test] fn svg_resvg_text_letter_spacing_mixed_spacing() {assert_eq!(render("svg/resvg/text/letter-spacing/mixed-spacing.svg", "ref/resvg/text/letter-spacing/mixed-spacing.png"), 0)}
 #[test] fn svg_resvg_text_letter_spacing_3() {assert_eq!(render("svg/resvg/text/letter-spacing/3.svg", "ref/resvg/text/letter-spacing/3.png"), 0)}
 #[test] fn svg_resvg_text_letter_spacing_5percent() {assert_eq!(render("svg/resvg/text/letter-spacing/5percent.svg", "ref/resvg/text/letter-spacing/5percent.png"), 0)}
 #[test] fn svg_resvg_text_letter_spacing__3() {assert_eq!(render("svg/resvg/text/letter-spacing/-3.svg", "ref/resvg/text/letter-spacing/-3.png"), 0)}
-// #[test] fn svg_resvg_text_letter_spacing_on_Arabic() {assert_eq!(render("svg/resvg/text/letter-spacing/on-Arabic.svg", "ref/resvg/text/letter-spacing/on-Arabic.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_letter_spacing_on_Arabic() {assert_eq!(render("svg/resvg/text/letter-spacing/on-Arabic.svg", "ref/resvg/text/letter-spacing/on-Arabic.png"), 0)}
 #[test] fn svg_resvg_text_letter_spacing_1mm() {assert_eq!(render("svg/resvg/text/letter-spacing/1mm.svg", "ref/resvg/text/letter-spacing/1mm.png"), 0)}
 #[test] fn svg_resvg_text_letter_spacing_normal() {assert_eq!(render("svg/resvg/text/letter-spacing/normal.svg", "ref/resvg/text/letter-spacing/normal.png"), 0)}
-// #[test] fn svg_resvg_text_letter_spacing_filter_bbox() {assert_eq!(render("svg/resvg/text/letter-spacing/filter-bbox.svg", "ref/resvg/text/letter-spacing/filter-bbox.png"), 0)}
-// #[test] fn svg_resvg_text_letter_spacing_mixed_scripts() {assert_eq!(render("svg/resvg/text/letter-spacing/mixed-scripts.svg", "ref/resvg/text/letter-spacing/mixed-scripts.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_letter_spacing_filter_bbox() {assert_eq!(render("svg/resvg/text/letter-spacing/filter-bbox.svg", "ref/resvg/text/letter-spacing/filter-bbox.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_letter_spacing_mixed_scripts() {assert_eq!(render("svg/resvg/text/letter-spacing/mixed-scripts.svg", "ref/resvg/text/letter-spacing/mixed-scripts.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_mathematical() {assert_eq!(render("svg/resvg/text/dominant-baseline/mathematical.svg", "ref/resvg/text/dominant-baseline/mathematical.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_dummy_tspan() {assert_eq!(render("svg/resvg/text/dominant-baseline/dummy-tspan.svg", "ref/resvg/text/dominant-baseline/dummy-tspan.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_equal_alignment_baseline_on_tspan() {assert_eq!(render("svg/resvg/text/dominant-baseline/equal-alignment-baseline-on-tspan.svg", "ref/resvg/text/dominant-baseline/equal-alignment-baseline-on-tspan.png"), 0)}
@@ -992,7 +1070,8 @@ use crate::render;
 #[test] fn svg_resvg_text_dominant_baseline_inherit() {assert_eq!(render("svg/resvg/text/dominant-baseline/inherit.svg", "ref/resvg/text/dominant-baseline/inherit.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_ideographic() {assert_eq!(render("svg/resvg/text/dominant-baseline/ideographic.svg", "ref/resvg/text/dominant-baseline/ideographic.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_alignment_baseline_baseline_on_tspan() {assert_eq!(render("svg/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.svg", "ref/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.png"), 0)}
-// #[test] fn svg_resvg_text_dominant_baseline_hanging() {assert_eq!(render("svg/resvg/text/dominant-baseline/hanging.svg", "ref/resvg/text/dominant-baseline/hanging.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_dominant_baseline_hanging() {assert_eq!(render("svg/resvg/text/dominant-baseline/hanging.svg", "ref/resvg/text/dominant-baseline/hanging.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_different_alignment_baseline_on_tspan() {assert_eq!(render("svg/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.svg", "ref/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_central() {assert_eq!(render("svg/resvg/text/dominant-baseline/central.svg", "ref/resvg/text/dominant-baseline/central.png"), 0)}
 #[test] fn svg_resvg_text_dominant_baseline_sequential() {assert_eq!(render("svg/resvg/text/dominant-baseline/sequential.svg", "ref/resvg/text/dominant-baseline/sequential.png"), 0)}
@@ -1018,7 +1097,8 @@ use crate::render;
 #[test] fn svg_resvg_text_baseline_shift_nested_with_baseline_2() {assert_eq!(render("svg/resvg/text/baseline-shift/nested-with-baseline-2.svg", "ref/resvg/text/baseline-shift/nested-with-baseline-2.png"), 0)}
 #[test] fn svg_resvg_text_baseline_shift_2mm() {assert_eq!(render("svg/resvg/text/baseline-shift/2mm.svg", "ref/resvg/text/baseline-shift/2mm.png"), 0)}
 #[test] fn svg_resvg_text_baseline_shift_nested_with_baseline_1() {assert_eq!(render("svg/resvg/text/baseline-shift/nested-with-baseline-1.svg", "ref/resvg/text/baseline-shift/nested-with-baseline-1.png"), 0)}
-// #[test] fn svg_resvg_text_lengthAdjust_vertical() {assert_eq!(render("svg/resvg/text/lengthAdjust/vertical.svg", "ref/resvg/text/lengthAdjust/vertical.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_lengthAdjust_vertical() {assert_eq!(render("svg/resvg/text/lengthAdjust/vertical.svg", "ref/resvg/text/lengthAdjust/vertical.png"), 0)}
 #[test] fn svg_resvg_text_lengthAdjust_text_on_path() {assert_eq!(render("svg/resvg/text/lengthAdjust/text-on-path.svg", "ref/resvg/text/lengthAdjust/text-on-path.png"), 0)}
 #[test] fn svg_resvg_text_lengthAdjust_spacingAndGlyphs() {assert_eq!(render("svg/resvg/text/lengthAdjust/spacingAndGlyphs.svg", "ref/resvg/text/lengthAdjust/spacingAndGlyphs.png"), 0)}
 #[test] fn svg_resvg_text_lengthAdjust_with_underline() {assert_eq!(render("svg/resvg/text/lengthAdjust/with-underline.svg", "ref/resvg/text/lengthAdjust/with-underline.png"), 0)}
@@ -1026,7 +1106,8 @@ use crate::render;
 #[test] fn svg_resvg_text_text_anchor_middle_on_text() {assert_eq!(render("svg/resvg/text/text-anchor/middle-on-text.svg", "ref/resvg/text/text-anchor/middle-on-text.png"), 0)}
 #[test] fn svg_resvg_text_text_anchor_text_anchor_not_on_text_chunk() {assert_eq!(render("svg/resvg/text/text-anchor/text-anchor-not-on-text-chunk.svg", "ref/resvg/text/text-anchor/text-anchor-not-on-text-chunk.png"), 0)}
 #[test] fn svg_resvg_text_text_anchor_on_tspan() {assert_eq!(render("svg/resvg/text/text-anchor/on-tspan.svg", "ref/resvg/text/text-anchor/on-tspan.png"), 0)}
-// #[test] fn svg_resvg_text_text_anchor_on_tspan_with_arabic() {assert_eq!(render("svg/resvg/text/text-anchor/on-tspan-with-arabic.svg", "ref/resvg/text/text-anchor/on-tspan-with-arabic.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_anchor_on_tspan_with_arabic() {assert_eq!(render("svg/resvg/text/text-anchor/on-tspan-with-arabic.svg", "ref/resvg/text/text-anchor/on-tspan-with-arabic.png"), 0)}
 #[test] fn svg_resvg_text_text_anchor_inheritance_1() {assert_eq!(render("svg/resvg/text/text-anchor/inheritance-1.svg", "ref/resvg/text/text-anchor/inheritance-1.png"), 0)}
 #[test] fn svg_resvg_text_text_anchor_inheritance_3() {assert_eq!(render("svg/resvg/text/text-anchor/inheritance-3.svg", "ref/resvg/text/text-anchor/inheritance-3.png"), 0)}
 #[test] fn svg_resvg_text_text_anchor_inheritance_2() {assert_eq!(render("svg/resvg/text/text-anchor/inheritance-2.svg", "ref/resvg/text/text-anchor/inheritance-2.png"), 0)}
@@ -1035,9 +1116,11 @@ use crate::render;
 #[test] fn svg_resvg_text_text_anchor_end_on_text() {assert_eq!(render("svg/resvg/text/text-anchor/end-on-text.svg", "ref/resvg/text/text-anchor/end-on-text.png"), 0)}
 #[test] fn svg_resvg_text_text_anchor_on_the_first_tspan() {assert_eq!(render("svg/resvg/text/text-anchor/on-the-first-tspan.svg", "ref/resvg/text/text-anchor/on-the-first-tspan.png"), 0)}
 #[test] fn svg_resvg_text_kerning_10percent() {assert_eq!(render("svg/resvg/text/kerning/10percent.svg", "ref/resvg/text/kerning/10percent.png"), 0)}
-// #[test] fn svg_resvg_text_font_kerning_as_property() {assert_eq!(render("svg/resvg/text/font-kerning/as-property.svg", "ref/resvg/text/font-kerning/as-property.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_kerning_as_property() {assert_eq!(render("svg/resvg/text/font-kerning/as-property.svg", "ref/resvg/text/font-kerning/as-property.png"), 0)}
 #[test] fn svg_resvg_text_font_kerning_none() {assert_eq!(render("svg/resvg/text/font-kerning/none.svg", "ref/resvg/text/font-kerning/none.png"), 0)}
-// #[test] fn svg_resvg_text_font_kerning_arabic_script() {assert_eq!(render("svg/resvg/text/font-kerning/arabic-script.svg", "ref/resvg/text/font-kerning/arabic-script.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_kerning_arabic_script() {assert_eq!(render("svg/resvg/text/font-kerning/arabic-script.svg", "ref/resvg/text/font-kerning/arabic-script.png"), 0)}
 #[test] fn svg_resvg_text_tref_with_a_title_child() {assert_eq!(render("svg/resvg/text/tref/with-a-title-child.svg", "ref/resvg/text/tref/with-a-title-child.png"), 0)}
 #[test] fn svg_resvg_text_tref_style_attributes() {assert_eq!(render("svg/resvg/text/tref/style-attributes.svg", "ref/resvg/text/tref/style-attributes.png"), 0)}
 #[test] fn svg_resvg_text_tref_nested() {assert_eq!(render("svg/resvg/text/tref/nested.svg", "ref/resvg/text/tref/nested.png"), 0)}
@@ -1054,20 +1137,24 @@ use crate::render;
 #[test] fn svg_resvg_text_word_spacing_5percent() {assert_eq!(render("svg/resvg/text/word-spacing/5percent.svg", "ref/resvg/text/word-spacing/5percent.png"), 0)}
 #[test] fn svg_resvg_text_word_spacing_normal() {assert_eq!(render("svg/resvg/text/word-spacing/normal.svg", "ref/resvg/text/word-spacing/normal.png"), 0)}
 #[test] fn svg_resvg_text_word_spacing_2mm() {assert_eq!(render("svg/resvg/text/word-spacing/2mm.svg", "ref/resvg/text/word-spacing/2mm.png"), 0)}
-// #[test] fn svg_resvg_text_unicode_bidi_bidi_override() {assert_eq!(render("svg/resvg/text/unicode-bidi/bidi-override.svg", "ref/resvg/text/unicode-bidi/bidi-override.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_unicode_bidi_bidi_override() {assert_eq!(render("svg/resvg/text/unicode-bidi/bidi-override.svg", "ref/resvg/text/unicode-bidi/bidi-override.png"), 0)}
 #[test] fn svg_resvg_text_font_variant_inherit() {assert_eq!(render("svg/resvg/text/font-variant/inherit.svg", "ref/resvg/text/font-variant/inherit.png"), 0)}
 #[test] fn svg_resvg_text_font_variant_small_caps() {assert_eq!(render("svg/resvg/text/font-variant/small-caps.svg", "ref/resvg/text/font-variant/small-caps.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_700() {assert_eq!(render("svg/resvg/text/font-weight/700.svg", "ref/resvg/text/font-weight/700.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_lighter() {assert_eq!(render("svg/resvg/text/font-weight/lighter.svg", "ref/resvg/text/font-weight/lighter.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_bolder() {assert_eq!(render("svg/resvg/text/font-weight/bolder.svg", "ref/resvg/text/font-weight/bolder.png"), 0)}
-// #[test] fn svg_resvg_text_font_weight_lighter_with_clamping() {assert_eq!(render("svg/resvg/text/font-weight/lighter-with-clamping.svg", "ref/resvg/text/font-weight/lighter-with-clamping.png"), 0)}
-// #[test] fn svg_resvg_text_font_weight_lighter_without_parent() {assert_eq!(render("svg/resvg/text/font-weight/lighter-without-parent.svg", "ref/resvg/text/font-weight/lighter-without-parent.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_weight_lighter_with_clamping() {assert_eq!(render("svg/resvg/text/font-weight/lighter-with-clamping.svg", "ref/resvg/text/font-weight/lighter-with-clamping.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_weight_lighter_without_parent() {assert_eq!(render("svg/resvg/text/font-weight/lighter-without-parent.svg", "ref/resvg/text/font-weight/lighter-without-parent.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_bold() {assert_eq!(render("svg/resvg/text/font-weight/bold.svg", "ref/resvg/text/font-weight/bold.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_inherit() {assert_eq!(render("svg/resvg/text/font-weight/inherit.svg", "ref/resvg/text/font-weight/inherit.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_normal() {assert_eq!(render("svg/resvg/text/font-weight/normal.svg", "ref/resvg/text/font-weight/normal.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_invalid_number_1() {assert_eq!(render("svg/resvg/text/font-weight/invalid-number-1.svg", "ref/resvg/text/font-weight/invalid-number-1.png"), 0)}
 #[test] fn svg_resvg_text_font_weight_bolder_without_parent() {assert_eq!(render("svg/resvg/text/font-weight/bolder-without-parent.svg", "ref/resvg/text/font-weight/bolder-without-parent.png"), 0)}
-// #[test] fn svg_resvg_text_font_weight_bolder_with_clamping() {assert_eq!(render("svg/resvg/text/font-weight/bolder-with-clamping.svg", "ref/resvg/text/font-weight/bolder-with-clamping.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_weight_bolder_with_clamping() {assert_eq!(render("svg/resvg/text/font-weight/bolder-with-clamping.svg", "ref/resvg/text/font-weight/bolder-with-clamping.png"), 0)}
 #[test] fn svg_resvg_text_text_rendering_optimizeLegibility() {assert_eq!(render("svg/resvg/text/text-rendering/optimizeLegibility.svg", "ref/resvg/text/text-rendering/optimizeLegibility.png"), 0)}
 #[test] fn svg_resvg_text_text_rendering_on_tspan() {assert_eq!(render("svg/resvg/text/text-rendering/on-tspan.svg", "ref/resvg/text/text-rendering/on-tspan.png"), 0)}
 #[test] fn svg_resvg_text_text_rendering_with_underline() {assert_eq!(render("svg/resvg/text/text-rendering/with-underline.svg", "ref/resvg/text/text-rendering/with-underline.png"), 0)}
@@ -1075,7 +1162,8 @@ use crate::render;
 #[test] fn svg_resvg_text_font_size_zero_size() {assert_eq!(render("svg/resvg/text/font-size/zero-size.svg", "ref/resvg/text/font-size/zero-size.png"), 0)}
 #[test] fn svg_resvg_text_font_size_ex() {assert_eq!(render("svg/resvg/text/font-size/ex.svg", "ref/resvg/text/font-size/ex.png"), 0)}
 #[test] fn svg_resvg_text_font_size_em() {assert_eq!(render("svg/resvg/text/font-size/em.svg", "ref/resvg/text/font-size/em.png"), 0)}
-// #[test] fn svg_resvg_text_font_size_named_value() {assert_eq!(render("svg/resvg/text/font-size/named-value.svg", "ref/resvg/text/font-size/named-value.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_size_named_value() {assert_eq!(render("svg/resvg/text/font-size/named-value.svg", "ref/resvg/text/font-size/named-value.png"), 0)}
 #[test] fn svg_resvg_text_font_size_simple_case() {assert_eq!(render("svg/resvg/text/font-size/simple-case.svg", "ref/resvg/text/font-size/simple-case.png"), 0)}
 #[test] fn svg_resvg_text_font_size_inheritance() {assert_eq!(render("svg/resvg/text/font-size/inheritance.svg", "ref/resvg/text/font-size/inheritance.png"), 0)}
 #[test] fn svg_resvg_text_font_size_zero_size_on_parent_1() {assert_eq!(render("svg/resvg/text/font-size/zero-size-on-parent-1.svg", "ref/resvg/text/font-size/zero-size-on-parent-1.png"), 0)}
@@ -1103,12 +1191,14 @@ use crate::render;
 #[test] fn svg_resvg_text_text_x_and_y_with_less_values_than_characters() {assert_eq!(render("svg/resvg/text/text/x-and-y-with-less-values-than-characters.svg", "ref/resvg/text/text/x-and-y-with-less-values-than-characters.png"), 0)}
 #[test] fn svg_resvg_text_text_transform() {assert_eq!(render("svg/resvg/text/text/transform.svg", "ref/resvg/text/text/transform.png"), 0)}
 #[test] fn svg_resvg_text_text_rotate_with_multiple_values_underline_and_pattern() {assert_eq!(render("svg/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.svg", "ref/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.png"), 0)}
-// #[test] fn svg_resvg_text_text_bidi_reordering() {assert_eq!(render("svg/resvg/text/text/bidi-reordering.svg", "ref/resvg/text/text/bidi-reordering.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_bidi_reordering() {assert_eq!(render("svg/resvg/text/text/bidi-reordering.svg", "ref/resvg/text/text/bidi-reordering.png"), 0)}
 #[test] fn svg_resvg_text_text_nested() {assert_eq!(render("svg/resvg/text/text/nested.svg", "ref/resvg/text/text/nested.png"), 0)}
 #[test] fn svg_resvg_text_text_zalgo() {assert_eq!(render("svg/resvg/text/text/zalgo.svg", "ref/resvg/text/text/zalgo.png"), 0)}
 #[test] fn svg_resvg_text_text_rotate_with_more_values_than_characters() {assert_eq!(render("svg/resvg/text/text/rotate-with-more-values-than-characters.svg", "ref/resvg/text/text/rotate-with-more-values-than-characters.png"), 0)}
 #[test] fn svg_resvg_text_text_x_and_y_with_dx_and_dy() {assert_eq!(render("svg/resvg/text/text/x-and-y-with-dx-and-dy.svg", "ref/resvg/text/text/x-and-y-with-dx-and-dy.png"), 0)}
-// #[test] fn svg_resvg_text_text_real_text_height() {assert_eq!(render("svg/resvg/text/text/real-text-height.svg", "ref/resvg/text/text/real-text-height.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_real_text_height() {assert_eq!(render("svg/resvg/text/text/real-text-height.svg", "ref/resvg/text/text/real-text-height.png"), 0)}
 #[test] fn svg_resvg_text_text_dx_and_dy_with_more_values_than_characters() {assert_eq!(render("svg/resvg/text/text/dx-and-dy-with-more-values-than-characters.svg", "ref/resvg/text/text/dx-and-dy-with-more-values-than-characters.png"), 0)}
 #[test] fn svg_resvg_text_text_simple_case() {assert_eq!(render("svg/resvg/text/text/simple-case.svg", "ref/resvg/text/text/simple-case.png"), 0)}
 #[test] fn svg_resvg_text_text_x_and_y_with_multiple_values_and_tspan() {assert_eq!(render("svg/resvg/text/text/x-and-y-with-multiple-values-and-tspan.svg", "ref/resvg/text/text/x-and-y-with-multiple-values-and-tspan.png"), 0)}
@@ -1116,11 +1206,13 @@ use crate::render;
 #[test] fn svg_resvg_text_text_dx_and_dy_with_less_values_than_characters() {assert_eq!(render("svg/resvg/text/text/dx-and-dy-with-less-values-than-characters.svg", "ref/resvg/text/text/dx-and-dy-with-less-values-than-characters.png"), 0)}
 #[test] fn svg_resvg_text_text_percent_value_on_x_and_y() {assert_eq!(render("svg/resvg/text/text/percent-value-on-x-and-y.svg", "ref/resvg/text/text/percent-value-on-x-and-y.png"), 0)}
 #[test] fn svg_resvg_text_text_xml_space() {assert_eq!(render("svg/resvg/text/text/xml-space.svg", "ref/resvg/text/text/xml-space.png"), 0)}
-// #[test] fn svg_resvg_text_text_fill_rule_evenodd() {assert_eq!(render("svg/resvg/text/text/fill-rule=evenodd.svg", "ref/resvg/text/text/fill-rule=evenodd.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_fill_rule_evenodd() {assert_eq!(render("svg/resvg/text/text/fill-rule=evenodd.svg", "ref/resvg/text/text/fill-rule=evenodd.png"), 0)}
 #[test] fn svg_resvg_text_text_x_and_y_with_dx_and_dy_lists() {assert_eq!(render("svg/resvg/text/text/x-and-y-with-dx-and-dy-lists.svg", "ref/resvg/text/text/x-and-y-with-dx-and-dy-lists.png"), 0)}
 #[test] fn svg_resvg_text_text_rotate_with_multiple_values_and_complex_text() {assert_eq!(render("svg/resvg/text/text/rotate-with-multiple-values-and-complex-text.svg", "ref/resvg/text/text/rotate-with-multiple-values-and-complex-text.png"), 0)}
 #[test] fn svg_resvg_text_text_rotate_with_an_invalid_angle() {assert_eq!(render("svg/resvg/text/text/rotate-with-an-invalid-angle.svg", "ref/resvg/text/text/rotate-with-an-invalid-angle.png"), 0)}
-// #[test] fn svg_resvg_text_text_filter_bbox() {assert_eq!(render("svg/resvg/text/text/filter-bbox.svg", "ref/resvg/text/text/filter-bbox.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_filter_bbox() {assert_eq!(render("svg/resvg/text/text/filter-bbox.svg", "ref/resvg/text/text/filter-bbox.png"), 0)}
 #[test] fn svg_resvg_text_text_no_coordinates() {assert_eq!(render("svg/resvg/text/text/no-coordinates.svg", "ref/resvg/text/text/no-coordinates.png"), 0)}
 #[test] fn svg_resvg_text_text_percent_value_on_dx_and_dy() {assert_eq!(render("svg/resvg/text/text/percent-value-on-dx-and-dy.svg", "ref/resvg/text/text/percent-value-on-dx-and-dy.png"), 0)}
 #[test] fn svg_resvg_text_text_mm_coordinates() {assert_eq!(render("svg/resvg/text/text/mm-coordinates.svg", "ref/resvg/text/text/mm-coordinates.png"), 0)}
@@ -1131,9 +1223,11 @@ use crate::render;
 #[test] fn svg_resvg_text_textLength_150_on_parent() {assert_eq!(render("svg/resvg/text/textLength/150-on-parent.svg", "ref/resvg/text/textLength/150-on-parent.png"), 0)}
 #[test] fn svg_resvg_text_textLength_on_a_single_tspan() {assert_eq!(render("svg/resvg/text/textLength/on-a-single-tspan.svg", "ref/resvg/text/textLength/on-a-single-tspan.png"), 0)}
 #[test] fn svg_resvg_text_textLength_75percent() {assert_eq!(render("svg/resvg/text/textLength/75percent.svg", "ref/resvg/text/textLength/75percent.png"), 0)}
-// #[test] fn svg_resvg_text_textLength_arabic() {assert_eq!(render("svg/resvg/text/textLength/arabic.svg", "ref/resvg/text/textLength/arabic.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_textLength_arabic() {assert_eq!(render("svg/resvg/text/textLength/arabic.svg", "ref/resvg/text/textLength/arabic.png"), 0)}
 #[test] fn svg_resvg_text_textLength_150() {assert_eq!(render("svg/resvg/text/textLength/150.svg", "ref/resvg/text/textLength/150.png"), 0)}
-// #[test] fn svg_resvg_text_textLength_arabic_with_lengthAdjust() {assert_eq!(render("svg/resvg/text/textLength/arabic-with-lengthAdjust.svg", "ref/resvg/text/textLength/arabic-with-lengthAdjust.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_textLength_arabic_with_lengthAdjust() {assert_eq!(render("svg/resvg/text/textLength/arabic-with-lengthAdjust.svg", "ref/resvg/text/textLength/arabic-with-lengthAdjust.png"), 0)}
 #[test] fn svg_resvg_text_textLength_150_on_tspan() {assert_eq!(render("svg/resvg/text/textLength/150-on-tspan.svg", "ref/resvg/text/textLength/150-on-tspan.png"), 0)}
 #[test] fn svg_resvg_text_textLength_inherit() {assert_eq!(render("svg/resvg/text/textLength/inherit.svg", "ref/resvg/text/textLength/inherit.png"), 0)}
 #[test] fn svg_resvg_text_textLength_on_text_and_tspan() {assert_eq!(render("svg/resvg/text/textLength/on-text-and-tspan.svg", "ref/resvg/text/textLength/on-text-and-tspan.png"), 0)}
@@ -1142,23 +1236,34 @@ use crate::render;
 #[test] fn svg_resvg_text_font_style_inherit() {assert_eq!(render("svg/resvg/text/font-style/inherit.svg", "ref/resvg/text/font-style/inherit.png"), 0)}
 #[test] fn svg_resvg_text_font_style_italic() {assert_eq!(render("svg/resvg/text/font-style/italic.svg", "ref/resvg/text/font-style/italic.png"), 0)}
 #[test] fn svg_resvg_text_font_style_oblique() {assert_eq!(render("svg/resvg/text/font-style/oblique.svg", "ref/resvg/text/font-style/oblique.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_font_list() {assert_eq!(render("svg/resvg/text/font-family/font-list.svg", "ref/resvg/text/font-family/font-list.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_source_sans_pro() {assert_eq!(render("svg/resvg/text/font-family/source-sans-pro.svg", "ref/resvg/text/font-family/source-sans-pro.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_serif() {assert_eq!(render("svg/resvg/text/font-family/serif.svg", "ref/resvg/text/font-family/serif.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_font_list() {assert_eq!(render("svg/resvg/text/font-family/font-list.svg", "ref/resvg/text/font-family/font-list.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_source_sans_pro() {assert_eq!(render("svg/resvg/text/font-family/source-sans-pro.svg", "ref/resvg/text/font-family/source-sans-pro.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_serif() {assert_eq!(render("svg/resvg/text/font-family/serif.svg", "ref/resvg/text/font-family/serif.png"), 0)}
 #[test] fn svg_resvg_text_font_family_noto_sans() {assert_eq!(render("svg/resvg/text/font-family/noto-sans.svg", "ref/resvg/text/font-family/noto-sans.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_fantasy() {assert_eq!(render("svg/resvg/text/font-family/fantasy.svg", "ref/resvg/text/font-family/fantasy.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_monospace() {assert_eq!(render("svg/resvg/text/font-family/monospace.svg", "ref/resvg/text/font-family/monospace.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_fantasy() {assert_eq!(render("svg/resvg/text/font-family/fantasy.svg", "ref/resvg/text/font-family/fantasy.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_monospace() {assert_eq!(render("svg/resvg/text/font-family/monospace.svg", "ref/resvg/text/font-family/monospace.png"), 0)}
 #[test] fn svg_resvg_text_font_family_fallback_2() {assert_eq!(render("svg/resvg/text/font-family/fallback-2.svg", "ref/resvg/text/font-family/fallback-2.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_double_quoted() {assert_eq!(render("svg/resvg/text/font-family/double-quoted.svg", "ref/resvg/text/font-family/double-quoted.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_cursive() {assert_eq!(render("svg/resvg/text/font-family/cursive.svg", "ref/resvg/text/font-family/cursive.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_fallback_1() {assert_eq!(render("svg/resvg/text/font-family/fallback-1.svg", "ref/resvg/text/font-family/fallback-1.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_bold_sans_serif() {assert_eq!(render("svg/resvg/text/font-family/bold-sans-serif.svg", "ref/resvg/text/font-family/bold-sans-serif.png"), 0)}
-// #[test] fn svg_resvg_text_font_family_sans_serif() {assert_eq!(render("svg/resvg/text/font-family/sans-serif.svg", "ref/resvg/text/font-family/sans-serif.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_double_quoted() {assert_eq!(render("svg/resvg/text/font-family/double-quoted.svg", "ref/resvg/text/font-family/double-quoted.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_cursive() {assert_eq!(render("svg/resvg/text/font-family/cursive.svg", "ref/resvg/text/font-family/cursive.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_fallback_1() {assert_eq!(render("svg/resvg/text/font-family/fallback-1.svg", "ref/resvg/text/font-family/fallback-1.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_bold_sans_serif() {assert_eq!(render("svg/resvg/text/font-family/bold-sans-serif.svg", "ref/resvg/text/font-family/bold-sans-serif.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_font_family_sans_serif() {assert_eq!(render("svg/resvg/text/font-family/sans-serif.svg", "ref/resvg/text/font-family/sans-serif.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_underline() {assert_eq!(render("svg/resvg/text/text-decoration/underline.svg", "ref/resvg/text/text-decoration/underline.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_line_through() {assert_eq!(render("svg/resvg/text/text-decoration/line-through.svg", "ref/resvg/text/text-decoration/line-through.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_all_types_inline_comma_separated() {assert_eq!(render("svg/resvg/text/text-decoration/all-types-inline-comma-separated.svg", "ref/resvg/text/text-decoration/all-types-inline-comma-separated.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_tspan_decoration() {assert_eq!(render("svg/resvg/text/text-decoration/tspan-decoration.svg", "ref/resvg/text/text-decoration/tspan-decoration.png"), 0)}
-// #[test] fn svg_resvg_text_text_decoration_underline_with_dy_list_2() {assert_eq!(render("svg/resvg/text/text-decoration/underline-with-dy-list-2.svg", "ref/resvg/text/text-decoration/underline-with-dy-list-2.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_decoration_underline_with_dy_list_2() {assert_eq!(render("svg/resvg/text/text-decoration/underline-with-dy-list-2.svg", "ref/resvg/text/text-decoration/underline-with-dy-list-2.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_outside_the_text_element() {assert_eq!(render("svg/resvg/text/text-decoration/outside-the-text-element.svg", "ref/resvg/text/text-decoration/outside-the-text-element.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_underline_with_dy_list_1() {assert_eq!(render("svg/resvg/text/text-decoration/underline-with-dy-list-1.svg", "ref/resvg/text/text-decoration/underline-with-dy-list-1.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_all_types_nested() {assert_eq!(render("svg/resvg/text/text-decoration/all-types-nested.svg", "ref/resvg/text/text-decoration/all-types-nested.png"), 0)}
@@ -1166,13 +1271,15 @@ use crate::render;
 #[test] fn svg_resvg_text_text_decoration_underline_with_y_list() {assert_eq!(render("svg/resvg/text/text-decoration/underline-with-y-list.svg", "ref/resvg/text/text-decoration/underline-with-y-list.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_all_types_inline_no_spaces() {assert_eq!(render("svg/resvg/text/text-decoration/all-types-inline-no-spaces.svg", "ref/resvg/text/text-decoration/all-types-inline-no-spaces.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_indirect_with_multiple_colors() {assert_eq!(render("svg/resvg/text/text-decoration/indirect-with-multiple-colors.svg", "ref/resvg/text/text-decoration/indirect-with-multiple-colors.png"), 0)}
-// #[test] fn svg_resvg_text_text_decoration_underline_with_rotate_list_4() {assert_eq!(render("svg/resvg/text/text-decoration/underline-with-rotate-list-4.svg", "ref/resvg/text/text-decoration/underline-with-rotate-list-4.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_decoration_underline_with_rotate_list_4() {assert_eq!(render("svg/resvg/text/text-decoration/underline-with-rotate-list-4.svg", "ref/resvg/text/text-decoration/underline-with-rotate-list-4.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_underline_with_rotate_list_3() {assert_eq!(render("svg/resvg/text/text-decoration/underline-with-rotate-list-3.svg", "ref/resvg/text/text-decoration/underline-with-rotate-list-3.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_style_resolving_3() {assert_eq!(render("svg/resvg/text/text-decoration/style-resolving-3.svg", "ref/resvg/text/text-decoration/style-resolving-3.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_all_types_inline() {assert_eq!(render("svg/resvg/text/text-decoration/all-types-inline.svg", "ref/resvg/text/text-decoration/all-types-inline.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_style_resolving_2() {assert_eq!(render("svg/resvg/text/text-decoration/style-resolving-2.svg", "ref/resvg/text/text-decoration/style-resolving-2.png"), 0)}
 #[test] fn svg_resvg_text_text_decoration_style_resolving_1() {assert_eq!(render("svg/resvg/text/text-decoration/style-resolving-1.svg", "ref/resvg/text/text-decoration/style-resolving-1.png"), 0)}
-// #[test] fn svg_resvg_text_text_decoration_with_textLength_on_a_single_character() {assert_eq!(render("svg/resvg/text/text-decoration/with-textLength-on-a-single-character.svg", "ref/resvg/text/text-decoration/with-textLength-on-a-single-character.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_text_decoration_with_textLength_on_a_single_character() {assert_eq!(render("svg/resvg/text/text-decoration/with-textLength-on-a-single-character.svg", "ref/resvg/text/text-decoration/with-textLength-on-a-single-character.png"), 0)}
 #[test] fn svg_resvg_text_textPath_invalid_textPath_in_the_middle() {assert_eq!(render("svg/resvg/text/textPath/invalid-textPath-in-the-middle.svg", "ref/resvg/text/textPath/invalid-textPath-in-the-middle.png"), 0)}
 #[test] fn svg_resvg_text_textPath_with_letter_spacing() {assert_eq!(render("svg/resvg/text/textPath/with-letter-spacing.svg", "ref/resvg/text/textPath/with-letter-spacing.png"), 0)}
 #[test] fn svg_resvg_text_textPath_link_to_rect() {assert_eq!(render("svg/resvg/text/textPath/link-to-rect.svg", "ref/resvg/text/textPath/link-to-rect.png"), 0)}
@@ -1184,12 +1291,14 @@ use crate::render;
 #[test] fn svg_resvg_text_textPath_nested() {assert_eq!(render("svg/resvg/text/textPath/nested.svg", "ref/resvg/text/textPath/nested.png"), 0)}
 #[test] fn svg_resvg_text_textPath_with_transform_outside_a_referenced_path() {assert_eq!(render("svg/resvg/text/textPath/with-transform-outside-a-referenced-path.svg", "ref/resvg/text/textPath/with-transform-outside-a-referenced-path.png"), 0)}
 #[test] fn svg_resvg_text_textPath_with_text_anchor() {assert_eq!(render("svg/resvg/text/textPath/with-text-anchor.svg", "ref/resvg/text/textPath/with-text-anchor.png"), 0)}
-// #[test] fn svg_resvg_text_textPath_writing_mode_tb() {assert_eq!(render("svg/resvg/text/textPath/writing-mode=tb.svg", "ref/resvg/text/textPath/writing-mode=tb.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_textPath_writing_mode_tb() {assert_eq!(render("svg/resvg/text/textPath/writing-mode=tb.svg", "ref/resvg/text/textPath/writing-mode=tb.png"), 0)}
 #[test] fn svg_resvg_text_textPath_with_big_letter_spacing() {assert_eq!(render("svg/resvg/text/textPath/with-big-letter-spacing.svg", "ref/resvg/text/textPath/with-big-letter-spacing.png"), 0)}
 #[test] fn svg_resvg_text_textPath_path_with_ClosePath() {assert_eq!(render("svg/resvg/text/textPath/path-with-ClosePath.svg", "ref/resvg/text/textPath/path-with-ClosePath.png"), 0)}
 #[test] fn svg_resvg_text_textPath_simple_case() {assert_eq!(render("svg/resvg/text/textPath/simple-case.svg", "ref/resvg/text/textPath/simple-case.png"), 0)}
 #[test] fn svg_resvg_text_textPath_path_with_subpaths_and_startOffset() {assert_eq!(render("svg/resvg/text/textPath/path-with-subpaths-and-startOffset.svg", "ref/resvg/text/textPath/path-with-subpaths-and-startOffset.png"), 0)}
-// #[test] fn svg_resvg_text_textPath_with_path_and_xlink_href() {assert_eq!(render("svg/resvg/text/textPath/with-path-and-xlink-href.svg", "ref/resvg/text/textPath/with-path-and-xlink-href.png"), 0)}
+#[ignore]
+#[test] fn svg_resvg_text_textPath_with_path_and_xlink_href() {assert_eq!(render("svg/resvg/text/textPath/with-path-and-xlink-href.svg", "ref/resvg/text/textPath/with-path-and-xlink-href.png"), 0)}
 #[test] fn svg_resvg_text_textPath_no_link() {assert_eq!(render("svg/resvg/text/textPath/no-link.svg", "ref/resvg/text/textPath/no-link.png"), 0)}
 #[test] fn svg_resvg_text_textPath_with_coordinates_on_text() {assert_eq!(render("svg/resvg/text/textPath/with-coordinates-on-text.svg", "ref/resvg/text/textPath/with-coordinates-on-text.png"), 0)}
 #[test] fn svg_resvg_text_textPath_m_A_path() {assert_eq!(render("svg/resvg/text/textPath/m-A-path.svg", "ref/resvg/text/textPath/m-A-path.png"), 0)}

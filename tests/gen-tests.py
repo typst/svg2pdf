@@ -42,7 +42,7 @@ def main():
             ref_path = test_file.ref_path
 
             if not ref_path.is_file():
-                test_string += "// "
+                test_string += "#[ignore]\n"
 
             test_string += "#[test] "
 

@@ -1,3 +1,4 @@
+#[rustfmt::skip]
 mod render;
 
 use std::cmp::max;
@@ -48,14 +49,13 @@ lazy_static! {
             .map(|e| e.into_path())
             .collect()
     };
-
     pub static ref PDFIUM: Pdfium = {
         Pdfium::new(
-                Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
-                    "./pdfium_lib/",
-                ))
-                .unwrap(),
-            )
+            Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
+                "./pdfium_lib/",
+            ))
+            .unwrap(),
+        )
     };
 }
 
