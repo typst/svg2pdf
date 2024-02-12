@@ -25,8 +25,6 @@ def sync_existing_tests():
             content = resvg_file.read()
 
             path = SVG2PDF_SVG_DIR / file
-            print(path)
-            print(path.parent)
             if not path.parent.exists():
                 path.parent.mkdir(parents=True, exist_ok=True)
 
