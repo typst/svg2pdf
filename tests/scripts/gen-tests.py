@@ -7,6 +7,14 @@ from pathlib import Path
 OUT_PATH = ROOT / "src" / "test.rs"
 
 
+IGNORE_TESTS = {
+    "svg/resvg/filters/feMorphology/huge-radius.svg": "will timeout CI",
+    "svg/resvg/structure/svg/negative-size.svg": "invalid size",
+    "svg/resvg/structure/svg/no-size.svg": "invalid size",
+    "svg/resvg/structure/svg/zero-size": "invalid size",
+    "svg/resvg/structure/svg/not-UTF-8-encoding": "invalid encoding"
+}
+
 def main():
     parser = argparse.ArgumentParser(
         prog="gen-tests", description="Generate the test files for svg2pdf"
@@ -33,7 +41,12 @@ def main():
                 .replace("#", "")
             )
 
-            if not test_file.has_ref():
+            print(test_file.svg_path())
+            if str(test_file.svg_path()) in IGNORE_TESTS:
+                test_string += f"// {IGNORE_TESTS[str(test_file.svg_path())]}\n"
+                test_string += "#[ignore] "
+            elif not test_file.has_ref():
+                test_string += f"// unknown reason\n"
                 test_string += "#[ignore] "
 
             test_string += "#[test] "
