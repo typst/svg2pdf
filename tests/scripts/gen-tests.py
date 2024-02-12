@@ -41,9 +41,9 @@ IGNORE_TESTS = {
     "svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg": NO_REPEAT,
     "svg/resvg/painting/marker/with-an-image-child.svg": NO_RELATIVE_PATHS,
     "svg/resvg/painting/mix-blend-mode/color-dodge.svg": "pdfium bug",
-    "svg/resvg/painting/stroke-dasharray/m-0.svg": INVESTIGATE,
-    "svg/resvg/painting/stroke-linecap/zero-lengt-path-with-round.svg": NO_SUPPORT,
-    "svg/resvg/painting/stroke-linecap/zero-lengt-path-with-square.svg": NO_SUPPORT,
+    "svg/resvg/painting/stroke-dasharray/n-0.svg": INVESTIGATE,
+    "svg/resvg/painting/stroke-linecap/zero-length-path-with-round.svg": NO_SUPPORT,
+    "svg/resvg/painting/stroke-linecap/zero-length-path-with-square.svg": NO_SUPPORT,
     "svg/resvg/painting/stroke-linejoin/miter-clip.svg": NO_SUPPORT,
     "svg/resvg/structure/image/external-gif.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/external-jpeg.svg": NO_RELATIVE_PATHS,
@@ -64,6 +64,7 @@ IGNORE_TESTS = {
     "svg/resvg/structure/image/recursive-2.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/width-and-height-set-to-auto.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/zero-height.svg": NO_RELATIVE_PATHS,
+    "svg/resvg/structure/image/zero-width.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/svg/funcIRI-parsing.svg": INVESTIGATE,
     "svg/resvg/structure/svg/funcIRI-with-invalid-characters.svg": INVESTIGATE,
     "svg/resvg/text/alignment-baseline/hanging-on-vertical.svg": NO_FONT,
@@ -141,18 +142,8 @@ def main():
                 test_string += f"// {IGNORE_TESTS[str(test_file.svg_path())]}\n"
                 test_string += "#[ignore] "
             elif not test_file.has_ref():
-                pass
-                resvg_path = str(test_file.ref_path())
-                resvg_path = resvg_path.replace("ref/resvg/", "")
-
-                resvg_root = Path("../../resvg/crates/resvg/tests/tests")
-                load_path = (resvg_root / resvg_path).resolve()
-                store_path = test_file.ref_path().resolve().with_stem(load_path.stem + "-1").with_suffix(".png")
-                print(f"{load_path}, {store_path}")
-                store_path.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(load_path, store_path)
-                # test_string += f"// unknown reason\n"
-                # test_string += "#[ignore] "
+                test_string += f"// unknown reason\n"
+                test_string += "#[ignore] "
 
             test_string += "#[test] "
 

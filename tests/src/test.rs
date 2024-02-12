@@ -5,13 +5,10 @@
 #[allow(unused_imports)]
 use crate::run_test;
 
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feDisplacementMap_simple_case() {assert_eq!(run_test("svg/resvg/filters/feDisplacementMap/simple-case.svg", "ref/resvg/filters/feDisplacementMap/simple-case.png", "diff/resvg/filters/feDisplacementMap/simple-case.png", false), 0)}
+#[test] fn resvg_filters_feDisplacementMap_simple_case() {assert_eq!(run_test("svg/resvg/filters/feDisplacementMap/simple-case.svg", "ref/resvg/filters/feDisplacementMap/simple-case.png", "diff/resvg/filters/feDisplacementMap/simple-case.png", false), 0)}
 #[test] fn resvg_filters_feOffset_negative_offset() {assert_eq!(run_test("svg/resvg/filters/feOffset/negative-offset.svg", "ref/resvg/filters/feOffset/negative-offset.png", "diff/resvg/filters/feOffset/negative-offset.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feOffset_fractional_offset() {assert_eq!(run_test("svg/resvg/filters/feOffset/fractional-offset.svg", "ref/resvg/filters/feOffset/fractional-offset.png", "diff/resvg/filters/feOffset/fractional-offset.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feOffset_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feOffset/complex-transform.svg", "ref/resvg/filters/feOffset/complex-transform.png", "diff/resvg/filters/feOffset/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feOffset_fractional_offset() {assert_eq!(run_test("svg/resvg/filters/feOffset/fractional-offset.svg", "ref/resvg/filters/feOffset/fractional-offset.png", "diff/resvg/filters/feOffset/fractional-offset.png", false), 0)}
+#[test] fn resvg_filters_feOffset_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feOffset/complex-transform.svg", "ref/resvg/filters/feOffset/complex-transform.png", "diff/resvg/filters/feOffset/complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feOffset_no_offset() {assert_eq!(run_test("svg/resvg/filters/feOffset/no-offset.svg", "ref/resvg/filters/feOffset/no-offset.png", "diff/resvg/filters/feOffset/no-offset.png", false), 0)}
 #[test] fn resvg_filters_feOffset_with_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("svg/resvg/filters/feOffset/with-primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feOffset/with-primitiveUnits=objectBoundingBox.png", "diff/resvg/filters/feOffset/with-primitiveUnits=objectBoundingBox.png", false), 0)}
 #[test] fn resvg_filters_feOffset_simple_case() {assert_eq!(run_test("svg/resvg/filters/feOffset/simple-case.svg", "ref/resvg/filters/feOffset/simple-case.png", "diff/resvg/filters/feOffset/simple-case.png", false), 0)}
@@ -25,8 +22,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feColorMatrix_type_hueRotate() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=hueRotate.svg", "ref/resvg/filters/feColorMatrix/type=hueRotate.png", "diff/resvg/filters/feColorMatrix/type=hueRotate.png", false), 0)}
 #[test] fn resvg_filters_feColorMatrix_without_attributes() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/without-attributes.svg", "ref/resvg/filters/feColorMatrix/without-attributes.png", "diff/resvg/filters/feColorMatrix/without-attributes.png", false), 0)}
 #[test] fn resvg_filters_feColorMatrix_type_matrix_without_values() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=matrix-without-values.svg", "ref/resvg/filters/feColorMatrix/type=matrix-without-values.png", "diff/resvg/filters/feColorMatrix/type=matrix-without-values.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feColorMatrix_type_saturate_with_negative_coefficient() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient.svg", "ref/resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient.png", "diff/resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient.png", false), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_saturate_with_negative_coefficient() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient.svg", "ref/resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient.png", "diff/resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient.png", false), 0)}
 #[test] fn resvg_filters_feColorMatrix_type_luminanceToAlpha() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=luminanceToAlpha.svg", "ref/resvg/filters/feColorMatrix/type=luminanceToAlpha.png", "diff/resvg/filters/feColorMatrix/type=luminanceToAlpha.png", false), 0)}
 #[test] fn resvg_filters_feColorMatrix_type_matrix_with_too_many_values() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=matrix-with-too-many-values.svg", "ref/resvg/filters/feColorMatrix/type=matrix-with-too-many-values.png", "diff/resvg/filters/feColorMatrix/type=matrix-with-too-many-values.png", false), 0)}
 #[test] fn resvg_filters_feColorMatrix_type_matrix_with_non_normalized_values() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=matrix-with-non-normalized-values.svg", "ref/resvg/filters/feColorMatrix/type=matrix-with-non-normalized-values.png", "diff/resvg/filters/feColorMatrix/type=matrix-with-non-normalized-values.png", false), 0)}
@@ -34,8 +30,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feColorMatrix_without_a_type() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/without-a-type.svg", "ref/resvg/filters/feColorMatrix/without-a-type.png", "diff/resvg/filters/feColorMatrix/without-a-type.png", false), 0)}
 #[test] fn resvg_filters_feColorMatrix_type_matrix_with_empty_values() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=matrix-with-empty-values.svg", "ref/resvg/filters/feColorMatrix/type=matrix-with-empty-values.png", "diff/resvg/filters/feColorMatrix/type=matrix-with-empty-values.png", false), 0)}
 #[test] fn resvg_filters_feColorMatrix_type_matrix_with_not_enough_values() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=matrix-with-not-enough-values.svg", "ref/resvg/filters/feColorMatrix/type=matrix-with-not-enough-values.png", "diff/resvg/filters/feColorMatrix/type=matrix-with-not-enough-values.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feColorMatrix_type_saturate_with_a_large_coefficient() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient.svg", "ref/resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient.png", "diff/resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient.png", false), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_saturate_with_a_large_coefficient() {assert_eq!(run_test("svg/resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient.svg", "ref/resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient.png", "diff/resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient.png", false), 0)}
 #[test] fn resvg_filters_feBlend_with_subregion_on_input_2() {assert_eq!(run_test("svg/resvg/filters/feBlend/with-subregion-on-input-2.svg", "ref/resvg/filters/feBlend/with-subregion-on-input-2.png", "diff/resvg/filters/feBlend/with-subregion-on-input-2.png", false), 0)}
 #[test] fn resvg_filters_feBlend_mode_darken() {assert_eq!(run_test("svg/resvg/filters/feBlend/mode=darken.svg", "ref/resvg/filters/feBlend/mode=darken.png", "diff/resvg/filters/feBlend/mode=darken.png", false), 0)}
 #[test] fn resvg_filters_feBlend_with_subregion_on_input_1() {assert_eq!(run_test("svg/resvg/filters/feBlend/with-subregion-on-input-1.svg", "ref/resvg/filters/feBlend/with-subregion-on-input-1.png", "diff/resvg/filters/feBlend/with-subregion-on-input-1.png", false), 0)}
@@ -102,8 +97,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feComposite_default_operator() {assert_eq!(run_test("svg/resvg/filters/feComposite/default-operator.svg", "ref/resvg/filters/feComposite/default-operator.png", "diff/resvg/filters/feComposite/default-operator.png", false), 0)}
 #[test] fn resvg_filters_feComposite_operator_arithmetic_with_opacity() {assert_eq!(run_test("svg/resvg/filters/feComposite/operator=arithmetic-with-opacity.svg", "ref/resvg/filters/feComposite/operator=arithmetic-with-opacity.png", "diff/resvg/filters/feComposite/operator=arithmetic-with-opacity.png", false), 0)}
 #[test] fn resvg_filters_filter_functions_two_drop_shadow_function() {assert_eq!(run_test("svg/resvg/filters/filter-functions/two-drop-shadow-function.svg", "ref/resvg/filters/filter-functions/two-drop-shadow-function.png", "diff/resvg/filters/filter-functions/two-drop-shadow-function.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_functions_two_exact_urls() {assert_eq!(run_test("svg/resvg/filters/filter-functions/two-exact-urls.svg", "ref/resvg/filters/filter-functions/two-exact-urls.png", "diff/resvg/filters/filter-functions/two-exact-urls.png", false), 0)}
+#[test] fn resvg_filters_filter_functions_two_exact_urls() {assert_eq!(run_test("svg/resvg/filters/filter-functions/two-exact-urls.svg", "ref/resvg/filters/filter-functions/two-exact-urls.png", "diff/resvg/filters/filter-functions/two-exact-urls.png", false), 0)}
 #[test] fn resvg_filters_filter_functions_color_adjust_functions_0percent() {assert_eq!(run_test("svg/resvg/filters/filter-functions/color-adjust-functions-0percent.svg", "ref/resvg/filters/filter-functions/color-adjust-functions-0percent.png", "diff/resvg/filters/filter-functions/color-adjust-functions-0percent.png", false), 0)}
 #[test] fn resvg_filters_filter_functions_hue_rotate_function_999deg() {assert_eq!(run_test("svg/resvg/filters/filter-functions/hue-rotate-function-999deg.svg", "ref/resvg/filters/filter-functions/hue-rotate-function-999deg.png", "diff/resvg/filters/filter-functions/hue-rotate-function-999deg.png", false), 0)}
 #[test] fn resvg_filters_filter_functions_hue_rotate_function_default_value() {assert_eq!(run_test("svg/resvg/filters/filter-functions/hue-rotate-function-default-value.svg", "ref/resvg/filters/filter-functions/hue-rotate-function-default-value.png", "diff/resvg/filters/filter-functions/hue-rotate-function-default-value.png", false), 0)}
@@ -145,8 +139,7 @@ use crate::run_test;
 #[test] fn resvg_filters_filter_functions_hue_rotate_function_0_25turn() {assert_eq!(run_test("svg/resvg/filters/filter-functions/hue-rotate-function-0.25turn.svg", "ref/resvg/filters/filter-functions/hue-rotate-function-0.25turn.png", "diff/resvg/filters/filter-functions/hue-rotate-function-0.25turn.png", false), 0)}
 #[test] fn resvg_filters_filter_functions_drop_shadow_function_mm_values() {assert_eq!(run_test("svg/resvg/filters/filter-functions/drop-shadow-function-mm-values.svg", "ref/resvg/filters/filter-functions/drop-shadow-function-mm-values.png", "diff/resvg/filters/filter-functions/drop-shadow-function-mm-values.png", false), 0)}
 #[test] fn resvg_filters_filter_functions_blur_function_negative_value() {assert_eq!(run_test("svg/resvg/filters/filter-functions/blur-function-negative-value.svg", "ref/resvg/filters/filter-functions/blur-function-negative-value.png", "diff/resvg/filters/filter-functions/blur-function-negative-value.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feTile_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feTile/complex-transform.svg", "ref/resvg/filters/feTile/complex-transform.png", "diff/resvg/filters/feTile/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feTile_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feTile/complex-transform.svg", "ref/resvg/filters/feTile/complex-transform.png", "diff/resvg/filters/feTile/complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feTile_empty_region() {assert_eq!(run_test("svg/resvg/filters/feTile/empty-region.svg", "ref/resvg/filters/feTile/empty-region.png", "diff/resvg/filters/feTile/empty-region.png", false), 0)}
 #[test] fn resvg_filters_feTile_simple_case() {assert_eq!(run_test("svg/resvg/filters/feTile/simple-case.svg", "ref/resvg/filters/feTile/simple-case.png", "diff/resvg/filters/feTile/simple-case.png", false), 0)}
 #[test] fn resvg_filters_feTile_with_region() {assert_eq!(run_test("svg/resvg/filters/feTile/with-region.svg", "ref/resvg/filters/feTile/with-region.png", "diff/resvg/filters/feTile/with-region.png", false), 0)}
@@ -157,8 +150,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feGaussianBlur_stdDeviation_with_two_values() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/stdDeviation-with-two-values.svg", "ref/resvg/filters/feGaussianBlur/stdDeviation-with-two-values.png", "diff/resvg/filters/feGaussianBlur/stdDeviation-with-two-values.png", false), 0)}
 #[test] fn resvg_filters_feGaussianBlur_small_stdDeviation() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/small-stdDeviation.svg", "ref/resvg/filters/feGaussianBlur/small-stdDeviation.png", "diff/resvg/filters/feGaussianBlur/small-stdDeviation.png", false), 0)}
 #[test] fn resvg_filters_feGaussianBlur_stdDeviation_5_0() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/stdDeviation=5-0.svg", "ref/resvg/filters/feGaussianBlur/stdDeviation=5-0.png", "diff/resvg/filters/feGaussianBlur/stdDeviation=5-0.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feGaussianBlur_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/complex-transform.svg", "ref/resvg/filters/feGaussianBlur/complex-transform.png", "diff/resvg/filters/feGaussianBlur/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feGaussianBlur_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/complex-transform.svg", "ref/resvg/filters/feGaussianBlur/complex-transform.png", "diff/resvg/filters/feGaussianBlur/complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feGaussianBlur_stdDeviation_0_5() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/stdDeviation=0-5.svg", "ref/resvg/filters/feGaussianBlur/stdDeviation=0-5.png", "diff/resvg/filters/feGaussianBlur/stdDeviation=0-5.png", false), 0)}
 #[test] fn resvg_filters_feGaussianBlur_negative_stdDeviation() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/negative-stdDeviation.svg", "ref/resvg/filters/feGaussianBlur/negative-stdDeviation.png", "diff/resvg/filters/feGaussianBlur/negative-stdDeviation.png", false), 0)}
 #[test] fn resvg_filters_feGaussianBlur_simple_case() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/simple-case.svg", "ref/resvg/filters/feGaussianBlur/simple-case.png", "diff/resvg/filters/feGaussianBlur/simple-case.png", false), 0)}
@@ -169,8 +161,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feGaussianBlur_tiny_stdDeviation() {assert_eq!(run_test("svg/resvg/filters/feGaussianBlur/tiny-stdDeviation.svg", "ref/resvg/filters/feGaussianBlur/tiny-stdDeviation.png", "diff/resvg/filters/feGaussianBlur/tiny-stdDeviation.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_baseFrequency__0_05() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/baseFrequency=-0.05.svg", "ref/resvg/filters/feTurbulence/baseFrequency=-0.05.png", "diff/resvg/filters/feTurbulence/baseFrequency=-0.05.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_type_fractalNoise() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/type=fractalNoise.svg", "ref/resvg/filters/feTurbulence/type=fractalNoise.png", "diff/resvg/filters/feTurbulence/type=fractalNoise.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feTurbulence_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/complex-transform.svg", "ref/resvg/filters/feTurbulence/complex-transform.png", "diff/resvg/filters/feTurbulence/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feTurbulence_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/complex-transform.svg", "ref/resvg/filters/feTurbulence/complex-transform.png", "diff/resvg/filters/feTurbulence/complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_numOctaves__1() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/numOctaves=-1.svg", "ref/resvg/filters/feTurbulence/numOctaves=-1.png", "diff/resvg/filters/feTurbulence/numOctaves=-1.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_seed_1_5() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/seed=1.5.svg", "ref/resvg/filters/feTurbulence/seed=1.5.png", "diff/resvg/filters/feTurbulence/seed=1.5.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_no_attributes() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/no-attributes.svg", "ref/resvg/filters/feTurbulence/no-attributes.png", "diff/resvg/filters/feTurbulence/no-attributes.png", false), 0)}
@@ -179,8 +170,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feTurbulence_numOctaves_5() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/numOctaves=5.svg", "ref/resvg/filters/feTurbulence/numOctaves=5.png", "diff/resvg/filters/feTurbulence/numOctaves=5.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_numOctaves_0() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/numOctaves=0.svg", "ref/resvg/filters/feTurbulence/numOctaves=0.png", "diff/resvg/filters/feTurbulence/numOctaves=0.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_seed__20() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/seed=-20.svg", "ref/resvg/filters/feTurbulence/seed=-20.png", "diff/resvg/filters/feTurbulence/seed=-20.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feTurbulence_stitchTiles_stitch() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/stitchTiles=stitch.svg", "ref/resvg/filters/feTurbulence/stitchTiles=stitch.png", "diff/resvg/filters/feTurbulence/stitchTiles=stitch.png", false), 0)}
+#[test] fn resvg_filters_feTurbulence_stitchTiles_stitch() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/stitchTiles=stitch.svg", "ref/resvg/filters/feTurbulence/stitchTiles=stitch.png", "diff/resvg/filters/feTurbulence/stitchTiles=stitch.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/baseFrequency=0.05-0.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.05-0.png", "diff/resvg/filters/feTurbulence/baseFrequency=0.05-0.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_seed_20() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/seed=20.svg", "ref/resvg/filters/feTurbulence/seed=20.png", "diff/resvg/filters/feTurbulence/seed=20.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0_05() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/baseFrequency=0.05-0.05.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.05-0.05.png", "diff/resvg/filters/feTurbulence/baseFrequency=0.05-0.05.png", false), 0)}
@@ -188,48 +178,27 @@ use crate::run_test;
 #[test] fn resvg_filters_feTurbulence_baseFrequency_0_01() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/baseFrequency=0.01.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.01.png", "diff/resvg/filters/feTurbulence/baseFrequency=0.01.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0_01() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/baseFrequency=0.05-0.01.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.05-0.01.png", "diff/resvg/filters/feTurbulence/baseFrequency=0.05-0.01.png", false), 0)}
 #[test] fn resvg_filters_feTurbulence_baseFrequency_0_05__0_01() {assert_eq!(run_test("svg/resvg/filters/feTurbulence/baseFrequency=0.05--0.01.svg", "ref/resvg/filters/feTurbulence/baseFrequency=0.05--0.01.png", "diff/resvg/filters/feTurbulence/baseFrequency=0.05--0.01.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_filter() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-filter.svg", "ref/resvg/filters/enable-background/with-filter.png", "diff/resvg/filters/enable-background/with-filter.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_filter_on_the_same_element() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-filter-on-the-same-element.svg", "ref/resvg/filters/enable-background/with-filter-on-the-same-element.png", "diff/resvg/filters/enable-background/with-filter-on-the-same-element.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_opacity_1() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-1.svg", "ref/resvg/filters/enable-background/with-opacity-1.png", "diff/resvg/filters/enable-background/with-opacity-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_accumulate() {assert_eq!(run_test("svg/resvg/filters/enable-background/accumulate.svg", "ref/resvg/filters/enable-background/accumulate.png", "diff/resvg/filters/enable-background/accumulate.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_opacity_2() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-2.svg", "ref/resvg/filters/enable-background/with-opacity-2.png", "diff/resvg/filters/enable-background/with-opacity-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_opacity_3() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-3.svg", "ref/resvg/filters/enable-background/with-opacity-3.png", "diff/resvg/filters/enable-background/with-opacity-3.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_stop_on_the_first_new_1() {assert_eq!(run_test("svg/resvg/filters/enable-background/stop-on-the-first-new-1.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-1.png", "diff/resvg/filters/enable-background/stop-on-the-first-new-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_stop_on_the_first_new_2() {assert_eq!(run_test("svg/resvg/filters/enable-background/stop-on-the-first-new-2.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-2.png", "diff/resvg/filters/enable-background/stop-on-the-first-new-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_opacity_4() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-4.svg", "ref/resvg/filters/enable-background/with-opacity-4.png", "diff/resvg/filters/enable-background/with-opacity-4.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_accumulate_with_new() {assert_eq!(run_test("svg/resvg/filters/enable-background/accumulate-with-new.svg", "ref/resvg/filters/enable-background/accumulate-with-new.png", "diff/resvg/filters/enable-background/accumulate-with-new.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_new_with_invalid_region_1() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-invalid-region-1.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-1.png", "diff/resvg/filters/enable-background/new-with-invalid-region-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_new_with_invalid_region_2() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-invalid-region-2.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-2.png", "diff/resvg/filters/enable-background/new-with-invalid-region-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_new_with_invalid_region_3() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-invalid-region-3.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-3.png", "diff/resvg/filters/enable-background/new-with-invalid-region-3.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_mask() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-mask.svg", "ref/resvg/filters/enable-background/with-mask.png", "diff/resvg/filters/enable-background/with-mask.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_inherit() {assert_eq!(run_test("svg/resvg/filters/enable-background/inherit.svg", "ref/resvg/filters/enable-background/inherit.png", "diff/resvg/filters/enable-background/inherit.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_clip_path() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-clip-path.svg", "ref/resvg/filters/enable-background/with-clip-path.png", "diff/resvg/filters/enable-background/with-clip-path.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_new() {assert_eq!(run_test("svg/resvg/filters/enable-background/new.svg", "ref/resvg/filters/enable-background/new.png", "diff/resvg/filters/enable-background/new.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_filter_on_shape() {assert_eq!(run_test("svg/resvg/filters/enable-background/filter-on-shape.svg", "ref/resvg/filters/enable-background/filter-on-shape.png", "diff/resvg/filters/enable-background/filter-on-shape.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_shapes_after_filter() {assert_eq!(run_test("svg/resvg/filters/enable-background/shapes-after-filter.svg", "ref/resvg/filters/enable-background/shapes-after-filter.png", "diff/resvg/filters/enable-background/shapes-after-filter.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_with_transform() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-transform.svg", "ref/resvg/filters/enable-background/with-transform.png", "diff/resvg/filters/enable-background/with-transform.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_enable_background_new_with_region() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-region.svg", "ref/resvg/filters/enable-background/new-with-region.png", "diff/resvg/filters/enable-background/new-with-region.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_filter() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-filter.svg", "ref/resvg/filters/enable-background/with-filter.png", "diff/resvg/filters/enable-background/with-filter.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_filter_on_the_same_element() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-filter-on-the-same-element.svg", "ref/resvg/filters/enable-background/with-filter-on-the-same-element.png", "diff/resvg/filters/enable-background/with-filter-on-the-same-element.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_1() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-1.svg", "ref/resvg/filters/enable-background/with-opacity-1.png", "diff/resvg/filters/enable-background/with-opacity-1.png", false), 0)}
+#[test] fn resvg_filters_enable_background_accumulate() {assert_eq!(run_test("svg/resvg/filters/enable-background/accumulate.svg", "ref/resvg/filters/enable-background/accumulate.png", "diff/resvg/filters/enable-background/accumulate.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_2() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-2.svg", "ref/resvg/filters/enable-background/with-opacity-2.png", "diff/resvg/filters/enable-background/with-opacity-2.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_3() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-3.svg", "ref/resvg/filters/enable-background/with-opacity-3.png", "diff/resvg/filters/enable-background/with-opacity-3.png", false), 0)}
+#[test] fn resvg_filters_enable_background_stop_on_the_first_new_1() {assert_eq!(run_test("svg/resvg/filters/enable-background/stop-on-the-first-new-1.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-1.png", "diff/resvg/filters/enable-background/stop-on-the-first-new-1.png", false), 0)}
+#[test] fn resvg_filters_enable_background_stop_on_the_first_new_2() {assert_eq!(run_test("svg/resvg/filters/enable-background/stop-on-the-first-new-2.svg", "ref/resvg/filters/enable-background/stop-on-the-first-new-2.png", "diff/resvg/filters/enable-background/stop-on-the-first-new-2.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_4() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-opacity-4.svg", "ref/resvg/filters/enable-background/with-opacity-4.png", "diff/resvg/filters/enable-background/with-opacity-4.png", false), 0)}
+#[test] fn resvg_filters_enable_background_accumulate_with_new() {assert_eq!(run_test("svg/resvg/filters/enable-background/accumulate-with-new.svg", "ref/resvg/filters/enable-background/accumulate-with-new.png", "diff/resvg/filters/enable-background/accumulate-with-new.png", false), 0)}
+#[test] fn resvg_filters_enable_background_new_with_invalid_region_1() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-invalid-region-1.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-1.png", "diff/resvg/filters/enable-background/new-with-invalid-region-1.png", false), 0)}
+#[test] fn resvg_filters_enable_background_new_with_invalid_region_2() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-invalid-region-2.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-2.png", "diff/resvg/filters/enable-background/new-with-invalid-region-2.png", false), 0)}
+#[test] fn resvg_filters_enable_background_new_with_invalid_region_3() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-invalid-region-3.svg", "ref/resvg/filters/enable-background/new-with-invalid-region-3.png", "diff/resvg/filters/enable-background/new-with-invalid-region-3.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_mask() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-mask.svg", "ref/resvg/filters/enable-background/with-mask.png", "diff/resvg/filters/enable-background/with-mask.png", false), 0)}
+#[test] fn resvg_filters_enable_background_inherit() {assert_eq!(run_test("svg/resvg/filters/enable-background/inherit.svg", "ref/resvg/filters/enable-background/inherit.png", "diff/resvg/filters/enable-background/inherit.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_clip_path() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-clip-path.svg", "ref/resvg/filters/enable-background/with-clip-path.png", "diff/resvg/filters/enable-background/with-clip-path.png", false), 0)}
+#[test] fn resvg_filters_enable_background_new() {assert_eq!(run_test("svg/resvg/filters/enable-background/new.svg", "ref/resvg/filters/enable-background/new.png", "diff/resvg/filters/enable-background/new.png", false), 0)}
+#[test] fn resvg_filters_enable_background_filter_on_shape() {assert_eq!(run_test("svg/resvg/filters/enable-background/filter-on-shape.svg", "ref/resvg/filters/enable-background/filter-on-shape.png", "diff/resvg/filters/enable-background/filter-on-shape.png", false), 0)}
+#[test] fn resvg_filters_enable_background_shapes_after_filter() {assert_eq!(run_test("svg/resvg/filters/enable-background/shapes-after-filter.svg", "ref/resvg/filters/enable-background/shapes-after-filter.png", "diff/resvg/filters/enable-background/shapes-after-filter.png", false), 0)}
+#[test] fn resvg_filters_enable_background_with_transform() {assert_eq!(run_test("svg/resvg/filters/enable-background/with-transform.svg", "ref/resvg/filters/enable-background/with-transform.png", "diff/resvg/filters/enable-background/with-transform.png", false), 0)}
+#[test] fn resvg_filters_enable_background_new_with_region() {assert_eq!(run_test("svg/resvg/filters/enable-background/new-with-region.svg", "ref/resvg/filters/enable-background/new-with-region.png", "diff/resvg/filters/enable-background/new-with-region.png", false), 0)}
 #[test] fn resvg_filters_feMorphology_radius_10_1() {assert_eq!(run_test("svg/resvg/filters/feMorphology/radius=10-1.svg", "ref/resvg/filters/feMorphology/radius=10-1.png", "diff/resvg/filters/feMorphology/radius=10-1.png", false), 0)}
 #[test] fn resvg_filters_feMorphology_source_with_opacity() {assert_eq!(run_test("svg/resvg/filters/feMorphology/source-with-opacity.svg", "ref/resvg/filters/feMorphology/source-with-opacity.png", "diff/resvg/filters/feMorphology/source-with-opacity.png", false), 0)}
 #[test] fn resvg_filters_feMorphology_radius_10_0() {assert_eq!(run_test("svg/resvg/filters/feMorphology/radius=10-0.svg", "ref/resvg/filters/feMorphology/radius=10-0.png", "diff/resvg/filters/feMorphology/radius=10-0.png", false), 0)}
@@ -245,8 +214,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feMorphology_radius_with_too_many_values() {assert_eq!(run_test("svg/resvg/filters/feMorphology/radius-with-too-many-values.svg", "ref/resvg/filters/feMorphology/radius-with-too-many-values.png", "diff/resvg/filters/feMorphology/radius-with-too-many-values.png", false), 0)}
 #[test] fn resvg_filters_feMorphology_negative_radius() {assert_eq!(run_test("svg/resvg/filters/feMorphology/negative-radius.svg", "ref/resvg/filters/feMorphology/negative-radius.png", "diff/resvg/filters/feMorphology/negative-radius.png", false), 0)}
 #[test] fn resvg_filters_feMorphology_zero_radius() {assert_eq!(run_test("svg/resvg/filters/feMorphology/zero-radius.svg", "ref/resvg/filters/feMorphology/zero-radius.png", "diff/resvg/filters/feMorphology/zero-radius.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feMerge_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feMerge/complex-transform.svg", "ref/resvg/filters/feMerge/complex-transform.png", "diff/resvg/filters/feMerge/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feMerge_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feMerge/complex-transform.svg", "ref/resvg/filters/feMerge/complex-transform.png", "diff/resvg/filters/feMerge/complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feMerge_color_interpolation_filters_linearRGB() {assert_eq!(run_test("svg/resvg/filters/feMerge/color-interpolation-filters=linearRGB.svg", "ref/resvg/filters/feMerge/color-interpolation-filters=linearRGB.png", "diff/resvg/filters/feMerge/color-interpolation-filters=linearRGB.png", false), 0)}
 #[test] fn resvg_filters_feMerge_color_interpolation_filters_sRGB() {assert_eq!(run_test("svg/resvg/filters/feMerge/color-interpolation-filters=sRGB.svg", "ref/resvg/filters/feMerge/color-interpolation-filters=sRGB.png", "diff/resvg/filters/feMerge/color-interpolation-filters=sRGB.png", false), 0)}
 #[test] fn resvg_filters_feDropShadow_hsla_color() {assert_eq!(run_test("svg/resvg/filters/feDropShadow/hsla-color.svg", "ref/resvg/filters/feDropShadow/hsla-color.png", "diff/resvg/filters/feDropShadow/hsla-color.png", false), 0)}
@@ -263,11 +231,9 @@ use crate::run_test;
 #[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_not_enough_values() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/kernelMatrix-with-not-enough-values.svg", "ref/resvg/filters/feConvolveMatrix/kernelMatrix-with-not-enough-values.png", "diff/resvg/filters/feConvolveMatrix/kernelMatrix-with-not-enough-values.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_order_with_a_negative_value_2() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/order-with-a-negative-value-2.svg", "ref/resvg/filters/feConvolveMatrix/order-with-a-negative-value-2.png", "diff/resvg/filters/feConvolveMatrix/order-with-a-negative-value-2.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_order_0() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/order=0.svg", "ref/resvg/filters/feConvolveMatrix/order=0.png", "diff/resvg/filters/feConvolveMatrix/order=0.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feConvolveMatrix_bias_9999() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/bias=9999.svg", "ref/resvg/filters/feConvolveMatrix/bias=9999.png", "diff/resvg/filters/feConvolveMatrix/bias=9999.png", false), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_bias_9999() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/bias=9999.svg", "ref/resvg/filters/feConvolveMatrix/bias=9999.png", "diff/resvg/filters/feConvolveMatrix/bias=9999.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_edgeMode_wrap() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/edgeMode=wrap.svg", "ref/resvg/filters/feConvolveMatrix/edgeMode=wrap.png", "diff/resvg/filters/feConvolveMatrix/edgeMode=wrap.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feConvolveMatrix_edgeMode_wrap_with_matrix_larger_than_target() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target.svg", "ref/resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target.png", "diff/resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target.png", false), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_edgeMode_wrap_with_matrix_larger_than_target() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target.svg", "ref/resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target.png", "diff/resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_divisor_0() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/divisor=0.svg", "ref/resvg/filters/feConvolveMatrix/divisor=0.png", "diff/resvg/filters/feConvolveMatrix/divisor=0.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_targetX_2() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/targetX=2.svg", "ref/resvg/filters/feConvolveMatrix/targetX=2.png", "diff/resvg/filters/feConvolveMatrix/targetX=2.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_zero_sum_and_no_divisor() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/kernelMatrix-with-zero-sum-and-no-divisor.svg", "ref/resvg/filters/feConvolveMatrix/kernelMatrix-with-zero-sum-and-no-divisor.png", "diff/resvg/filters/feConvolveMatrix/kernelMatrix-with-zero-sum-and-no-divisor.png", false), 0)}
@@ -275,15 +241,13 @@ use crate::run_test;
 #[test] fn resvg_filters_feConvolveMatrix_empty_kernelMatrix() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/empty-kernelMatrix.svg", "ref/resvg/filters/feConvolveMatrix/empty-kernelMatrix.png", "diff/resvg/filters/feConvolveMatrix/empty-kernelMatrix.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_unset_order() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/unset-order.svg", "ref/resvg/filters/feConvolveMatrix/unset-order.png", "diff/resvg/filters/feConvolveMatrix/unset-order.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_targetX_0() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/targetX=0.svg", "ref/resvg/filters/feConvolveMatrix/targetX=0.png", "diff/resvg/filters/feConvolveMatrix/targetX=0.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feConvolveMatrix_bias_0_5() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/bias=0.5.svg", "ref/resvg/filters/feConvolveMatrix/bias=0.5.png", "diff/resvg/filters/feConvolveMatrix/bias=0.5.png", false), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_bias_0_5() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/bias=0.5.svg", "ref/resvg/filters/feConvolveMatrix/bias=0.5.png", "diff/resvg/filters/feConvolveMatrix/bias=0.5.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_targetX__1() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/targetX=-1.svg", "ref/resvg/filters/feConvolveMatrix/targetX=-1.png", "diff/resvg/filters/feConvolveMatrix/targetX=-1.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_order_4_4() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/order=4-4.svg", "ref/resvg/filters/feConvolveMatrix/order=4-4.png", "diff/resvg/filters/feConvolveMatrix/order=4-4.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_custom_divisor() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/custom-divisor.svg", "ref/resvg/filters/feConvolveMatrix/custom-divisor.png", "diff/resvg/filters/feConvolveMatrix/custom-divisor.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_no_kernelMatrix() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/no-kernelMatrix.svg", "ref/resvg/filters/feConvolveMatrix/no-kernelMatrix.png", "diff/resvg/filters/feConvolveMatrix/no-kernelMatrix.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_preserveAlpha_true() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/preserveAlpha=true.svg", "ref/resvg/filters/feConvolveMatrix/preserveAlpha=true.png", "diff/resvg/filters/feConvolveMatrix/preserveAlpha=true.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feConvolveMatrix_bias__0_5() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/bias=-0.5.svg", "ref/resvg/filters/feConvolveMatrix/bias=-0.5.png", "diff/resvg/filters/feConvolveMatrix/bias=-0.5.png", false), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_bias__0_5() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/bias=-0.5.svg", "ref/resvg/filters/feConvolveMatrix/bias=-0.5.png", "diff/resvg/filters/feConvolveMatrix/bias=-0.5.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_too_many_values() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/kernelMatrix-with-too-many-values.svg", "ref/resvg/filters/feConvolveMatrix/kernelMatrix-with-too-many-values.png", "diff/resvg/filters/feConvolveMatrix/kernelMatrix-with-too-many-values.png", false), 0)}
 #[test] fn resvg_filters_feConvolveMatrix_order_4_2() {assert_eq!(run_test("svg/resvg/filters/feConvolveMatrix/order=4-2.svg", "ref/resvg/filters/feConvolveMatrix/order=4-2.png", "diff/resvg/filters/feConvolveMatrix/order=4-2.png", false), 0)}
 #[test] fn resvg_filters_flood_opacity_simple_case() {assert_eq!(run_test("svg/resvg/filters/flood-opacity/simple-case.svg", "ref/resvg/filters/flood-opacity/simple-case.png", "diff/resvg/filters/flood-opacity/simple-case.png", false), 0)}
@@ -292,36 +256,30 @@ use crate::run_test;
 #[test] fn resvg_filters_feDistantLight_only_azimuth() {assert_eq!(run_test("svg/resvg/filters/feDistantLight/only-azimuth.svg", "ref/resvg/filters/feDistantLight/only-azimuth.png", "diff/resvg/filters/feDistantLight/only-azimuth.png", false), 0)}
 #[test] fn resvg_filters_feDistantLight_only_elevation() {assert_eq!(run_test("svg/resvg/filters/feDistantLight/only-elevation.svg", "ref/resvg/filters/feDistantLight/only-elevation.png", "diff/resvg/filters/feDistantLight/only-elevation.png", false), 0)}
 #[test] fn resvg_filters_feDistantLight_default_attributes() {assert_eq!(run_test("svg/resvg/filters/feDistantLight/default-attributes.svg", "ref/resvg/filters/feDistantLight/default-attributes.png", "diff/resvg/filters/feDistantLight/default-attributes.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_fePointLight_complex_transform() {assert_eq!(run_test("svg/resvg/filters/fePointLight/complex-transform.svg", "ref/resvg/filters/fePointLight/complex-transform.png", "diff/resvg/filters/fePointLight/complex-transform.png", false), 0)}
-// unknown reason
+#[test] fn resvg_filters_fePointLight_complex_transform() {assert_eq!(run_test("svg/resvg/filters/fePointLight/complex-transform.svg", "ref/resvg/filters/fePointLight/complex-transform.png", "diff/resvg/filters/fePointLight/complex-transform.png", false), 0)}
+// need to investigate
 #[ignore] #[test] fn resvg_filters_fePointLight_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("svg/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.png", "diff/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.png", false), 0)}
 #[test] fn resvg_filters_fePointLight_custom_attributes() {assert_eq!(run_test("svg/resvg/filters/fePointLight/custom-attributes.svg", "ref/resvg/filters/fePointLight/custom-attributes.png", "diff/resvg/filters/fePointLight/custom-attributes.png", false), 0)}
 #[test] fn resvg_filters_fePointLight_default_attributes() {assert_eq!(run_test("svg/resvg/filters/fePointLight/default-attributes.svg", "ref/resvg/filters/fePointLight/default-attributes.png", "diff/resvg/filters/fePointLight/default-attributes.png", false), 0)}
 #[test] fn resvg_filters_filter_in_to_invalid_1() {assert_eq!(run_test("svg/resvg/filters/filter/in-to-invalid-1.svg", "ref/resvg/filters/filter/in-to-invalid-1.png", "diff/resvg/filters/filter/in-to-invalid-1.png", false), 0)}
 #[test] fn resvg_filters_filter_invalid_primitive_2() {assert_eq!(run_test("svg/resvg/filters/filter/invalid-primitive-2.svg", "ref/resvg/filters/filter/invalid-primitive-2.png", "diff/resvg/filters/filter/invalid-primitive-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_transform_on_shape_with_filter_region() {assert_eq!(run_test("svg/resvg/filters/filter/transform-on-shape-with-filter-region.svg", "ref/resvg/filters/filter/transform-on-shape-with-filter-region.png", "diff/resvg/filters/filter/transform-on-shape-with-filter-region.png", false), 0)}
+#[test] fn resvg_filters_filter_transform_on_shape_with_filter_region() {assert_eq!(run_test("svg/resvg/filters/filter/transform-on-shape-with-filter-region.svg", "ref/resvg/filters/filter/transform-on-shape-with-filter-region.png", "diff/resvg/filters/filter/transform-on-shape-with-filter-region.png", false), 0)}
 #[test] fn resvg_filters_filter_region_with_stroke() {assert_eq!(run_test("svg/resvg/filters/filter/region-with-stroke.svg", "ref/resvg/filters/filter/region-with-stroke.png", "diff/resvg/filters/filter/region-with-stroke.png", false), 0)}
 #[test] fn resvg_filters_filter_in_SourceAlpha() {assert_eq!(run_test("svg/resvg/filters/filter/in=SourceAlpha.svg", "ref/resvg/filters/filter/in=SourceAlpha.png", "diff/resvg/filters/filter/in=SourceAlpha.png", false), 0)}
 #[test] fn resvg_filters_filter_on_a_vertical_line() {assert_eq!(run_test("svg/resvg/filters/filter/on-a-vertical-line.svg", "ref/resvg/filters/filter/on-a-vertical-line.png", "diff/resvg/filters/filter/on-a-vertical-line.png", false), 0)}
-// unknown reason
+// will sigkill
 #[ignore] #[test] fn resvg_filters_filter_huge_region() {assert_eq!(run_test("svg/resvg/filters/filter/huge-region.svg", "ref/resvg/filters/filter/huge-region.png", "diff/resvg/filters/filter/huge-region.png", false), 0)}
 #[test] fn resvg_filters_filter_invalid_primitive_1() {assert_eq!(run_test("svg/resvg/filters/filter/invalid-primitive-1.svg", "ref/resvg/filters/filter/invalid-primitive-1.png", "diff/resvg/filters/filter/invalid-primitive-1.png", false), 0)}
 #[test] fn resvg_filters_filter_in_to_invalid_2() {assert_eq!(run_test("svg/resvg/filters/filter/in-to-invalid-2.svg", "ref/resvg/filters/filter/in-to-invalid-2.png", "diff/resvg/filters/filter/in-to-invalid-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_path_bbox() {assert_eq!(run_test("svg/resvg/filters/filter/path-bbox.svg", "ref/resvg/filters/filter/path-bbox.png", "diff/resvg/filters/filter/path-bbox.png", false), 0)}
+#[test] fn resvg_filters_filter_path_bbox() {assert_eq!(run_test("svg/resvg/filters/filter/path-bbox.svg", "ref/resvg/filters/filter/path-bbox.png", "diff/resvg/filters/filter/path-bbox.png", false), 0)}
 #[test] fn resvg_filters_filter_content_outside_the_canvas() {assert_eq!(run_test("svg/resvg/filters/filter/content-outside-the-canvas.svg", "ref/resvg/filters/filter/content-outside-the-canvas.png", "diff/resvg/filters/filter/content-outside-the-canvas.png", false), 0)}
 #[test] fn resvg_filters_filter_transform_on_filter() {assert_eq!(run_test("svg/resvg/filters/filter/transform-on-filter.svg", "ref/resvg/filters/filter/transform-on-filter.png", "diff/resvg/filters/filter/transform-on-filter.png", false), 0)}
 #[test] fn resvg_filters_filter_with_region_and_subregion() {assert_eq!(run_test("svg/resvg/filters/filter/with-region-and-subregion.svg", "ref/resvg/filters/filter/with-region-and-subregion.png", "diff/resvg/filters/filter/with-region-and-subregion.png", false), 0)}
 #[test] fn resvg_filters_filter_with_region_and_filterUnits_userSpaceOnUse() {assert_eq!(run_test("svg/resvg/filters/filter/with-region-and-filterUnits=userSpaceOnUse.svg", "ref/resvg/filters/filter/with-region-and-filterUnits=userSpaceOnUse.png", "diff/resvg/filters/filter/with-region-and-filterUnits=userSpaceOnUse.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_BackgroundAlpha_with_enable_background() {assert_eq!(run_test("svg/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.png", "diff/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_StrokePaint() {assert_eq!(run_test("svg/resvg/filters/filter/in=StrokePaint.svg", "ref/resvg/filters/filter/in=StrokePaint.png", "diff/resvg/filters/filter/in=StrokePaint.png", false), 0)}
+#[test] fn resvg_filters_filter_in_BackgroundAlpha_with_enable_background() {assert_eq!(run_test("svg/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.png", "diff/resvg/filters/filter/in=BackgroundAlpha-with-enable-background.png", false), 0)}
+#[test] fn resvg_filters_filter_in_StrokePaint() {assert_eq!(run_test("svg/resvg/filters/filter/in=StrokePaint.svg", "ref/resvg/filters/filter/in=StrokePaint.png", "diff/resvg/filters/filter/in=StrokePaint.png", false), 0)}
 #[test] fn resvg_filters_filter_no_children() {assert_eq!(run_test("svg/resvg/filters/filter/no-children.svg", "ref/resvg/filters/filter/no-children.png", "diff/resvg/filters/filter/no-children.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_on_an_empty_group_1() {assert_eq!(run_test("svg/resvg/filters/filter/on-an-empty-group-1.svg", "ref/resvg/filters/filter/on-an-empty-group-1.png", "diff/resvg/filters/filter/on-an-empty-group-1.png", false), 0)}
+#[test] fn resvg_filters_filter_on_an_empty_group_1() {assert_eq!(run_test("svg/resvg/filters/filter/on-an-empty-group-1.svg", "ref/resvg/filters/filter/on-an-empty-group-1.png", "diff/resvg/filters/filter/on-an-empty-group-1.png", false), 0)}
 #[test] fn resvg_filters_filter_invalid_subregion() {assert_eq!(run_test("svg/resvg/filters/filter/invalid-subregion.svg", "ref/resvg/filters/filter/invalid-subregion.png", "diff/resvg/filters/filter/invalid-subregion.png", false), 0)}
 #[test] fn resvg_filters_filter_everything_via_xlink_href() {assert_eq!(run_test("svg/resvg/filters/filter/everything-via-xlink-href.svg", "ref/resvg/filters/filter/everything-via-xlink-href.png", "diff/resvg/filters/filter/everything-via-xlink-href.png", false), 0)}
 #[test] fn resvg_filters_filter_zero_sized_subregion() {assert_eq!(run_test("svg/resvg/filters/filter/zero-sized-subregion.svg", "ref/resvg/filters/filter/zero-sized-subregion.png", "diff/resvg/filters/filter/zero-sized-subregion.png", false), 0)}
@@ -330,45 +288,34 @@ use crate::run_test;
 #[test] fn resvg_filters_filter_on_an_empty_group_2() {assert_eq!(run_test("svg/resvg/filters/filter/on-an-empty-group-2.svg", "ref/resvg/filters/filter/on-an-empty-group-2.png", "diff/resvg/filters/filter/on-an-empty-group-2.png", false), 0)}
 #[test] fn resvg_filters_filter_in_BackgroundAlpha() {assert_eq!(run_test("svg/resvg/filters/filter/in=BackgroundAlpha.svg", "ref/resvg/filters/filter/in=BackgroundAlpha.png", "diff/resvg/filters/filter/in=BackgroundAlpha.png", false), 0)}
 #[test] fn resvg_filters_filter_with_clip_path_and_mask() {assert_eq!(run_test("svg/resvg/filters/filter/with-clip-path-and-mask.svg", "ref/resvg/filters/filter/with-clip-path-and-mask.png", "diff/resvg/filters/filter/with-clip-path-and-mask.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_filters_filter_with_mask_on_parent() {assert_eq!(run_test("svg/resvg/filters/filter/with-mask-on-parent.svg", "ref/resvg/filters/filter/with-mask-on-parent.png", "diff/resvg/filters/filter/with-mask-on-parent.png", false), 0)}
 #[test] fn resvg_filters_filter_with_region_outside_the_canvas() {assert_eq!(run_test("svg/resvg/filters/filter/with-region-outside-the-canvas.svg", "ref/resvg/filters/filter/with-region-outside-the-canvas.png", "diff/resvg/filters/filter/with-region-outside-the-canvas.png", false), 0)}
 #[test] fn resvg_filters_filter_transform_on_shape() {assert_eq!(run_test("svg/resvg/filters/filter/transform-on-shape.svg", "ref/resvg/filters/filter/transform-on-shape.png", "diff/resvg/filters/filter/transform-on-shape.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_BackgroundImage_with_enable_background() {assert_eq!(run_test("svg/resvg/filters/filter/in=BackgroundImage-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundImage-with-enable-background.png", "diff/resvg/filters/filter/in=BackgroundImage-with-enable-background.png", false), 0)}
+#[test] fn resvg_filters_filter_in_BackgroundImage_with_enable_background() {assert_eq!(run_test("svg/resvg/filters/filter/in=BackgroundImage-with-enable-background.svg", "ref/resvg/filters/filter/in=BackgroundImage-with-enable-background.png", "diff/resvg/filters/filter/in=BackgroundImage-with-enable-background.png", false), 0)}
 #[test] fn resvg_filters_filter_subregion_bigger_that_region() {assert_eq!(run_test("svg/resvg/filters/filter/subregion-bigger-that-region.svg", "ref/resvg/filters/filter/subregion-bigger-that-region.png", "diff/resvg/filters/filter/subregion-bigger-that-region.png", false), 0)}
 #[test] fn resvg_filters_filter_global_transform() {assert_eq!(run_test("svg/resvg/filters/filter/global-transform.svg", "ref/resvg/filters/filter/global-transform.png", "diff/resvg/filters/filter/global-transform.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_FillPaint_with_gradient() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-with-gradient.svg", "ref/resvg/filters/filter/in=FillPaint-with-gradient.png", "diff/resvg/filters/filter/in=FillPaint-with-gradient.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_FillPaint_with_pattern() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-with-pattern.svg", "ref/resvg/filters/filter/in=FillPaint-with-pattern.png", "diff/resvg/filters/filter/in=FillPaint-with-pattern.png", false), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_with_gradient() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-with-gradient.svg", "ref/resvg/filters/filter/in=FillPaint-with-gradient.png", "diff/resvg/filters/filter/in=FillPaint-with-gradient.png", false), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_with_pattern() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-with-pattern.svg", "ref/resvg/filters/filter/in=FillPaint-with-pattern.png", "diff/resvg/filters/filter/in=FillPaint-with-pattern.png", false), 0)}
 #[test] fn resvg_filters_filter_simple_case() {assert_eq!(run_test("svg/resvg/filters/filter/simple-case.svg", "ref/resvg/filters/filter/simple-case.png", "diff/resvg/filters/filter/simple-case.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_on_the_root_svg() {assert_eq!(run_test("svg/resvg/filters/filter/on-the-root-svg.svg", "ref/resvg/filters/filter/on-the-root-svg.png", "diff/resvg/filters/filter/on-the-root-svg.png", false), 0)}
+#[test] fn resvg_filters_filter_on_the_root_svg() {assert_eq!(run_test("svg/resvg/filters/filter/on-the-root-svg.svg", "ref/resvg/filters/filter/on-the-root-svg.png", "diff/resvg/filters/filter/on-the-root-svg.png", false), 0)}
 #[test] fn resvg_filters_filter_some_attributes_via_xlink_href() {assert_eq!(run_test("svg/resvg/filters/filter/some-attributes-via-xlink-href.svg", "ref/resvg/filters/filter/some-attributes-via-xlink-href.png", "diff/resvg/filters/filter/some-attributes-via-xlink-href.png", false), 0)}
 #[test] fn resvg_filters_filter_invalid_region() {assert_eq!(run_test("svg/resvg/filters/filter/invalid-region.svg", "ref/resvg/filters/filter/invalid-region.png", "diff/resvg/filters/filter/invalid-region.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_2() {assert_eq!(run_test("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.png", "diff/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.png", false), 0)}
+#[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_2() {assert_eq!(run_test("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.png", "diff/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2.png", false), 0)}
 #[test] fn resvg_filters_filter_content_outside_the_canvas_2() {assert_eq!(run_test("svg/resvg/filters/filter/content-outside-the-canvas-2.svg", "ref/resvg/filters/filter/content-outside-the-canvas-2.png", "diff/resvg/filters/filter/content-outside-the-canvas-2.png", false), 0)}
 #[test] fn resvg_filters_filter_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("svg/resvg/filters/filter/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/filter/primitiveUnits=objectBoundingBox.png", "diff/resvg/filters/filter/primitiveUnits=objectBoundingBox.png", false), 0)}
 #[test] fn resvg_filters_filter_color_interpolation_filters_sRGB() {assert_eq!(run_test("svg/resvg/filters/filter/color-interpolation-filters=sRGB.svg", "ref/resvg/filters/filter/color-interpolation-filters=sRGB.png", "diff/resvg/filters/filter/color-interpolation-filters=sRGB.png", false), 0)}
 #[test] fn resvg_filters_filter_with_region() {assert_eq!(run_test("svg/resvg/filters/filter/with-region.svg", "ref/resvg/filters/filter/with-region.png", "diff/resvg/filters/filter/with-region.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_1() {assert_eq!(run_test("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.png", "diff/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_FillPaint_with_target_on_g() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-with-target-on-g.svg", "ref/resvg/filters/filter/in=FillPaint-with-target-on-g.png", "diff/resvg/filters/filter/in=FillPaint-with-target-on-g.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_FillPaint() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint.svg", "ref/resvg/filters/filter/in=FillPaint.png", "diff/resvg/filters/filter/in=FillPaint.png", false), 0)}
+#[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_1() {assert_eq!(run_test("svg/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.svg", "ref/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.png", "diff/resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1.png", false), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_with_target_on_g() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-with-target-on-g.svg", "ref/resvg/filters/filter/in=FillPaint-with-target-on-g.png", "diff/resvg/filters/filter/in=FillPaint-with-target-on-g.png", false), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint.svg", "ref/resvg/filters/filter/in=FillPaint.png", "diff/resvg/filters/filter/in=FillPaint.png", false), 0)}
 #[test] fn resvg_filters_filter_negative_subregion() {assert_eq!(run_test("svg/resvg/filters/filter/negative-subregion.svg", "ref/resvg/filters/filter/negative-subregion.png", "diff/resvg/filters/filter/negative-subregion.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_in_FillPaint_on_g_without_children() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-on-g-without-children.svg", "ref/resvg/filters/filter/in=FillPaint-on-g-without-children.png", "diff/resvg/filters/filter/in=FillPaint-on-g-without-children.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_with_mask() {assert_eq!(run_test("svg/resvg/filters/filter/with-mask.svg", "ref/resvg/filters/filter/with-mask.png", "diff/resvg/filters/filter/with-mask.png", false), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_on_g_without_children() {assert_eq!(run_test("svg/resvg/filters/filter/in=FillPaint-on-g-without-children.svg", "ref/resvg/filters/filter/in=FillPaint-on-g-without-children.png", "diff/resvg/filters/filter/in=FillPaint-on-g-without-children.png", false), 0)}
+#[test] fn resvg_filters_filter_with_mask() {assert_eq!(run_test("svg/resvg/filters/filter/with-mask.svg", "ref/resvg/filters/filter/with-mask.png", "diff/resvg/filters/filter/with-mask.png", false), 0)}
 #[test] fn resvg_filters_filter_invalid_filterUnits() {assert_eq!(run_test("svg/resvg/filters/filter/invalid-filterUnits.svg", "ref/resvg/filters/filter/invalid-filterUnits.png", "diff/resvg/filters/filter/invalid-filterUnits.png", false), 0)}
 #[test] fn resvg_filters_filter_with_multiple_transforms_1() {assert_eq!(run_test("svg/resvg/filters/filter/with-multiple-transforms-1.svg", "ref/resvg/filters/filter/with-multiple-transforms-1.png", "diff/resvg/filters/filter/with-multiple-transforms-1.png", false), 0)}
 #[test] fn resvg_filters_filter_with_subregion_1() {assert_eq!(run_test("svg/resvg/filters/filter/with-subregion-1.svg", "ref/resvg/filters/filter/with-subregion-1.png", "diff/resvg/filters/filter/with-subregion-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_filter_on_a_thin_rect() {assert_eq!(run_test("svg/resvg/filters/filter/on-a-thin-rect.svg", "ref/resvg/filters/filter/on-a-thin-rect.png", "diff/resvg/filters/filter/on-a-thin-rect.png", false), 0)}
+#[test] fn resvg_filters_filter_on_a_thin_rect() {assert_eq!(run_test("svg/resvg/filters/filter/on-a-thin-rect.svg", "ref/resvg/filters/filter/on-a-thin-rect.png", "diff/resvg/filters/filter/on-a-thin-rect.png", false), 0)}
 #[test] fn resvg_filters_filter_default_color_interpolation_filters() {assert_eq!(run_test("svg/resvg/filters/filter/default-color-interpolation-filters.svg", "ref/resvg/filters/filter/default-color-interpolation-filters.png", "diff/resvg/filters/filter/default-color-interpolation-filters.png", false), 0)}
 #[test] fn resvg_filters_filter_with_clip_path() {assert_eq!(run_test("svg/resvg/filters/filter/with-clip-path.svg", "ref/resvg/filters/filter/with-clip-path.png", "diff/resvg/filters/filter/with-clip-path.png", false), 0)}
 #[test] fn resvg_filters_filter_with_subregion_3() {assert_eq!(run_test("svg/resvg/filters/filter/with-subregion-3.svg", "ref/resvg/filters/filter/with-subregion-3.png", "diff/resvg/filters/filter/with-subregion-3.png", false), 0)}
@@ -392,26 +339,21 @@ use crate::run_test;
 #[test] fn resvg_filters_feImage_link_to_g() {assert_eq!(run_test("svg/resvg/filters/feImage/link-to-g.svg", "ref/resvg/filters/feImage/link-to-g.png", "diff/resvg/filters/feImage/link-to-g.png", false), 0)}
 #[test] fn resvg_filters_feImage_empty() {assert_eq!(run_test("svg/resvg/filters/feImage/empty.svg", "ref/resvg/filters/feImage/empty.png", "diff/resvg/filters/feImage/empty.png", false), 0)}
 #[test] fn resvg_filters_feImage_link_to_an_element_with_transform() {assert_eq!(run_test("svg/resvg/filters/feImage/link-to-an-element-with-transform.svg", "ref/resvg/filters/feImage/link-to-an-element-with-transform.png", "diff/resvg/filters/feImage/link-to-an-element-with-transform.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feImage_with_x_y() {assert_eq!(run_test("svg/resvg/filters/feImage/with-x-y.svg", "ref/resvg/filters/feImage/with-x-y.png", "diff/resvg/filters/feImage/with-x-y.png", false), 0)}
+#[test] fn resvg_filters_feImage_with_x_y() {assert_eq!(run_test("svg/resvg/filters/feImage/with-x-y.svg", "ref/resvg/filters/feImage/with-x-y.png", "diff/resvg/filters/feImage/with-x-y.png", false), 0)}
 #[test] fn resvg_filters_feImage_link_to_an_invalid_element() {assert_eq!(run_test("svg/resvg/filters/feImage/link-to-an-invalid-element.svg", "ref/resvg/filters/feImage/link-to-an-invalid-element.png", "diff/resvg/filters/feImage/link-to-an-invalid-element.png", false), 0)}
 #[test] fn resvg_filters_feImage_link_on_an_element_with_transform() {assert_eq!(run_test("svg/resvg/filters/feImage/link-on-an-element-with-transform.svg", "ref/resvg/filters/feImage/link-on-an-element-with-transform.png", "diff/resvg/filters/feImage/link-on-an-element-with-transform.png", false), 0)}
 #[test] fn resvg_filters_feImage_embedded_png() {assert_eq!(run_test("svg/resvg/filters/feImage/embedded-png.svg", "ref/resvg/filters/feImage/embedded-png.png", "diff/resvg/filters/feImage/embedded-png.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_filters_feImage_simple_case() {assert_eq!(run_test("svg/resvg/filters/feImage/simple-case.svg", "ref/resvg/filters/feImage/simple-case.png", "diff/resvg/filters/feImage/simple-case.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_2() {assert_eq!(run_test("svg/resvg/filters/feImage/with-x-y-and-protruding-subregion-2.svg", "ref/resvg/filters/feImage/with-x-y-and-protruding-subregion-2.png", "diff/resvg/filters/feImage/with-x-y-and-protruding-subregion-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_1() {assert_eq!(run_test("svg/resvg/filters/feImage/with-x-y-and-protruding-subregion-1.svg", "ref/resvg/filters/feImage/with-x-y-and-protruding-subregion-1.png", "diff/resvg/filters/feImage/with-x-y-and-protruding-subregion-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feImage_with_subregion_5() {assert_eq!(run_test("svg/resvg/filters/feImage/with-subregion-5.svg", "ref/resvg/filters/feImage/with-subregion-5.png", "diff/resvg/filters/feImage/with-subregion-5.png", false), 0)}
+#[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_2() {assert_eq!(run_test("svg/resvg/filters/feImage/with-x-y-and-protruding-subregion-2.svg", "ref/resvg/filters/feImage/with-x-y-and-protruding-subregion-2.png", "diff/resvg/filters/feImage/with-x-y-and-protruding-subregion-2.png", false), 0)}
+#[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_1() {assert_eq!(run_test("svg/resvg/filters/feImage/with-x-y-and-protruding-subregion-1.svg", "ref/resvg/filters/feImage/with-x-y-and-protruding-subregion-1.png", "diff/resvg/filters/feImage/with-x-y-and-protruding-subregion-1.png", false), 0)}
+#[test] fn resvg_filters_feImage_with_subregion_5() {assert_eq!(run_test("svg/resvg/filters/feImage/with-subregion-5.svg", "ref/resvg/filters/feImage/with-subregion-5.png", "diff/resvg/filters/feImage/with-subregion-5.png", false), 0)}
 #[test] fn resvg_filters_feImage_link_to_an_element_with_opacity() {assert_eq!(run_test("svg/resvg/filters/feImage/link-to-an-element-with-opacity.svg", "ref/resvg/filters/feImage/link-to-an-element-with-opacity.png", "diff/resvg/filters/feImage/link-to-an-element-with-opacity.png", false), 0)}
 #[test] fn resvg_filters_feImage_preserveAspectRatio_none() {assert_eq!(run_test("svg/resvg/filters/feImage/preserveAspectRatio=none.svg", "ref/resvg/filters/feImage/preserveAspectRatio=none.png", "diff/resvg/filters/feImage/preserveAspectRatio=none.png", false), 0)}
 #[test] fn resvg_filters_feImage_with_subregion_4() {assert_eq!(run_test("svg/resvg/filters/feImage/with-subregion-4.svg", "ref/resvg/filters/feImage/with-subregion-4.png", "diff/resvg/filters/feImage/with-subregion-4.png", false), 0)}
 #[test] fn resvg_filters_feImage_svg() {assert_eq!(run_test("svg/resvg/filters/feImage/svg.svg", "ref/resvg/filters/feImage/svg.png", "diff/resvg/filters/feImage/svg.png", false), 0)}
 #[test] fn resvg_filters_feImage_with_subregion_1() {assert_eq!(run_test("svg/resvg/filters/feImage/with-subregion-1.svg", "ref/resvg/filters/feImage/with-subregion-1.png", "diff/resvg/filters/feImage/with-subregion-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feImage_link_on_an_element_with_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feImage/link-on-an-element-with-complex-transform.svg", "ref/resvg/filters/feImage/link-on-an-element-with-complex-transform.png", "diff/resvg/filters/feImage/link-on-an-element-with-complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feImage_link_on_an_element_with_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feImage/link-on-an-element-with-complex-transform.svg", "ref/resvg/filters/feImage/link-on-an-element-with-complex-transform.png", "diff/resvg/filters/feImage/link-on-an-element-with-complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feImage_with_subregion_3() {assert_eq!(run_test("svg/resvg/filters/feImage/with-subregion-3.svg", "ref/resvg/filters/feImage/with-subregion-3.png", "diff/resvg/filters/feImage/with-subregion-3.png", false), 0)}
 #[test] fn resvg_filters_feImage_link_to_an_element() {assert_eq!(run_test("svg/resvg/filters/feImage/link-to-an-element.svg", "ref/resvg/filters/feImage/link-to-an-element.png", "diff/resvg/filters/feImage/link-to-an-element.png", false), 0)}
 #[test] fn resvg_filters_feImage_with_subregion_2() {assert_eq!(run_test("svg/resvg/filters/feImage/with-subregion-2.svg", "ref/resvg/filters/feImage/with-subregion-2.png", "diff/resvg/filters/feImage/with-subregion-2.png", false), 0)}
@@ -427,8 +369,7 @@ use crate::run_test;
 #[test] fn resvg_filters_feDiffuseLighting_lighting_color_hsla() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/lighting-color=hsla.svg", "ref/resvg/filters/feDiffuseLighting/lighting-color=hsla.png", "diff/resvg/filters/feDiffuseLighting/lighting-color=hsla.png", false), 0)}
 #[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_title_and_desc() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/single-light-source-with-title-and-desc.svg", "ref/resvg/filters/feDiffuseLighting/single-light-source-with-title-and-desc.png", "diff/resvg/filters/feDiffuseLighting/single-light-source-with-title-and-desc.png", false), 0)}
 #[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_invalid_child() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/single-light-source-with-invalid-child.svg", "ref/resvg/filters/feDiffuseLighting/single-light-source-with-invalid-child.png", "diff/resvg/filters/feDiffuseLighting/single-light-source-with-invalid-child.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feDiffuseLighting_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/complex-transform.svg", "ref/resvg/filters/feDiffuseLighting/complex-transform.png", "diff/resvg/filters/feDiffuseLighting/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/complex-transform.svg", "ref/resvg/filters/feDiffuseLighting/complex-transform.png", "diff/resvg/filters/feDiffuseLighting/complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feDiffuseLighting_lighting_color_currentColor() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/lighting-color=currentColor.svg", "ref/resvg/filters/feDiffuseLighting/lighting-color=currentColor.png", "diff/resvg/filters/feDiffuseLighting/lighting-color=currentColor.png", false), 0)}
 #[test] fn resvg_filters_feDiffuseLighting_surfaceScale_1_33() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/surfaceScale=1.33.svg", "ref/resvg/filters/feDiffuseLighting/surfaceScale=1.33.png", "diff/resvg/filters/feDiffuseLighting/surfaceScale=1.33.png", false), 0)}
 #[test] fn resvg_filters_feDiffuseLighting_no_light_source() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/no-light-source.svg", "ref/resvg/filters/feDiffuseLighting/no-light-source.png", "diff/resvg/filters/feDiffuseLighting/no-light-source.png", false), 0)}
@@ -444,23 +385,18 @@ use crate::run_test;
 #[test] fn resvg_filters_feDiffuseLighting_lighting_color_currentColor_without_color() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/lighting-color=currentColor-without-color.svg", "ref/resvg/filters/feDiffuseLighting/lighting-color=currentColor-without-color.png", "diff/resvg/filters/feDiffuseLighting/lighting-color=currentColor-without-color.png", false), 0)}
 #[test] fn resvg_filters_feDiffuseLighting_multiple_light_sources() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/multiple-light-sources.svg", "ref/resvg/filters/feDiffuseLighting/multiple-light-sources.png", "diff/resvg/filters/feDiffuseLighting/multiple-light-sources.png", false), 0)}
 #[test] fn resvg_filters_feDiffuseLighting_diffuseConstant_5() {assert_eq!(run_test("svg/resvg/filters/feDiffuseLighting/diffuseConstant=5.svg", "ref/resvg/filters/feDiffuseLighting/diffuseConstant=5.png", "diff/resvg/filters/feDiffuseLighting/diffuseConstant=5.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feFlood_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feFlood/complex-transform.svg", "ref/resvg/filters/feFlood/complex-transform.png", "diff/resvg/filters/feFlood/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feFlood_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feFlood/complex-transform.svg", "ref/resvg/filters/feFlood/complex-transform.png", "diff/resvg/filters/feFlood/complex-transform.png", false), 0)}
 #[test] fn resvg_filters_feFlood_with_opacity_on_target_element() {assert_eq!(run_test("svg/resvg/filters/feFlood/with-opacity-on-target-element.svg", "ref/resvg/filters/feFlood/with-opacity-on-target-element.png", "diff/resvg/filters/feFlood/with-opacity-on-target-element.png", false), 0)}
 #[test] fn resvg_filters_feFlood_with_opacity() {assert_eq!(run_test("svg/resvg/filters/feFlood/with-opacity.svg", "ref/resvg/filters/feFlood/with-opacity.png", "diff/resvg/filters/feFlood/with-opacity.png", false), 0)}
 #[test] fn resvg_filters_feFlood_subregion_with_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("svg/resvg/filters/feFlood/subregion-with-primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feFlood/subregion-with-primitiveUnits=objectBoundingBox.png", "diff/resvg/filters/feFlood/subregion-with-primitiveUnits=objectBoundingBox.png", false), 0)}
 #[test] fn resvg_filters_feFlood_default_values() {assert_eq!(run_test("svg/resvg/filters/feFlood/default-values.svg", "ref/resvg/filters/feFlood/default-values.png", "diff/resvg/filters/feFlood/default-values.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feFlood_partial_subregion() {assert_eq!(run_test("svg/resvg/filters/feFlood/partial-subregion.svg", "ref/resvg/filters/feFlood/partial-subregion.png", "diff/resvg/filters/feFlood/partial-subregion.png", false), 0)}
+#[test] fn resvg_filters_feFlood_partial_subregion() {assert_eq!(run_test("svg/resvg/filters/feFlood/partial-subregion.svg", "ref/resvg/filters/feFlood/partial-subregion.png", "diff/resvg/filters/feFlood/partial-subregion.png", false), 0)}
 #[test] fn resvg_filters_feFlood_seagreen() {assert_eq!(run_test("svg/resvg/filters/feFlood/seagreen.svg", "ref/resvg/filters/feFlood/seagreen.png", "diff/resvg/filters/feFlood/seagreen.png", false), 0)}
 #[test] fn resvg_filters_feFlood_subregion_inheritance() {assert_eq!(run_test("svg/resvg/filters/feFlood/subregion-inheritance.svg", "ref/resvg/filters/feFlood/subregion-inheritance.png", "diff/resvg/filters/feFlood/subregion-inheritance.png", false), 0)}
 #[test] fn resvg_filters_feSpotLight_with_all_pointsAt() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/with-all-pointsAt.svg", "ref/resvg/filters/feSpotLight/with-all-pointsAt.png", "diff/resvg/filters/feSpotLight/with-all-pointsAt.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feSpotLight_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/complex-transform.svg", "ref/resvg/filters/feSpotLight/complex-transform.png", "diff/resvg/filters/feSpotLight/complex-transform.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feSpotLight_limitingConeAngle_0() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/limitingConeAngle=0.svg", "ref/resvg/filters/feSpotLight/limitingConeAngle=0.png", "diff/resvg/filters/feSpotLight/limitingConeAngle=0.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_filters_feSpotLight_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.png", "diff/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.png", false), 0)}
+#[test] fn resvg_filters_feSpotLight_complex_transform() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/complex-transform.svg", "ref/resvg/filters/feSpotLight/complex-transform.png", "diff/resvg/filters/feSpotLight/complex-transform.png", false), 0)}
+#[test] fn resvg_filters_feSpotLight_limitingConeAngle_0() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/limitingConeAngle=0.svg", "ref/resvg/filters/feSpotLight/limitingConeAngle=0.png", "diff/resvg/filters/feSpotLight/limitingConeAngle=0.png", false), 0)}
+#[test] fn resvg_filters_feSpotLight_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.svg", "ref/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.png", "diff/resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox.png", false), 0)}
 #[test] fn resvg_filters_feSpotLight_limitingConeAngle_anti_aliasing() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/limitingConeAngle-anti-aliasing.svg", "ref/resvg/filters/feSpotLight/limitingConeAngle-anti-aliasing.png", "diff/resvg/filters/feSpotLight/limitingConeAngle-anti-aliasing.png", false), 0)}
 #[test] fn resvg_filters_feSpotLight_specularExponent_10() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/specularExponent=10.svg", "ref/resvg/filters/feSpotLight/specularExponent=10.png", "diff/resvg/filters/feSpotLight/specularExponent=10.png", false), 0)}
 #[test] fn resvg_filters_feSpotLight_specularExponent__10() {assert_eq!(run_test("svg/resvg/filters/feSpotLight/specularExponent=-10.svg", "ref/resvg/filters/feSpotLight/specularExponent=-10.png", "diff/resvg/filters/feSpotLight/specularExponent=-10.png", false), 0)}
@@ -477,58 +413,55 @@ use crate::run_test;
 #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href.png", "diff/resvg/paint-servers/radialGradient/attributes-via-xlink-href.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_gradientTransform_and_transform() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/gradientTransform-and-transform.svg", "ref/resvg/paint-servers/radialGradient/gradientTransform-and-transform.png", "diff/resvg/paint-servers/radialGradient/gradientTransform-and-transform.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/stops-via-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/stops-via-xlink-href.png", "diff/resvg/paint-servers/radialGradient/stops-via-xlink-href.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_fr__1() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/fr=-1.svg", "ref/resvg/paint-servers/radialGradient/fr=-1.png", "diff/resvg/paint-servers/radialGradient/fr=-1.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_no_stops() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/no-stops.svg", "ref/resvg/paint-servers/radialGradient/no-stops.png", "diff/resvg/paint-servers/radialGradient/no-stops.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_fr_0_2() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/fr=0.2.svg", "ref/resvg/paint-servers/radialGradient/fr=0.2.png", "diff/resvg/paint-servers/radialGradient/fr=0.2.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_spreadMethod_pad() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/spreadMethod=pad.svg", "ref/resvg/paint-servers/radialGradient/spreadMethod=pad.png", "diff/resvg/paint-servers/radialGradient/spreadMethod=pad.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_invalid_gradientUnits() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/invalid-gradientUnits.svg", "ref/resvg/paint-servers/radialGradient/invalid-gradientUnits.png", "diff/resvg/paint-servers/radialGradient/invalid-gradientUnits.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_gradientUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/gradientUnits=objectBoundingBox-with-percent.svg", "ref/resvg/paint-servers/radialGradient/gradientUnits=objectBoundingBox-with-percent.png", "diff/resvg/paint-servers/radialGradient/gradientUnits=objectBoundingBox-with-percent.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_invalid_spreadMethod() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/invalid-spreadMethod.svg", "ref/resvg/paint-servers/radialGradient/invalid-spreadMethod.png", "diff/resvg/paint-servers/radialGradient/invalid-spreadMethod.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_fr_0_5() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/fr=0.5.svg", "ref/resvg/paint-servers/radialGradient/fr=0.5.png", "diff/resvg/paint-servers/radialGradient/fr=0.5.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_fx_resolving_1() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/fx-resolving-1.svg", "ref/resvg/paint-servers/radialGradient/fx-resolving-1.png", "diff/resvg/paint-servers/radialGradient/fx-resolving-1.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_from_linearGradient() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/stops-via-xlink-href-from-linearGradient.svg", "ref/resvg/paint-servers/radialGradient/stops-via-xlink-href-from-linearGradient.png", "diff/resvg/paint-servers/radialGradient/stops-via-xlink-href-from-linearGradient.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_many_stops() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/many-stops.svg", "ref/resvg/paint-servers/radialGradient/many-stops.png", "diff/resvg/paint-servers/radialGradient/many-stops.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_fx_resolving_2() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/fx-resolving-2.svg", "ref/resvg/paint-servers/radialGradient/fx-resolving-2.png", "diff/resvg/paint-servers/radialGradient/fx-resolving-2.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_fx_resolving_3() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/fx-resolving-3.svg", "ref/resvg/paint-servers/radialGradient/fx-resolving-3.png", "diff/resvg/paint-servers/radialGradient/fx-resolving-3.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_fr_0_7() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/fr=0.7.svg", "ref/resvg/paint-servers/radialGradient/fr=0.7.png", "diff/resvg/paint-servers/radialGradient/fr=0.7.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_gradientTransform() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/gradientTransform.svg", "ref/resvg/paint-servers/radialGradient/gradientTransform.png", "diff/resvg/paint-servers/radialGradient/gradientTransform.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse.svg", "ref/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse.png", "diff/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_2() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-2.svg", "ref/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-2.png", "diff/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-2.png", false), 0)}
-// unknown reason
+// spreadMethod reflect not supported
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_linearGradient() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.png", "diff/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_1() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-1.svg", "ref/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-1.png", "diff/resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-1.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_complex_order() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/stops-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/radialGradient/stops-via-xlink-href-complex-order.png", "diff/resvg/paint-servers/radialGradient/stops-via-xlink-href-complex-order.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_single_stop() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/single-stop.svg", "ref/resvg/paint-servers/radialGradient/single-stop.png", "diff/resvg/paint-servers/radialGradient/single-stop.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_radialGradient_invalid_gradientTransform() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/invalid-gradientTransform.svg", "ref/resvg/paint-servers/radialGradient/invalid-gradientTransform.png", "diff/resvg/paint-servers/radialGradient/invalid-gradientTransform.png", false), 0)}
+#[test] fn resvg_paint_servers_radialGradient_invalid_gradientTransform() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/invalid-gradientTransform.svg", "ref/resvg/paint-servers/radialGradient/invalid-gradientTransform.png", "diff/resvg/paint-servers/radialGradient/invalid-gradientTransform.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_from_rect() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/stops-via-xlink-href-from-rect.svg", "ref/resvg/paint-servers/radialGradient/stops-via-xlink-href-from-rect.png", "diff/resvg/paint-servers/radialGradient/stops-via-xlink-href-from-rect.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_zero_r() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/zero-r.svg", "ref/resvg/paint-servers/radialGradient/zero-r.png", "diff/resvg/paint-servers/radialGradient/zero-r.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_recursive_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/recursive-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/recursive-xlink-href.png", "diff/resvg/paint-servers/radialGradient/recursive-xlink-href.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_radialGradient_negative_r() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/negative-r.svg", "ref/resvg/paint-servers/radialGradient/negative-r.png", "diff/resvg/paint-servers/radialGradient/negative-r.png", false), 0)}
+#[test] fn resvg_paint_servers_radialGradient_negative_r() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/negative-r.svg", "ref/resvg/paint-servers/radialGradient/negative-r.png", "diff/resvg/paint-servers/radialGradient/negative-r.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_focal_point_correction() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/focal-point-correction.svg", "ref/resvg/paint-servers/radialGradient/focal-point-correction.png", "diff/resvg/paint-servers/radialGradient/focal-point-correction.png", false), 0)}
-// unknown reason
+// spreadMethod repeat not supported
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_spreadMethod_repeat() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg", "ref/resvg/paint-servers/radialGradient/spreadMethod=repeat.png", "diff/resvg/paint-servers/radialGradient/spreadMethod=repeat.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_unresolved_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/unresolved-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/unresolved-xlink-href.png", "diff/resvg/paint-servers/radialGradient/unresolved-xlink-href.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_invalid_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/invalid-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/invalid-xlink-href.png", "diff/resvg/paint-servers/radialGradient/invalid-xlink-href.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_rect() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-rect.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-rect.png", "diff/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-rect.png", false), 0)}
-// unknown reason
+// spreadMethod reflect not supported
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_complex_order() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.png", "diff/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_xlink_href_not_to_gradient() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/xlink-href-not-to-gradient.svg", "ref/resvg/paint-servers/radialGradient/xlink-href-not-to-gradient.png", "diff/resvg/paint-servers/radialGradient/xlink-href-not-to-gradient.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse-with-percent.svg", "ref/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse-with-percent.png", "diff/resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse-with-percent.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_self_recursive_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/self-recursive-xlink-href.svg", "ref/resvg/paint-servers/radialGradient/self-recursive-xlink-href.png", "diff/resvg/paint-servers/radialGradient/self-recursive-xlink-href.png", false), 0)}
-// unknown reason
+// spreadMethod reflect not supported
 #[ignore] #[test] fn resvg_paint_servers_radialGradient_spreadMethod_reflect() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/spreadMethod=reflect.svg", "ref/resvg/paint-servers/radialGradient/spreadMethod=reflect.png", "diff/resvg/paint-servers/radialGradient/spreadMethod=reflect.png", false), 0)}
 #[test] fn resvg_paint_servers_radialGradient_default_attributes() {assert_eq!(run_test("svg/resvg/paint-servers/radialGradient/default-attributes.svg", "ref/resvg/paint-servers/radialGradient/default-attributes.png", "diff/resvg/paint-servers/radialGradient/default-attributes.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_opacity_simple_case() {assert_eq!(run_test("svg/resvg/paint-servers/stop-opacity/simple-case.svg", "ref/resvg/paint-servers/stop-opacity/simple-case.png", "diff/resvg/paint-servers/stop-opacity/simple-case.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_opacity_50percent() {assert_eq!(run_test("svg/resvg/paint-servers/stop-opacity/50percent.svg", "ref/resvg/paint-servers/stop-opacity/50percent.png", "diff/resvg/paint-servers/stop-opacity/50percent.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_stop_hsla_color() {assert_eq!(run_test("svg/resvg/paint-servers/stop/hsla-color.svg", "ref/resvg/paint-servers/stop/hsla-color.png", "diff/resvg/paint-servers/stop/hsla-color.png", false), 0)}
+#[test] fn resvg_paint_servers_stop_hsla_color() {assert_eq!(run_test("svg/resvg/paint-servers/stop/hsla-color.svg", "ref/resvg/paint-servers/stop/hsla-color.png", "diff/resvg/paint-servers/stop/hsla-color.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_zero_offset_in_the_middle() {assert_eq!(run_test("svg/resvg/paint-servers/stop/zero-offset-in-the-middle.svg", "ref/resvg/paint-servers/stop/zero-offset-in-the-middle.png", "diff/resvg/paint-servers/stop/zero-offset-in-the-middle.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_stop_with_smaller_offset() {assert_eq!(run_test("svg/resvg/paint-servers/stop/stop-with-smaller-offset.svg", "ref/resvg/paint-servers/stop/stop-with-smaller-offset.png", "diff/resvg/paint-servers/stop/stop-with-smaller-offset.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_stops_with_equal_offset_3() {assert_eq!(run_test("svg/resvg/paint-servers/stop/stops-with-equal-offset-3.svg", "ref/resvg/paint-servers/stop/stops-with-equal-offset-3.png", "diff/resvg/paint-servers/stop/stops-with-equal-offset-3.png", false), 0)}
@@ -556,8 +489,7 @@ use crate::run_test;
 #[test] fn resvg_paint_servers_stop_stop_color_with_inherit_4() {assert_eq!(run_test("svg/resvg/paint-servers/stop/stop-color-with-inherit-4.svg", "ref/resvg/paint-servers/stop/stop-color-with-inherit-4.png", "diff/resvg/paint-servers/stop/stop-color-with-inherit-4.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_offset_with_percent() {assert_eq!(run_test("svg/resvg/paint-servers/stop/offset-with-percent.svg", "ref/resvg/paint-servers/stop/offset-with-percent.png", "diff/resvg/paint-servers/stop/offset-with-percent.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_stop_color_with_inherit_5() {assert_eq!(run_test("svg/resvg/paint-servers/stop/stop-color-with-inherit-5.svg", "ref/resvg/paint-servers/stop/stop-color-with-inherit-5.png", "diff/resvg/paint-servers/stop/stop-color-with-inherit-5.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_stop_equal_stop_color() {assert_eq!(run_test("svg/resvg/paint-servers/stop/equal-stop-color.svg", "ref/resvg/paint-servers/stop/equal-stop-color.png", "diff/resvg/paint-servers/stop/equal-stop-color.png", false), 0)}
+#[test] fn resvg_paint_servers_stop_equal_stop_color() {assert_eq!(run_test("svg/resvg/paint-servers/stop/equal-stop-color.svg", "ref/resvg/paint-servers/stop/equal-stop-color.png", "diff/resvg/paint-servers/stop/equal-stop-color.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_stop_color_with_inherit_2() {assert_eq!(run_test("svg/resvg/paint-servers/stop/stop-color-with-inherit-2.svg", "ref/resvg/paint-servers/stop/stop-color-with-inherit-2.png", "diff/resvg/paint-servers/stop/stop-color-with-inherit-2.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_stop_color_with_inherit_3() {assert_eq!(run_test("svg/resvg/paint-servers/stop/stop-color-with-inherit-3.svg", "ref/resvg/paint-servers/stop/stop-color-with-inherit-3.png", "diff/resvg/paint-servers/stop/stop-color-with-inherit-3.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_stop_color_with_inherit_1() {assert_eq!(run_test("svg/resvg/paint-servers/stop/stop-color-with-inherit-1.svg", "ref/resvg/paint-servers/stop/stop-color-with-inherit-1.png", "diff/resvg/paint-servers/stop/stop-color-with-inherit-1.png", false), 0)}
@@ -582,27 +514,25 @@ use crate::run_test;
 #[test] fn resvg_paint_servers_linearGradient_gradientTransform() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/gradientTransform.svg", "ref/resvg/paint-servers/linearGradient/gradientTransform.png", "diff/resvg/paint-servers/linearGradient/gradientTransform.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse.svg", "ref/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse.png", "diff/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_3() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/recursive-xlink-href-3.svg", "ref/resvg/paint-servers/linearGradient/recursive-xlink-href-3.png", "diff/resvg/paint-servers/linearGradient/recursive-xlink-href-3.png", false), 0)}
-// unknown reason
+// spreadMethod reflect not supported
 #[ignore] #[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_radialGradient() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.png", "diff/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_2() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/recursive-xlink-href-2.svg", "ref/resvg/paint-servers/linearGradient/recursive-xlink-href-2.png", "diff/resvg/paint-servers/linearGradient/recursive-xlink-href-2.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_1() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/recursive-xlink-href-1.svg", "ref/resvg/paint-servers/linearGradient/recursive-xlink-href-1.png", "diff/resvg/paint-servers/linearGradient/recursive-xlink-href-1.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_stroke() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-stroke.svg", "ref/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-stroke.png", "diff/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-stroke.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_single_stop() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/single-stop.svg", "ref/resvg/paint-servers/linearGradient/single-stop.png", "diff/resvg/paint-servers/linearGradient/single-stop.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_linearGradient_invalid_gradientTransform() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/invalid-gradientTransform.svg", "ref/resvg/paint-servers/linearGradient/invalid-gradientTransform.png", "diff/resvg/paint-servers/linearGradient/invalid-gradientTransform.png", false), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_gradientTransform() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/invalid-gradientTransform.svg", "ref/resvg/paint-servers/linearGradient/invalid-gradientTransform.png", "diff/resvg/paint-servers/linearGradient/invalid-gradientTransform.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_from_rect() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/stops-via-xlink-href-from-rect.svg", "ref/resvg/paint-servers/linearGradient/stops-via-xlink-href-from-rect.png", "diff/resvg/paint-servers/linearGradient/stops-via-xlink-href-from-rect.png", false), 0)}
-// unknown reason
+// spreadMethod repeat not supported
 #[ignore] #[test] fn resvg_paint_servers_linearGradient_spreadMethod_repeat() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/spreadMethod=repeat.svg", "ref/resvg/paint-servers/linearGradient/spreadMethod=repeat.png", "diff/resvg/paint-servers/linearGradient/spreadMethod=repeat.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_unresolved_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/unresolved-xlink-href.svg", "ref/resvg/paint-servers/linearGradient/unresolved-xlink-href.png", "diff/resvg/paint-servers/linearGradient/unresolved-xlink-href.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_invalid_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/invalid-xlink-href.svg", "ref/resvg/paint-servers/linearGradient/invalid-xlink-href.png", "diff/resvg/paint-servers/linearGradient/invalid-xlink-href.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_rect() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-rect.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-rect.png", "diff/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-rect.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill_and_stroke() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.svg", "ref/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.png", "diff/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.png", false), 0)}
-// unknown reason
+#[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill_and_stroke() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.svg", "ref/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.png", "diff/resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke.png", false), 0)}
+// spreadMethod reflect not supported
 #[ignore] #[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_complex_order() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.svg", "ref/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.png", "diff/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse-with-percent.svg", "ref/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse-with-percent.png", "diff/resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse-with-percent.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_self_recursive_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/self-recursive-xlink-href.svg", "ref/resvg/paint-servers/linearGradient/self-recursive-xlink-href.png", "diff/resvg/paint-servers/linearGradient/self-recursive-xlink-href.png", false), 0)}
-// unknown reason
+// spreadMethod reflect not supported
 #[ignore] #[test] fn resvg_paint_servers_linearGradient_spreadMethod_reflect() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/spreadMethod=reflect.svg", "ref/resvg/paint-servers/linearGradient/spreadMethod=reflect.png", "diff/resvg/paint-servers/linearGradient/spreadMethod=reflect.png", false), 0)}
 #[test] fn resvg_paint_servers_linearGradient_default_attributes() {assert_eq!(run_test("svg/resvg/paint-servers/linearGradient/default-attributes.svg", "ref/resvg/paint-servers/linearGradient/default-attributes.png", "diff/resvg/paint-servers/linearGradient/default-attributes.png", false), 0)}
 #[test] fn resvg_paint_servers_stop_color_simple_case() {assert_eq!(run_test("svg/resvg/paint-servers/stop-color/simple-case.svg", "ref/resvg/paint-servers/stop-color/simple-case.png", "diff/resvg/paint-servers/stop-color/simple-case.png", false), 0)}
@@ -621,7 +551,7 @@ use crate::run_test;
 #[test] fn resvg_paint_servers_pattern_out_of_order_referencing() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/out-of-order-referencing.svg", "ref/resvg/paint-servers/pattern/out-of-order-referencing.png", "diff/resvg/paint-servers/pattern/out-of-order-referencing.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_with_patternTransform() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/with-patternTransform.svg", "ref/resvg/paint-servers/pattern/with-patternTransform.png", "diff/resvg/paint-servers/pattern/with-patternTransform.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_with_x_and_y() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/with-x-and-y.svg", "ref/resvg/paint-servers/pattern/with-x-and-y.png", "diff/resvg/paint-servers/pattern/with-x-and-y.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_paint_servers_pattern_nested_objectBoundingBox() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/nested-objectBoundingBox.svg", "ref/resvg/paint-servers/pattern/nested-objectBoundingBox.png", "diff/resvg/paint-servers/pattern/nested-objectBoundingBox.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_preserveAspectRatio() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/preserveAspectRatio.svg", "ref/resvg/paint-servers/pattern/preserveAspectRatio.png", "diff/resvg/paint-servers/pattern/preserveAspectRatio.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_simple_case() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/simple-case.svg", "ref/resvg/paint-servers/pattern/simple-case.png", "diff/resvg/paint-servers/pattern/simple-case.png", false), 0)}
@@ -631,38 +561,30 @@ use crate::run_test;
 #[test] fn resvg_paint_servers_pattern_children_via_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/children-via-xlink-href.svg", "ref/resvg/paint-servers/pattern/children-via-xlink-href.png", "diff/resvg/paint-servers/pattern/children-via-xlink-href.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_invalid_patternUnits_and_patternContentUnits() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/invalid-patternUnits-and-patternContentUnits.svg", "ref/resvg/paint-servers/pattern/invalid-patternUnits-and-patternContentUnits.png", "diff/resvg/paint-servers/pattern/invalid-patternUnits-and-patternContentUnits.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_pattern_on_child() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/pattern-on-child.svg", "ref/resvg/paint-servers/pattern/pattern-on-child.png", "diff/resvg/paint-servers/pattern/pattern-on-child.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_pattern_overflow_visible() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/overflow=visible.svg", "ref/resvg/paint-servers/pattern/overflow=visible.png", "diff/resvg/paint-servers/pattern/overflow=visible.png", false), 0)}
+#[test] fn resvg_paint_servers_pattern_overflow_visible() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/overflow=visible.svg", "ref/resvg/paint-servers/pattern/overflow=visible.png", "diff/resvg/paint-servers/pattern/overflow=visible.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_child_with_invalid_FuncIRI() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/child-with-invalid-FuncIRI.svg", "ref/resvg/paint-servers/pattern/child-with-invalid-FuncIRI.png", "diff/resvg/paint-servers/pattern/child-with-invalid-FuncIRI.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_self_recursive() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/self-recursive.svg", "ref/resvg/paint-servers/pattern/self-recursive.png", "diff/resvg/paint-servers/pattern/self-recursive.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_text_child() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/text-child.svg", "ref/resvg/paint-servers/pattern/text-child.png", "diff/resvg/paint-servers/pattern/text-child.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_paint_servers_pattern_invalid_patternTransform() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/invalid-patternTransform.svg", "ref/resvg/paint-servers/pattern/invalid-patternTransform.png", "diff/resvg/paint-servers/pattern/invalid-patternTransform.png", false), 0)}
+#[test] fn resvg_paint_servers_pattern_invalid_patternTransform() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/invalid-patternTransform.svg", "ref/resvg/paint-servers/pattern/invalid-patternTransform.png", "diff/resvg/paint-servers/pattern/invalid-patternTransform.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_viewBox_via_xlink_href() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/viewBox-via-xlink-href.svg", "ref/resvg/paint-servers/pattern/viewBox-via-xlink-href.png", "diff/resvg/paint-servers/pattern/viewBox-via-xlink-href.png", false), 0)}
 #[test] fn resvg_paint_servers_pattern_self_recursive_on_child() {assert_eq!(run_test("svg/resvg/paint-servers/pattern/self-recursive-on-child.svg", "ref/resvg/paint-servers/pattern/self-recursive-on-child.png", "diff/resvg/paint-servers/pattern/self-recursive-on-child.png", false), 0)}
 #[test] fn resvg_shapes_rect_with_child() {assert_eq!(run_test("svg/resvg/shapes/rect/with-child.svg", "ref/resvg/shapes/rect/with-child.png", "diff/resvg/shapes/rect/with-child.png", false), 0)}
 #[test] fn resvg_shapes_rect_y_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/y-attribute-resolving.svg", "ref/resvg/shapes/rect/y-attribute-resolving.png", "diff/resvg/shapes/rect/y-attribute-resolving.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_vi_and_vb_values() {assert_eq!(run_test("svg/resvg/shapes/rect/vi-and-vb-values.svg", "ref/resvg/shapes/rect/vi-and-vb-values.png", "diff/resvg/shapes/rect/vi-and-vb-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_vi_and_vb_values() {assert_eq!(run_test("svg/resvg/shapes/rect/vi-and-vb-values.svg", "ref/resvg/shapes/rect/vi-and-vb-values.png", "diff/resvg/shapes/rect/vi-and-vb-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_ry_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/ry-attribute-resolving.svg", "ref/resvg/shapes/rect/ry-attribute-resolving.png", "diff/resvg/shapes/rect/ry-attribute-resolving.png", false), 0)}
 #[test] fn resvg_shapes_rect_ry_attribute_clamping() {assert_eq!(run_test("svg/resvg/shapes/rect/ry-attribute-clamping.svg", "ref/resvg/shapes/rect/ry-attribute-clamping.png", "diff/resvg/shapes/rect/ry-attribute-clamping.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_ch_values() {assert_eq!(run_test("svg/resvg/shapes/rect/ch-values.svg", "ref/resvg/shapes/rect/ch-values.png", "diff/resvg/shapes/rect/ch-values.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_cap_values() {assert_eq!(run_test("svg/resvg/shapes/rect/cap-values.svg", "ref/resvg/shapes/rect/cap-values.png", "diff/resvg/shapes/rect/cap-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_ch_values() {assert_eq!(run_test("svg/resvg/shapes/rect/ch-values.svg", "ref/resvg/shapes/rect/ch-values.png", "diff/resvg/shapes/rect/ch-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_cap_values() {assert_eq!(run_test("svg/resvg/shapes/rect/cap-values.svg", "ref/resvg/shapes/rect/cap-values.png", "diff/resvg/shapes/rect/cap-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_zero_width_attribute_processing() {assert_eq!(run_test("svg/resvg/shapes/rect/zero-width-attribute-processing.svg", "ref/resvg/shapes/rect/zero-width-attribute-processing.png", "diff/resvg/shapes/rect/zero-width-attribute-processing.png", false), 0)}
 #[test] fn resvg_shapes_rect_zero_rx_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/zero-rx-attribute-resolving.svg", "ref/resvg/shapes/rect/zero-rx-attribute-resolving.png", "diff/resvg/shapes/rect/zero-rx-attribute-resolving.png", false), 0)}
 #[test] fn resvg_shapes_rect_em_values() {assert_eq!(run_test("svg/resvg/shapes/rect/em-values.svg", "ref/resvg/shapes/rect/em-values.png", "diff/resvg/shapes/rect/em-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_invalid_length() {assert_eq!(run_test("svg/resvg/shapes/rect/invalid-length.svg", "ref/resvg/shapes/rect/invalid-length.png", "diff/resvg/shapes/rect/invalid-length.png", false), 0)}
 #[test] fn resvg_shapes_rect_rx_attribute_clamping() {assert_eq!(run_test("svg/resvg/shapes/rect/rx-attribute-clamping.svg", "ref/resvg/shapes/rect/rx-attribute-clamping.png", "diff/resvg/shapes/rect/rx-attribute-clamping.png", false), 0)}
 #[test] fn resvg_shapes_rect_negative_rx_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/negative-rx-attribute-resolving.svg", "ref/resvg/shapes/rect/negative-rx-attribute-resolving.png", "diff/resvg/shapes/rect/negative-rx-attribute-resolving.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_lh_values() {assert_eq!(run_test("svg/resvg/shapes/rect/lh-values.svg", "ref/resvg/shapes/rect/lh-values.png", "diff/resvg/shapes/rect/lh-values.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_vw_and_vh_values() {assert_eq!(run_test("svg/resvg/shapes/rect/vw-and-vh-values.svg", "ref/resvg/shapes/rect/vw-and-vh-values.png", "diff/resvg/shapes/rect/vw-and-vh-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_lh_values() {assert_eq!(run_test("svg/resvg/shapes/rect/lh-values.svg", "ref/resvg/shapes/rect/lh-values.png", "diff/resvg/shapes/rect/lh-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_vw_and_vh_values() {assert_eq!(run_test("svg/resvg/shapes/rect/vw-and-vh-values.svg", "ref/resvg/shapes/rect/vw-and-vh-values.png", "diff/resvg/shapes/rect/vw-and-vh-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_simple_case() {assert_eq!(run_test("svg/resvg/shapes/rect/simple-case.svg", "ref/resvg/shapes/rect/simple-case.png", "diff/resvg/shapes/rect/simple-case.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_ic_values() {assert_eq!(run_test("svg/resvg/shapes/rect/ic-values.svg", "ref/resvg/shapes/rect/ic-values.png", "diff/resvg/shapes/rect/ic-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_ic_values() {assert_eq!(run_test("svg/resvg/shapes/rect/ic-values.svg", "ref/resvg/shapes/rect/ic-values.png", "diff/resvg/shapes/rect/ic-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_negative_width_attribute_processing() {assert_eq!(run_test("svg/resvg/shapes/rect/negative-width-attribute-processing.svg", "ref/resvg/shapes/rect/negative-width-attribute-processing.png", "diff/resvg/shapes/rect/negative-width-attribute-processing.png", false), 0)}
 #[test] fn resvg_shapes_rect_rounded_rect() {assert_eq!(run_test("svg/resvg/shapes/rect/rounded-rect.svg", "ref/resvg/shapes/rect/rounded-rect.png", "diff/resvg/shapes/rect/rounded-rect.png", false), 0)}
 #[test] fn resvg_shapes_rect_missing_height_attribute_processing() {assert_eq!(run_test("svg/resvg/shapes/rect/missing-height-attribute-processing.svg", "ref/resvg/shapes/rect/missing-height-attribute-processing.png", "diff/resvg/shapes/rect/missing-height-attribute-processing.png", false), 0)}
@@ -671,20 +593,16 @@ use crate::run_test;
 #[test] fn resvg_shapes_rect_negative_height_attribute_processing() {assert_eq!(run_test("svg/resvg/shapes/rect/negative-height-attribute-processing.svg", "ref/resvg/shapes/rect/negative-height-attribute-processing.png", "diff/resvg/shapes/rect/negative-height-attribute-processing.png", false), 0)}
 #[test] fn resvg_shapes_rect_rx_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/rx-attribute-resolving.svg", "ref/resvg/shapes/rect/rx-attribute-resolving.png", "diff/resvg/shapes/rect/rx-attribute-resolving.png", false), 0)}
 #[test] fn resvg_shapes_rect_x_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/x-attribute-resolving.svg", "ref/resvg/shapes/rect/x-attribute-resolving.png", "diff/resvg/shapes/rect/x-attribute-resolving.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_rlh_values() {assert_eq!(run_test("svg/resvg/shapes/rect/rlh-values.svg", "ref/resvg/shapes/rect/rlh-values.png", "diff/resvg/shapes/rect/rlh-values.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_vmin_and_vmax_values() {assert_eq!(run_test("svg/resvg/shapes/rect/vmin-and-vmax-values.svg", "ref/resvg/shapes/rect/vmin-and-vmax-values.png", "diff/resvg/shapes/rect/vmin-and-vmax-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_rlh_values() {assert_eq!(run_test("svg/resvg/shapes/rect/rlh-values.svg", "ref/resvg/shapes/rect/rlh-values.png", "diff/resvg/shapes/rect/rlh-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_vmin_and_vmax_values() {assert_eq!(run_test("svg/resvg/shapes/rect/vmin-and-vmax-values.svg", "ref/resvg/shapes/rect/vmin-and-vmax-values.png", "diff/resvg/shapes/rect/vmin-and-vmax-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_percentage_values_2() {assert_eq!(run_test("svg/resvg/shapes/rect/percentage-values-2.svg", "ref/resvg/shapes/rect/percentage-values-2.png", "diff/resvg/shapes/rect/percentage-values-2.png", false), 0)}
 #[test] fn resvg_shapes_rect_negative_ry_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/negative-ry-attribute-resolving.svg", "ref/resvg/shapes/rect/negative-ry-attribute-resolving.png", "diff/resvg/shapes/rect/negative-ry-attribute-resolving.png", false), 0)}
 #[test] fn resvg_shapes_rect_zero_height_attribute_processing() {assert_eq!(run_test("svg/resvg/shapes/rect/zero-height-attribute-processing.svg", "ref/resvg/shapes/rect/zero-height-attribute-processing.png", "diff/resvg/shapes/rect/zero-height-attribute-processing.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_q_values() {assert_eq!(run_test("svg/resvg/shapes/rect/q-values.svg", "ref/resvg/shapes/rect/q-values.png", "diff/resvg/shapes/rect/q-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_q_values() {assert_eq!(run_test("svg/resvg/shapes/rect/q-values.svg", "ref/resvg/shapes/rect/q-values.png", "diff/resvg/shapes/rect/q-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_rx_and_ry_attributes_clamping_order() {assert_eq!(run_test("svg/resvg/shapes/rect/rx-and-ry-attributes-clamping-order.svg", "ref/resvg/shapes/rect/rx-and-ry-attributes-clamping-order.png", "diff/resvg/shapes/rect/rx-and-ry-attributes-clamping-order.png", false), 0)}
 #[test] fn resvg_shapes_rect_missing_width_attribute_processing() {assert_eq!(run_test("svg/resvg/shapes/rect/missing-width-attribute-processing.svg", "ref/resvg/shapes/rect/missing-width-attribute-processing.png", "diff/resvg/shapes/rect/missing-width-attribute-processing.png", false), 0)}
 #[test] fn resvg_shapes_rect_percentage_values_1() {assert_eq!(run_test("svg/resvg/shapes/rect/percentage-values-1.svg", "ref/resvg/shapes/rect/percentage-values-1.png", "diff/resvg/shapes/rect/percentage-values-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_shapes_rect_rem_values() {assert_eq!(run_test("svg/resvg/shapes/rect/rem-values.svg", "ref/resvg/shapes/rect/rem-values.png", "diff/resvg/shapes/rect/rem-values.png", false), 0)}
+#[test] fn resvg_shapes_rect_rem_values() {assert_eq!(run_test("svg/resvg/shapes/rect/rem-values.svg", "ref/resvg/shapes/rect/rem-values.png", "diff/resvg/shapes/rect/rem-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_zero_ry_attribute_resolving() {assert_eq!(run_test("svg/resvg/shapes/rect/zero-ry-attribute-resolving.svg", "ref/resvg/shapes/rect/zero-ry-attribute-resolving.png", "diff/resvg/shapes/rect/zero-ry-attribute-resolving.png", false), 0)}
 #[test] fn resvg_shapes_rect_mm_values() {assert_eq!(run_test("svg/resvg/shapes/rect/mm-values.svg", "ref/resvg/shapes/rect/mm-values.png", "diff/resvg/shapes/rect/mm-values.png", false), 0)}
 #[test] fn resvg_shapes_rect_invalid_coordinates() {assert_eq!(run_test("svg/resvg/shapes/rect/invalid-coordinates.svg", "ref/resvg/shapes/rect/invalid-coordinates.png", "diff/resvg/shapes/rect/invalid-coordinates.png", false), 0)}
@@ -810,22 +728,17 @@ use crate::run_test;
 #[test] fn resvg_painting_visibility_bbox_impact_1() {assert_eq!(run_test("svg/resvg/painting/visibility/bbox-impact-1.svg", "ref/resvg/painting/visibility/bbox-impact-1.png", "diff/resvg/painting/visibility/bbox-impact-1.png", false), 0)}
 #[test] fn resvg_painting_visibility_bbox_impact_2() {assert_eq!(run_test("svg/resvg/painting/visibility/bbox-impact-2.svg", "ref/resvg/painting/visibility/bbox-impact-2.png", "diff/resvg/painting/visibility/bbox-impact-2.png", false), 0)}
 #[test] fn resvg_painting_visibility_bbox_impact_3() {assert_eq!(run_test("svg/resvg/painting/visibility/bbox-impact-3.svg", "ref/resvg/painting/visibility/bbox-impact-3.png", "diff/resvg/painting/visibility/bbox-impact-3.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dashoffset_mm_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/mm-units.svg", "ref/resvg/painting/stroke-dashoffset/mm-units.png", "diff/resvg/painting/stroke-dashoffset/mm-units.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dashoffset_em_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/em-units.svg", "ref/resvg/painting/stroke-dashoffset/em-units.png", "diff/resvg/painting/stroke-dashoffset/em-units.png", false), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_mm_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/mm-units.svg", "ref/resvg/painting/stroke-dashoffset/mm-units.png", "diff/resvg/painting/stroke-dashoffset/mm-units.png", false), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_em_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/em-units.svg", "ref/resvg/painting/stroke-dashoffset/em-units.png", "diff/resvg/painting/stroke-dashoffset/em-units.png", false), 0)}
 #[test] fn resvg_painting_stroke_dashoffset_negative_value() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/negative-value.svg", "ref/resvg/painting/stroke-dashoffset/negative-value.png", "diff/resvg/painting/stroke-dashoffset/negative-value.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dashoffset_percent_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/percent-units.svg", "ref/resvg/painting/stroke-dashoffset/percent-units.png", "diff/resvg/painting/stroke-dashoffset/percent-units.png", false), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_percent_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/percent-units.svg", "ref/resvg/painting/stroke-dashoffset/percent-units.png", "diff/resvg/painting/stroke-dashoffset/percent-units.png", false), 0)}
 #[test] fn resvg_painting_stroke_dashoffset_default() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/default.svg", "ref/resvg/painting/stroke-dashoffset/default.png", "diff/resvg/painting/stroke-dashoffset/default.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dashoffset_px_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/px-units.svg", "ref/resvg/painting/stroke-dashoffset/px-units.png", "diff/resvg/painting/stroke-dashoffset/px-units.png", false), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_px_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dashoffset/px-units.svg", "ref/resvg/painting/stroke-dashoffset/px-units.png", "diff/resvg/painting/stroke-dashoffset/px-units.png", false), 0)}
 #[test] fn resvg_painting_fill_RRGGBB_uppercase_color() {assert_eq!(run_test("svg/resvg/painting/fill/#RRGGBB-uppercase-color.svg", "ref/resvg/painting/fill/#RRGGBB-uppercase-color.png", "diff/resvg/painting/fill/#RRGGBB-uppercase-color.png", false), 0)}
 #[test] fn resvg_painting_fill_RGB_color() {assert_eq!(run_test("svg/resvg/painting/fill/#RGB-color.svg", "ref/resvg/painting/fill/#RGB-color.png", "diff/resvg/painting/fill/#RGB-color.png", false), 0)}
 #[test] fn resvg_painting_fill_radial_gradient_on_text() {assert_eq!(run_test("svg/resvg/painting/fill/radial-gradient-on-text.svg", "ref/resvg/painting/fill/radial-gradient-on-text.png", "diff/resvg/painting/fill/radial-gradient-on-text.png", false), 0)}
 #[test] fn resvg_painting_fill_named_color_in_uppercase() {assert_eq!(run_test("svg/resvg/painting/fill/named-color-in-uppercase.svg", "ref/resvg/painting/fill/named-color-in-uppercase.png", "diff/resvg/painting/fill/named-color-in-uppercase.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_fill_rgb_int_int_int() {assert_eq!(run_test("svg/resvg/painting/fill/rgb-int-int-int.svg", "ref/resvg/painting/fill/rgb-int-int-int.png", "diff/resvg/painting/fill/rgb-int-int-int.png", false), 0)}
+#[test] fn resvg_painting_fill_rgb_int_int_int() {assert_eq!(run_test("svg/resvg/painting/fill/rgb-int-int-int.svg", "ref/resvg/painting/fill/rgb-int-int-int.png", "diff/resvg/painting/fill/rgb-int-int-int.png", false), 0)}
 #[test] fn resvg_painting_fill_random_value() {assert_eq!(run_test("svg/resvg/painting/fill/random-value.svg", "ref/resvg/painting/fill/random-value.png", "diff/resvg/painting/fill/random-value.png", false), 0)}
 #[test] fn resvg_painting_fill_rgb_color_with_extra_spaces() {assert_eq!(run_test("svg/resvg/painting/fill/rgb-color-with-extra-spaces.svg", "ref/resvg/painting/fill/rgb-color-with-extra-spaces.png", "diff/resvg/painting/fill/rgb-color-with-extra-spaces.png", false), 0)}
 #[test] fn resvg_painting_fill_named_color_in_mixedcase() {assert_eq!(run_test("svg/resvg/painting/fill/named-color-in-mixedcase.svg", "ref/resvg/painting/fill/named-color-in-mixedcase.png", "diff/resvg/painting/fill/named-color-in-mixedcase.png", false), 0)}
@@ -836,19 +749,16 @@ use crate::run_test;
 #[test] fn resvg_painting_fill_not_trimmed_attribute_value() {assert_eq!(run_test("svg/resvg/painting/fill/not-trimmed-attribute-value.svg", "ref/resvg/painting/fill/not-trimmed-attribute-value.png", "diff/resvg/painting/fill/not-trimmed-attribute-value.png", false), 0)}
 #[test] fn resvg_painting_fill_funcIRI_to_a_missing_element_with_a_none_fallback() {assert_eq!(run_test("svg/resvg/painting/fill/funcIRI-to-a-missing-element-with-a-none-fallback.svg", "ref/resvg/painting/fill/funcIRI-to-a-missing-element-with-a-none-fallback.png", "diff/resvg/painting/fill/funcIRI-to-a-missing-element-with-a-none-fallback.png", false), 0)}
 #[test] fn resvg_painting_fill_inherit_without_parent() {assert_eq!(run_test("svg/resvg/painting/fill/inherit-without-parent.svg", "ref/resvg/painting/fill/inherit-without-parent.png", "diff/resvg/painting/fill/inherit-without-parent.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_fill_valid_FuncIRI_with_a_fallback_ICC_color() {assert_eq!(run_test("svg/resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color.svg", "ref/resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color.png", "diff/resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color.png", false), 0)}
+#[test] fn resvg_painting_fill_valid_FuncIRI_with_a_fallback_ICC_color() {assert_eq!(run_test("svg/resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color.svg", "ref/resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color.png", "diff/resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color.png", false), 0)}
 #[test] fn resvg_painting_fill_radial_gradient_on_shape() {assert_eq!(run_test("svg/resvg/painting/fill/radial-gradient-on-shape.svg", "ref/resvg/painting/fill/radial-gradient-on-shape.png", "diff/resvg/painting/fill/radial-gradient-on-shape.png", false), 0)}
 #[test] fn resvg_painting_fill_hsl_120_200percent_25percent() {assert_eq!(run_test("svg/resvg/painting/fill/hsl-120-200percent-25percent.svg", "ref/resvg/painting/fill/hsl-120-200percent-25percent.png", "diff/resvg/painting/fill/hsl-120-200percent-25percent.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_fill_RGBA() {assert_eq!(run_test("svg/resvg/painting/fill/#RGBA.svg", "ref/resvg/painting/fill/#RGBA.png", "diff/resvg/painting/fill/#RGBA.png", false), 0)}
+#[test] fn resvg_painting_fill_RGBA() {assert_eq!(run_test("svg/resvg/painting/fill/#RGBA.svg", "ref/resvg/painting/fill/#RGBA.png", "diff/resvg/painting/fill/#RGBA.png", false), 0)}
 #[test] fn resvg_painting_fill_rgb_color_with_a_big_fraction_part() {assert_eq!(run_test("svg/resvg/painting/fill/rgb-color-with-a-big-fraction-part.svg", "ref/resvg/painting/fill/rgb-color-with-a-big-fraction-part.png", "diff/resvg/painting/fill/rgb-color-with-a-big-fraction-part.png", false), 0)}
 #[test] fn resvg_painting_fill_pattern_on_shape() {assert_eq!(run_test("svg/resvg/painting/fill/pattern-on-shape.svg", "ref/resvg/painting/fill/pattern-on-shape.png", "diff/resvg/painting/fill/pattern-on-shape.png", false), 0)}
 #[test] fn resvg_painting_fill_uppercase_rgb_color() {assert_eq!(run_test("svg/resvg/painting/fill/uppercase-rgb-color.svg", "ref/resvg/painting/fill/uppercase-rgb-color.png", "diff/resvg/painting/fill/uppercase-rgb-color.png", false), 0)}
 #[test] fn resvg_painting_fill_double_inherit() {assert_eq!(run_test("svg/resvg/painting/fill/double-inherit.svg", "ref/resvg/painting/fill/double-inherit.png", "diff/resvg/painting/fill/double-inherit.png", false), 0)}
 #[test] fn resvg_painting_fill_pattern_on_text() {assert_eq!(run_test("svg/resvg/painting/fill/pattern-on-text.svg", "ref/resvg/painting/fill/pattern-on-text.png", "diff/resvg/painting/fill/pattern-on-text.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_fill_rgba_0_127_0_50percent() {assert_eq!(run_test("svg/resvg/painting/fill/rgba-0-127-0-50percent.svg", "ref/resvg/painting/fill/rgba-0-127-0-50percent.png", "diff/resvg/painting/fill/rgba-0-127-0-50percent.png", false), 0)}
+#[test] fn resvg_painting_fill_rgba_0_127_0_50percent() {assert_eq!(run_test("svg/resvg/painting/fill/rgba-0-127-0-50percent.svg", "ref/resvg/painting/fill/rgba-0-127-0-50percent.png", "diff/resvg/painting/fill/rgba-0-127-0-50percent.png", false), 0)}
 #[test] fn resvg_painting_fill_missing_FuncIRI_with_a_currentColor_fallback() {assert_eq!(run_test("svg/resvg/painting/fill/missing-FuncIRI-with-a-currentColor-fallback.svg", "ref/resvg/painting/fill/missing-FuncIRI-with-a-currentColor-fallback.png", "diff/resvg/painting/fill/missing-FuncIRI-with-a-currentColor-fallback.png", false), 0)}
 #[test] fn resvg_painting_fill_rgb_0_127_0_0_5() {assert_eq!(run_test("svg/resvg/painting/fill/rgb-0-127-0-0.5.svg", "ref/resvg/painting/fill/rgb-0-127-0-0.5.png", "diff/resvg/painting/fill/rgb-0-127-0-0.5.png", false), 0)}
 #[test] fn resvg_painting_fill_rgba_0_50percent_0_0_5() {assert_eq!(run_test("svg/resvg/painting/fill/rgba-0-50percent-0-0.5.svg", "ref/resvg/painting/fill/rgba-0-50percent-0-0.5.png", "diff/resvg/painting/fill/rgba-0-50percent-0-0.5.png", false), 0)}
@@ -870,10 +780,8 @@ use crate::run_test;
 #[test] fn resvg_painting_fill_none() {assert_eq!(run_test("svg/resvg/painting/fill/none.svg", "ref/resvg/painting/fill/none.png", "diff/resvg/painting/fill/none.png", false), 0)}
 #[test] fn resvg_painting_fill_RRGGBB_color() {assert_eq!(run_test("svg/resvg/painting/fill/#RRGGBB-color.svg", "ref/resvg/painting/fill/#RRGGBB-color.png", "diff/resvg/painting/fill/#RRGGBB-color.png", false), 0)}
 #[test] fn resvg_painting_fill_linear_gradient_on_text() {assert_eq!(run_test("svg/resvg/painting/fill/linear-gradient-on-text.svg", "ref/resvg/painting/fill/linear-gradient-on-text.png", "diff/resvg/painting/fill/linear-gradient-on-text.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_fill_icc_color() {assert_eq!(run_test("svg/resvg/painting/fill/icc-color.svg", "ref/resvg/painting/fill/icc-color.png", "diff/resvg/painting/fill/icc-color.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_fill_RRGGBBAA() {assert_eq!(run_test("svg/resvg/painting/fill/#RRGGBBAA.svg", "ref/resvg/painting/fill/#RRGGBBAA.png", "diff/resvg/painting/fill/#RRGGBBAA.png", false), 0)}
+#[test] fn resvg_painting_fill_icc_color() {assert_eq!(run_test("svg/resvg/painting/fill/icc-color.svg", "ref/resvg/painting/fill/icc-color.png", "diff/resvg/painting/fill/icc-color.png", false), 0)}
+#[test] fn resvg_painting_fill_RRGGBBAA() {assert_eq!(run_test("svg/resvg/painting/fill/#RRGGBBAA.svg", "ref/resvg/painting/fill/#RRGGBBAA.png", "diff/resvg/painting/fill/#RRGGBBAA.png", false), 0)}
 #[test] fn resvg_painting_fill_rgba_0_127_0_0_5() {assert_eq!(run_test("svg/resvg/painting/fill/rgba-0-127-0-0.5.svg", "ref/resvg/painting/fill/rgba-0-127-0-0.5.png", "diff/resvg/painting/fill/rgba-0-127-0-0.5.png", false), 0)}
 #[test] fn resvg_painting_fill_funcIRI_with_a_fallback_color() {assert_eq!(run_test("svg/resvg/painting/fill/funcIRI-with-a-fallback-color.svg", "ref/resvg/painting/fill/funcIRI-with-a-fallback-color.png", "diff/resvg/painting/fill/funcIRI-with-a-fallback-color.png", false), 0)}
 #[test] fn resvg_painting_fill_rgb_color_with_floats() {assert_eq!(run_test("svg/resvg/painting/fill/rgb-color-with-floats.svg", "ref/resvg/painting/fill/rgb-color-with-floats.png", "diff/resvg/painting/fill/rgb-color-with-floats.png", false), 0)}
@@ -919,21 +827,19 @@ use crate::run_test;
 #[test] fn resvg_painting_stroke_linecap_butt() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/butt.svg", "ref/resvg/painting/stroke-linecap/butt.png", "diff/resvg/painting/stroke-linecap/butt.png", false), 0)}
 #[test] fn resvg_painting_stroke_linecap_open_path_with_square() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/open-path-with-square.svg", "ref/resvg/painting/stroke-linecap/open-path-with-square.png", "diff/resvg/painting/stroke-linecap/open-path-with-square.png", false), 0)}
 #[test] fn resvg_painting_stroke_linecap_round() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/round.svg", "ref/resvg/painting/stroke-linecap/round.png", "diff/resvg/painting/stroke-linecap/round.png", false), 0)}
-// unknown reason
+// not supported in PDF
 #[ignore] #[test] fn resvg_painting_stroke_linecap_zero_length_path_with_square() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/zero-length-path-with-square.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-square.png", "diff/resvg/painting/stroke-linecap/zero-length-path-with-square.png", false), 0)}
 #[test] fn resvg_painting_stroke_linecap_square() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/square.svg", "ref/resvg/painting/stroke-linecap/square.png", "diff/resvg/painting/stroke-linecap/square.png", false), 0)}
-// unknown reason
+// not supported in PDF
 #[ignore] #[test] fn resvg_painting_stroke_linecap_zero_length_path_with_round() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/zero-length-path-with-round.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-round.png", "diff/resvg/painting/stroke-linecap/zero-length-path-with-round.png", false), 0)}
 #[test] fn resvg_painting_stroke_linecap_open_path_with_butt() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/open-path-with-butt.svg", "ref/resvg/painting/stroke-linecap/open-path-with-butt.png", "diff/resvg/painting/stroke-linecap/open-path-with-butt.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_linecap_zero_length_path_with_butt() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/zero-length-path-with-butt.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-butt.png", "diff/resvg/painting/stroke-linecap/zero-length-path-with-butt.png", false), 0)}
+#[test] fn resvg_painting_stroke_linecap_zero_length_path_with_butt() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/zero-length-path-with-butt.svg", "ref/resvg/painting/stroke-linecap/zero-length-path-with-butt.png", "diff/resvg/painting/stroke-linecap/zero-length-path-with-butt.png", false), 0)}
 #[test] fn resvg_painting_stroke_linecap_open_path_with_round() {assert_eq!(run_test("svg/resvg/painting/stroke-linecap/open-path-with-round.svg", "ref/resvg/painting/stroke-linecap/open-path-with-round.png", "diff/resvg/painting/stroke-linecap/open-path-with-round.png", false), 0)}
 #[test] fn resvg_painting_stroke_width_zero() {assert_eq!(run_test("svg/resvg/painting/stroke-width/zero.svg", "ref/resvg/painting/stroke-width/zero.png", "diff/resvg/painting/stroke-width/zero.png", false), 0)}
 #[test] fn resvg_painting_stroke_width_percentage() {assert_eq!(run_test("svg/resvg/painting/stroke-width/percentage.svg", "ref/resvg/painting/stroke-width/percentage.png", "diff/resvg/painting/stroke-width/percentage.png", false), 0)}
 #[test] fn resvg_painting_stroke_width_bold() {assert_eq!(run_test("svg/resvg/painting/stroke-width/bold.svg", "ref/resvg/painting/stroke-width/bold.png", "diff/resvg/painting/stroke-width/bold.png", false), 0)}
 #[test] fn resvg_painting_stroke_width_default() {assert_eq!(run_test("svg/resvg/painting/stroke-width/default.svg", "ref/resvg/painting/stroke-width/default.png", "diff/resvg/painting/stroke-width/default.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_width_negative() {assert_eq!(run_test("svg/resvg/painting/stroke-width/negative.svg", "ref/resvg/painting/stroke-width/negative.png", "diff/resvg/painting/stroke-width/negative.png", false), 0)}
+#[test] fn resvg_painting_stroke_width_negative() {assert_eq!(run_test("svg/resvg/painting/stroke-width/negative.svg", "ref/resvg/painting/stroke-width/negative.png", "diff/resvg/painting/stroke-width/negative.png", false), 0)}
 #[test] fn resvg_painting_overflow_visible_on_marker() {assert_eq!(run_test("svg/resvg/painting/overflow/visible-on-marker.svg", "ref/resvg/painting/overflow/visible-on-marker.png", "diff/resvg/painting/overflow/visible-on-marker.png", false), 0)}
 #[test] fn resvg_painting_overflow_inherit_on_marker_without_parent() {assert_eq!(run_test("svg/resvg/painting/overflow/inherit-on-marker-without-parent.svg", "ref/resvg/painting/overflow/inherit-on-marker-without-parent.png", "diff/resvg/painting/overflow/inherit-on-marker-without-parent.png", false), 0)}
 #[test] fn resvg_painting_overflow_auto_on_marker() {assert_eq!(run_test("svg/resvg/painting/overflow/auto-on-marker.svg", "ref/resvg/painting/overflow/auto-on-marker.png", "diff/resvg/painting/overflow/auto-on-marker.png", false), 0)}
@@ -951,11 +857,10 @@ use crate::run_test;
 #[test] fn resvg_painting_isolation_isolate() {assert_eq!(run_test("svg/resvg/painting/isolation/isolate.svg", "ref/resvg/painting/isolation/isolate.png", "diff/resvg/painting/isolation/isolate.png", false), 0)}
 #[test] fn resvg_painting_isolation_as_property() {assert_eq!(run_test("svg/resvg/painting/isolation/as-property.svg", "ref/resvg/painting/isolation/as-property.png", "diff/resvg/painting/isolation/as-property.png", false), 0)}
 #[test] fn resvg_painting_stroke_linejoin_miter() {assert_eq!(run_test("svg/resvg/painting/stroke-linejoin/miter.svg", "ref/resvg/painting/stroke-linejoin/miter.png", "diff/resvg/painting/stroke-linejoin/miter.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_linejoin_arcs() {assert_eq!(run_test("svg/resvg/painting/stroke-linejoin/arcs.svg", "ref/resvg/painting/stroke-linejoin/arcs.png", "diff/resvg/painting/stroke-linejoin/arcs.png", false), 0)}
+#[test] fn resvg_painting_stroke_linejoin_arcs() {assert_eq!(run_test("svg/resvg/painting/stroke-linejoin/arcs.svg", "ref/resvg/painting/stroke-linejoin/arcs.png", "diff/resvg/painting/stroke-linejoin/arcs.png", false), 0)}
 #[test] fn resvg_painting_stroke_linejoin_round() {assert_eq!(run_test("svg/resvg/painting/stroke-linejoin/round.svg", "ref/resvg/painting/stroke-linejoin/round.png", "diff/resvg/painting/stroke-linejoin/round.png", false), 0)}
 #[test] fn resvg_painting_stroke_linejoin_bevel() {assert_eq!(run_test("svg/resvg/painting/stroke-linejoin/bevel.svg", "ref/resvg/painting/stroke-linejoin/bevel.png", "diff/resvg/painting/stroke-linejoin/bevel.png", false), 0)}
-// unknown reason
+// not supported in PDF
 #[ignore] #[test] fn resvg_painting_stroke_linejoin_miter_clip() {assert_eq!(run_test("svg/resvg/painting/stroke-linejoin/miter-clip.svg", "ref/resvg/painting/stroke-linejoin/miter-clip.png", "diff/resvg/painting/stroke-linejoin/miter-clip.png", false), 0)}
 #[test] fn resvg_painting_stroke_miterlimit_valid_value() {assert_eq!(run_test("svg/resvg/painting/stroke-miterlimit/valid-value.svg", "ref/resvg/painting/stroke-miterlimit/valid-value.png", "diff/resvg/painting/stroke-miterlimit/valid-value.png", false), 0)}
 #[test] fn resvg_painting_stroke_miterlimit_value_with_mm() {assert_eq!(run_test("svg/resvg/painting/stroke-miterlimit/value-with-mm.svg", "ref/resvg/painting/stroke-miterlimit/value-with-mm.png", "diff/resvg/painting/stroke-miterlimit/value-with-mm.png", false), 0)}
@@ -979,34 +884,24 @@ use crate::run_test;
 #[test] fn resvg_painting_fill_opacity_nested() {assert_eq!(run_test("svg/resvg/painting/fill-opacity/nested.svg", "ref/resvg/painting/fill-opacity/nested.png", "diff/resvg/painting/fill-opacity/nested.png", false), 0)}
 #[test] fn resvg_painting_fill_opacity_with_opacity() {assert_eq!(run_test("svg/resvg/painting/fill-opacity/with-opacity.svg", "ref/resvg/painting/fill-opacity/with-opacity.png", "diff/resvg/painting/fill-opacity/with-opacity.png", false), 0)}
 #[test] fn resvg_painting_fill_opacity_50percent() {assert_eq!(run_test("svg/resvg/painting/fill-opacity/50percent.svg", "ref/resvg/painting/fill-opacity/50percent.png", "diff/resvg/painting/fill-opacity/50percent.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_0_n_with_butt_caps() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/0-n-with-butt-caps.svg", "ref/resvg/painting/stroke-dasharray/0-n-with-butt-caps.png", "diff/resvg/painting/stroke-dasharray/0-n-with-butt-caps.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_mm_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/mm-units.svg", "ref/resvg/painting/stroke-dasharray/mm-units.png", "diff/resvg/painting/stroke-dasharray/mm-units.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_negative_sum() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/negative-sum.svg", "ref/resvg/painting/stroke-dasharray/negative-sum.png", "diff/resvg/painting/stroke-dasharray/negative-sum.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_em_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/em-units.svg", "ref/resvg/painting/stroke-dasharray/em-units.png", "diff/resvg/painting/stroke-dasharray/em-units.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_even_count() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/even-count.svg", "ref/resvg/painting/stroke-dasharray/even-count.png", "diff/resvg/painting/stroke-dasharray/even-count.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_0_n_with_butt_caps() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/0-n-with-butt-caps.svg", "ref/resvg/painting/stroke-dasharray/0-n-with-butt-caps.png", "diff/resvg/painting/stroke-dasharray/0-n-with-butt-caps.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_mm_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/mm-units.svg", "ref/resvg/painting/stroke-dasharray/mm-units.png", "diff/resvg/painting/stroke-dasharray/mm-units.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_negative_sum() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/negative-sum.svg", "ref/resvg/painting/stroke-dasharray/negative-sum.png", "diff/resvg/painting/stroke-dasharray/negative-sum.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_em_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/em-units.svg", "ref/resvg/painting/stroke-dasharray/em-units.png", "diff/resvg/painting/stroke-dasharray/em-units.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_even_count() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/even-count.svg", "ref/resvg/painting/stroke-dasharray/even-count.png", "diff/resvg/painting/stroke-dasharray/even-count.png", false), 0)}
 #[test] fn resvg_painting_stroke_dasharray_ws_separator() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/ws-separator.svg", "ref/resvg/painting/stroke-dasharray/ws-separator.png", "diff/resvg/painting/stroke-dasharray/ws-separator.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_percent_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/percent-units.svg", "ref/resvg/painting/stroke-dasharray/percent-units.png", "diff/resvg/painting/stroke-dasharray/percent-units.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_0_n_with_square_caps() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/0-n-with-square-caps.svg", "ref/resvg/painting/stroke-dasharray/0-n-with-square-caps.png", "diff/resvg/painting/stroke-dasharray/0-n-with-square-caps.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_percent_units() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/percent-units.svg", "ref/resvg/painting/stroke-dasharray/percent-units.png", "diff/resvg/painting/stroke-dasharray/percent-units.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_0_n_with_square_caps() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/0-n-with-square-caps.svg", "ref/resvg/painting/stroke-dasharray/0-n-with-square-caps.png", "diff/resvg/painting/stroke-dasharray/0-n-with-square-caps.png", false), 0)}
 #[test] fn resvg_painting_stroke_dasharray_multiple_subpaths() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/multiple-subpaths.svg", "ref/resvg/painting/stroke-dasharray/multiple-subpaths.png", "diff/resvg/painting/stroke-dasharray/multiple-subpaths.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_negative_values() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/negative-values.svg", "ref/resvg/painting/stroke-dasharray/negative-values.png", "diff/resvg/painting/stroke-dasharray/negative-values.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_negative_values() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/negative-values.svg", "ref/resvg/painting/stroke-dasharray/negative-values.png", "diff/resvg/painting/stroke-dasharray/negative-values.png", false), 0)}
 #[test] fn resvg_painting_stroke_dasharray_on_a_circle() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/on-a-circle.svg", "ref/resvg/painting/stroke-dasharray/on-a-circle.png", "diff/resvg/painting/stroke-dasharray/on-a-circle.png", false), 0)}
 #[test] fn resvg_painting_stroke_dasharray_zero_sum() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/zero-sum.svg", "ref/resvg/painting/stroke-dasharray/zero-sum.png", "diff/resvg/painting/stroke-dasharray/zero-sum.png", false), 0)}
 #[test] fn resvg_painting_stroke_dasharray_none() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/none.svg", "ref/resvg/painting/stroke-dasharray/none.png", "diff/resvg/painting/stroke-dasharray/none.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_painting_stroke_dasharray_n_0() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/n-0.svg", "ref/resvg/painting/stroke-dasharray/n-0.png", "diff/resvg/painting/stroke-dasharray/n-0.png", false), 0)}
 #[test] fn resvg_painting_stroke_dasharray_comma_ws_separator() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/comma-ws-separator.svg", "ref/resvg/painting/stroke-dasharray/comma-ws-separator.png", "diff/resvg/painting/stroke-dasharray/comma-ws-separator.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_0_n_with_round_caps() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/0-n-with-round-caps.svg", "ref/resvg/painting/stroke-dasharray/0-n-with-round-caps.png", "diff/resvg/painting/stroke-dasharray/0-n-with-round-caps.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_odd_count() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/odd-count.svg", "ref/resvg/painting/stroke-dasharray/odd-count.png", "diff/resvg/painting/stroke-dasharray/odd-count.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_0_n_with_round_caps() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/0-n-with-round-caps.svg", "ref/resvg/painting/stroke-dasharray/0-n-with-round-caps.png", "diff/resvg/painting/stroke-dasharray/0-n-with-round-caps.png", false), 0)}
+#[test] fn resvg_painting_stroke_dasharray_odd_count() {assert_eq!(run_test("svg/resvg/painting/stroke-dasharray/odd-count.svg", "ref/resvg/painting/stroke-dasharray/odd-count.png", "diff/resvg/painting/stroke-dasharray/odd-count.png", false), 0)}
 #[test] fn resvg_painting_marker_with_a_text_child() {assert_eq!(run_test("svg/resvg/painting/marker/with-a-text-child.svg", "ref/resvg/painting/marker/with-a-text-child.png", "diff/resvg/painting/marker/with-a-text-child.png", false), 0)}
 #[test] fn resvg_painting_marker_orient_1_5rad() {assert_eq!(run_test("svg/resvg/painting/marker/orient=1.5rad.svg", "ref/resvg/painting/marker/orient=1.5rad.png", "diff/resvg/painting/marker/orient=1.5rad.png", false), 0)}
 #[test] fn resvg_painting_marker_orient_0_25turn() {assert_eq!(run_test("svg/resvg/painting/marker/orient=0.25turn.svg", "ref/resvg/painting/marker/orient=0.25turn.png", "diff/resvg/painting/marker/orient=0.25turn.png", false), 0)}
@@ -1034,8 +929,7 @@ use crate::run_test;
 #[test] fn resvg_painting_marker_default_clip() {assert_eq!(run_test("svg/resvg/painting/marker/default-clip.svg", "ref/resvg/painting/marker/default-clip.png", "diff/resvg/painting/marker/default-clip.png", false), 0)}
 #[test] fn resvg_painting_marker_only_marker_mid() {assert_eq!(run_test("svg/resvg/painting/marker/only-marker-mid.svg", "ref/resvg/painting/marker/only-marker-mid.png", "diff/resvg/painting/marker/only-marker-mid.png", false), 0)}
 #[test] fn resvg_painting_marker_with_markerUnits_userSpaceOnUse() {assert_eq!(run_test("svg/resvg/painting/marker/with-markerUnits=userSpaceOnUse.svg", "ref/resvg/painting/marker/with-markerUnits=userSpaceOnUse.png", "diff/resvg/painting/marker/with-markerUnits=userSpaceOnUse.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_marker_with_viewBox_1() {assert_eq!(run_test("svg/resvg/painting/marker/with-viewBox-1.svg", "ref/resvg/painting/marker/with-viewBox-1.png", "diff/resvg/painting/marker/with-viewBox-1.png", false), 0)}
+#[test] fn resvg_painting_marker_with_viewBox_1() {assert_eq!(run_test("svg/resvg/painting/marker/with-viewBox-1.svg", "ref/resvg/painting/marker/with-viewBox-1.png", "diff/resvg/painting/marker/with-viewBox-1.png", false), 0)}
 #[test] fn resvg_painting_marker_with_a_large_stroke() {assert_eq!(run_test("svg/resvg/painting/marker/with-a-large-stroke.svg", "ref/resvg/painting/marker/with-a-large-stroke.png", "diff/resvg/painting/marker/with-a-large-stroke.png", false), 0)}
 #[test] fn resvg_painting_marker_recursive_2() {assert_eq!(run_test("svg/resvg/painting/marker/recursive-2.svg", "ref/resvg/painting/marker/recursive-2.png", "diff/resvg/painting/marker/recursive-2.png", false), 0)}
 #[test] fn resvg_painting_marker_marker_on_rounded_rect() {assert_eq!(run_test("svg/resvg/painting/marker/marker-on-rounded-rect.svg", "ref/resvg/painting/marker/marker-on-rounded-rect.png", "diff/resvg/painting/marker/marker-on-rounded-rect.png", false), 0)}
@@ -1060,23 +954,20 @@ use crate::run_test;
 #[test] fn resvg_painting_marker_orient_auto_on_M_L_L_Z_Z_Z() {assert_eq!(run_test("svg/resvg/painting/marker/orient=auto-on-M-L-L-Z-Z-Z.svg", "ref/resvg/painting/marker/orient=auto-on-M-L-L-Z-Z-Z.png", "diff/resvg/painting/marker/orient=auto-on-M-L-L-Z-Z-Z.png", false), 0)}
 #[test] fn resvg_painting_marker_zero_length_path_2() {assert_eq!(run_test("svg/resvg/painting/marker/zero-length-path-2.svg", "ref/resvg/painting/marker/zero-length-path-2.png", "diff/resvg/painting/marker/zero-length-path-2.png", false), 0)}
 #[test] fn resvg_painting_marker_only_marker_end() {assert_eq!(run_test("svg/resvg/painting/marker/only-marker-end.svg", "ref/resvg/painting/marker/only-marker-end.png", "diff/resvg/painting/marker/only-marker-end.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_painting_marker_with_an_image_child() {assert_eq!(run_test("svg/resvg/painting/marker/with-an-image-child.svg", "ref/resvg/painting/marker/with-an-image-child.png", "diff/resvg/painting/marker/with-an-image-child.png", false), 0)}
 #[test] fn resvg_painting_marker_invalid_child() {assert_eq!(run_test("svg/resvg/painting/marker/invalid-child.svg", "ref/resvg/painting/marker/invalid-child.png", "diff/resvg/painting/marker/invalid-child.png", false), 0)}
 #[test] fn resvg_painting_marker_marker_on_rect() {assert_eq!(run_test("svg/resvg/painting/marker/marker-on-rect.svg", "ref/resvg/painting/marker/marker-on-rect.png", "diff/resvg/painting/marker/marker-on-rect.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_marker_on_ArcTo() {assert_eq!(run_test("svg/resvg/painting/marker/on-ArcTo.svg", "ref/resvg/painting/marker/on-ArcTo.png", "diff/resvg/painting/marker/on-ArcTo.png", false), 0)}
+#[test] fn resvg_painting_marker_on_ArcTo() {assert_eq!(run_test("svg/resvg/painting/marker/on-ArcTo.svg", "ref/resvg/painting/marker/on-ArcTo.png", "diff/resvg/painting/marker/on-ArcTo.png", false), 0)}
 #[test] fn resvg_painting_marker_zero_length_path_1() {assert_eq!(run_test("svg/resvg/painting/marker/zero-length-path-1.svg", "ref/resvg/painting/marker/zero-length-path-1.png", "diff/resvg/painting/marker/zero-length-path-1.png", false), 0)}
 #[test] fn resvg_painting_marker_target_with_subpaths_1() {assert_eq!(run_test("svg/resvg/painting/marker/target-with-subpaths-1.svg", "ref/resvg/painting/marker/target-with-subpaths-1.png", "diff/resvg/painting/marker/target-with-subpaths-1.png", false), 0)}
 #[test] fn resvg_painting_marker_the_marker_property_in_CSS() {assert_eq!(run_test("svg/resvg/painting/marker/the-marker-property-in-CSS.svg", "ref/resvg/painting/marker/the-marker-property-in-CSS.png", "diff/resvg/painting/marker/the-marker-property-in-CSS.png", false), 0)}
 #[test] fn resvg_painting_marker_no_stroke_on_target() {assert_eq!(run_test("svg/resvg/painting/marker/no-stroke-on-target.svg", "ref/resvg/painting/marker/no-stroke-on-target.png", "diff/resvg/painting/marker/no-stroke-on-target.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_marker_target_with_subpaths_2() {assert_eq!(run_test("svg/resvg/painting/marker/target-with-subpaths-2.svg", "ref/resvg/painting/marker/target-with-subpaths-2.png", "diff/resvg/painting/marker/target-with-subpaths-2.png", false), 0)}
+#[test] fn resvg_painting_marker_target_with_subpaths_2() {assert_eq!(run_test("svg/resvg/painting/marker/target-with-subpaths-2.svg", "ref/resvg/painting/marker/target-with-subpaths-2.png", "diff/resvg/painting/marker/target-with-subpaths-2.png", false), 0)}
 #[test] fn resvg_painting_marker_zero_sized() {assert_eq!(run_test("svg/resvg/painting/marker/zero-sized.svg", "ref/resvg/painting/marker/zero-sized.png", "diff/resvg/painting/marker/zero-sized.png", false), 0)}
 #[test] fn resvg_painting_marker_marker_on_polyline() {assert_eq!(run_test("svg/resvg/painting/marker/marker-on-polyline.svg", "ref/resvg/painting/marker/marker-on-polyline.png", "diff/resvg/painting/marker/marker-on-polyline.png", false), 0)}
 #[test] fn resvg_painting_image_rendering_optimizeSpeed_on_SVG() {assert_eq!(run_test("svg/resvg/painting/image-rendering/optimizeSpeed-on-SVG.svg", "ref/resvg/painting/image-rendering/optimizeSpeed-on-SVG.png", "diff/resvg/painting/image-rendering/optimizeSpeed-on-SVG.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_painting_image_rendering_on_feImage() {assert_eq!(run_test("svg/resvg/painting/image-rendering/on-feImage.svg", "ref/resvg/painting/image-rendering/on-feImage.png", "diff/resvg/painting/image-rendering/on-feImage.png", false), 0)}
+#[test] fn resvg_painting_image_rendering_on_feImage() {assert_eq!(run_test("svg/resvg/painting/image-rendering/on-feImage.svg", "ref/resvg/painting/image-rendering/on-feImage.png", "diff/resvg/painting/image-rendering/on-feImage.png", false), 0)}
 #[test] fn resvg_painting_image_rendering_optimizeSpeed() {assert_eq!(run_test("svg/resvg/painting/image-rendering/optimizeSpeed.svg", "ref/resvg/painting/image-rendering/optimizeSpeed.png", "diff/resvg/painting/image-rendering/optimizeSpeed.png", false), 0)}
 #[test] fn resvg_painting_fill_rule_nonzero() {assert_eq!(run_test("svg/resvg/painting/fill-rule/nonzero.svg", "ref/resvg/painting/fill-rule/nonzero.png", "diff/resvg/painting/fill-rule/nonzero.png", false), 0)}
 #[test] fn resvg_painting_fill_rule_evenodd() {assert_eq!(run_test("svg/resvg/painting/fill-rule/evenodd.svg", "ref/resvg/painting/fill-rule/evenodd.png", "diff/resvg/painting/fill-rule/evenodd.png", false), 0)}
@@ -1092,7 +983,7 @@ use crate::run_test;
 #[test] fn resvg_painting_mix_blend_mode_opacity_on_element() {assert_eq!(run_test("svg/resvg/painting/mix-blend-mode/opacity-on-element.svg", "ref/resvg/painting/mix-blend-mode/opacity-on-element.png", "diff/resvg/painting/mix-blend-mode/opacity-on-element.png", false), 0)}
 #[test] fn resvg_painting_mix_blend_mode_saturation() {assert_eq!(run_test("svg/resvg/painting/mix-blend-mode/saturation.svg", "ref/resvg/painting/mix-blend-mode/saturation.png", "diff/resvg/painting/mix-blend-mode/saturation.png", false), 0)}
 #[test] fn resvg_painting_mix_blend_mode_luminosity() {assert_eq!(run_test("svg/resvg/painting/mix-blend-mode/luminosity.svg", "ref/resvg/painting/mix-blend-mode/luminosity.png", "diff/resvg/painting/mix-blend-mode/luminosity.png", false), 0)}
-// unknown reason
+// pdfium bug
 #[ignore] #[test] fn resvg_painting_mix_blend_mode_color_dodge() {assert_eq!(run_test("svg/resvg/painting/mix-blend-mode/color-dodge.svg", "ref/resvg/painting/mix-blend-mode/color-dodge.png", "diff/resvg/painting/mix-blend-mode/color-dodge.png", false), 0)}
 #[test] fn resvg_painting_mix_blend_mode_overlay() {assert_eq!(run_test("svg/resvg/painting/mix-blend-mode/overlay.svg", "ref/resvg/painting/mix-blend-mode/overlay.png", "diff/resvg/painting/mix-blend-mode/overlay.png", false), 0)}
 #[test] fn resvg_painting_mix_blend_mode_lighten() {assert_eq!(run_test("svg/resvg/painting/mix-blend-mode/lighten.svg", "ref/resvg/painting/mix-blend-mode/lighten.png", "diff/resvg/painting/mix-blend-mode/lighten.png", false), 0)}
@@ -1106,33 +997,28 @@ use crate::run_test;
 #[test] fn resvg_text_alignment_baseline_middle_on_textPath() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/middle-on-textPath.svg", "ref/resvg/text/alignment-baseline/middle-on-textPath.png", "diff/resvg/text/alignment-baseline/middle-on-textPath.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_text_before_edge() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/text-before-edge.svg", "ref/resvg/text/alignment-baseline/text-before-edge.png", "diff/resvg/text/alignment-baseline/text-before-edge.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_hanging_with_underline() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging-with-underline.svg", "ref/resvg/text/alignment-baseline/hanging-with-underline.png", "diff/resvg/text/alignment-baseline/hanging-with-underline.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_alignment_baseline_baseline() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/baseline.svg", "ref/resvg/text/alignment-baseline/baseline.png", "diff/resvg/text/alignment-baseline/baseline.png", false), 0)}
+#[test] fn resvg_text_alignment_baseline_baseline() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/baseline.svg", "ref/resvg/text/alignment-baseline/baseline.png", "diff/resvg/text/alignment-baseline/baseline.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_alphabetic() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/alphabetic.svg", "ref/resvg/text/alignment-baseline/alphabetic.png", "diff/resvg/text/alignment-baseline/alphabetic.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_before_edge() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/before-edge.svg", "ref/resvg/text/alignment-baseline/before-edge.png", "diff/resvg/text/alignment-baseline/before-edge.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_auto() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/auto.svg", "ref/resvg/text/alignment-baseline/auto.png", "diff/resvg/text/alignment-baseline/auto.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_middle() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/middle.svg", "ref/resvg/text/alignment-baseline/middle.png", "diff/resvg/text/alignment-baseline/middle.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_alignment_baseline_text_after_edge() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/text-after-edge.svg", "ref/resvg/text/alignment-baseline/text-after-edge.png", "diff/resvg/text/alignment-baseline/text-after-edge.png", false), 0)}
+#[test] fn resvg_text_alignment_baseline_text_after_edge() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/text-after-edge.svg", "ref/resvg/text/alignment-baseline/text-after-edge.png", "diff/resvg/text/alignment-baseline/text-after-edge.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_hanging_on_tspan() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging-on-tspan.svg", "ref/resvg/text/alignment-baseline/hanging-on-tspan.png", "diff/resvg/text/alignment-baseline/hanging-on-tspan.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_inherit() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/inherit.svg", "ref/resvg/text/alignment-baseline/inherit.png", "diff/resvg/text/alignment-baseline/inherit.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_alignment_baseline_ideographic() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/ideographic.svg", "ref/resvg/text/alignment-baseline/ideographic.png", "diff/resvg/text/alignment-baseline/ideographic.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_alignment_baseline_after_edge() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/after-edge.svg", "ref/resvg/text/alignment-baseline/after-edge.png", "diff/resvg/text/alignment-baseline/after-edge.png", false), 0)}
+#[test] fn resvg_text_alignment_baseline_ideographic() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/ideographic.svg", "ref/resvg/text/alignment-baseline/ideographic.png", "diff/resvg/text/alignment-baseline/ideographic.png", false), 0)}
+#[test] fn resvg_text_alignment_baseline_after_edge() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/after-edge.svg", "ref/resvg/text/alignment-baseline/after-edge.png", "diff/resvg/text/alignment-baseline/after-edge.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_hanging_and_baseline_shift_eq_20_on_tspan() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan.svg", "ref/resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan.png", "diff/resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_hanging() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging.svg", "ref/resvg/text/alignment-baseline/hanging.png", "diff/resvg/text/alignment-baseline/hanging.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_alignment_baseline_hanging_on_vertical() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging-on-vertical.svg", "ref/resvg/text/alignment-baseline/hanging-on-vertical.png", "diff/resvg/text/alignment-baseline/hanging-on-vertical.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_central() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/central.svg", "ref/resvg/text/alignment-baseline/central.png", "diff/resvg/text/alignment-baseline/central.png", false), 0)}
 #[test] fn resvg_text_tspan_style_override() {assert_eq!(run_test("svg/resvg/text/tspan/style-override.svg", "ref/resvg/text/tspan/style-override.png", "diff/resvg/text/tspan/style-override.png", false), 0)}
 #[test] fn resvg_text_tspan_multiple_coordinates() {assert_eq!(run_test("svg/resvg/text/tspan/multiple-coordinates.svg", "ref/resvg/text/tspan/multiple-coordinates.png", "diff/resvg/text/tspan/multiple-coordinates.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_tspan_with_filter() {assert_eq!(run_test("svg/resvg/text/tspan/with-filter.svg", "ref/resvg/text/tspan/with-filter.png", "diff/resvg/text/tspan/with-filter.png", false), 0)}
+#[test] fn resvg_text_tspan_with_filter() {assert_eq!(run_test("svg/resvg/text/tspan/with-filter.svg", "ref/resvg/text/tspan/with-filter.png", "diff/resvg/text/tspan/with-filter.png", false), 0)}
 #[test] fn resvg_text_tspan_transform() {assert_eq!(run_test("svg/resvg/text/tspan/transform.svg", "ref/resvg/text/tspan/transform.png", "diff/resvg/text/tspan/transform.png", false), 0)}
 #[test] fn resvg_text_tspan_pseudo_multi_line() {assert_eq!(run_test("svg/resvg/text/tspan/pseudo-multi-line.svg", "ref/resvg/text/tspan/pseudo-multi-line.png", "diff/resvg/text/tspan/pseudo-multi-line.png", false), 0)}
 #[test] fn resvg_text_tspan_nested_rotate() {assert_eq!(run_test("svg/resvg/text/tspan/nested-rotate.svg", "ref/resvg/text/tspan/nested-rotate.png", "diff/resvg/text/tspan/nested-rotate.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_tspan_bidi_reordering() {assert_eq!(run_test("svg/resvg/text/tspan/bidi-reordering.svg", "ref/resvg/text/tspan/bidi-reordering.png", "diff/resvg/text/tspan/bidi-reordering.png", false), 0)}
 #[test] fn resvg_text_tspan_nested() {assert_eq!(run_test("svg/resvg/text/tspan/nested.svg", "ref/resvg/text/tspan/nested.png", "diff/resvg/text/tspan/nested.png", false), 0)}
 #[test] fn resvg_text_tspan_without_attributes() {assert_eq!(run_test("svg/resvg/text/tspan/without-attributes.svg", "ref/resvg/text/tspan/without-attributes.png", "diff/resvg/text/tspan/without-attributes.png", false), 0)}
@@ -1143,18 +1029,13 @@ use crate::run_test;
 #[test] fn resvg_text_tspan_outside_the_text() {assert_eq!(run_test("svg/resvg/text/tspan/outside-the-text.svg", "ref/resvg/text/tspan/outside-the-text.png", "diff/resvg/text/tspan/outside-the-text.png", false), 0)}
 #[test] fn resvg_text_tspan_with_dy() {assert_eq!(run_test("svg/resvg/text/tspan/with-dy.svg", "ref/resvg/text/tspan/with-dy.png", "diff/resvg/text/tspan/with-dy.png", false), 0)}
 #[test] fn resvg_text_tspan_xml_space_2() {assert_eq!(run_test("svg/resvg/text/tspan/xml-space-2.svg", "ref/resvg/text/tspan/xml-space-2.png", "diff/resvg/text/tspan/xml-space-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_tspan_with_mask() {assert_eq!(run_test("svg/resvg/text/tspan/with-mask.svg", "ref/resvg/text/tspan/with-mask.png", "diff/resvg/text/tspan/with-mask.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_tspan_tspan_bbox_2() {assert_eq!(run_test("svg/resvg/text/tspan/tspan-bbox-2.svg", "ref/resvg/text/tspan/tspan-bbox-2.png", "diff/resvg/text/tspan/tspan-bbox-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_tspan_with_clip_path() {assert_eq!(run_test("svg/resvg/text/tspan/with-clip-path.svg", "ref/resvg/text/tspan/with-clip-path.png", "diff/resvg/text/tspan/with-clip-path.png", false), 0)}
+#[test] fn resvg_text_tspan_with_mask() {assert_eq!(run_test("svg/resvg/text/tspan/with-mask.svg", "ref/resvg/text/tspan/with-mask.png", "diff/resvg/text/tspan/with-mask.png", false), 0)}
+#[test] fn resvg_text_tspan_tspan_bbox_2() {assert_eq!(run_test("svg/resvg/text/tspan/tspan-bbox-2.svg", "ref/resvg/text/tspan/tspan-bbox-2.png", "diff/resvg/text/tspan/tspan-bbox-2.png", false), 0)}
+#[test] fn resvg_text_tspan_with_clip_path() {assert_eq!(run_test("svg/resvg/text/tspan/with-clip-path.svg", "ref/resvg/text/tspan/with-clip-path.png", "diff/resvg/text/tspan/with-clip-path.png", false), 0)}
 #[test] fn resvg_text_tspan_xml_space_1() {assert_eq!(run_test("svg/resvg/text/tspan/xml-space-1.svg", "ref/resvg/text/tspan/xml-space-1.png", "diff/resvg/text/tspan/xml-space-1.png", false), 0)}
 #[test] fn resvg_text_tspan_nested_whitespaces() {assert_eq!(run_test("svg/resvg/text/tspan/nested-whitespaces.svg", "ref/resvg/text/tspan/nested-whitespaces.png", "diff/resvg/text/tspan/nested-whitespaces.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_tspan_with_opacity() {assert_eq!(run_test("svg/resvg/text/tspan/with-opacity.svg", "ref/resvg/text/tspan/with-opacity.png", "diff/resvg/text/tspan/with-opacity.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_tspan_tspan_bbox_1() {assert_eq!(run_test("svg/resvg/text/tspan/tspan-bbox-1.svg", "ref/resvg/text/tspan/tspan-bbox-1.png", "diff/resvg/text/tspan/tspan-bbox-1.png", false), 0)}
+#[test] fn resvg_text_tspan_with_opacity() {assert_eq!(run_test("svg/resvg/text/tspan/with-opacity.svg", "ref/resvg/text/tspan/with-opacity.png", "diff/resvg/text/tspan/with-opacity.png", false), 0)}
+#[test] fn resvg_text_tspan_tspan_bbox_1() {assert_eq!(run_test("svg/resvg/text/tspan/tspan-bbox-1.svg", "ref/resvg/text/tspan/tspan-bbox-1.png", "diff/resvg/text/tspan/tspan-bbox-1.png", false), 0)}
 #[test] fn resvg_text_tspan_rotate_and_display_none() {assert_eq!(run_test("svg/resvg/text/tspan/rotate-and-display-none.svg", "ref/resvg/text/tspan/rotate-and-display-none.png", "diff/resvg/text/tspan/rotate-and-display-none.png", false), 0)}
 #[test] fn resvg_text_tspan_only_with_y() {assert_eq!(run_test("svg/resvg/text/tspan/only-with-y.svg", "ref/resvg/text/tspan/only-with-y.png", "diff/resvg/text/tspan/only-with-y.png", false), 0)}
 #[test] fn resvg_text_tspan_mixed_xml_space_2() {assert_eq!(run_test("svg/resvg/text/tspan/mixed-xml-space-2.svg", "ref/resvg/text/tspan/mixed-xml-space-2.png", "diff/resvg/text/tspan/mixed-xml-space-2.png", false), 0)}
@@ -1167,52 +1048,47 @@ use crate::run_test;
 #[test] fn resvg_text_writing_mode_tb_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-rl.svg", "ref/resvg/text/writing-mode/tb-rl.png", "diff/resvg/text/writing-mode/tb-rl.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb_with_dx_on_second_tspan() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-dx-on-second-tspan.svg", "ref/resvg/text/writing-mode/tb-with-dx-on-second-tspan.png", "diff/resvg/text/writing-mode/tb-with-dx-on-second-tspan.png", false), 0)}
 #[test] fn resvg_text_writing_mode_lr_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/lr-tb.svg", "ref/resvg/text/writing-mode/lr-tb.png", "diff/resvg/text/writing-mode/lr-tb.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_writing_mode_mixed_languages_with_tb_and_underline() {assert_eq!(run_test("svg/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png", "diff/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png", false), 0)}
 #[test] fn resvg_text_writing_mode_rl_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/rl-tb.svg", "ref/resvg/text/writing-mode/rl-tb.png", "diff/resvg/text/writing-mode/rl-tb.png", false), 0)}
 #[test] fn resvg_text_writing_mode_lr() {assert_eq!(run_test("svg/resvg/text/writing-mode/lr.svg", "ref/resvg/text/writing-mode/lr.png", "diff/resvg/text/writing-mode/lr.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_writing_mode_japanese_with_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/japanese-with-tb.svg", "ref/resvg/text/writing-mode/japanese-with-tb.png", "diff/resvg/text/writing-mode/japanese-with-tb.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb.svg", "ref/resvg/text/writing-mode/tb.png", "diff/resvg/text/writing-mode/tb.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_writing_mode_tb_with_rotate_and_underline() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-rotate-and-underline.svg", "ref/resvg/text/writing-mode/tb-with-rotate-and-underline.png", "diff/resvg/text/writing-mode/tb-with-rotate-and-underline.png", false), 0)}
 #[test] fn resvg_text_writing_mode_invalid_value() {assert_eq!(run_test("svg/resvg/text/writing-mode/invalid-value.svg", "ref/resvg/text/writing-mode/invalid-value.png", "diff/resvg/text/writing-mode/invalid-value.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb_with_alignment() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-alignment.svg", "ref/resvg/text/writing-mode/tb-with-alignment.png", "diff/resvg/text/writing-mode/tb-with-alignment.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_writing_mode_vertical_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/vertical-rl.svg", "ref/resvg/text/writing-mode/vertical-rl.png", "diff/resvg/text/writing-mode/vertical-rl.png", false), 0)}
+#[test] fn resvg_text_writing_mode_vertical_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/vertical-rl.svg", "ref/resvg/text/writing-mode/vertical-rl.png", "diff/resvg/text/writing-mode/vertical-rl.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb_with_dx_on_tspan() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-dx-on-tspan.svg", "ref/resvg/text/writing-mode/tb-with-dx-on-tspan.png", "diff/resvg/text/writing-mode/tb-with-dx-on-tspan.png", false), 0)}
 #[test] fn resvg_text_writing_mode_inheritance() {assert_eq!(run_test("svg/resvg/text/writing-mode/inheritance.svg", "ref/resvg/text/writing-mode/inheritance.png", "diff/resvg/text/writing-mode/inheritance.png", false), 0)}
 #[test] fn resvg_text_writing_mode_on_tspan() {assert_eq!(run_test("svg/resvg/text/writing-mode/on-tspan.svg", "ref/resvg/text/writing-mode/on-tspan.png", "diff/resvg/text/writing-mode/on-tspan.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_writing_mode_mixed_languages_with_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/mixed-languages-with-tb.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb.png", "diff/resvg/text/writing-mode/mixed-languages-with-tb.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_writing_mode_tb_and_punctuation() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-and-punctuation.svg", "ref/resvg/text/writing-mode/tb-and-punctuation.png", "diff/resvg/text/writing-mode/tb-and-punctuation.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_writing_mode_tb_with_rotate() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-rotate.svg", "ref/resvg/text/writing-mode/tb-with-rotate.png", "diff/resvg/text/writing-mode/tb-with-rotate.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_writing_mode_arabic_with_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/arabic-with-rl.svg", "ref/resvg/text/writing-mode/arabic-with-rl.png", "diff/resvg/text/writing-mode/arabic-with-rl.png", false), 0)}
 #[test] fn resvg_text_writing_mode_horizontal_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/horizontal-tb.svg", "ref/resvg/text/writing-mode/horizontal-tb.png", "diff/resvg/text/writing-mode/horizontal-tb.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_writing_mode_vertical_lr() {assert_eq!(run_test("svg/resvg/text/writing-mode/vertical-lr.svg", "ref/resvg/text/writing-mode/vertical-lr.png", "diff/resvg/text/writing-mode/vertical-lr.png", false), 0)}
+#[test] fn resvg_text_writing_mode_vertical_lr() {assert_eq!(run_test("svg/resvg/text/writing-mode/vertical-lr.svg", "ref/resvg/text/writing-mode/vertical-lr.png", "diff/resvg/text/writing-mode/vertical-lr.png", false), 0)}
 #[test] fn resvg_text_writing_mode_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/rl.svg", "ref/resvg/text/writing-mode/rl.png", "diff/resvg/text/writing-mode/rl.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_glyph_orientation_horizontal_simple_case() {assert_eq!(run_test("svg/resvg/text/glyph-orientation-horizontal/simple-case.svg", "ref/resvg/text/glyph-orientation-horizontal/simple-case.png", "diff/resvg/text/glyph-orientation-horizontal/simple-case.png", false), 0)}
-// unknown reason
+#[test] fn resvg_text_glyph_orientation_horizontal_simple_case() {assert_eq!(run_test("svg/resvg/text/glyph-orientation-horizontal/simple-case.svg", "ref/resvg/text/glyph-orientation-horizontal/simple-case.png", "diff/resvg/text/glyph-orientation-horizontal/simple-case.png", false), 0)}
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_letter_spacing_non_ASCII_character() {assert_eq!(run_test("svg/resvg/text/letter-spacing/non-ASCII-character.svg", "ref/resvg/text/letter-spacing/non-ASCII-character.png", "diff/resvg/text/letter-spacing/non-ASCII-character.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_letter_spacing_large_negative() {assert_eq!(run_test("svg/resvg/text/letter-spacing/large-negative.svg", "ref/resvg/text/letter-spacing/large-negative.png", "diff/resvg/text/letter-spacing/large-negative.png", false), 0)}
+#[test] fn resvg_text_letter_spacing_large_negative() {assert_eq!(run_test("svg/resvg/text/letter-spacing/large-negative.svg", "ref/resvg/text/letter-spacing/large-negative.png", "diff/resvg/text/letter-spacing/large-negative.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_0() {assert_eq!(run_test("svg/resvg/text/letter-spacing/0.svg", "ref/resvg/text/letter-spacing/0.png", "diff/resvg/text/letter-spacing/0.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_mixed_spacing() {assert_eq!(run_test("svg/resvg/text/letter-spacing/mixed-spacing.svg", "ref/resvg/text/letter-spacing/mixed-spacing.png", "diff/resvg/text/letter-spacing/mixed-spacing.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_3() {assert_eq!(run_test("svg/resvg/text/letter-spacing/3.svg", "ref/resvg/text/letter-spacing/3.png", "diff/resvg/text/letter-spacing/3.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_5percent() {assert_eq!(run_test("svg/resvg/text/letter-spacing/5percent.svg", "ref/resvg/text/letter-spacing/5percent.png", "diff/resvg/text/letter-spacing/5percent.png", false), 0)}
 #[test] fn resvg_text_letter_spacing__3() {assert_eq!(run_test("svg/resvg/text/letter-spacing/-3.svg", "ref/resvg/text/letter-spacing/-3.png", "diff/resvg/text/letter-spacing/-3.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_letter_spacing_on_Arabic() {assert_eq!(run_test("svg/resvg/text/letter-spacing/on-Arabic.svg", "ref/resvg/text/letter-spacing/on-Arabic.png", "diff/resvg/text/letter-spacing/on-Arabic.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_1mm() {assert_eq!(run_test("svg/resvg/text/letter-spacing/1mm.svg", "ref/resvg/text/letter-spacing/1mm.png", "diff/resvg/text/letter-spacing/1mm.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_normal() {assert_eq!(run_test("svg/resvg/text/letter-spacing/normal.svg", "ref/resvg/text/letter-spacing/normal.png", "diff/resvg/text/letter-spacing/normal.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_letter_spacing_filter_bbox() {assert_eq!(run_test("svg/resvg/text/letter-spacing/filter-bbox.svg", "ref/resvg/text/letter-spacing/filter-bbox.png", "diff/resvg/text/letter-spacing/filter-bbox.png", false), 0)}
-// unknown reason
+#[test] fn resvg_text_letter_spacing_filter_bbox() {assert_eq!(run_test("svg/resvg/text/letter-spacing/filter-bbox.svg", "ref/resvg/text/letter-spacing/filter-bbox.png", "diff/resvg/text/letter-spacing/filter-bbox.png", false), 0)}
+// need to investigate
 #[ignore] #[test] fn resvg_text_letter_spacing_mixed_scripts() {assert_eq!(run_test("svg/resvg/text/letter-spacing/mixed-scripts.svg", "ref/resvg/text/letter-spacing/mixed-scripts.png", "diff/resvg/text/letter-spacing/mixed-scripts.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_mathematical() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/mathematical.svg", "ref/resvg/text/dominant-baseline/mathematical.png", "diff/resvg/text/dominant-baseline/mathematical.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_dummy_tspan() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/dummy-tspan.svg", "ref/resvg/text/dominant-baseline/dummy-tspan.png", "diff/resvg/text/dominant-baseline/dummy-tspan.png", false), 0)}
@@ -1221,7 +1097,7 @@ use crate::run_test;
 #[test] fn resvg_text_dominant_baseline_complex() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/complex.svg", "ref/resvg/text/dominant-baseline/complex.png", "diff/resvg/text/dominant-baseline/complex.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_alphabetic() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/alphabetic.svg", "ref/resvg/text/dominant-baseline/alphabetic.png", "diff/resvg/text/dominant-baseline/alphabetic.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_nested() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/nested.svg", "ref/resvg/text/dominant-baseline/nested.png", "diff/resvg/text/dominant-baseline/nested.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_dominant_baseline_use_script() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/use-script.svg", "ref/resvg/text/dominant-baseline/use-script.png", "diff/resvg/text/dominant-baseline/use-script.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_auto() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/auto.svg", "ref/resvg/text/dominant-baseline/auto.png", "diff/resvg/text/dominant-baseline/auto.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_middle() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/middle.svg", "ref/resvg/text/dominant-baseline/middle.png", "diff/resvg/text/dominant-baseline/middle.png", false), 0)}
@@ -1231,11 +1107,10 @@ use crate::run_test;
 #[test] fn resvg_text_dominant_baseline_inherit() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/inherit.svg", "ref/resvg/text/dominant-baseline/inherit.png", "diff/resvg/text/dominant-baseline/inherit.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_ideographic() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/ideographic.svg", "ref/resvg/text/dominant-baseline/ideographic.png", "diff/resvg/text/dominant-baseline/ideographic.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_alignment_baseline_baseline_on_tspan() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.svg", "ref/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.png", "diff/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_dominant_baseline_hanging() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/hanging.svg", "ref/resvg/text/dominant-baseline/hanging.png", "diff/resvg/text/dominant-baseline/hanging.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_different_alignment_baseline_on_tspan() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.svg", "ref/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.png", "diff/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_dominant_baseline_reset_size() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/reset-size.svg", "ref/resvg/text/dominant-baseline/reset-size.png", "diff/resvg/text/dominant-baseline/reset-size.png", false), 0)}
+#[test] fn resvg_text_dominant_baseline_reset_size() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/reset-size.svg", "ref/resvg/text/dominant-baseline/reset-size.png", "diff/resvg/text/dominant-baseline/reset-size.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_central() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/central.svg", "ref/resvg/text/dominant-baseline/central.png", "diff/resvg/text/dominant-baseline/central.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_sequential() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/sequential.svg", "ref/resvg/text/dominant-baseline/sequential.png", "diff/resvg/text/dominant-baseline/sequential.png", false), 0)}
 #[test] fn resvg_text_baseline_shift_10() {assert_eq!(run_test("svg/resvg/text/baseline-shift/10.svg", "ref/resvg/text/baseline-shift/10.png", "diff/resvg/text/baseline-shift/10.png", false), 0)}
@@ -1260,18 +1135,16 @@ use crate::run_test;
 #[test] fn resvg_text_baseline_shift_nested_with_baseline_2() {assert_eq!(run_test("svg/resvg/text/baseline-shift/nested-with-baseline-2.svg", "ref/resvg/text/baseline-shift/nested-with-baseline-2.png", "diff/resvg/text/baseline-shift/nested-with-baseline-2.png", false), 0)}
 #[test] fn resvg_text_baseline_shift_2mm() {assert_eq!(run_test("svg/resvg/text/baseline-shift/2mm.svg", "ref/resvg/text/baseline-shift/2mm.png", "diff/resvg/text/baseline-shift/2mm.png", false), 0)}
 #[test] fn resvg_text_baseline_shift_nested_with_baseline_1() {assert_eq!(run_test("svg/resvg/text/baseline-shift/nested-with-baseline-1.svg", "ref/resvg/text/baseline-shift/nested-with-baseline-1.png", "diff/resvg/text/baseline-shift/nested-with-baseline-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_lengthAdjust_vertical() {assert_eq!(run_test("svg/resvg/text/lengthAdjust/vertical.svg", "ref/resvg/text/lengthAdjust/vertical.png", "diff/resvg/text/lengthAdjust/vertical.png", false), 0)}
+#[test] fn resvg_text_lengthAdjust_vertical() {assert_eq!(run_test("svg/resvg/text/lengthAdjust/vertical.svg", "ref/resvg/text/lengthAdjust/vertical.png", "diff/resvg/text/lengthAdjust/vertical.png", false), 0)}
 #[test] fn resvg_text_lengthAdjust_text_on_path() {assert_eq!(run_test("svg/resvg/text/lengthAdjust/text-on-path.svg", "ref/resvg/text/lengthAdjust/text-on-path.png", "diff/resvg/text/lengthAdjust/text-on-path.png", false), 0)}
 #[test] fn resvg_text_lengthAdjust_spacingAndGlyphs() {assert_eq!(run_test("svg/resvg/text/lengthAdjust/spacingAndGlyphs.svg", "ref/resvg/text/lengthAdjust/spacingAndGlyphs.png", "diff/resvg/text/lengthAdjust/spacingAndGlyphs.png", false), 0)}
 #[test] fn resvg_text_lengthAdjust_with_underline() {assert_eq!(run_test("svg/resvg/text/lengthAdjust/with-underline.svg", "ref/resvg/text/lengthAdjust/with-underline.png", "diff/resvg/text/lengthAdjust/with-underline.png", false), 0)}
 #[test] fn resvg_text_text_anchor_end_with_letter_spacing() {assert_eq!(run_test("svg/resvg/text/text-anchor/end-with-letter-spacing.svg", "ref/resvg/text/text-anchor/end-with-letter-spacing.png", "diff/resvg/text/text-anchor/end-with-letter-spacing.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_anchor_coordinates_list() {assert_eq!(run_test("svg/resvg/text/text-anchor/coordinates-list.svg", "ref/resvg/text/text-anchor/coordinates-list.png", "diff/resvg/text/text-anchor/coordinates-list.png", false), 0)}
+#[test] fn resvg_text_text_anchor_coordinates_list() {assert_eq!(run_test("svg/resvg/text/text-anchor/coordinates-list.svg", "ref/resvg/text/text-anchor/coordinates-list.png", "diff/resvg/text/text-anchor/coordinates-list.png", false), 0)}
 #[test] fn resvg_text_text_anchor_middle_on_text() {assert_eq!(run_test("svg/resvg/text/text-anchor/middle-on-text.svg", "ref/resvg/text/text-anchor/middle-on-text.png", "diff/resvg/text/text-anchor/middle-on-text.png", false), 0)}
 #[test] fn resvg_text_text_anchor_text_anchor_not_on_text_chunk() {assert_eq!(run_test("svg/resvg/text/text-anchor/text-anchor-not-on-text-chunk.svg", "ref/resvg/text/text-anchor/text-anchor-not-on-text-chunk.png", "diff/resvg/text/text-anchor/text-anchor-not-on-text-chunk.png", false), 0)}
 #[test] fn resvg_text_text_anchor_on_tspan() {assert_eq!(run_test("svg/resvg/text/text-anchor/on-tspan.svg", "ref/resvg/text/text-anchor/on-tspan.png", "diff/resvg/text/text-anchor/on-tspan.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_text_anchor_on_tspan_with_arabic() {assert_eq!(run_test("svg/resvg/text/text-anchor/on-tspan-with-arabic.svg", "ref/resvg/text/text-anchor/on-tspan-with-arabic.png", "diff/resvg/text/text-anchor/on-tspan-with-arabic.png", false), 0)}
 #[test] fn resvg_text_text_anchor_inheritance_1() {assert_eq!(run_test("svg/resvg/text/text-anchor/inheritance-1.svg", "ref/resvg/text/text-anchor/inheritance-1.png", "diff/resvg/text/text-anchor/inheritance-1.png", false), 0)}
 #[test] fn resvg_text_text_anchor_inheritance_3() {assert_eq!(run_test("svg/resvg/text/text-anchor/inheritance-3.svg", "ref/resvg/text/text-anchor/inheritance-3.png", "diff/resvg/text/text-anchor/inheritance-3.png", false), 0)}
@@ -1280,26 +1153,20 @@ use crate::run_test;
 #[test] fn resvg_text_text_anchor_start_on_text() {assert_eq!(run_test("svg/resvg/text/text-anchor/start-on-text.svg", "ref/resvg/text/text-anchor/start-on-text.png", "diff/resvg/text/text-anchor/start-on-text.png", false), 0)}
 #[test] fn resvg_text_text_anchor_end_on_text() {assert_eq!(run_test("svg/resvg/text/text-anchor/end-on-text.svg", "ref/resvg/text/text-anchor/end-on-text.png", "diff/resvg/text/text-anchor/end-on-text.png", false), 0)}
 #[test] fn resvg_text_text_anchor_on_the_first_tspan() {assert_eq!(run_test("svg/resvg/text/text-anchor/on-the-first-tspan.svg", "ref/resvg/text/text-anchor/on-the-first-tspan.png", "diff/resvg/text/text-anchor/on-the-first-tspan.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_stretch_narrower() {assert_eq!(run_test("svg/resvg/text/font-stretch/narrower.svg", "ref/resvg/text/font-stretch/narrower.png", "diff/resvg/text/font-stretch/narrower.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_stretch_inherit() {assert_eq!(run_test("svg/resvg/text/font-stretch/inherit.svg", "ref/resvg/text/font-stretch/inherit.png", "diff/resvg/text/font-stretch/inherit.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_stretch_extra_condensed() {assert_eq!(run_test("svg/resvg/text/font-stretch/extra-condensed.svg", "ref/resvg/text/font-stretch/extra-condensed.png", "diff/resvg/text/font-stretch/extra-condensed.png", false), 0)}
+#[test] fn resvg_text_font_stretch_narrower() {assert_eq!(run_test("svg/resvg/text/font-stretch/narrower.svg", "ref/resvg/text/font-stretch/narrower.png", "diff/resvg/text/font-stretch/narrower.png", false), 0)}
+#[test] fn resvg_text_font_stretch_inherit() {assert_eq!(run_test("svg/resvg/text/font-stretch/inherit.svg", "ref/resvg/text/font-stretch/inherit.png", "diff/resvg/text/font-stretch/inherit.png", false), 0)}
+#[test] fn resvg_text_font_stretch_extra_condensed() {assert_eq!(run_test("svg/resvg/text/font-stretch/extra-condensed.svg", "ref/resvg/text/font-stretch/extra-condensed.png", "diff/resvg/text/font-stretch/extra-condensed.png", false), 0)}
 #[test] fn resvg_text_kerning_10percent() {assert_eq!(run_test("svg/resvg/text/kerning/10percent.svg", "ref/resvg/text/kerning/10percent.png", "diff/resvg/text/kerning/10percent.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_kerning_0() {assert_eq!(run_test("svg/resvg/text/kerning/0.svg", "ref/resvg/text/kerning/0.png", "diff/resvg/text/kerning/0.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_kerning_as_property() {assert_eq!(run_test("svg/resvg/text/font-kerning/as-property.svg", "ref/resvg/text/font-kerning/as-property.png", "diff/resvg/text/font-kerning/as-property.png", false), 0)}
+#[test] fn resvg_text_kerning_0() {assert_eq!(run_test("svg/resvg/text/kerning/0.svg", "ref/resvg/text/kerning/0.png", "diff/resvg/text/kerning/0.png", false), 0)}
+#[test] fn resvg_text_font_kerning_as_property() {assert_eq!(run_test("svg/resvg/text/font-kerning/as-property.svg", "ref/resvg/text/font-kerning/as-property.png", "diff/resvg/text/font-kerning/as-property.png", false), 0)}
 #[test] fn resvg_text_font_kerning_none() {assert_eq!(run_test("svg/resvg/text/font-kerning/none.svg", "ref/resvg/text/font-kerning/none.png", "diff/resvg/text/font-kerning/none.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_kerning_arabic_script() {assert_eq!(run_test("svg/resvg/text/font-kerning/arabic-script.svg", "ref/resvg/text/font-kerning/arabic-script.png", "diff/resvg/text/font-kerning/arabic-script.png", false), 0)}
 #[test] fn resvg_text_tref_with_a_title_child() {assert_eq!(run_test("svg/resvg/text/tref/with-a-title-child.svg", "ref/resvg/text/tref/with-a-title-child.png", "diff/resvg/text/tref/with-a-title-child.png", false), 0)}
 #[test] fn resvg_text_tref_style_attributes() {assert_eq!(run_test("svg/resvg/text/tref/style-attributes.svg", "ref/resvg/text/tref/style-attributes.png", "diff/resvg/text/tref/style-attributes.png", false), 0)}
 #[test] fn resvg_text_tref_nested() {assert_eq!(run_test("svg/resvg/text/tref/nested.svg", "ref/resvg/text/tref/nested.png", "diff/resvg/text/tref/nested.png", false), 0)}
 #[test] fn resvg_text_tref_link_to_a_complex_text() {assert_eq!(run_test("svg/resvg/text/tref/link-to-a-complex-text.svg", "ref/resvg/text/tref/link-to-a-complex-text.png", "diff/resvg/text/tref/link-to-a-complex-text.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_tref_link_to_an_external_file_element() {assert_eq!(run_test("svg/resvg/text/tref/link-to-an-external-file-element.svg", "ref/resvg/text/tref/link-to-an-external-file-element.png", "diff/resvg/text/tref/link-to-an-external-file-element.png", false), 0)}
+#[test] fn resvg_text_tref_link_to_an_external_file_element() {assert_eq!(run_test("svg/resvg/text/tref/link-to-an-external-file-element.svg", "ref/resvg/text/tref/link-to-an-external-file-element.png", "diff/resvg/text/tref/link-to-an-external-file-element.png", false), 0)}
 #[test] fn resvg_text_tref_position_attributes() {assert_eq!(run_test("svg/resvg/text/tref/position-attributes.svg", "ref/resvg/text/tref/position-attributes.png", "diff/resvg/text/tref/position-attributes.png", false), 0)}
 #[test] fn resvg_text_tref_link_to_text() {assert_eq!(run_test("svg/resvg/text/tref/link-to-text.svg", "ref/resvg/text/tref/link-to-text.png", "diff/resvg/text/tref/link-to-text.png", false), 0)}
 #[test] fn resvg_text_tref_link_to_a_non_SVG_element() {assert_eq!(run_test("svg/resvg/text/tref/link-to-a-non-SVG-element.svg", "ref/resvg/text/tref/link-to-a-non-SVG-element.png", "diff/resvg/text/tref/link-to-a-non-SVG-element.png", false), 0)}
@@ -1307,48 +1174,43 @@ use crate::run_test;
 #[test] fn resvg_text_tref_xml_space() {assert_eq!(run_test("svg/resvg/text/tref/xml-space.svg", "ref/resvg/text/tref/xml-space.png", "diff/resvg/text/tref/xml-space.png", false), 0)}
 #[test] fn resvg_text_tref_link_to_a_non_text_element() {assert_eq!(run_test("svg/resvg/text/tref/link-to-a-non-text-element.svg", "ref/resvg/text/tref/link-to-a-non-text-element.png", "diff/resvg/text/tref/link-to-a-non-text-element.png", false), 0)}
 #[test] fn resvg_text_word_spacing_10() {assert_eq!(run_test("svg/resvg/text/word-spacing/10.svg", "ref/resvg/text/word-spacing/10.png", "diff/resvg/text/word-spacing/10.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_word_spacing_large_negative() {assert_eq!(run_test("svg/resvg/text/word-spacing/large-negative.svg", "ref/resvg/text/word-spacing/large-negative.png", "diff/resvg/text/word-spacing/large-negative.png", false), 0)}
+#[test] fn resvg_text_word_spacing_large_negative() {assert_eq!(run_test("svg/resvg/text/word-spacing/large-negative.svg", "ref/resvg/text/word-spacing/large-negative.png", "diff/resvg/text/word-spacing/large-negative.png", false), 0)}
 #[test] fn resvg_text_word_spacing_0() {assert_eq!(run_test("svg/resvg/text/word-spacing/0.svg", "ref/resvg/text/word-spacing/0.png", "diff/resvg/text/word-spacing/0.png", false), 0)}
 #[test] fn resvg_text_word_spacing__5() {assert_eq!(run_test("svg/resvg/text/word-spacing/-5.svg", "ref/resvg/text/word-spacing/-5.png", "diff/resvg/text/word-spacing/-5.png", false), 0)}
 #[test] fn resvg_text_word_spacing_5percent() {assert_eq!(run_test("svg/resvg/text/word-spacing/5percent.svg", "ref/resvg/text/word-spacing/5percent.png", "diff/resvg/text/word-spacing/5percent.png", false), 0)}
 #[test] fn resvg_text_word_spacing_normal() {assert_eq!(run_test("svg/resvg/text/word-spacing/normal.svg", "ref/resvg/text/word-spacing/normal.png", "diff/resvg/text/word-spacing/normal.png", false), 0)}
 #[test] fn resvg_text_word_spacing_2mm() {assert_eq!(run_test("svg/resvg/text/word-spacing/2mm.svg", "ref/resvg/text/word-spacing/2mm.png", "diff/resvg/text/word-spacing/2mm.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_unicode_bidi_bidi_override() {assert_eq!(run_test("svg/resvg/text/unicode-bidi/bidi-override.svg", "ref/resvg/text/unicode-bidi/bidi-override.png", "diff/resvg/text/unicode-bidi/bidi-override.png", false), 0)}
 #[test] fn resvg_text_font_variant_inherit() {assert_eq!(run_test("svg/resvg/text/font-variant/inherit.svg", "ref/resvg/text/font-variant/inherit.png", "diff/resvg/text/font-variant/inherit.png", false), 0)}
 #[test] fn resvg_text_font_variant_small_caps() {assert_eq!(run_test("svg/resvg/text/font-variant/small-caps.svg", "ref/resvg/text/font-variant/small-caps.png", "diff/resvg/text/font-variant/small-caps.png", false), 0)}
 #[test] fn resvg_text_font_weight_700() {assert_eq!(run_test("svg/resvg/text/font-weight/700.svg", "ref/resvg/text/font-weight/700.png", "diff/resvg/text/font-weight/700.png", false), 0)}
 #[test] fn resvg_text_font_weight_lighter() {assert_eq!(run_test("svg/resvg/text/font-weight/lighter.svg", "ref/resvg/text/font-weight/lighter.png", "diff/resvg/text/font-weight/lighter.png", false), 0)}
 #[test] fn resvg_text_font_weight_bolder() {assert_eq!(run_test("svg/resvg/text/font-weight/bolder.svg", "ref/resvg/text/font-weight/bolder.png", "diff/resvg/text/font-weight/bolder.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_text_font_weight_lighter_with_clamping() {assert_eq!(run_test("svg/resvg/text/font-weight/lighter-with-clamping.svg", "ref/resvg/text/font-weight/lighter-with-clamping.png", "diff/resvg/text/font-weight/lighter-with-clamping.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_text_font_weight_lighter_without_parent() {assert_eq!(run_test("svg/resvg/text/font-weight/lighter-without-parent.svg", "ref/resvg/text/font-weight/lighter-without-parent.png", "diff/resvg/text/font-weight/lighter-without-parent.png", false), 0)}
 #[test] fn resvg_text_font_weight_bold() {assert_eq!(run_test("svg/resvg/text/font-weight/bold.svg", "ref/resvg/text/font-weight/bold.png", "diff/resvg/text/font-weight/bold.png", false), 0)}
 #[test] fn resvg_text_font_weight_inherit() {assert_eq!(run_test("svg/resvg/text/font-weight/inherit.svg", "ref/resvg/text/font-weight/inherit.png", "diff/resvg/text/font-weight/inherit.png", false), 0)}
 #[test] fn resvg_text_font_weight_normal() {assert_eq!(run_test("svg/resvg/text/font-weight/normal.svg", "ref/resvg/text/font-weight/normal.png", "diff/resvg/text/font-weight/normal.png", false), 0)}
 #[test] fn resvg_text_font_weight_invalid_number_1() {assert_eq!(run_test("svg/resvg/text/font-weight/invalid-number-1.svg", "ref/resvg/text/font-weight/invalid-number-1.png", "diff/resvg/text/font-weight/invalid-number-1.png", false), 0)}
 #[test] fn resvg_text_font_weight_bolder_without_parent() {assert_eq!(run_test("svg/resvg/text/font-weight/bolder-without-parent.svg", "ref/resvg/text/font-weight/bolder-without-parent.png", "diff/resvg/text/font-weight/bolder-without-parent.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_weight_650() {assert_eq!(run_test("svg/resvg/text/font-weight/650.svg", "ref/resvg/text/font-weight/650.png", "diff/resvg/text/font-weight/650.png", false), 0)}
-// unknown reason
+#[test] fn resvg_text_font_weight_650() {assert_eq!(run_test("svg/resvg/text/font-weight/650.svg", "ref/resvg/text/font-weight/650.png", "diff/resvg/text/font-weight/650.png", false), 0)}
+// need to investigate
 #[ignore] #[test] fn resvg_text_font_weight_bolder_with_clamping() {assert_eq!(run_test("svg/resvg/text/font-weight/bolder-with-clamping.svg", "ref/resvg/text/font-weight/bolder-with-clamping.png", "diff/resvg/text/font-weight/bolder-with-clamping.png", false), 0)}
 #[test] fn resvg_text_text_rendering_optimizeLegibility() {assert_eq!(run_test("svg/resvg/text/text-rendering/optimizeLegibility.svg", "ref/resvg/text/text-rendering/optimizeLegibility.png", "diff/resvg/text/text-rendering/optimizeLegibility.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_rendering_geometricPrecision() {assert_eq!(run_test("svg/resvg/text/text-rendering/geometricPrecision.svg", "ref/resvg/text/text-rendering/geometricPrecision.png", "diff/resvg/text/text-rendering/geometricPrecision.png", false), 0)}
+#[test] fn resvg_text_text_rendering_geometricPrecision() {assert_eq!(run_test("svg/resvg/text/text-rendering/geometricPrecision.svg", "ref/resvg/text/text-rendering/geometricPrecision.png", "diff/resvg/text/text-rendering/geometricPrecision.png", false), 0)}
 #[test] fn resvg_text_text_rendering_on_tspan() {assert_eq!(run_test("svg/resvg/text/text-rendering/on-tspan.svg", "ref/resvg/text/text-rendering/on-tspan.png", "diff/resvg/text/text-rendering/on-tspan.png", false), 0)}
 #[test] fn resvg_text_text_rendering_with_underline() {assert_eq!(run_test("svg/resvg/text/text-rendering/with-underline.svg", "ref/resvg/text/text-rendering/with-underline.png", "diff/resvg/text/text-rendering/with-underline.png", false), 0)}
 #[test] fn resvg_text_text_rendering_optimizeSpeed() {assert_eq!(run_test("svg/resvg/text/text-rendering/optimizeSpeed.svg", "ref/resvg/text/text-rendering/optimizeSpeed.png", "diff/resvg/text/text-rendering/optimizeSpeed.png", false), 0)}
 #[test] fn resvg_text_font_size_zero_size() {assert_eq!(run_test("svg/resvg/text/font-size/zero-size.svg", "ref/resvg/text/font-size/zero-size.png", "diff/resvg/text/font-size/zero-size.png", false), 0)}
 #[test] fn resvg_text_font_size_ex() {assert_eq!(run_test("svg/resvg/text/font-size/ex.svg", "ref/resvg/text/font-size/ex.png", "diff/resvg/text/font-size/ex.png", false), 0)}
 #[test] fn resvg_text_font_size_em() {assert_eq!(run_test("svg/resvg/text/font-size/em.svg", "ref/resvg/text/font-size/em.png", "diff/resvg/text/font-size/em.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_size_named_value() {assert_eq!(run_test("svg/resvg/text/font-size/named-value.svg", "ref/resvg/text/font-size/named-value.png", "diff/resvg/text/font-size/named-value.png", false), 0)}
+#[test] fn resvg_text_font_size_named_value() {assert_eq!(run_test("svg/resvg/text/font-size/named-value.svg", "ref/resvg/text/font-size/named-value.png", "diff/resvg/text/font-size/named-value.png", false), 0)}
 #[test] fn resvg_text_font_size_simple_case() {assert_eq!(run_test("svg/resvg/text/font-size/simple-case.svg", "ref/resvg/text/font-size/simple-case.png", "diff/resvg/text/font-size/simple-case.png", false), 0)}
 #[test] fn resvg_text_font_size_inheritance() {assert_eq!(run_test("svg/resvg/text/font-size/inheritance.svg", "ref/resvg/text/font-size/inheritance.png", "diff/resvg/text/font-size/inheritance.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_size_negative_size() {assert_eq!(run_test("svg/resvg/text/font-size/negative-size.svg", "ref/resvg/text/font-size/negative-size.png", "diff/resvg/text/font-size/negative-size.png", false), 0)}
+#[test] fn resvg_text_font_size_negative_size() {assert_eq!(run_test("svg/resvg/text/font-size/negative-size.svg", "ref/resvg/text/font-size/negative-size.png", "diff/resvg/text/font-size/negative-size.png", false), 0)}
 #[test] fn resvg_text_font_size_zero_size_on_parent_1() {assert_eq!(run_test("svg/resvg/text/font-size/zero-size-on-parent-1.svg", "ref/resvg/text/font-size/zero-size-on-parent-1.png", "diff/resvg/text/font-size/zero-size-on-parent-1.png", false), 0)}
 #[test] fn resvg_text_font_size_zero_size_on_parent_2() {assert_eq!(run_test("svg/resvg/text/font-size/zero-size-on-parent-2.svg", "ref/resvg/text/font-size/zero-size-on-parent-2.png", "diff/resvg/text/font-size/zero-size-on-parent-2.png", false), 0)}
 #[test] fn resvg_text_font_size_zero_size_on_parent_3() {assert_eq!(run_test("svg/resvg/text/font-size/zero-size-on-parent-3.svg", "ref/resvg/text/font-size/zero-size-on-parent-3.png", "diff/resvg/text/font-size/zero-size-on-parent-3.png", false), 0)}
@@ -1362,19 +1224,19 @@ use crate::run_test;
 #[test] fn resvg_text_font_size_ex_on_the_root_element() {assert_eq!(run_test("svg/resvg/text/font-size/ex-on-the-root-element.svg", "ref/resvg/text/font-size/ex-on-the-root-element.png", "diff/resvg/text/font-size/ex-on-the-root-element.png", false), 0)}
 #[test] fn resvg_text_font_size_em_on_the_root_element() {assert_eq!(run_test("svg/resvg/text/font-size/em-on-the-root-element.svg", "ref/resvg/text/font-size/em-on-the-root-element.png", "diff/resvg/text/font-size/em-on-the-root-element.png", false), 0)}
 #[test] fn resvg_text_font_size_mixed_values() {assert_eq!(run_test("svg/resvg/text/font-size/mixed-values.svg", "ref/resvg/text/font-size/mixed-values.png", "diff/resvg/text/font-size/mixed-values.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_direction_rtl() {assert_eq!(run_test("svg/resvg/text/direction/rtl.svg", "ref/resvg/text/direction/rtl.png", "diff/resvg/text/direction/rtl.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_direction_rtl_with_vertical_writing_mode() {assert_eq!(run_test("svg/resvg/text/direction/rtl-with-vertical-writing-mode.svg", "ref/resvg/text/direction/rtl-with-vertical-writing-mode.png", "diff/resvg/text/direction/rtl-with-vertical-writing-mode.png", false), 0)}
 #[test] fn resvg_text_text_escaped_text_4() {assert_eq!(run_test("svg/resvg/text/text/escaped-text-4.svg", "ref/resvg/text/text/escaped-text-4.png", "diff/resvg/text/text/escaped-text-4.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_text_xml_lang_ja() {assert_eq!(run_test("svg/resvg/text/text/xml-lang=ja.svg", "ref/resvg/text/text/xml-lang=ja.png", "diff/resvg/text/text/xml-lang=ja.png", false), 0)}
 #[test] fn resvg_text_text_dx_and_dy_with_multiple_values() {assert_eq!(run_test("svg/resvg/text/text/dx-and-dy-with-multiple-values.svg", "ref/resvg/text/text/dx-and-dy-with-multiple-values.png", "diff/resvg/text/text/dx-and-dy-with-multiple-values.png", false), 0)}
 #[test] fn resvg_text_text_complex_graphemes() {assert_eq!(run_test("svg/resvg/text/text/complex-graphemes.svg", "ref/resvg/text/text/complex-graphemes.png", "diff/resvg/text/text/complex-graphemes.png", false), 0)}
 #[test] fn resvg_text_text_escaped_text_2() {assert_eq!(run_test("svg/resvg/text/text/escaped-text-2.svg", "ref/resvg/text/text/escaped-text-2.png", "diff/resvg/text/text/escaped-text-2.png", false), 0)}
 #[test] fn resvg_text_text_dx_and_dy_instead_of_x_and_y() {assert_eq!(run_test("svg/resvg/text/text/dx-and-dy-instead-of-x-and-y.svg", "ref/resvg/text/text/dx-and-dy-instead-of-x-and-y.png", "diff/resvg/text/text/dx-and-dy-instead-of-x-and-y.png", false), 0)}
 #[test] fn resvg_text_text_rotate() {assert_eq!(run_test("svg/resvg/text/text/rotate.svg", "ref/resvg/text/text/rotate.png", "diff/resvg/text/text/rotate.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_text_text_compound_emojis_and_coordinates_list() {assert_eq!(run_test("svg/resvg/text/text/compound-emojis-and-coordinates-list.svg", "ref/resvg/text/text/compound-emojis-and-coordinates-list.png", "diff/resvg/text/text/compound-emojis-and-coordinates-list.png", false), 0)}
 #[test] fn resvg_text_text_escaped_text_3() {assert_eq!(run_test("svg/resvg/text/text/escaped-text-3.svg", "ref/resvg/text/text/escaped-text-3.png", "diff/resvg/text/text/escaped-text-3.png", false), 0)}
 #[test] fn resvg_text_text_escaped_text_1() {assert_eq!(run_test("svg/resvg/text/text/escaped-text-1.svg", "ref/resvg/text/text/escaped-text-1.png", "diff/resvg/text/text/escaped-text-1.png", false), 0)}
@@ -1382,97 +1244,88 @@ use crate::run_test;
 #[test] fn resvg_text_text_x_and_y_with_less_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-less-values-than-characters.svg", "ref/resvg/text/text/x-and-y-with-less-values-than-characters.png", "diff/resvg/text/text/x-and-y-with-less-values-than-characters.png", false), 0)}
 #[test] fn resvg_text_text_transform() {assert_eq!(run_test("svg/resvg/text/text/transform.svg", "ref/resvg/text/text/transform.png", "diff/resvg/text/text/transform.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_multiple_values_underline_and_pattern() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.svg", "ref/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.png", "diff/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_text_rotate_on_Arabic() {assert_eq!(run_test("svg/resvg/text/text/rotate-on-Arabic.svg", "ref/resvg/text/text/rotate-on-Arabic.png", "diff/resvg/text/text/rotate-on-Arabic.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_text_bidi_reordering() {assert_eq!(run_test("svg/resvg/text/text/bidi-reordering.svg", "ref/resvg/text/text/bidi-reordering.png", "diff/resvg/text/text/bidi-reordering.png", false), 0)}
 #[test] fn resvg_text_text_nested() {assert_eq!(run_test("svg/resvg/text/text/nested.svg", "ref/resvg/text/text/nested.png", "diff/resvg/text/text/nested.png", false), 0)}
 #[test] fn resvg_text_text_zalgo() {assert_eq!(run_test("svg/resvg/text/text/zalgo.svg", "ref/resvg/text/text/zalgo.png", "diff/resvg/text/text/zalgo.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_more_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-more-values-than-characters.svg", "ref/resvg/text/text/rotate-with-more-values-than-characters.png", "diff/resvg/text/text/rotate-with-more-values-than-characters.png", false), 0)}
 #[test] fn resvg_text_text_x_and_y_with_dx_and_dy() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-dx-and-dy.svg", "ref/resvg/text/text/x-and-y-with-dx-and-dy.png", "diff/resvg/text/text/x-and-y-with-dx-and-dy.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_real_text_height() {assert_eq!(run_test("svg/resvg/text/text/real-text-height.svg", "ref/resvg/text/text/real-text-height.png", "diff/resvg/text/text/real-text-height.png", false), 0)}
+#[test] fn resvg_text_text_real_text_height() {assert_eq!(run_test("svg/resvg/text/text/real-text-height.svg", "ref/resvg/text/text/real-text-height.png", "diff/resvg/text/text/real-text-height.png", false), 0)}
 #[test] fn resvg_text_text_dx_and_dy_with_more_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/dx-and-dy-with-more-values-than-characters.svg", "ref/resvg/text/text/dx-and-dy-with-more-values-than-characters.png", "diff/resvg/text/text/dx-and-dy-with-more-values-than-characters.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_text_text_emojis() {assert_eq!(run_test("svg/resvg/text/text/emojis.svg", "ref/resvg/text/text/emojis.png", "diff/resvg/text/text/emojis.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_text_x_and_y_with_multiple_values_and_arabic_text() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.svg", "ref/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.png", "diff/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.png", false), 0)}
 #[test] fn resvg_text_text_simple_case() {assert_eq!(run_test("svg/resvg/text/text/simple-case.svg", "ref/resvg/text/text/simple-case.png", "diff/resvg/text/text/simple-case.png", false), 0)}
 #[test] fn resvg_text_text_x_and_y_with_multiple_values_and_tspan() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-multiple-values-and-tspan.svg", "ref/resvg/text/text/x-and-y-with-multiple-values-and-tspan.png", "diff/resvg/text/text/x-and-y-with-multiple-values-and-tspan.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_less_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-less-values-than-characters.svg", "ref/resvg/text/text/rotate-with-less-values-than-characters.png", "diff/resvg/text/text/rotate-with-less-values-than-characters.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_complex_grapheme_split_by_tspan() {assert_eq!(run_test("svg/resvg/text/text/complex-grapheme-split-by-tspan.svg", "ref/resvg/text/text/complex-grapheme-split-by-tspan.png", "diff/resvg/text/text/complex-grapheme-split-by-tspan.png", false), 0)}
+#[test] fn resvg_text_text_complex_grapheme_split_by_tspan() {assert_eq!(run_test("svg/resvg/text/text/complex-grapheme-split-by-tspan.svg", "ref/resvg/text/text/complex-grapheme-split-by-tspan.png", "diff/resvg/text/text/complex-grapheme-split-by-tspan.png", false), 0)}
 #[test] fn resvg_text_text_dx_and_dy_with_less_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/dx-and-dy-with-less-values-than-characters.svg", "ref/resvg/text/text/dx-and-dy-with-less-values-than-characters.png", "diff/resvg/text/text/dx-and-dy-with-less-values-than-characters.png", false), 0)}
 #[test] fn resvg_text_text_percent_value_on_x_and_y() {assert_eq!(run_test("svg/resvg/text/text/percent-value-on-x-and-y.svg", "ref/resvg/text/text/percent-value-on-x-and-y.png", "diff/resvg/text/text/percent-value-on-x-and-y.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_text_text_compound_emojis() {assert_eq!(run_test("svg/resvg/text/text/compound-emojis.svg", "ref/resvg/text/text/compound-emojis.png", "diff/resvg/text/text/compound-emojis.png", false), 0)}
 #[test] fn resvg_text_text_xml_space() {assert_eq!(run_test("svg/resvg/text/text/xml-space.svg", "ref/resvg/text/text/xml-space.png", "diff/resvg/text/text/xml-space.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_text_fill_rule_evenodd() {assert_eq!(run_test("svg/resvg/text/text/fill-rule=evenodd.svg", "ref/resvg/text/text/fill-rule=evenodd.png", "diff/resvg/text/text/fill-rule=evenodd.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_complex_graphemes_and_coordinates_list() {assert_eq!(run_test("svg/resvg/text/text/complex-graphemes-and-coordinates-list.svg", "ref/resvg/text/text/complex-graphemes-and-coordinates-list.png", "diff/resvg/text/text/complex-graphemes-and-coordinates-list.png", false), 0)}
+#[test] fn resvg_text_text_complex_graphemes_and_coordinates_list() {assert_eq!(run_test("svg/resvg/text/text/complex-graphemes-and-coordinates-list.svg", "ref/resvg/text/text/complex-graphemes-and-coordinates-list.png", "diff/resvg/text/text/complex-graphemes-and-coordinates-list.png", false), 0)}
 #[test] fn resvg_text_text_x_and_y_with_dx_and_dy_lists() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-dx-and-dy-lists.svg", "ref/resvg/text/text/x-and-y-with-dx-and-dy-lists.png", "diff/resvg/text/text/x-and-y-with-dx-and-dy-lists.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_multiple_values_and_complex_text() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-multiple-values-and-complex-text.svg", "ref/resvg/text/text/rotate-with-multiple-values-and-complex-text.png", "diff/resvg/text/text/rotate-with-multiple-values-and-complex-text.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_an_invalid_angle() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-an-invalid-angle.svg", "ref/resvg/text/text/rotate-with-an-invalid-angle.png", "diff/resvg/text/text/rotate-with-an-invalid-angle.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_filter_bbox() {assert_eq!(run_test("svg/resvg/text/text/filter-bbox.svg", "ref/resvg/text/text/filter-bbox.png", "diff/resvg/text/text/filter-bbox.png", false), 0)}
+#[test] fn resvg_text_text_filter_bbox() {assert_eq!(run_test("svg/resvg/text/text/filter-bbox.svg", "ref/resvg/text/text/filter-bbox.png", "diff/resvg/text/text/filter-bbox.png", false), 0)}
 #[test] fn resvg_text_text_no_coordinates() {assert_eq!(run_test("svg/resvg/text/text/no-coordinates.svg", "ref/resvg/text/text/no-coordinates.png", "diff/resvg/text/text/no-coordinates.png", false), 0)}
 #[test] fn resvg_text_text_percent_value_on_dx_and_dy() {assert_eq!(run_test("svg/resvg/text/text/percent-value-on-dx-and-dy.svg", "ref/resvg/text/text/percent-value-on-dx-and-dy.png", "diff/resvg/text/text/percent-value-on-dx-and-dy.png", false), 0)}
 #[test] fn resvg_text_text_mm_coordinates() {assert_eq!(run_test("svg/resvg/text/text/mm-coordinates.svg", "ref/resvg/text/text/mm-coordinates.png", "diff/resvg/text/text/mm-coordinates.png", false), 0)}
 #[test] fn resvg_text_text_x_and_y_with_more_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-more-values-than-characters.svg", "ref/resvg/text/text/x-and-y-with-more-values-than-characters.png", "diff/resvg/text/text/x-and-y-with-more-values-than-characters.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_multiple_values() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-multiple-values.svg", "ref/resvg/text/text/rotate-with-multiple-values.png", "diff/resvg/text/text/rotate-with-multiple-values.png", false), 0)}
 #[test] fn resvg_text_text_em_and_ex_coordinates() {assert_eq!(run_test("svg/resvg/text/text/em-and-ex-coordinates.svg", "ref/resvg/text/text/em-and-ex-coordinates.png", "diff/resvg/text/text/em-and-ex-coordinates.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_simple_case() {assert_eq!(run_test("svg/resvg/text/font/simple-case.svg", "ref/resvg/text/font/simple-case.png", "diff/resvg/text/font/simple-case.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_glyph_orientation_vertical_simple_case() {assert_eq!(run_test("svg/resvg/text/glyph-orientation-vertical/simple-case.svg", "ref/resvg/text/glyph-orientation-vertical/simple-case.png", "diff/resvg/text/glyph-orientation-vertical/simple-case.png", false), 0)}
+#[test] fn resvg_text_glyph_orientation_vertical_simple_case() {assert_eq!(run_test("svg/resvg/text/glyph-orientation-vertical/simple-case.svg", "ref/resvg/text/glyph-orientation-vertical/simple-case.png", "diff/resvg/text/glyph-orientation-vertical/simple-case.png", false), 0)}
 #[test] fn resvg_text_textLength_zero() {assert_eq!(run_test("svg/resvg/text/textLength/zero.svg", "ref/resvg/text/textLength/zero.png", "diff/resvg/text/textLength/zero.png", false), 0)}
 #[test] fn resvg_text_textLength_150_on_parent() {assert_eq!(run_test("svg/resvg/text/textLength/150-on-parent.svg", "ref/resvg/text/textLength/150-on-parent.png", "diff/resvg/text/textLength/150-on-parent.png", false), 0)}
 #[test] fn resvg_text_textLength_on_a_single_tspan() {assert_eq!(run_test("svg/resvg/text/textLength/on-a-single-tspan.svg", "ref/resvg/text/textLength/on-a-single-tspan.png", "diff/resvg/text/textLength/on-a-single-tspan.png", false), 0)}
 #[test] fn resvg_text_textLength_75percent() {assert_eq!(run_test("svg/resvg/text/textLength/75percent.svg", "ref/resvg/text/textLength/75percent.png", "diff/resvg/text/textLength/75percent.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_textLength_arabic() {assert_eq!(run_test("svg/resvg/text/textLength/arabic.svg", "ref/resvg/text/textLength/arabic.png", "diff/resvg/text/textLength/arabic.png", false), 0)}
 #[test] fn resvg_text_textLength_150() {assert_eq!(run_test("svg/resvg/text/textLength/150.svg", "ref/resvg/text/textLength/150.png", "diff/resvg/text/textLength/150.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_textLength_arabic_with_lengthAdjust() {assert_eq!(run_test("svg/resvg/text/textLength/arabic-with-lengthAdjust.svg", "ref/resvg/text/textLength/arabic-with-lengthAdjust.png", "diff/resvg/text/textLength/arabic-with-lengthAdjust.png", false), 0)}
 #[test] fn resvg_text_textLength_150_on_tspan() {assert_eq!(run_test("svg/resvg/text/textLength/150-on-tspan.svg", "ref/resvg/text/textLength/150-on-tspan.png", "diff/resvg/text/textLength/150-on-tspan.png", false), 0)}
 #[test] fn resvg_text_textLength_inherit() {assert_eq!(run_test("svg/resvg/text/textLength/inherit.svg", "ref/resvg/text/textLength/inherit.png", "diff/resvg/text/textLength/inherit.png", false), 0)}
 #[test] fn resvg_text_textLength_on_text_and_tspan() {assert_eq!(run_test("svg/resvg/text/textLength/on-text-and-tspan.svg", "ref/resvg/text/textLength/on-text-and-tspan.png", "diff/resvg/text/textLength/on-text-and-tspan.png", false), 0)}
 #[test] fn resvg_text_textLength_negative() {assert_eq!(run_test("svg/resvg/text/textLength/negative.svg", "ref/resvg/text/textLength/negative.png", "diff/resvg/text/textLength/negative.png", false), 0)}
 #[test] fn resvg_text_textLength_40mm() {assert_eq!(run_test("svg/resvg/text/textLength/40mm.svg", "ref/resvg/text/textLength/40mm.png", "diff/resvg/text/textLength/40mm.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_size_adjust_simple_case() {assert_eq!(run_test("svg/resvg/text/font-size-adjust/simple-case.svg", "ref/resvg/text/font-size-adjust/simple-case.png", "diff/resvg/text/font-size-adjust/simple-case.png", false), 0)}
+#[test] fn resvg_text_font_size_adjust_simple_case() {assert_eq!(run_test("svg/resvg/text/font-size-adjust/simple-case.svg", "ref/resvg/text/font-size-adjust/simple-case.png", "diff/resvg/text/font-size-adjust/simple-case.png", false), 0)}
 #[test] fn resvg_text_font_style_inherit() {assert_eq!(run_test("svg/resvg/text/font-style/inherit.svg", "ref/resvg/text/font-style/inherit.png", "diff/resvg/text/font-style/inherit.png", false), 0)}
 #[test] fn resvg_text_font_style_italic() {assert_eq!(run_test("svg/resvg/text/font-style/italic.svg", "ref/resvg/text/font-style/italic.png", "diff/resvg/text/font-style/italic.png", false), 0)}
 #[test] fn resvg_text_font_style_oblique() {assert_eq!(run_test("svg/resvg/text/font-style/oblique.svg", "ref/resvg/text/font-style/oblique.png", "diff/resvg/text/font-style/oblique.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_family_font_list() {assert_eq!(run_test("svg/resvg/text/font-family/font-list.svg", "ref/resvg/text/font-family/font-list.png", "diff/resvg/text/font-family/font-list.png", false), 0)}
-// unknown reason
+#[test] fn resvg_text_font_family_font_list() {assert_eq!(run_test("svg/resvg/text/font-family/font-list.svg", "ref/resvg/text/font-family/font-list.png", "diff/resvg/text/font-family/font-list.png", false), 0)}
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_source_sans_pro() {assert_eq!(run_test("svg/resvg/text/font-family/source-sans-pro.svg", "ref/resvg/text/font-family/source-sans-pro.png", "diff/resvg/text/font-family/source-sans-pro.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_serif() {assert_eq!(run_test("svg/resvg/text/font-family/serif.svg", "ref/resvg/text/font-family/serif.png", "diff/resvg/text/font-family/serif.png", false), 0)}
 #[test] fn resvg_text_font_family_noto_sans() {assert_eq!(run_test("svg/resvg/text/font-family/noto-sans.svg", "ref/resvg/text/font-family/noto-sans.png", "diff/resvg/text/font-family/noto-sans.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_fantasy() {assert_eq!(run_test("svg/resvg/text/font-family/fantasy.svg", "ref/resvg/text/font-family/fantasy.png", "diff/resvg/text/font-family/fantasy.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_monospace() {assert_eq!(run_test("svg/resvg/text/font-family/monospace.svg", "ref/resvg/text/font-family/monospace.png", "diff/resvg/text/font-family/monospace.png", false), 0)}
 #[test] fn resvg_text_font_family_fallback_2() {assert_eq!(run_test("svg/resvg/text/font-family/fallback-2.svg", "ref/resvg/text/font-family/fallback-2.png", "diff/resvg/text/font-family/fallback-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_font_family_double_quoted() {assert_eq!(run_test("svg/resvg/text/font-family/double-quoted.svg", "ref/resvg/text/font-family/double-quoted.png", "diff/resvg/text/font-family/double-quoted.png", false), 0)}
-// unknown reason
+#[test] fn resvg_text_font_family_double_quoted() {assert_eq!(run_test("svg/resvg/text/font-family/double-quoted.svg", "ref/resvg/text/font-family/double-quoted.png", "diff/resvg/text/font-family/double-quoted.png", false), 0)}
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_cursive() {assert_eq!(run_test("svg/resvg/text/font-family/cursive.svg", "ref/resvg/text/font-family/cursive.png", "diff/resvg/text/font-family/cursive.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_fallback_1() {assert_eq!(run_test("svg/resvg/text/font-family/fallback-1.svg", "ref/resvg/text/font-family/fallback-1.png", "diff/resvg/text/font-family/fallback-1.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_bold_sans_serif() {assert_eq!(run_test("svg/resvg/text/font-family/bold-sans-serif.svg", "ref/resvg/text/font-family/bold-sans-serif.png", "diff/resvg/text/font-family/bold-sans-serif.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_font_family_sans_serif() {assert_eq!(run_test("svg/resvg/text/font-family/sans-serif.svg", "ref/resvg/text/font-family/sans-serif.png", "diff/resvg/text/font-family/sans-serif.png", false), 0)}
 #[test] fn resvg_text_text_decoration_underline() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline.svg", "ref/resvg/text/text-decoration/underline.png", "diff/resvg/text/text-decoration/underline.png", false), 0)}
 #[test] fn resvg_text_text_decoration_line_through() {assert_eq!(run_test("svg/resvg/text/text-decoration/line-through.svg", "ref/resvg/text/text-decoration/line-through.png", "diff/resvg/text/text-decoration/line-through.png", false), 0)}
 #[test] fn resvg_text_text_decoration_all_types_inline_comma_separated() {assert_eq!(run_test("svg/resvg/text/text-decoration/all-types-inline-comma-separated.svg", "ref/resvg/text/text-decoration/all-types-inline-comma-separated.png", "diff/resvg/text/text-decoration/all-types-inline-comma-separated.png", false), 0)}
 #[test] fn resvg_text_text_decoration_tspan_decoration() {assert_eq!(run_test("svg/resvg/text/text-decoration/tspan-decoration.svg", "ref/resvg/text/text-decoration/tspan-decoration.png", "diff/resvg/text/text-decoration/tspan-decoration.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_decoration_underline_with_dy_list_2() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline-with-dy-list-2.svg", "ref/resvg/text/text-decoration/underline-with-dy-list-2.png", "diff/resvg/text/text-decoration/underline-with-dy-list-2.png", false), 0)}
+#[test] fn resvg_text_text_decoration_underline_with_dy_list_2() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline-with-dy-list-2.svg", "ref/resvg/text/text-decoration/underline-with-dy-list-2.png", "diff/resvg/text/text-decoration/underline-with-dy-list-2.png", false), 0)}
 #[test] fn resvg_text_text_decoration_outside_the_text_element() {assert_eq!(run_test("svg/resvg/text/text-decoration/outside-the-text-element.svg", "ref/resvg/text/text-decoration/outside-the-text-element.png", "diff/resvg/text/text-decoration/outside-the-text-element.png", false), 0)}
 #[test] fn resvg_text_text_decoration_underline_with_dy_list_1() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline-with-dy-list-1.svg", "ref/resvg/text/text-decoration/underline-with-dy-list-1.png", "diff/resvg/text/text-decoration/underline-with-dy-list-1.png", false), 0)}
 #[test] fn resvg_text_text_decoration_all_types_nested() {assert_eq!(run_test("svg/resvg/text/text-decoration/all-types-nested.svg", "ref/resvg/text/text-decoration/all-types-nested.png", "diff/resvg/text/text-decoration/all-types-nested.png", false), 0)}
@@ -1480,32 +1333,24 @@ use crate::run_test;
 #[test] fn resvg_text_text_decoration_underline_with_y_list() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline-with-y-list.svg", "ref/resvg/text/text-decoration/underline-with-y-list.png", "diff/resvg/text/text-decoration/underline-with-y-list.png", false), 0)}
 #[test] fn resvg_text_text_decoration_all_types_inline_no_spaces() {assert_eq!(run_test("svg/resvg/text/text-decoration/all-types-inline-no-spaces.svg", "ref/resvg/text/text-decoration/all-types-inline-no-spaces.png", "diff/resvg/text/text-decoration/all-types-inline-no-spaces.png", false), 0)}
 #[test] fn resvg_text_text_decoration_indirect_with_multiple_colors() {assert_eq!(run_test("svg/resvg/text/text-decoration/indirect-with-multiple-colors.svg", "ref/resvg/text/text-decoration/indirect-with-multiple-colors.png", "diff/resvg/text/text-decoration/indirect-with-multiple-colors.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_decoration_underline_with_rotate_list_4() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline-with-rotate-list-4.svg", "ref/resvg/text/text-decoration/underline-with-rotate-list-4.png", "diff/resvg/text/text-decoration/underline-with-rotate-list-4.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_decoration_indirect() {assert_eq!(run_test("svg/resvg/text/text-decoration/indirect.svg", "ref/resvg/text/text-decoration/indirect.png", "diff/resvg/text/text-decoration/indirect.png", false), 0)}
+#[test] fn resvg_text_text_decoration_underline_with_rotate_list_4() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline-with-rotate-list-4.svg", "ref/resvg/text/text-decoration/underline-with-rotate-list-4.png", "diff/resvg/text/text-decoration/underline-with-rotate-list-4.png", false), 0)}
+#[test] fn resvg_text_text_decoration_indirect() {assert_eq!(run_test("svg/resvg/text/text-decoration/indirect.svg", "ref/resvg/text/text-decoration/indirect.png", "diff/resvg/text/text-decoration/indirect.png", false), 0)}
 #[test] fn resvg_text_text_decoration_underline_with_rotate_list_3() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline-with-rotate-list-3.svg", "ref/resvg/text/text-decoration/underline-with-rotate-list-3.png", "diff/resvg/text/text-decoration/underline-with-rotate-list-3.png", false), 0)}
 #[test] fn resvg_text_text_decoration_style_resolving_3() {assert_eq!(run_test("svg/resvg/text/text-decoration/style-resolving-3.svg", "ref/resvg/text/text-decoration/style-resolving-3.png", "diff/resvg/text/text-decoration/style-resolving-3.png", false), 0)}
 #[test] fn resvg_text_text_decoration_all_types_inline() {assert_eq!(run_test("svg/resvg/text/text-decoration/all-types-inline.svg", "ref/resvg/text/text-decoration/all-types-inline.png", "diff/resvg/text/text-decoration/all-types-inline.png", false), 0)}
 #[test] fn resvg_text_text_decoration_style_resolving_2() {assert_eq!(run_test("svg/resvg/text/text-decoration/style-resolving-2.svg", "ref/resvg/text/text-decoration/style-resolving-2.png", "diff/resvg/text/text-decoration/style-resolving-2.png", false), 0)}
 #[test] fn resvg_text_text_decoration_style_resolving_1() {assert_eq!(run_test("svg/resvg/text/text-decoration/style-resolving-1.svg", "ref/resvg/text/text-decoration/style-resolving-1.png", "diff/resvg/text/text-decoration/style-resolving-1.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_decoration_style_resolving_4() {assert_eq!(run_test("svg/resvg/text/text-decoration/style-resolving-4.svg", "ref/resvg/text/text-decoration/style-resolving-4.png", "diff/resvg/text/text-decoration/style-resolving-4.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_text_decoration_with_textLength_on_a_single_character() {assert_eq!(run_test("svg/resvg/text/text-decoration/with-textLength-on-a-single-character.svg", "ref/resvg/text/text-decoration/with-textLength-on-a-single-character.png", "diff/resvg/text/text-decoration/with-textLength-on-a-single-character.png", false), 0)}
+#[test] fn resvg_text_text_decoration_style_resolving_4() {assert_eq!(run_test("svg/resvg/text/text-decoration/style-resolving-4.svg", "ref/resvg/text/text-decoration/style-resolving-4.png", "diff/resvg/text/text-decoration/style-resolving-4.png", false), 0)}
+#[test] fn resvg_text_text_decoration_with_textLength_on_a_single_character() {assert_eq!(run_test("svg/resvg/text/text-decoration/with-textLength-on-a-single-character.svg", "ref/resvg/text/text-decoration/with-textLength-on-a-single-character.png", "diff/resvg/text/text-decoration/with-textLength-on-a-single-character.png", false), 0)}
 #[test] fn resvg_text_textPath_invalid_textPath_in_the_middle() {assert_eq!(run_test("svg/resvg/text/textPath/invalid-textPath-in-the-middle.svg", "ref/resvg/text/textPath/invalid-textPath-in-the-middle.png", "diff/resvg/text/textPath/invalid-textPath-in-the-middle.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_spacing_auto() {assert_eq!(run_test("svg/resvg/text/textPath/spacing=auto.svg", "ref/resvg/text/textPath/spacing=auto.png", "diff/resvg/text/textPath/spacing=auto.png", false), 0)}
+#[test] fn resvg_text_textPath_spacing_auto() {assert_eq!(run_test("svg/resvg/text/textPath/spacing=auto.svg", "ref/resvg/text/textPath/spacing=auto.png", "diff/resvg/text/textPath/spacing=auto.png", false), 0)}
 #[test] fn resvg_text_textPath_with_letter_spacing() {assert_eq!(run_test("svg/resvg/text/textPath/with-letter-spacing.svg", "ref/resvg/text/textPath/with-letter-spacing.png", "diff/resvg/text/textPath/with-letter-spacing.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_with_invalid_path_and_xlink_href() {assert_eq!(run_test("svg/resvg/text/textPath/with-invalid-path-and-xlink-href.svg", "ref/resvg/text/textPath/with-invalid-path-and-xlink-href.png", "diff/resvg/text/textPath/with-invalid-path-and-xlink-href.png", false), 0)}
+#[test] fn resvg_text_textPath_with_invalid_path_and_xlink_href() {assert_eq!(run_test("svg/resvg/text/textPath/with-invalid-path-and-xlink-href.svg", "ref/resvg/text/textPath/with-invalid-path-and-xlink-href.png", "diff/resvg/text/textPath/with-invalid-path-and-xlink-href.png", false), 0)}
 #[test] fn resvg_text_textPath_link_to_rect() {assert_eq!(run_test("svg/resvg/text/textPath/link-to-rect.svg", "ref/resvg/text/textPath/link-to-rect.png", "diff/resvg/text/textPath/link-to-rect.png", false), 0)}
 #[test] fn resvg_text_textPath_dy_with_tiny_coordinates() {assert_eq!(run_test("svg/resvg/text/textPath/dy-with-tiny-coordinates.svg", "ref/resvg/text/textPath/dy-with-tiny-coordinates.png", "diff/resvg/text/textPath/dy-with-tiny-coordinates.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_with_path() {assert_eq!(run_test("svg/resvg/text/textPath/with-path.svg", "ref/resvg/text/textPath/with-path.png", "diff/resvg/text/textPath/with-path.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_with_filter() {assert_eq!(run_test("svg/resvg/text/textPath/with-filter.svg", "ref/resvg/text/textPath/with-filter.png", "diff/resvg/text/textPath/with-filter.png", false), 0)}
-// unknown reason
+#[test] fn resvg_text_textPath_with_path() {assert_eq!(run_test("svg/resvg/text/textPath/with-path.svg", "ref/resvg/text/textPath/with-path.png", "diff/resvg/text/textPath/with-path.png", false), 0)}
+#[test] fn resvg_text_textPath_with_filter() {assert_eq!(run_test("svg/resvg/text/textPath/with-filter.svg", "ref/resvg/text/textPath/with-filter.png", "diff/resvg/text/textPath/with-filter.png", false), 0)}
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_textPath_complex() {assert_eq!(run_test("svg/resvg/text/textPath/complex.svg", "ref/resvg/text/textPath/complex.png", "diff/resvg/text/textPath/complex.png", false), 0)}
 #[test] fn resvg_text_textPath_invalid_link() {assert_eq!(run_test("svg/resvg/text/textPath/invalid-link.svg", "ref/resvg/text/textPath/invalid-link.png", "diff/resvg/text/textPath/invalid-link.png", false), 0)}
 #[test] fn resvg_text_textPath_mixed_children_2() {assert_eq!(run_test("svg/resvg/text/textPath/mixed-children-2.svg", "ref/resvg/text/textPath/mixed-children-2.png", "diff/resvg/text/textPath/mixed-children-2.png", false), 0)}
@@ -1514,30 +1359,26 @@ use crate::run_test;
 #[test] fn resvg_text_textPath_nested() {assert_eq!(run_test("svg/resvg/text/textPath/nested.svg", "ref/resvg/text/textPath/nested.png", "diff/resvg/text/textPath/nested.png", false), 0)}
 #[test] fn resvg_text_textPath_with_transform_outside_a_referenced_path() {assert_eq!(run_test("svg/resvg/text/textPath/with-transform-outside-a-referenced-path.svg", "ref/resvg/text/textPath/with-transform-outside-a-referenced-path.png", "diff/resvg/text/textPath/with-transform-outside-a-referenced-path.png", false), 0)}
 #[test] fn resvg_text_textPath_with_text_anchor() {assert_eq!(run_test("svg/resvg/text/textPath/with-text-anchor.svg", "ref/resvg/text/textPath/with-text-anchor.png", "diff/resvg/text/textPath/with-text-anchor.png", false), 0)}
-// unknown reason
+// font is not part of test suite yet
 #[ignore] #[test] fn resvg_text_textPath_writing_mode_tb() {assert_eq!(run_test("svg/resvg/text/textPath/writing-mode=tb.svg", "ref/resvg/text/textPath/writing-mode=tb.png", "diff/resvg/text/textPath/writing-mode=tb.png", false), 0)}
 #[test] fn resvg_text_textPath_with_big_letter_spacing() {assert_eq!(run_test("svg/resvg/text/textPath/with-big-letter-spacing.svg", "ref/resvg/text/textPath/with-big-letter-spacing.png", "diff/resvg/text/textPath/with-big-letter-spacing.png", false), 0)}
 #[test] fn resvg_text_textPath_path_with_ClosePath() {assert_eq!(run_test("svg/resvg/text/textPath/path-with-ClosePath.svg", "ref/resvg/text/textPath/path-with-ClosePath.png", "diff/resvg/text/textPath/path-with-ClosePath.png", false), 0)}
 #[test] fn resvg_text_textPath_simple_case() {assert_eq!(run_test("svg/resvg/text/textPath/simple-case.svg", "ref/resvg/text/textPath/simple-case.png", "diff/resvg/text/textPath/simple-case.png", false), 0)}
 #[test] fn resvg_text_textPath_path_with_subpaths_and_startOffset() {assert_eq!(run_test("svg/resvg/text/textPath/path-with-subpaths-and-startOffset.svg", "ref/resvg/text/textPath/path-with-subpaths-and-startOffset.png", "diff/resvg/text/textPath/path-with-subpaths-and-startOffset.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_method_stretch() {assert_eq!(run_test("svg/resvg/text/textPath/method=stretch.svg", "ref/resvg/text/textPath/method=stretch.png", "diff/resvg/text/textPath/method=stretch.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_with_path_and_xlink_href() {assert_eq!(run_test("svg/resvg/text/textPath/with-path-and-xlink-href.svg", "ref/resvg/text/textPath/with-path-and-xlink-href.png", "diff/resvg/text/textPath/with-path-and-xlink-href.png", false), 0)}
+#[test] fn resvg_text_textPath_method_stretch() {assert_eq!(run_test("svg/resvg/text/textPath/method=stretch.svg", "ref/resvg/text/textPath/method=stretch.png", "diff/resvg/text/textPath/method=stretch.png", false), 0)}
+#[test] fn resvg_text_textPath_with_path_and_xlink_href() {assert_eq!(run_test("svg/resvg/text/textPath/with-path-and-xlink-href.svg", "ref/resvg/text/textPath/with-path-and-xlink-href.png", "diff/resvg/text/textPath/with-path-and-xlink-href.png", false), 0)}
 #[test] fn resvg_text_textPath_no_link() {assert_eq!(run_test("svg/resvg/text/textPath/no-link.svg", "ref/resvg/text/textPath/no-link.png", "diff/resvg/text/textPath/no-link.png", false), 0)}
 #[test] fn resvg_text_textPath_with_coordinates_on_text() {assert_eq!(run_test("svg/resvg/text/textPath/with-coordinates-on-text.svg", "ref/resvg/text/textPath/with-coordinates-on-text.png", "diff/resvg/text/textPath/with-coordinates-on-text.png", false), 0)}
 #[test] fn resvg_text_textPath_m_A_path() {assert_eq!(run_test("svg/resvg/text/textPath/m-A-path.svg", "ref/resvg/text/textPath/m-A-path.png", "diff/resvg/text/textPath/m-A-path.png", false), 0)}
 #[test] fn resvg_text_textPath_closed_path() {assert_eq!(run_test("svg/resvg/text/textPath/closed-path.svg", "ref/resvg/text/textPath/closed-path.png", "diff/resvg/text/textPath/closed-path.png", false), 0)}
 #[test] fn resvg_text_textPath_with_baseline_shift() {assert_eq!(run_test("svg/resvg/text/textPath/with-baseline-shift.svg", "ref/resvg/text/textPath/with-baseline-shift.png", "diff/resvg/text/textPath/with-baseline-shift.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_with_baseline_shift_and_rotate() {assert_eq!(run_test("svg/resvg/text/textPath/with-baseline-shift-and-rotate.svg", "ref/resvg/text/textPath/with-baseline-shift-and-rotate.png", "diff/resvg/text/textPath/with-baseline-shift-and-rotate.png", false), 0)}
+#[test] fn resvg_text_textPath_with_baseline_shift_and_rotate() {assert_eq!(run_test("svg/resvg/text/textPath/with-baseline-shift-and-rotate.svg", "ref/resvg/text/textPath/with-baseline-shift-and-rotate.png", "diff/resvg/text/textPath/with-baseline-shift-and-rotate.png", false), 0)}
 #[test] fn resvg_text_textPath_very_long_text() {assert_eq!(run_test("svg/resvg/text/textPath/very-long-text.svg", "ref/resvg/text/textPath/very-long-text.png", "diff/resvg/text/textPath/very-long-text.png", false), 0)}
 #[test] fn resvg_text_textPath_startOffset_5mm() {assert_eq!(run_test("svg/resvg/text/textPath/startOffset=5mm.svg", "ref/resvg/text/textPath/startOffset=5mm.png", "diff/resvg/text/textPath/startOffset=5mm.png", false), 0)}
 #[test] fn resvg_text_textPath_with_underline() {assert_eq!(run_test("svg/resvg/text/textPath/with-underline.svg", "ref/resvg/text/textPath/with-underline.png", "diff/resvg/text/textPath/with-underline.png", false), 0)}
 #[test] fn resvg_text_textPath_tspan_with_absolute_position() {assert_eq!(run_test("svg/resvg/text/textPath/tspan-with-absolute-position.svg", "ref/resvg/text/textPath/tspan-with-absolute-position.png", "diff/resvg/text/textPath/tspan-with-absolute-position.png", false), 0)}
 #[test] fn resvg_text_textPath_startOffset_10percent() {assert_eq!(run_test("svg/resvg/text/textPath/startOffset=10percent.svg", "ref/resvg/text/textPath/startOffset=10percent.png", "diff/resvg/text/textPath/startOffset=10percent.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_text_textPath_side_right() {assert_eq!(run_test("svg/resvg/text/textPath/side=right.svg", "ref/resvg/text/textPath/side=right.png", "diff/resvg/text/textPath/side=right.png", false), 0)}
+#[test] fn resvg_text_textPath_side_right() {assert_eq!(run_test("svg/resvg/text/textPath/side=right.svg", "ref/resvg/text/textPath/side=right.png", "diff/resvg/text/textPath/side=right.png", false), 0)}
 #[test] fn resvg_text_textPath_with_rotate() {assert_eq!(run_test("svg/resvg/text/textPath/with-rotate.svg", "ref/resvg/text/textPath/with-rotate.png", "diff/resvg/text/textPath/with-rotate.png", false), 0)}
 #[test] fn resvg_text_textPath_m_L_Z_path() {assert_eq!(run_test("svg/resvg/text/textPath/m-L-Z-path.svg", "ref/resvg/text/textPath/m-L-Z-path.png", "diff/resvg/text/textPath/m-L-Z-path.png", false), 0)}
 #[test] fn resvg_text_textPath_with_transform_on_a_referenced_path() {assert_eq!(run_test("svg/resvg/text/textPath/with-transform-on-a-referenced-path.svg", "ref/resvg/text/textPath/with-transform-on-a-referenced-path.png", "diff/resvg/text/textPath/with-transform-on-a-referenced-path.png", false), 0)}
@@ -1548,14 +1389,14 @@ use crate::run_test;
 #[test] fn resvg_text_textPath_startOffset_30() {assert_eq!(run_test("svg/resvg/text/textPath/startOffset=30.svg", "ref/resvg/text/textPath/startOffset=30.png", "diff/resvg/text/textPath/startOffset=30.png", false), 0)}
 #[test] fn resvg_text_textPath_tspan_with_relative_position() {assert_eq!(run_test("svg/resvg/text/textPath/tspan-with-relative-position.svg", "ref/resvg/text/textPath/tspan-with-relative-position.png", "diff/resvg/text/textPath/tspan-with-relative-position.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_rect_and_percent_values() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-rect-and-percent-values.svg", "ref/resvg/structure/svg/nested-svg-with-rect-and-percent-values.png", "diff/resvg/structure/svg/nested-svg-with-rect-and-percent-values.png", false), 0)}
-// unknown reason
+// invalid size
 #[ignore] #[test] fn resvg_structure_svg_zero_size() {assert_eq!(run_test("svg/resvg/structure/svg/zero-size.svg", "ref/resvg/structure/svg/zero-size.png", "diff/resvg/structure/svg/zero-size.png", false), 0)}
 #[test] fn resvg_structure_svg_preserveAspectRatio_xMinYMin() {assert_eq!(run_test("svg/resvg/structure/svg/preserveAspectRatio=xMinYMin.svg", "ref/resvg/structure/svg/preserveAspectRatio=xMinYMin.png", "diff/resvg/structure/svg/preserveAspectRatio=xMinYMin.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_2() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-rect-and-viewBox-2.svg", "ref/resvg/structure/svg/nested-svg-with-rect-and-viewBox-2.png", "diff/resvg/structure/svg/nested-svg-with-rect-and-viewBox-2.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_3() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-rect-and-viewBox-3.svg", "ref/resvg/structure/svg/nested-svg-with-rect-and-viewBox-3.png", "diff/resvg/structure/svg/nested-svg-with-rect-and-viewBox-3.png", false), 0)}
 #[test] fn resvg_structure_svg_no_children() {assert_eq!(run_test("svg/resvg/structure/svg/no-children.svg", "ref/resvg/structure/svg/no-children.png", "diff/resvg/structure/svg/no-children.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_1() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-rect-and-viewBox-1.svg", "ref/resvg/structure/svg/nested-svg-with-rect-and-viewBox-1.png", "diff/resvg/structure/svg/nested-svg-with-rect-and-viewBox-1.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_structure_svg_funcIRI_with_invalid_characters() {assert_eq!(run_test("svg/resvg/structure/svg/funcIRI-with-invalid-characters.svg", "ref/resvg/structure/svg/funcIRI-with-invalid-characters.png", "diff/resvg/structure/svg/funcIRI-with-invalid-characters.png", false), 0)}
 #[test] fn resvg_structure_svg_elements_via_ENTITY_reference_1() {assert_eq!(run_test("svg/resvg/structure/svg/elements-via-ENTITY-reference-1.svg", "ref/resvg/structure/svg/elements-via-ENTITY-reference-1.png", "diff/resvg/structure/svg/elements-via-ENTITY-reference-1.png", false), 0)}
 #[test] fn resvg_structure_svg_preserveAspectRatio_xMaxYMax_slice() {assert_eq!(run_test("svg/resvg/structure/svg/preserveAspectRatio=xMaxYMax-slice.svg", "ref/resvg/structure/svg/preserveAspectRatio=xMaxYMax-slice.png", "diff/resvg/structure/svg/preserveAspectRatio=xMaxYMax-slice.png", false), 0)}
@@ -1566,8 +1407,7 @@ use crate::run_test;
 #[test] fn resvg_structure_svg_preserveAspectRatio_xMaxYMax() {assert_eq!(run_test("svg/resvg/structure/svg/preserveAspectRatio=xMaxYMax.svg", "ref/resvg/structure/svg/preserveAspectRatio=xMaxYMax.png", "diff/resvg/structure/svg/preserveAspectRatio=xMaxYMax.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_relative_width_and_height() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-relative-width-and-height.svg", "ref/resvg/structure/svg/nested-svg-with-relative-width-and-height.png", "diff/resvg/structure/svg/nested-svg-with-relative-width-and-height.png", false), 0)}
 #[test] fn resvg_structure_svg_mixed_namespaces() {assert_eq!(run_test("svg/resvg/structure/svg/mixed-namespaces.svg", "ref/resvg/structure/svg/mixed-namespaces.png", "diff/resvg/structure/svg/mixed-namespaces.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_structure_svg_funcIRI_with_quotes() {assert_eq!(run_test("svg/resvg/structure/svg/funcIRI-with-quotes.svg", "ref/resvg/structure/svg/funcIRI-with-quotes.png", "diff/resvg/structure/svg/funcIRI-with-quotes.png", false), 0)}
+#[test] fn resvg_structure_svg_funcIRI_with_quotes() {assert_eq!(run_test("svg/resvg/structure/svg/funcIRI-with-quotes.svg", "ref/resvg/structure/svg/funcIRI-with-quotes.png", "diff/resvg/structure/svg/funcIRI-with-quotes.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_overflow_visible() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-overflow-visible.svg", "ref/resvg/structure/svg/nested-svg-with-overflow-visible.png", "diff/resvg/structure/svg/nested-svg-with-overflow-visible.png", false), 0)}
 // invalid size
 #[ignore] #[test] fn resvg_structure_svg_negative_size() {assert_eq!(run_test("svg/resvg/structure/svg/negative-size.svg", "ref/resvg/structure/svg/negative-size.png", "diff/resvg/structure/svg/negative-size.png", false), 0)}
@@ -1577,18 +1417,16 @@ use crate::run_test;
 #[ignore] #[test] fn resvg_structure_svg_no_size() {assert_eq!(run_test("svg/resvg/structure/svg/no-size.svg", "ref/resvg/structure/svg/no-size.png", "diff/resvg/structure/svg/no-size.png", false), 0)}
 #[test] fn resvg_structure_svg_preserveAspectRatio_xMidYMid_slice() {assert_eq!(run_test("svg/resvg/structure/svg/preserveAspectRatio=xMidYMid-slice.svg", "ref/resvg/structure/svg/preserveAspectRatio=xMidYMid-slice.png", "diff/resvg/structure/svg/preserveAspectRatio=xMidYMid-slice.png", false), 0)}
 #[test] fn resvg_structure_svg_preserveAspectRatio_xMinYMin_slice() {assert_eq!(run_test("svg/resvg/structure/svg/preserveAspectRatio=xMinYMin-slice.svg", "ref/resvg/structure/svg/preserveAspectRatio=xMinYMin-slice.png", "diff/resvg/structure/svg/preserveAspectRatio=xMinYMin-slice.png", false), 0)}
-// unknown reason
+// invalid encoding
 #[ignore] #[test] fn resvg_structure_svg_not_UTF_8_encoding() {assert_eq!(run_test("svg/resvg/structure/svg/not-UTF-8-encoding.svg", "ref/resvg/structure/svg/not-UTF-8-encoding.png", "diff/resvg/structure/svg/not-UTF-8-encoding.png", false), 0)}
 #[test] fn resvg_structure_svg_preserveAspectRatio_none() {assert_eq!(run_test("svg/resvg/structure/svg/preserveAspectRatio=none.svg", "ref/resvg/structure/svg/preserveAspectRatio=none.png", "diff/resvg/structure/svg/preserveAspectRatio=none.png", false), 0)}
 #[test] fn resvg_structure_svg_attribute_value_via_ENTITY_reference() {assert_eq!(run_test("svg/resvg/structure/svg/attribute-value-via-ENTITY-reference.svg", "ref/resvg/structure/svg/attribute-value-via-ENTITY-reference.png", "diff/resvg/structure/svg/attribute-value-via-ENTITY-reference.png", false), 0)}
 #[test] fn resvg_structure_svg_explicit_svg_namespace() {assert_eq!(run_test("svg/resvg/structure/svg/explicit-svg-namespace.svg", "ref/resvg/structure/svg/explicit-svg-namespace.png", "diff/resvg/structure/svg/explicit-svg-namespace.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_structure_svg_invalid_id_attribute_2() {assert_eq!(run_test("svg/resvg/structure/svg/invalid-id-attribute-2.svg", "ref/resvg/structure/svg/invalid-id-attribute-2.png", "diff/resvg/structure/svg/invalid-id-attribute-2.png", false), 0)}
-// unknown reason
+#[test] fn resvg_structure_svg_invalid_id_attribute_2() {assert_eq!(run_test("svg/resvg/structure/svg/invalid-id-attribute-2.svg", "ref/resvg/structure/svg/invalid-id-attribute-2.png", "diff/resvg/structure/svg/invalid-id-attribute-2.png", false), 0)}
+// need to investigate
 #[ignore] #[test] fn resvg_structure_svg_funcIRI_parsing() {assert_eq!(run_test("svg/resvg/structure/svg/funcIRI-parsing.svg", "ref/resvg/structure/svg/funcIRI-parsing.png", "diff/resvg/structure/svg/funcIRI-parsing.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_overflow_auto() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-overflow-auto.svg", "ref/resvg/structure/svg/nested-svg-with-overflow-auto.png", "diff/resvg/structure/svg/nested-svg-with-overflow-auto.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_structure_svg_invalid_id_attribute_1() {assert_eq!(run_test("svg/resvg/structure/svg/invalid-id-attribute-1.svg", "ref/resvg/structure/svg/invalid-id-attribute-1.png", "diff/resvg/structure/svg/invalid-id-attribute-1.png", false), 0)}
+#[test] fn resvg_structure_svg_invalid_id_attribute_1() {assert_eq!(run_test("svg/resvg/structure/svg/invalid-id-attribute-1.svg", "ref/resvg/structure/svg/invalid-id-attribute-1.png", "diff/resvg/structure/svg/invalid-id-attribute-1.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_viewBox() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-with-viewBox.svg", "ref/resvg/structure/svg/nested-svg-with-viewBox.png", "diff/resvg/structure/svg/nested-svg-with-viewBox.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg_one_with_rect_and_one_with_viewBox() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg-one-with-rect-and-one-with-viewBox.svg", "ref/resvg/structure/svg/nested-svg-one-with-rect-and-one-with-viewBox.png", "diff/resvg/structure/svg/nested-svg-one-with-rect-and-one-with-viewBox.png", false), 0)}
 #[test] fn resvg_structure_svg_nested_svg() {assert_eq!(run_test("svg/resvg/structure/svg/nested-svg.svg", "ref/resvg/structure/svg/nested-svg.png", "diff/resvg/structure/svg/nested-svg.png", false), 0)}
@@ -1613,11 +1451,9 @@ use crate::run_test;
 #[test] fn resvg_structure_style_iD_selector() {assert_eq!(run_test("svg/resvg/structure/style/iD-selector.svg", "ref/resvg/structure/style/iD-selector.png", "diff/resvg/structure/style/iD-selector.png", false), 0)}
 #[test] fn resvg_structure_style_non_presentational_attribute() {assert_eq!(run_test("svg/resvg/structure/style/non-presentational-attribute.svg", "ref/resvg/structure/style/non-presentational-attribute.png", "diff/resvg/structure/style/non-presentational-attribute.png", false), 0)}
 #[test] fn resvg_structure_style_invalid_type() {assert_eq!(run_test("svg/resvg/structure/style/invalid-type.svg", "ref/resvg/structure/style/invalid-type.png", "diff/resvg/structure/style/invalid-type.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_structure_style_important() {assert_eq!(run_test("svg/resvg/structure/style/important.svg", "ref/resvg/structure/style/important.png", "diff/resvg/structure/style/important.png", false), 0)}
+#[test] fn resvg_structure_style_important() {assert_eq!(run_test("svg/resvg/structure/style/important.svg", "ref/resvg/structure/style/important.png", "diff/resvg/structure/style/important.png", false), 0)}
 #[test] fn resvg_structure_style_transform() {assert_eq!(run_test("svg/resvg/structure/style/transform.svg", "ref/resvg/structure/style/transform.png", "diff/resvg/structure/style/transform.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_structure_style_external_CSS() {assert_eq!(run_test("svg/resvg/structure/style/external-CSS.svg", "ref/resvg/structure/style/external-CSS.png", "diff/resvg/structure/style/external-CSS.png", false), 0)}
+#[test] fn resvg_structure_style_external_CSS() {assert_eq!(run_test("svg/resvg/structure/style/external-CSS.svg", "ref/resvg/structure/style/external-CSS.png", "diff/resvg/structure/style/external-CSS.png", false), 0)}
 #[test] fn resvg_structure_style_type_selector() {assert_eq!(run_test("svg/resvg/structure/style/type-selector.svg", "ref/resvg/structure/style/type-selector.png", "diff/resvg/structure/style/type-selector.png", false), 0)}
 #[test] fn resvg_structure_style_class_selector() {assert_eq!(run_test("svg/resvg/structure/style/class-selector.svg", "ref/resvg/structure/style/class-selector.png", "diff/resvg/structure/style/class-selector.png", false), 0)}
 #[test] fn resvg_structure_style_resolve_order() {assert_eq!(run_test("svg/resvg/structure/style/resolve-order.svg", "ref/resvg/structure/style/resolve-order.png", "diff/resvg/structure/style/resolve-order.png", false), 0)}
@@ -1649,41 +1485,39 @@ use crate::run_test;
 #[test] fn resvg_structure_a_on_shape() {assert_eq!(run_test("svg/resvg/structure/a/on-shape.svg", "ref/resvg/structure/a/on-shape.png", "diff/resvg/structure/a/on-shape.png", false), 0)}
 #[test] fn resvg_structure_a_on_tspan() {assert_eq!(run_test("svg/resvg/structure/a/on-tspan.svg", "ref/resvg/structure/a/on-tspan.png", "diff/resvg/structure/a/on-tspan.png", false), 0)}
 #[test] fn resvg_structure_a_inside_tspan() {assert_eq!(run_test("svg/resvg/structure/a/inside-tspan.svg", "ref/resvg/structure/a/inside-tspan.png", "diff/resvg/structure/a/inside-tspan.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_jpeg() {assert_eq!(run_test("svg/resvg/structure/image/external-jpeg.svg", "ref/resvg/structure/image/external-jpeg.png", "diff/resvg/structure/image/external-jpeg.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_svg() {assert_eq!(run_test("svg/resvg/structure/image/external-svg.svg", "ref/resvg/structure/image/external-svg.png", "diff/resvg/structure/image/external-svg.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_structure_image_url_to_png() {assert_eq!(run_test("svg/resvg/structure/image/url-to-png.svg", "ref/resvg/structure/image/url-to-png.png", "diff/resvg/structure/image/url-to-png.png", false), 0)}
+#[test] fn resvg_structure_image_url_to_png() {assert_eq!(run_test("svg/resvg/structure/image/url-to-png.svg", "ref/resvg/structure/image/url-to-png.png", "diff/resvg/structure/image/url-to-png.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_svg() {assert_eq!(run_test("svg/resvg/structure/image/embedded-svg.svg", "ref/resvg/structure/image/embedded-svg.png", "diff/resvg/structure/image/embedded-svg.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_meet() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMaxYMax-meet.svg", "ref/resvg/structure/image/preserveAspectRatio=xMaxYMax-meet.png", "diff/resvg/structure/image/preserveAspectRatio=xMaxYMax-meet.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_meet() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMidYMid-meet.svg", "ref/resvg/structure/image/preserveAspectRatio=xMidYMid-meet.png", "diff/resvg/structure/image/preserveAspectRatio=xMidYMid-meet.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_zero_height() {assert_eq!(run_test("svg/resvg/structure/image/zero-height.svg", "ref/resvg/structure/image/zero-height.png", "diff/resvg/structure/image/zero-height.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_width_and_height_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/no-width-and-height-on-svg.svg", "ref/resvg/structure/image/no-width-and-height-on-svg.png", "diff/resvg/structure/image/no-width-and-height-on-svg.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_16bit_png() {assert_eq!(run_test("svg/resvg/structure/image/embedded-16bit-png.svg", "ref/resvg/structure/image/embedded-16bit-png.png", "diff/resvg/structure/image/embedded-16bit-png.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_meet_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMidYMid-meet-on-svg.svg", "ref/resvg/structure/image/preserveAspectRatio=xMidYMid-meet-on-svg.png", "diff/resvg/structure/image/preserveAspectRatio=xMidYMid-meet-on-svg.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_zero_width() {assert_eq!(run_test("svg/resvg/structure/image/zero-width.svg", "ref/resvg/structure/image/zero-width.png", "diff/resvg/structure/image/zero-width.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_svgz() {assert_eq!(run_test("svg/resvg/structure/image/embedded-svgz.svg", "ref/resvg/structure/image/embedded-svgz.png", "diff/resvg/structure/image/embedded-svgz.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_svg_with_transform() {assert_eq!(run_test("svg/resvg/structure/image/external-svg-with-transform.svg", "ref/resvg/structure/image/external-svg-with-transform.png", "diff/resvg/structure/image/external-svg-with-transform.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_slice_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMinYMin-slice-on-svg.svg", "ref/resvg/structure/image/preserveAspectRatio=xMinYMin-slice-on-svg.png", "diff/resvg/structure/image/preserveAspectRatio=xMinYMin-slice-on-svg.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_jpeg_as_image_jpeg() {assert_eq!(run_test("svg/resvg/structure/image/embedded-jpeg-as-image-jpeg.svg", "ref/resvg/structure/image/embedded-jpeg-as-image-jpeg.png", "diff/resvg/structure/image/embedded-jpeg-as-image-jpeg.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_raster_image_and_size_with_odd_numbers() {assert_eq!(run_test("svg/resvg/structure/image/raster-image-and-size-with-odd-numbers.svg", "ref/resvg/structure/image/raster-image-and-size-with-odd-numbers.png", "diff/resvg/structure/image/raster-image-and-size-with-odd-numbers.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_float_size() {assert_eq!(run_test("svg/resvg/structure/image/float-size.svg", "ref/resvg/structure/image/float-size.png", "diff/resvg/structure/image/float-size.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_slice() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMaxYMax-slice.svg", "ref/resvg/structure/image/preserveAspectRatio=xMaxYMax-slice.png", "diff/resvg/structure/image/preserveAspectRatio=xMaxYMax-slice.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_height() {assert_eq!(run_test("svg/resvg/structure/image/no-height.svg", "ref/resvg/structure/image/no-height.png", "diff/resvg/structure/image/no-height.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_width_and_height_set_to_auto() {assert_eq!(run_test("svg/resvg/structure/image/width-and-height-set-to-auto.svg", "ref/resvg/structure/image/width-and-height-set-to-auto.png", "diff/resvg/structure/image/width-and-height-set-to-auto.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_png() {assert_eq!(run_test("svg/resvg/structure/image/external-png.svg", "ref/resvg/structure/image/external-png.png", "diff/resvg/structure/image/external-png.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_structure_image_url_to_svg() {assert_eq!(run_test("svg/resvg/structure/image/url-to-svg.svg", "ref/resvg/structure/image/url-to-svg.png", "diff/resvg/structure/image/url-to-svg.png", false), 0)}
+#[test] fn resvg_structure_image_url_to_svg() {assert_eq!(run_test("svg/resvg/structure/image/url-to-svg.svg", "ref/resvg/structure/image/url-to-svg.png", "diff/resvg/structure/image/url-to-svg.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_svg_with_text() {assert_eq!(run_test("svg/resvg/structure/image/embedded-svg-with-text.svg", "ref/resvg/structure/image/embedded-svg-with-text.png", "diff/resvg/structure/image/embedded-svg-with-text.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_slice_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMidYMid-slice-on-svg.svg", "ref/resvg/structure/image/preserveAspectRatio=xMidYMid-slice-on-svg.png", "diff/resvg/structure/image/preserveAspectRatio=xMidYMid-slice-on-svg.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_svg_without_mime() {assert_eq!(run_test("svg/resvg/structure/image/embedded-svg-without-mime.svg", "ref/resvg/structure/image/embedded-svg-without-mime.png", "diff/resvg/structure/image/embedded-svg-without-mime.png", false), 0)}
@@ -1691,33 +1525,33 @@ use crate::run_test;
 #[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_meet_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMaxYMax-meet-on-svg.svg", "ref/resvg/structure/image/preserveAspectRatio=xMaxYMax-meet-on-svg.png", "diff/resvg/structure/image/preserveAspectRatio=xMaxYMax-meet-on-svg.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_none_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=none-on-svg.svg", "ref/resvg/structure/image/preserveAspectRatio=none-on-svg.png", "diff/resvg/structure/image/preserveAspectRatio=none-on-svg.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_png() {assert_eq!(run_test("svg/resvg/structure/image/embedded-png.svg", "ref/resvg/structure/image/embedded-png.png", "diff/resvg/structure/image/embedded-png.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_recursive_2() {assert_eq!(run_test("svg/resvg/structure/image/recursive-2.svg", "ref/resvg/structure/image/recursive-2.png", "diff/resvg/structure/image/recursive-2.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_width() {assert_eq!(run_test("svg/resvg/structure/image/no-width.svg", "ref/resvg/structure/image/no-width.png", "diff/resvg/structure/image/no-width.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_jpeg_as_image_jpg() {assert_eq!(run_test("svg/resvg/structure/image/embedded-jpeg-as-image-jpg.svg", "ref/resvg/structure/image/embedded-jpeg-as-image-jpg.png", "diff/resvg/structure/image/embedded-jpeg-as-image-jpg.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_slice() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMidYMid-slice.svg", "ref/resvg/structure/image/preserveAspectRatio=xMidYMid-slice.png", "diff/resvg/structure/image/preserveAspectRatio=xMidYMid-slice.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_recursive_1() {assert_eq!(run_test("svg/resvg/structure/image/recursive-1.svg", "ref/resvg/structure/image/recursive-1.png", "diff/resvg/structure/image/recursive-1.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_slice() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMinYMin-slice.svg", "ref/resvg/structure/image/preserveAspectRatio=xMinYMin-slice.png", "diff/resvg/structure/image/preserveAspectRatio=xMinYMin-slice.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_none() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=none.svg", "ref/resvg/structure/image/preserveAspectRatio=none.png", "diff/resvg/structure/image/preserveAspectRatio=none.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg.svg", "ref/resvg/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg.png", "diff/resvg/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_svgz() {assert_eq!(run_test("svg/resvg/structure/image/external-svgz.svg", "ref/resvg/structure/image/external-svgz.png", "diff/resvg/structure/image/external-svgz.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_structure_image_image_with_float_size_scaling() {assert_eq!(run_test("svg/resvg/structure/image/image-with-float-size-scaling.svg", "ref/resvg/structure/image/image-with-float-size-scaling.png", "diff/resvg/structure/image/image-with-float-size-scaling.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_height_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/no-height-on-svg.svg", "ref/resvg/structure/image/no-height-on-svg.png", "diff/resvg/structure/image/no-height-on-svg.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_width_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/no-width-on-svg.svg", "ref/resvg/structure/image/no-width-on-svg.png", "diff/resvg/structure/image/no-width-on-svg.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_width_and_height() {assert_eq!(run_test("svg/resvg/structure/image/no-width-and-height.svg", "ref/resvg/structure/image/no-width-and-height.png", "diff/resvg/structure/image/no-width-and-height.png", false), 0)}
 #[test] fn resvg_structure_image_with_zero_width_and_height() {assert_eq!(run_test("svg/resvg/structure/image/with-zero-width-and-height.svg", "ref/resvg/structure/image/with-zero-width-and-height.png", "diff/resvg/structure/image/with-zero-width-and-height.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_gif() {assert_eq!(run_test("svg/resvg/structure/image/embedded-gif.svg", "ref/resvg/structure/image/embedded-gif.png", "diff/resvg/structure/image/embedded-gif.png", false), 0)}
 #[test] fn resvg_structure_image_embedded_jpeg_without_mime() {assert_eq!(run_test("svg/resvg/structure/image/embedded-jpeg-without-mime.svg", "ref/resvg/structure/image/embedded-jpeg-without-mime.png", "diff/resvg/structure/image/embedded-jpeg-without-mime.png", false), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_slice_on_svg() {assert_eq!(run_test("svg/resvg/structure/image/preserveAspectRatio=xMaxYMax-slice-on-svg.svg", "ref/resvg/structure/image/preserveAspectRatio=xMaxYMax-slice-on-svg.png", "diff/resvg/structure/image/preserveAspectRatio=xMaxYMax-slice-on-svg.png", false), 0)}
 #[test] fn resvg_structure_image_with_transform() {assert_eq!(run_test("svg/resvg/structure/image/with-transform.svg", "ref/resvg/structure/image/with-transform.png", "diff/resvg/structure/image/with-transform.png", false), 0)}
-// unknown reason
+// no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_gif() {assert_eq!(run_test("svg/resvg/structure/image/external-gif.svg", "ref/resvg/structure/image/external-gif.png", "diff/resvg/structure/image/external-gif.png", false), 0)}
 #[test] fn resvg_structure_use_xlink_to_an_invalid_element_1() {assert_eq!(run_test("svg/resvg/structure/use/xlink-to-an-invalid-element-1.svg", "ref/resvg/structure/use/xlink-to-an-invalid-element-1.png", "diff/resvg/structure/use/xlink-to-an-invalid-element-1.png", false), 0)}
 #[test] fn resvg_structure_use_xlink_to_a_child_of_a_non_SVG_element() {assert_eq!(run_test("svg/resvg/structure/use/xlink-to-a-child-of-a-non-SVG-element.svg", "ref/resvg/structure/use/xlink-to-a-child-of-a-non-SVG-element.png", "diff/resvg/structure/use/xlink-to-a-child-of-a-non-SVG-element.png", false), 0)}
@@ -1827,12 +1661,10 @@ use crate::run_test;
 #[test] fn resvg_structure_defs_multiple_defs() {assert_eq!(run_test("svg/resvg/structure/defs/multiple-defs.svg", "ref/resvg/structure/defs/multiple-defs.png", "diff/resvg/structure/defs/multiple-defs.png", false), 0)}
 #[test] fn resvg_structure_defs_nested_defs() {assert_eq!(run_test("svg/resvg/structure/defs/nested-defs.svg", "ref/resvg/structure/defs/nested-defs.png", "diff/resvg/structure/defs/nested-defs.png", false), 0)}
 #[test] fn resvg_masking_clip_rule_clip_rule_evenodd() {assert_eq!(run_test("svg/resvg/masking/clip-rule/clip-rule=evenodd.svg", "ref/resvg/masking/clip-rule/clip-rule=evenodd.png", "diff/resvg/masking/clip-rule/clip-rule=evenodd.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_masking_clip_simple_case() {assert_eq!(run_test("svg/resvg/masking/clip/simple-case.svg", "ref/resvg/masking/clip/simple-case.png", "diff/resvg/masking/clip/simple-case.png", false), 0)}
+#[test] fn resvg_masking_clip_simple_case() {assert_eq!(run_test("svg/resvg/masking/clip/simple-case.svg", "ref/resvg/masking/clip/simple-case.png", "diff/resvg/masking/clip/simple-case.png", false), 0)}
 #[test] fn resvg_masking_clipPath_with_marker_on_clip() {assert_eq!(run_test("svg/resvg/masking/clipPath/with-marker-on-clip.svg", "ref/resvg/masking/clipPath/with-marker-on-clip.png", "diff/resvg/masking/clipPath/with-marker-on-clip.png", false), 0)}
 #[test] fn resvg_masking_clipPath_mixed_clip_rule() {assert_eq!(run_test("svg/resvg/masking/clipPath/mixed-clip-rule.svg", "ref/resvg/masking/clipPath/mixed-clip-rule.png", "diff/resvg/masking/clipPath/mixed-clip-rule.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_masking_clipPath_circle_shorthand() {assert_eq!(run_test("svg/resvg/masking/clipPath/circle-shorthand.svg", "ref/resvg/masking/clipPath/circle-shorthand.png", "diff/resvg/masking/clipPath/circle-shorthand.png", false), 0)}
+#[test] fn resvg_masking_clipPath_circle_shorthand() {assert_eq!(run_test("svg/resvg/masking/clipPath/circle-shorthand.svg", "ref/resvg/masking/clipPath/circle-shorthand.png", "diff/resvg/masking/clipPath/circle-shorthand.png", false), 0)}
 #[test] fn resvg_masking_clipPath_clip_rule_evenodd() {assert_eq!(run_test("svg/resvg/masking/clipPath/clip-rule=evenodd.svg", "ref/resvg/masking/clipPath/clip-rule=evenodd.png", "diff/resvg/masking/clipPath/clip-rule=evenodd.png", false), 0)}
 #[test] fn resvg_masking_clipPath_switch_is_not_a_valid_child() {assert_eq!(run_test("svg/resvg/masking/clipPath/switch-is-not-a-valid-child.svg", "ref/resvg/masking/clipPath/switch-is-not-a-valid-child.png", "diff/resvg/masking/clipPath/switch-is-not-a-valid-child.png", false), 0)}
 #[test] fn resvg_masking_clipPath_g_is_not_a_valid_child() {assert_eq!(run_test("svg/resvg/masking/clipPath/g-is-not-a-valid-child.svg", "ref/resvg/masking/clipPath/g-is-not-a-valid-child.png", "diff/resvg/masking/clipPath/g-is-not-a-valid-child.png", false), 0)}
@@ -1847,15 +1679,13 @@ use crate::run_test;
 #[test] fn resvg_masking_clipPath_opacity_has_no_effect() {assert_eq!(run_test("svg/resvg/masking/clipPath/opacity-has-no-effect.svg", "ref/resvg/masking/clipPath/opacity-has-no-effect.png", "diff/resvg/masking/clipPath/opacity-has-no-effect.png", false), 0)}
 #[test] fn resvg_masking_clipPath_invisible_child_2() {assert_eq!(run_test("svg/resvg/masking/clipPath/invisible-child-2.svg", "ref/resvg/masking/clipPath/invisible-child-2.png", "diff/resvg/masking/clipPath/invisible-child-2.png", false), 0)}
 #[test] fn resvg_masking_clipPath_multiple_children() {assert_eq!(run_test("svg/resvg/masking/clipPath/multiple-children.svg", "ref/resvg/masking/clipPath/multiple-children.png", "diff/resvg/masking/clipPath/multiple-children.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_masking_clipPath_on_the_root_svg_without_size() {assert_eq!(run_test("svg/resvg/masking/clipPath/on-the-root-svg-without-size.svg", "ref/resvg/masking/clipPath/on-the-root-svg-without-size.png", "diff/resvg/masking/clipPath/on-the-root-svg-without-size.png", false), 0)}
+#[test] fn resvg_masking_clipPath_on_the_root_svg_without_size() {assert_eq!(run_test("svg/resvg/masking/clipPath/on-the-root-svg-without-size.svg", "ref/resvg/masking/clipPath/on-the-root-svg-without-size.png", "diff/resvg/masking/clipPath/on-the-root-svg-without-size.png", false), 0)}
 #[test] fn resvg_masking_clipPath_invisible_child_1() {assert_eq!(run_test("svg/resvg/masking/clipPath/invisible-child-1.svg", "ref/resvg/masking/clipPath/invisible-child-1.png", "diff/resvg/masking/clipPath/invisible-child-1.png", false), 0)}
 #[test] fn resvg_masking_clipPath_transform_on_clipPath() {assert_eq!(run_test("svg/resvg/masking/clipPath/transform-on-clipPath.svg", "ref/resvg/masking/clipPath/transform-on-clipPath.png", "diff/resvg/masking/clipPath/transform-on-clipPath.png", false), 0)}
 #[test] fn resvg_masking_clipPath_on_a_horizontal_line() {assert_eq!(run_test("svg/resvg/masking/clipPath/on-a-horizontal-line.svg", "ref/resvg/masking/clipPath/on-a-horizontal-line.png", "diff/resvg/masking/clipPath/on-a-horizontal-line.png", false), 0)}
 #[test] fn resvg_masking_clipPath_invalid_clip_path_on_self() {assert_eq!(run_test("svg/resvg/masking/clipPath/invalid-clip-path-on-self.svg", "ref/resvg/masking/clipPath/invalid-clip-path-on-self.png", "diff/resvg/masking/clipPath/invalid-clip-path-on-self.png", false), 0)}
 #[test] fn resvg_masking_clipPath_clip_path_on_child() {assert_eq!(run_test("svg/resvg/masking/clipPath/clip-path-on-child.svg", "ref/resvg/masking/clipPath/clip-path-on-child.png", "diff/resvg/masking/clipPath/clip-path-on-child.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_masking_clipPath_circle_shorthand_with_view_box() {assert_eq!(run_test("svg/resvg/masking/clipPath/circle-shorthand-with-view-box.svg", "ref/resvg/masking/clipPath/circle-shorthand-with-view-box.png", "diff/resvg/masking/clipPath/circle-shorthand-with-view-box.png", false), 0)}
+#[test] fn resvg_masking_clipPath_circle_shorthand_with_view_box() {assert_eq!(run_test("svg/resvg/masking/clipPath/circle-shorthand-with-view-box.svg", "ref/resvg/masking/clipPath/circle-shorthand-with-view-box.png", "diff/resvg/masking/clipPath/circle-shorthand-with-view-box.png", false), 0)}
 #[test] fn resvg_masking_clipPath_clipping_with_complex_text_and_clip_rule() {assert_eq!(run_test("svg/resvg/masking/clipPath/clipping-with-complex-text-and-clip-rule.svg", "ref/resvg/masking/clipPath/clipping-with-complex-text-and-clip-rule.png", "diff/resvg/masking/clipPath/clipping-with-complex-text-and-clip-rule.png", false), 0)}
 #[test] fn resvg_masking_clipPath_simple_case() {assert_eq!(run_test("svg/resvg/masking/clipPath/simple-case.svg", "ref/resvg/masking/clipPath/simple-case.png", "diff/resvg/masking/clipPath/simple-case.png", false), 0)}
 #[test] fn resvg_masking_clipPath_clipPathUnits_objectBoundingBox() {assert_eq!(run_test("svg/resvg/masking/clipPath/clipPathUnits=objectBoundingBox.svg", "ref/resvg/masking/clipPath/clipPathUnits=objectBoundingBox.png", "diff/resvg/masking/clipPath/clipPathUnits=objectBoundingBox.png", false), 0)}
@@ -1869,8 +1699,7 @@ use crate::run_test;
 #[test] fn resvg_masking_clipPath_clip_path_on_self() {assert_eq!(run_test("svg/resvg/masking/clipPath/clip-path-on-self.svg", "ref/resvg/masking/clipPath/clip-path-on-self.png", "diff/resvg/masking/clipPath/clip-path-on-self.png", false), 0)}
 #[test] fn resvg_masking_clipPath_overlapped_shapes_with_evenodd() {assert_eq!(run_test("svg/resvg/masking/clipPath/overlapped-shapes-with-evenodd.svg", "ref/resvg/masking/clipPath/overlapped-shapes-with-evenodd.png", "diff/resvg/masking/clipPath/overlapped-shapes-with-evenodd.png", false), 0)}
 #[test] fn resvg_masking_clipPath_clipping_with_complex_text_2() {assert_eq!(run_test("svg/resvg/masking/clipPath/clipping-with-complex-text-2.svg", "ref/resvg/masking/clipPath/clipping-with-complex-text-2.png", "diff/resvg/masking/clipPath/clipping-with-complex-text-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_masking_clipPath_circle_shorthand_with_stroke_box() {assert_eq!(run_test("svg/resvg/masking/clipPath/circle-shorthand-with-stroke-box.svg", "ref/resvg/masking/clipPath/circle-shorthand-with-stroke-box.png", "diff/resvg/masking/clipPath/circle-shorthand-with-stroke-box.png", false), 0)}
+#[test] fn resvg_masking_clipPath_circle_shorthand_with_stroke_box() {assert_eq!(run_test("svg/resvg/masking/clipPath/circle-shorthand-with-stroke-box.svg", "ref/resvg/masking/clipPath/circle-shorthand-with-stroke-box.png", "diff/resvg/masking/clipPath/circle-shorthand-with-stroke-box.png", false), 0)}
 #[test] fn resvg_masking_clipPath_invalid_clip_path_on_child() {assert_eq!(run_test("svg/resvg/masking/clipPath/invalid-clip-path-on-child.svg", "ref/resvg/masking/clipPath/invalid-clip-path-on-child.png", "diff/resvg/masking/clipPath/invalid-clip-path-on-child.png", false), 0)}
 #[test] fn resvg_masking_clipPath_symbol_via_use_is_not_a_valid_child() {assert_eq!(run_test("svg/resvg/masking/clipPath/symbol-via-use-is-not-a-valid-child.svg", "ref/resvg/masking/clipPath/symbol-via-use-is-not-a-valid-child.png", "diff/resvg/masking/clipPath/symbol-via-use-is-not-a-valid-child.png", false), 0)}
 #[test] fn resvg_masking_clipPath_clip_rule_from_parent_node() {assert_eq!(run_test("svg/resvg/masking/clipPath/clip-rule-from-parent-node.svg", "ref/resvg/masking/clipPath/clip-rule-from-parent-node.png", "diff/resvg/masking/clipPath/clip-rule-from-parent-node.png", false), 0)}
@@ -1887,7 +1716,7 @@ use crate::run_test;
 #[test] fn resvg_masking_clipPath_clip_path_on_self_2() {assert_eq!(run_test("svg/resvg/masking/clipPath/clip-path-on-self-2.svg", "ref/resvg/masking/clipPath/clip-path-on-self-2.png", "diff/resvg/masking/clipPath/clip-path-on-self-2.png", false), 0)}
 #[test] fn resvg_masking_mask_with_image() {assert_eq!(run_test("svg/resvg/masking/mask/with-image.svg", "ref/resvg/masking/mask/with-image.png", "diff/resvg/masking/mask/with-image.png", false), 0)}
 #[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_without_rect() {assert_eq!(run_test("svg/resvg/masking/mask/maskUnits=userSpaceOnUse-without-rect.svg", "ref/resvg/masking/mask/maskUnits=userSpaceOnUse-without-rect.png", "diff/resvg/masking/mask/maskUnits=userSpaceOnUse-without-rect.png", false), 0)}
-// unknown reason
+// need to investigate
 #[ignore] #[test] fn resvg_masking_mask_recursive_on_child() {assert_eq!(run_test("svg/resvg/masking/mask/recursive-on-child.svg", "ref/resvg/masking/mask/recursive-on-child.png", "diff/resvg/masking/mask/recursive-on-child.png", false), 0)}
 #[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_rect() {assert_eq!(run_test("svg/resvg/masking/mask/maskUnits=userSpaceOnUse-with-rect.svg", "ref/resvg/masking/mask/maskUnits=userSpaceOnUse-with-rect.png", "diff/resvg/masking/mask/maskUnits=userSpaceOnUse-with-rect.png", false), 0)}
 #[test] fn resvg_masking_mask_mask_on_child() {assert_eq!(run_test("svg/resvg/masking/mask/mask-on-child.svg", "ref/resvg/masking/mask/mask-on-child.png", "diff/resvg/masking/mask/mask-on-child.png", false), 0)}
@@ -1900,8 +1729,7 @@ use crate::run_test;
 #[test] fn resvg_masking_mask_on_group_with_transform() {assert_eq!(run_test("svg/resvg/masking/mask/on-group-with-transform.svg", "ref/resvg/masking/mask/on-group-with-transform.png", "diff/resvg/masking/mask/on-group-with-transform.png", false), 0)}
 #[test] fn resvg_masking_mask_mask_type_alpha() {assert_eq!(run_test("svg/resvg/masking/mask/mask-type=alpha.svg", "ref/resvg/masking/mask/mask-type=alpha.png", "diff/resvg/masking/mask/mask-type=alpha.png", false), 0)}
 #[test] fn resvg_masking_mask_with_opacity_2() {assert_eq!(run_test("svg/resvg/masking/mask/with-opacity-2.svg", "ref/resvg/masking/mask/with-opacity-2.png", "diff/resvg/masking/mask/with-opacity-2.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_masking_mask_color_interpolation_linearRGB() {assert_eq!(run_test("svg/resvg/masking/mask/color-interpolation=linearRGB.svg", "ref/resvg/masking/mask/color-interpolation=linearRGB.png", "diff/resvg/masking/mask/color-interpolation=linearRGB.png", false), 0)}
+#[test] fn resvg_masking_mask_color_interpolation_linearRGB() {assert_eq!(run_test("svg/resvg/masking/mask/color-interpolation=linearRGB.svg", "ref/resvg/masking/mask/color-interpolation=linearRGB.png", "diff/resvg/masking/mask/color-interpolation=linearRGB.png", false), 0)}
 #[test] fn resvg_masking_mask_with_opacity_3() {assert_eq!(run_test("svg/resvg/masking/mask/with-opacity-3.svg", "ref/resvg/masking/mask/with-opacity-3.png", "diff/resvg/masking/mask/with-opacity-3.png", false), 0)}
 #[test] fn resvg_masking_mask_invisible_child_1() {assert_eq!(run_test("svg/resvg/masking/mask/invisible-child-1.svg", "ref/resvg/masking/mask/invisible-child-1.png", "diff/resvg/masking/mask/invisible-child-1.png", false), 0)}
 #[test] fn resvg_masking_mask_transform_on_shape() {assert_eq!(run_test("svg/resvg/masking/mask/transform-on-shape.svg", "ref/resvg/masking/mask/transform-on-shape.png", "diff/resvg/masking/mask/transform-on-shape.png", false), 0)}
@@ -1918,8 +1746,7 @@ use crate::run_test;
 #[test] fn resvg_masking_mask_none() {assert_eq!(run_test("svg/resvg/masking/mask/none.svg", "ref/resvg/masking/mask/none.png", "diff/resvg/masking/mask/none.png", false), 0)}
 #[test] fn resvg_masking_mask_on_a_small_object() {assert_eq!(run_test("svg/resvg/masking/mask/on-a-small-object.svg", "ref/resvg/masking/mask/on-a-small-object.png", "diff/resvg/masking/mask/on-a-small-object.png", false), 0)}
 #[test] fn resvg_masking_mask_transform_has_no_effect() {assert_eq!(run_test("svg/resvg/masking/mask/transform-has-no-effect.svg", "ref/resvg/masking/mask/transform-has-no-effect.png", "diff/resvg/masking/mask/transform-has-no-effect.png", false), 0)}
-// unknown reason
-#[ignore] #[test] fn resvg_masking_mask_mask_type_in_style() {assert_eq!(run_test("svg/resvg/masking/mask/mask-type-in-style.svg", "ref/resvg/masking/mask/mask-type-in-style.png", "diff/resvg/masking/mask/mask-type-in-style.png", false), 0)}
+#[test] fn resvg_masking_mask_mask_type_in_style() {assert_eq!(run_test("svg/resvg/masking/mask/mask-type-in-style.svg", "ref/resvg/masking/mask/mask-type-in-style.png", "diff/resvg/masking/mask/mask-type-in-style.png", false), 0)}
 #[test] fn resvg_masking_mask_mask_type_luminance() {assert_eq!(run_test("svg/resvg/masking/mask/mask-type=luminance.svg", "ref/resvg/masking/mask/mask-type=luminance.png", "diff/resvg/masking/mask/mask-type=luminance.png", false), 0)}
 #[test] fn resvg_masking_mask_with_grayscale_image() {assert_eq!(run_test("svg/resvg/masking/mask/with-grayscale-image.svg", "ref/resvg/masking/mask/with-grayscale-image.png", "diff/resvg/masking/mask/with-grayscale-image.png", false), 0)}
 #[test] fn resvg_masking_mask_invalid_child() {assert_eq!(run_test("svg/resvg/masking/mask/invalid-child.svg", "ref/resvg/masking/mask/invalid-child.png", "diff/resvg/masking/mask/invalid-child.png", false), 0)}
