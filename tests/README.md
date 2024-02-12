@@ -30,6 +30,13 @@ that are part of the test suites. SVG files which don't have a corresponding ref
 will be skipped. To regenerate this file, you can simply run `./scripts/gen-tests.py` and
 it should work out of the box. 
 
+Note: The aim of the test cases it not necessarily to check whether the SVGs are rendered
+correctly, but rather whether our SVGs output match the one from resvg. In most cases, if
+it matches resvg it is also correct, because resvg is pretty good at rendering SVGs in general.
+However, a couple of features are not implemented (e.g. `enableBackground` in filters), thus
+they are not rendered correctly, but we consider the test case as passing anyway, because
+it matches the output of resvg.
+
 To run the tests, you can then just invoke `cargo test --release` (make sure to run it
 in release mode, otherwise it will be very slow).
 
