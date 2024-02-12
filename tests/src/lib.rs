@@ -28,6 +28,16 @@ static FONTDB: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| {
     std::sync::Mutex::new(fontdb)
 });
 
+static PDFIUM: Lazy<std::sync::Mutex<Pdfium>> = Lazy::new(|| {
+    let pdfium = Pdfium::new(
+        Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
+            "./pdfium/",
+        ))
+        .unwrap(),
+    );
+    std::sync::Mutex::new(pdfium)
+});
+
 lazy_static! {
     pub static ref SVG_FILES: Vec<PathBuf> = {
         WalkDir::new(SVG_DIR)
@@ -52,14 +62,6 @@ lazy_static! {
             })
             .map(|e| e.into_path())
             .collect()
-    };
-    pub static ref PDFIUM: Pdfium = {
-        Pdfium::new(
-            Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
-                "./pdfium/",
-            ))
-            .unwrap(),
-        )
     };
 }
 
@@ -113,13 +115,14 @@ impl TestFile {
 }
 
 pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
-    let document = PDFIUM.load_pdf_from_byte_slice(pdf, None);
+    let pdfium = PDFIUM.lock().unwrap();
+    let document = pdfium.load_pdf_from_byte_slice(pdf, None);
 
     let render_config = PdfRenderConfig::new()
         .clear_before_rendering(true)
         .set_clear_color(PdfColor::new(255, 255, 255, 0));
 
-    document
+    let result = document
         .unwrap()
         .pages()
         .first()
@@ -127,7 +130,8 @@ pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
         .render_with_config(&render_config)
         .unwrap()
         .as_image()
-        .into_rgba8()
+        .into_rgba8();
+    result
 }
 
 pub fn read_svg(svg_string: &str) -> Tree {
