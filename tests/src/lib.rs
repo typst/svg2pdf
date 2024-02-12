@@ -191,7 +191,7 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
         || pixel1.0[3] != pixel2.0[3]
 }
 
-pub fn render(svg_path: &str, ref_path: &str) -> i32 {
+pub fn render(svg_path: &str, ref_path: &str, diff_path: &str) -> i32 {
     let runner = Runner::default();
 
     let expected_image = Reader::open(ref_path).unwrap().decode().unwrap().into_rgba8();
@@ -202,6 +202,8 @@ pub fn render(svg_path: &str, ref_path: &str) -> i32 {
     let width = max(expected_image.width(), actual_image.width());
     let height = max(expected_image.height(), actual_image.height());
 
+    let mut diff_image = RgbaImage::new(width * 3, height);
+
     let mut pixel_diff = 0;
 
     for x in 0..width {
@@ -211,13 +213,36 @@ pub fn render(svg_path: &str, ref_path: &str) -> i32 {
 
             match (actual_pixel, expected_pixel) {
                 (Some(actual), Some(expected)) => {
+                    diff_image.put_pixel(x, y, *expected);
+                    diff_image.put_pixel(x + 2 * width, y, *actual);
                     if is_pix_diff(expected, actual) {
                         pixel_diff += 1;
+                        diff_image.put_pixel(x + width, y, Rgba([255, 0, 0, 255]));
+                    } else {
+                        diff_image.put_pixel(x + width, y, Rgba([0, 0, 0, 255]))
                     }
                 }
-                _ => pixel_diff += 1,
+                (Some(actual), None) => {
+                    pixel_diff += 1;
+                    diff_image.put_pixel(x + 2 * width, y, *actual);
+                    diff_image.put_pixel(x + width, y, Rgba([255, 0, 0, 255]));
+                }
+                (None, Some(expected)) => {
+                    pixel_diff += 1;
+                    diff_image.put_pixel(x, y, *expected);
+                    diff_image.put_pixel(x + width, y, Rgba([255, 0, 0, 255]));
+                }
+                _ => unreachable!(),
             }
         }
+    }
+
+    if pixel_diff > 0 {
+        fs::create_dir_all(Path::new(diff_path).parent().unwrap()).unwrap();
+
+        diff_image
+            .save_with_format(diff_path, image::ImageFormat::Png)
+            .unwrap();
     }
 
     pixel_diff

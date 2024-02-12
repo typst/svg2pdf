@@ -29,8 +29,8 @@ pub fn render(
         let gs_ref = ctx.alloc_ref();
         let mut gs = chunk.ext_graphics(gs_ref);
         gs.non_stroking_alpha(group.opacity.get())
-            .stroking_alpha(group.opacity.get())
-            .blend_mode(group.blend_mode.to_pdf_blend_mode());
+            .stroking_alpha(group.opacity.get());
+        // .blend_mode(group.blend_mode.to_pdf_blend_mode());
 
         gs.finish();
         content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
