@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 from pathlib import Path
 
 from common import SVG_DIR, ROOT, TestFile
@@ -14,7 +15,7 @@ def main():
 
             if test_file.has_ref():
                 test_files.append(
-                    f'  ("{test_file.svg_path.relative_to(ROOT)}", "{test_file.ref_path.relative_to(ROOT)}"),'
+                    f'  ("{test_file.svg_path()}", "{test_file.ref_path()}"),'
                 )
 
     typst_string = f"""

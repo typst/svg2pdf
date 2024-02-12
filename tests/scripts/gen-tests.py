@@ -15,23 +15,21 @@ def main():
             test_file = TestFile(p)
 
             function_name = (
-                str(test_file.svg_path.relative_to(SVG_DIR).with_suffix(""))
+                str(test_file.test_name())
                 .replace("/", "_")
                 .replace("-", "_")
                 .replace("=", "_")
                 .replace(".", "_")
                 .replace("#", "")
             )
-            svg_path = test_file.svg_path
-            ref_path = test_file.ref_path
-            diff_path = test_file.diff_path
 
             if not test_file.has_ref():
                 test_string += "#[ignore] "
 
             test_string += "#[test] "
 
-            test_string += f'fn {function_name}() {{assert_eq!(render("{svg_path.relative_to(ROOT)}", "{ref_path.relative_to(ROOT)}", "{diff_path.relative_to(ROOT)}"), 0)}}\n'
+            test_string += f'fn {function_name}() {{assert_eq!(render("{test_file.svg_path()}", "{test_file
+            .ref_path()}", "{test_file.diff_path()}"), 0)}}\n'
 
     with open(Path(OUT_PATH), "w") as file:
         file.write(test_string)
