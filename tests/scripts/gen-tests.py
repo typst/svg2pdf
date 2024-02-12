@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 
 from common import SVG_DIR, ROOT, TestFile
 from pathlib import Path
@@ -7,6 +8,14 @@ OUT_PATH = ROOT / "src" / "render.rs"
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        prog="gen-tests", description="Generate the test files for svg2pdf"
+    )
+
+    parser.add_argument("-r", "--replace", action="store_true")
+
+    args = parser.parse_args()
+
     test_string = "#![allow(non_snake_case)]\n\n"
     test_string += "#[allow(unused_imports)]\nuse crate::render;\n\n"
 
@@ -28,8 +37,9 @@ def main():
 
             test_string += "#[test] "
 
-            test_string += f'fn {function_name}() {{assert_eq!(render("{test_file.svg_path()}", "{test_file
-            .ref_path()}", "{test_file.diff_path()}"), 0)}}\n'
+            replace = "true" if args.replace else "false"
+
+            test_string += f'fn {function_name}() {{assert_eq!(render("{test_file.svg_path()}", "{test_file.ref_path()}", "{test_file.diff_path()}", {replace}), 0)}}\n'
 
     with open(Path(OUT_PATH), "w") as file:
         file.write(test_string)

@@ -179,7 +179,7 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
         || pixel1.0[3] != pixel2.0[3]
 }
 
-pub fn render(svg_path: &str, ref_path: &str, diff_path: &str) -> i32 {
+pub fn render(svg_path: &str, ref_path: &str, diff_path: &str, replace: bool) -> i32 {
     let expected_image = Reader::open(ref_path).unwrap().decode().unwrap().into_rgba8();
 
     let (_, actual_image) = convert_svg(&fs::read_to_string(svg_path).unwrap());
@@ -228,6 +228,10 @@ pub fn render(svg_path: &str, ref_path: &str, diff_path: &str) -> i32 {
         diff_image
             .save_with_format(diff_path, image::ImageFormat::Png)
             .unwrap();
+
+        if replace {
+            save_image(&actual_image, Path::new(ref_path));
+        }
     }
 
     pixel_diff
