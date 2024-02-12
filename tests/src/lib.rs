@@ -106,9 +106,8 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
 
 /// Runs a single test instance.
 pub fn run_test(svg_path: &str, ref_path: &str, diff_path: &str, replace: bool) -> i32 {
-    let expected_image = Reader::open(ref_path).unwrap().decode().unwrap().into_rgba8();
-
     let (_, actual_image) = convert_svg(&fs::read_to_string(svg_path).unwrap());
+    let expected_image = Reader::open(ref_path).unwrap().decode().unwrap().into_rgba8();
 
     let width = max(expected_image.width(), actual_image.width());
     let height = max(expected_image.height(), actual_image.height());
