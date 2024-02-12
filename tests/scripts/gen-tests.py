@@ -79,46 +79,8 @@ IGNORE_TESTS = {
     "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=reflect.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg": NO_REPEAT,
-
-    # The following test cases don't work yet because we are not including
-    # all necessary fonts.
-    "svg/resvg/text/alignment-baseline/hanging-on-vertical.svg": NO_FONT,
-    "svg/resvg/text/direction/rtl.svg": NO_FONT,
-    "svg/resvg/text/direction/rtl-with-vertical-writing-mode.svg": NO_FONT,
-    "svg/resvg/text/dominant-baseline/hanging.svg": NO_FONT,
-    "svg/resvg/text/dominant-baseline/use-script.svg": NO_FONT,
-    "svg/resvg/text/font/simple-case.svg": NO_FONT,
-    "svg/resvg/text/font-family/bold-sans-serif.svg": NO_FONT,
-    "svg/resvg/text/font-family/cursive.svg": NO_FONT,
-    "svg/resvg/text/font-family/fallback-1.svg": NO_FONT,
-    "svg/resvg/text/font-family/fantasy.svg": NO_FONT,
-    "svg/resvg/text/font-family/monospace.svg": NO_FONT,
-    "svg/resvg/text/font-family/sans-serif.svg": NO_FONT,
-    "svg/resvg/text/font-family/serif.svg": NO_FONT,
-    "svg/resvg/text/font-family/source-sans-pro.svg": NO_FONT,
-    "svg/resvg/text/font-kerning/arabic-script.svg": NO_FONT,
-    "svg/resvg/text/letter-spacing/non-ASCII-character.svg": NO_FONT,
-    "svg/resvg/text/letter-spacing/on-Arabic.svg": NO_FONT,
-    "svg/resvg/text/text/bidi-reordering.svg": NO_FONT,
-    "svg/resvg/text/text/fill-rule=evenodd.svg": NO_FONT,
-    "svg/resvg/text/text/rotate-on-Arabic.svg": NO_FONT,
-    "svg/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.svg": NO_FONT,
-    "svg/resvg/text/text/xml-lang=ja.svg": NO_FONT,
-    "svg/resvg/text/text-anchor/on-tspan-with-arabic.svg": NO_FONT,
-    "svg/resvg/text/textLength/arabic.svg": NO_FONT,
-    "svg/resvg/text/textLength/arabic-with-lengthAdjust.svg": NO_FONT,
-    "svg/resvg/text/textPath/complex.svg": NO_FONT,
-    "svg/resvg/text/textPath/writing-mode=tb.svg": NO_FONT,
-    "svg/resvg/text/tspan/bidi-reordering.svg": NO_FONT,
-    "svg/resvg/text/unicode-bidi/bidi-override.svg": NO_FONT,
-    "svg/resvg/text/writing-mode/arabic-with-rl.svg": NO_FONT,
-    "svg/resvg/text/writing-mode/japanese-with-tb.svg": NO_FONT,
-    "svg/resvg/text/writing-mode/mixed-languages-with-tb.svg": NO_FONT,
-    "svg/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.svg": NO_FONT,
-    "svg/resvg/text/writing-mode/tb-and-punctuation.svg": NO_FONT,
-    "svg/resvg/text/writing-mode/tb-with-rotate.svg": NO_FONT,
-    "svg/resvg/text/writing-mode/tb-with-rotate-and-underline.svg": NO_FONT,
 }
+
 
 def main():
     parser = argparse.ArgumentParser(

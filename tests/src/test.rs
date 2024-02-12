@@ -1009,8 +1009,7 @@ use crate::run_test;
 #[test] fn resvg_text_alignment_baseline_after_edge() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/after-edge.svg", "ref/resvg/text/alignment-baseline/after-edge.png", "diff/resvg/text/alignment-baseline/after-edge.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_hanging_and_baseline_shift_eq_20_on_tspan() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan.svg", "ref/resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan.png", "diff/resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_hanging() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging.svg", "ref/resvg/text/alignment-baseline/hanging.png", "diff/resvg/text/alignment-baseline/hanging.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_alignment_baseline_hanging_on_vertical() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging-on-vertical.svg", "ref/resvg/text/alignment-baseline/hanging-on-vertical.png", "diff/resvg/text/alignment-baseline/hanging-on-vertical.png", false), 0)}
+#[test] fn resvg_text_alignment_baseline_hanging_on_vertical() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/hanging-on-vertical.svg", "ref/resvg/text/alignment-baseline/hanging-on-vertical.png", "diff/resvg/text/alignment-baseline/hanging-on-vertical.png", false), 0)}
 #[test] fn resvg_text_alignment_baseline_central() {assert_eq!(run_test("svg/resvg/text/alignment-baseline/central.svg", "ref/resvg/text/alignment-baseline/central.png", "diff/resvg/text/alignment-baseline/central.png", false), 0)}
 #[test] fn resvg_text_tspan_style_override() {assert_eq!(run_test("svg/resvg/text/tspan/style-override.svg", "ref/resvg/text/tspan/style-override.png", "diff/resvg/text/tspan/style-override.png", false), 0)}
 #[test] fn resvg_text_tspan_multiple_coordinates() {assert_eq!(run_test("svg/resvg/text/tspan/multiple-coordinates.svg", "ref/resvg/text/tspan/multiple-coordinates.png", "diff/resvg/text/tspan/multiple-coordinates.png", false), 0)}
@@ -1018,8 +1017,7 @@ use crate::run_test;
 #[test] fn resvg_text_tspan_transform() {assert_eq!(run_test("svg/resvg/text/tspan/transform.svg", "ref/resvg/text/tspan/transform.png", "diff/resvg/text/tspan/transform.png", false), 0)}
 #[test] fn resvg_text_tspan_pseudo_multi_line() {assert_eq!(run_test("svg/resvg/text/tspan/pseudo-multi-line.svg", "ref/resvg/text/tspan/pseudo-multi-line.png", "diff/resvg/text/tspan/pseudo-multi-line.png", false), 0)}
 #[test] fn resvg_text_tspan_nested_rotate() {assert_eq!(run_test("svg/resvg/text/tspan/nested-rotate.svg", "ref/resvg/text/tspan/nested-rotate.png", "diff/resvg/text/tspan/nested-rotate.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_tspan_bidi_reordering() {assert_eq!(run_test("svg/resvg/text/tspan/bidi-reordering.svg", "ref/resvg/text/tspan/bidi-reordering.png", "diff/resvg/text/tspan/bidi-reordering.png", false), 0)}
+#[test] fn resvg_text_tspan_bidi_reordering() {assert_eq!(run_test("svg/resvg/text/tspan/bidi-reordering.svg", "ref/resvg/text/tspan/bidi-reordering.png", "diff/resvg/text/tspan/bidi-reordering.png", false), 0)}
 #[test] fn resvg_text_tspan_nested() {assert_eq!(run_test("svg/resvg/text/tspan/nested.svg", "ref/resvg/text/tspan/nested.png", "diff/resvg/text/tspan/nested.png", false), 0)}
 #[test] fn resvg_text_tspan_without_attributes() {assert_eq!(run_test("svg/resvg/text/tspan/without-attributes.svg", "ref/resvg/text/tspan/without-attributes.png", "diff/resvg/text/tspan/without-attributes.png", false), 0)}
 #[test] fn resvg_text_tspan_text_shaping_across_multiple_tspan_2() {assert_eq!(run_test("svg/resvg/text/tspan/text-shaping-across-multiple-tspan-2.svg", "ref/resvg/text/tspan/text-shaping-across-multiple-tspan-2.png", "diff/resvg/text/tspan/text-shaping-across-multiple-tspan-2.png", false), 0)}
@@ -1048,43 +1046,34 @@ use crate::run_test;
 #[test] fn resvg_text_writing_mode_tb_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-rl.svg", "ref/resvg/text/writing-mode/tb-rl.png", "diff/resvg/text/writing-mode/tb-rl.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb_with_dx_on_second_tspan() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-dx-on-second-tspan.svg", "ref/resvg/text/writing-mode/tb-with-dx-on-second-tspan.png", "diff/resvg/text/writing-mode/tb-with-dx-on-second-tspan.png", false), 0)}
 #[test] fn resvg_text_writing_mode_lr_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/lr-tb.svg", "ref/resvg/text/writing-mode/lr-tb.png", "diff/resvg/text/writing-mode/lr-tb.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_writing_mode_mixed_languages_with_tb_and_underline() {assert_eq!(run_test("svg/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png", "diff/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png", false), 0)}
+#[test] fn resvg_text_writing_mode_mixed_languages_with_tb_and_underline() {assert_eq!(run_test("svg/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png", "diff/resvg/text/writing-mode/mixed-languages-with-tb-and-underline.png", false), 0)}
 #[test] fn resvg_text_writing_mode_rl_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/rl-tb.svg", "ref/resvg/text/writing-mode/rl-tb.png", "diff/resvg/text/writing-mode/rl-tb.png", false), 0)}
 #[test] fn resvg_text_writing_mode_lr() {assert_eq!(run_test("svg/resvg/text/writing-mode/lr.svg", "ref/resvg/text/writing-mode/lr.png", "diff/resvg/text/writing-mode/lr.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_writing_mode_japanese_with_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/japanese-with-tb.svg", "ref/resvg/text/writing-mode/japanese-with-tb.png", "diff/resvg/text/writing-mode/japanese-with-tb.png", false), 0)}
+#[test] fn resvg_text_writing_mode_japanese_with_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/japanese-with-tb.svg", "ref/resvg/text/writing-mode/japanese-with-tb.png", "diff/resvg/text/writing-mode/japanese-with-tb.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb.svg", "ref/resvg/text/writing-mode/tb.png", "diff/resvg/text/writing-mode/tb.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_writing_mode_tb_with_rotate_and_underline() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-rotate-and-underline.svg", "ref/resvg/text/writing-mode/tb-with-rotate-and-underline.png", "diff/resvg/text/writing-mode/tb-with-rotate-and-underline.png", false), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_rotate_and_underline() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-rotate-and-underline.svg", "ref/resvg/text/writing-mode/tb-with-rotate-and-underline.png", "diff/resvg/text/writing-mode/tb-with-rotate-and-underline.png", false), 0)}
 #[test] fn resvg_text_writing_mode_invalid_value() {assert_eq!(run_test("svg/resvg/text/writing-mode/invalid-value.svg", "ref/resvg/text/writing-mode/invalid-value.png", "diff/resvg/text/writing-mode/invalid-value.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb_with_alignment() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-alignment.svg", "ref/resvg/text/writing-mode/tb-with-alignment.png", "diff/resvg/text/writing-mode/tb-with-alignment.png", false), 0)}
 #[test] fn resvg_text_writing_mode_vertical_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/vertical-rl.svg", "ref/resvg/text/writing-mode/vertical-rl.png", "diff/resvg/text/writing-mode/vertical-rl.png", false), 0)}
 #[test] fn resvg_text_writing_mode_tb_with_dx_on_tspan() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-dx-on-tspan.svg", "ref/resvg/text/writing-mode/tb-with-dx-on-tspan.png", "diff/resvg/text/writing-mode/tb-with-dx-on-tspan.png", false), 0)}
 #[test] fn resvg_text_writing_mode_inheritance() {assert_eq!(run_test("svg/resvg/text/writing-mode/inheritance.svg", "ref/resvg/text/writing-mode/inheritance.png", "diff/resvg/text/writing-mode/inheritance.png", false), 0)}
 #[test] fn resvg_text_writing_mode_on_tspan() {assert_eq!(run_test("svg/resvg/text/writing-mode/on-tspan.svg", "ref/resvg/text/writing-mode/on-tspan.png", "diff/resvg/text/writing-mode/on-tspan.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_writing_mode_mixed_languages_with_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/mixed-languages-with-tb.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb.png", "diff/resvg/text/writing-mode/mixed-languages-with-tb.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_writing_mode_tb_and_punctuation() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-and-punctuation.svg", "ref/resvg/text/writing-mode/tb-and-punctuation.png", "diff/resvg/text/writing-mode/tb-and-punctuation.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_writing_mode_tb_with_rotate() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-rotate.svg", "ref/resvg/text/writing-mode/tb-with-rotate.png", "diff/resvg/text/writing-mode/tb-with-rotate.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_writing_mode_arabic_with_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/arabic-with-rl.svg", "ref/resvg/text/writing-mode/arabic-with-rl.png", "diff/resvg/text/writing-mode/arabic-with-rl.png", false), 0)}
+#[test] fn resvg_text_writing_mode_mixed_languages_with_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/mixed-languages-with-tb.svg", "ref/resvg/text/writing-mode/mixed-languages-with-tb.png", "diff/resvg/text/writing-mode/mixed-languages-with-tb.png", false), 0)}
+#[test] fn resvg_text_writing_mode_tb_and_punctuation() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-and-punctuation.svg", "ref/resvg/text/writing-mode/tb-and-punctuation.png", "diff/resvg/text/writing-mode/tb-and-punctuation.png", false), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_rotate() {assert_eq!(run_test("svg/resvg/text/writing-mode/tb-with-rotate.svg", "ref/resvg/text/writing-mode/tb-with-rotate.png", "diff/resvg/text/writing-mode/tb-with-rotate.png", false), 0)}
+#[test] fn resvg_text_writing_mode_arabic_with_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/arabic-with-rl.svg", "ref/resvg/text/writing-mode/arabic-with-rl.png", "diff/resvg/text/writing-mode/arabic-with-rl.png", false), 0)}
 #[test] fn resvg_text_writing_mode_horizontal_tb() {assert_eq!(run_test("svg/resvg/text/writing-mode/horizontal-tb.svg", "ref/resvg/text/writing-mode/horizontal-tb.png", "diff/resvg/text/writing-mode/horizontal-tb.png", false), 0)}
 #[test] fn resvg_text_writing_mode_vertical_lr() {assert_eq!(run_test("svg/resvg/text/writing-mode/vertical-lr.svg", "ref/resvg/text/writing-mode/vertical-lr.png", "diff/resvg/text/writing-mode/vertical-lr.png", false), 0)}
 #[test] fn resvg_text_writing_mode_rl() {assert_eq!(run_test("svg/resvg/text/writing-mode/rl.svg", "ref/resvg/text/writing-mode/rl.png", "diff/resvg/text/writing-mode/rl.png", false), 0)}
 #[test] fn resvg_text_glyph_orientation_horizontal_simple_case() {assert_eq!(run_test("svg/resvg/text/glyph-orientation-horizontal/simple-case.svg", "ref/resvg/text/glyph-orientation-horizontal/simple-case.png", "diff/resvg/text/glyph-orientation-horizontal/simple-case.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_letter_spacing_non_ASCII_character() {assert_eq!(run_test("svg/resvg/text/letter-spacing/non-ASCII-character.svg", "ref/resvg/text/letter-spacing/non-ASCII-character.png", "diff/resvg/text/letter-spacing/non-ASCII-character.png", false), 0)}
+#[test] fn resvg_text_letter_spacing_non_ASCII_character() {assert_eq!(run_test("svg/resvg/text/letter-spacing/non-ASCII-character.svg", "ref/resvg/text/letter-spacing/non-ASCII-character.png", "diff/resvg/text/letter-spacing/non-ASCII-character.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_large_negative() {assert_eq!(run_test("svg/resvg/text/letter-spacing/large-negative.svg", "ref/resvg/text/letter-spacing/large-negative.png", "diff/resvg/text/letter-spacing/large-negative.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_0() {assert_eq!(run_test("svg/resvg/text/letter-spacing/0.svg", "ref/resvg/text/letter-spacing/0.png", "diff/resvg/text/letter-spacing/0.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_mixed_spacing() {assert_eq!(run_test("svg/resvg/text/letter-spacing/mixed-spacing.svg", "ref/resvg/text/letter-spacing/mixed-spacing.png", "diff/resvg/text/letter-spacing/mixed-spacing.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_3() {assert_eq!(run_test("svg/resvg/text/letter-spacing/3.svg", "ref/resvg/text/letter-spacing/3.png", "diff/resvg/text/letter-spacing/3.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_5percent() {assert_eq!(run_test("svg/resvg/text/letter-spacing/5percent.svg", "ref/resvg/text/letter-spacing/5percent.png", "diff/resvg/text/letter-spacing/5percent.png", false), 0)}
 #[test] fn resvg_text_letter_spacing__3() {assert_eq!(run_test("svg/resvg/text/letter-spacing/-3.svg", "ref/resvg/text/letter-spacing/-3.png", "diff/resvg/text/letter-spacing/-3.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_letter_spacing_on_Arabic() {assert_eq!(run_test("svg/resvg/text/letter-spacing/on-Arabic.svg", "ref/resvg/text/letter-spacing/on-Arabic.png", "diff/resvg/text/letter-spacing/on-Arabic.png", false), 0)}
+#[test] fn resvg_text_letter_spacing_on_Arabic() {assert_eq!(run_test("svg/resvg/text/letter-spacing/on-Arabic.svg", "ref/resvg/text/letter-spacing/on-Arabic.png", "diff/resvg/text/letter-spacing/on-Arabic.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_1mm() {assert_eq!(run_test("svg/resvg/text/letter-spacing/1mm.svg", "ref/resvg/text/letter-spacing/1mm.png", "diff/resvg/text/letter-spacing/1mm.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_normal() {assert_eq!(run_test("svg/resvg/text/letter-spacing/normal.svg", "ref/resvg/text/letter-spacing/normal.png", "diff/resvg/text/letter-spacing/normal.png", false), 0)}
 #[test] fn resvg_text_letter_spacing_filter_bbox() {assert_eq!(run_test("svg/resvg/text/letter-spacing/filter-bbox.svg", "ref/resvg/text/letter-spacing/filter-bbox.png", "diff/resvg/text/letter-spacing/filter-bbox.png", false), 0)}
@@ -1097,8 +1086,7 @@ use crate::run_test;
 #[test] fn resvg_text_dominant_baseline_complex() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/complex.svg", "ref/resvg/text/dominant-baseline/complex.png", "diff/resvg/text/dominant-baseline/complex.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_alphabetic() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/alphabetic.svg", "ref/resvg/text/dominant-baseline/alphabetic.png", "diff/resvg/text/dominant-baseline/alphabetic.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_nested() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/nested.svg", "ref/resvg/text/dominant-baseline/nested.png", "diff/resvg/text/dominant-baseline/nested.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_dominant_baseline_use_script() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/use-script.svg", "ref/resvg/text/dominant-baseline/use-script.png", "diff/resvg/text/dominant-baseline/use-script.png", false), 0)}
+#[test] fn resvg_text_dominant_baseline_use_script() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/use-script.svg", "ref/resvg/text/dominant-baseline/use-script.png", "diff/resvg/text/dominant-baseline/use-script.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_auto() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/auto.svg", "ref/resvg/text/dominant-baseline/auto.png", "diff/resvg/text/dominant-baseline/auto.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_middle() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/middle.svg", "ref/resvg/text/dominant-baseline/middle.png", "diff/resvg/text/dominant-baseline/middle.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_text_after_edge() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/text-after-edge.svg", "ref/resvg/text/dominant-baseline/text-after-edge.png", "diff/resvg/text/dominant-baseline/text-after-edge.png", false), 0)}
@@ -1107,8 +1095,7 @@ use crate::run_test;
 #[test] fn resvg_text_dominant_baseline_inherit() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/inherit.svg", "ref/resvg/text/dominant-baseline/inherit.png", "diff/resvg/text/dominant-baseline/inherit.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_ideographic() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/ideographic.svg", "ref/resvg/text/dominant-baseline/ideographic.png", "diff/resvg/text/dominant-baseline/ideographic.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_alignment_baseline_baseline_on_tspan() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.svg", "ref/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.png", "diff/resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_dominant_baseline_hanging() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/hanging.svg", "ref/resvg/text/dominant-baseline/hanging.png", "diff/resvg/text/dominant-baseline/hanging.png", false), 0)}
+#[test] fn resvg_text_dominant_baseline_hanging() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/hanging.svg", "ref/resvg/text/dominant-baseline/hanging.png", "diff/resvg/text/dominant-baseline/hanging.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_different_alignment_baseline_on_tspan() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.svg", "ref/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.png", "diff/resvg/text/dominant-baseline/different-alignment-baseline-on-tspan.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_reset_size() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/reset-size.svg", "ref/resvg/text/dominant-baseline/reset-size.png", "diff/resvg/text/dominant-baseline/reset-size.png", false), 0)}
 #[test] fn resvg_text_dominant_baseline_central() {assert_eq!(run_test("svg/resvg/text/dominant-baseline/central.svg", "ref/resvg/text/dominant-baseline/central.png", "diff/resvg/text/dominant-baseline/central.png", false), 0)}
@@ -1144,8 +1131,7 @@ use crate::run_test;
 #[test] fn resvg_text_text_anchor_middle_on_text() {assert_eq!(run_test("svg/resvg/text/text-anchor/middle-on-text.svg", "ref/resvg/text/text-anchor/middle-on-text.png", "diff/resvg/text/text-anchor/middle-on-text.png", false), 0)}
 #[test] fn resvg_text_text_anchor_text_anchor_not_on_text_chunk() {assert_eq!(run_test("svg/resvg/text/text-anchor/text-anchor-not-on-text-chunk.svg", "ref/resvg/text/text-anchor/text-anchor-not-on-text-chunk.png", "diff/resvg/text/text-anchor/text-anchor-not-on-text-chunk.png", false), 0)}
 #[test] fn resvg_text_text_anchor_on_tspan() {assert_eq!(run_test("svg/resvg/text/text-anchor/on-tspan.svg", "ref/resvg/text/text-anchor/on-tspan.png", "diff/resvg/text/text-anchor/on-tspan.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_text_anchor_on_tspan_with_arabic() {assert_eq!(run_test("svg/resvg/text/text-anchor/on-tspan-with-arabic.svg", "ref/resvg/text/text-anchor/on-tspan-with-arabic.png", "diff/resvg/text/text-anchor/on-tspan-with-arabic.png", false), 0)}
+#[test] fn resvg_text_text_anchor_on_tspan_with_arabic() {assert_eq!(run_test("svg/resvg/text/text-anchor/on-tspan-with-arabic.svg", "ref/resvg/text/text-anchor/on-tspan-with-arabic.png", "diff/resvg/text/text-anchor/on-tspan-with-arabic.png", false), 0)}
 #[test] fn resvg_text_text_anchor_inheritance_1() {assert_eq!(run_test("svg/resvg/text/text-anchor/inheritance-1.svg", "ref/resvg/text/text-anchor/inheritance-1.png", "diff/resvg/text/text-anchor/inheritance-1.png", false), 0)}
 #[test] fn resvg_text_text_anchor_inheritance_3() {assert_eq!(run_test("svg/resvg/text/text-anchor/inheritance-3.svg", "ref/resvg/text/text-anchor/inheritance-3.png", "diff/resvg/text/text-anchor/inheritance-3.png", false), 0)}
 #[test] fn resvg_text_text_anchor_inheritance_2() {assert_eq!(run_test("svg/resvg/text/text-anchor/inheritance-2.svg", "ref/resvg/text/text-anchor/inheritance-2.png", "diff/resvg/text/text-anchor/inheritance-2.png", false), 0)}
@@ -1160,8 +1146,7 @@ use crate::run_test;
 #[test] fn resvg_text_kerning_0() {assert_eq!(run_test("svg/resvg/text/kerning/0.svg", "ref/resvg/text/kerning/0.png", "diff/resvg/text/kerning/0.png", false), 0)}
 #[test] fn resvg_text_font_kerning_as_property() {assert_eq!(run_test("svg/resvg/text/font-kerning/as-property.svg", "ref/resvg/text/font-kerning/as-property.png", "diff/resvg/text/font-kerning/as-property.png", false), 0)}
 #[test] fn resvg_text_font_kerning_none() {assert_eq!(run_test("svg/resvg/text/font-kerning/none.svg", "ref/resvg/text/font-kerning/none.png", "diff/resvg/text/font-kerning/none.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_kerning_arabic_script() {assert_eq!(run_test("svg/resvg/text/font-kerning/arabic-script.svg", "ref/resvg/text/font-kerning/arabic-script.png", "diff/resvg/text/font-kerning/arabic-script.png", false), 0)}
+#[test] fn resvg_text_font_kerning_arabic_script() {assert_eq!(run_test("svg/resvg/text/font-kerning/arabic-script.svg", "ref/resvg/text/font-kerning/arabic-script.png", "diff/resvg/text/font-kerning/arabic-script.png", false), 0)}
 #[test] fn resvg_text_tref_with_a_title_child() {assert_eq!(run_test("svg/resvg/text/tref/with-a-title-child.svg", "ref/resvg/text/tref/with-a-title-child.png", "diff/resvg/text/tref/with-a-title-child.png", false), 0)}
 #[test] fn resvg_text_tref_style_attributes() {assert_eq!(run_test("svg/resvg/text/tref/style-attributes.svg", "ref/resvg/text/tref/style-attributes.png", "diff/resvg/text/tref/style-attributes.png", false), 0)}
 #[test] fn resvg_text_tref_nested() {assert_eq!(run_test("svg/resvg/text/tref/nested.svg", "ref/resvg/text/tref/nested.png", "diff/resvg/text/tref/nested.png", false), 0)}
@@ -1180,8 +1165,7 @@ use crate::run_test;
 #[test] fn resvg_text_word_spacing_5percent() {assert_eq!(run_test("svg/resvg/text/word-spacing/5percent.svg", "ref/resvg/text/word-spacing/5percent.png", "diff/resvg/text/word-spacing/5percent.png", false), 0)}
 #[test] fn resvg_text_word_spacing_normal() {assert_eq!(run_test("svg/resvg/text/word-spacing/normal.svg", "ref/resvg/text/word-spacing/normal.png", "diff/resvg/text/word-spacing/normal.png", false), 0)}
 #[test] fn resvg_text_word_spacing_2mm() {assert_eq!(run_test("svg/resvg/text/word-spacing/2mm.svg", "ref/resvg/text/word-spacing/2mm.png", "diff/resvg/text/word-spacing/2mm.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_unicode_bidi_bidi_override() {assert_eq!(run_test("svg/resvg/text/unicode-bidi/bidi-override.svg", "ref/resvg/text/unicode-bidi/bidi-override.png", "diff/resvg/text/unicode-bidi/bidi-override.png", false), 0)}
+#[test] fn resvg_text_unicode_bidi_bidi_override() {assert_eq!(run_test("svg/resvg/text/unicode-bidi/bidi-override.svg", "ref/resvg/text/unicode-bidi/bidi-override.png", "diff/resvg/text/unicode-bidi/bidi-override.png", false), 0)}
 #[test] fn resvg_text_font_variant_inherit() {assert_eq!(run_test("svg/resvg/text/font-variant/inherit.svg", "ref/resvg/text/font-variant/inherit.png", "diff/resvg/text/font-variant/inherit.png", false), 0)}
 #[test] fn resvg_text_font_variant_small_caps() {assert_eq!(run_test("svg/resvg/text/font-variant/small-caps.svg", "ref/resvg/text/font-variant/small-caps.png", "diff/resvg/text/font-variant/small-caps.png", false), 0)}
 #[test] fn resvg_text_font_weight_700() {assert_eq!(run_test("svg/resvg/text/font-weight/700.svg", "ref/resvg/text/font-weight/700.png", "diff/resvg/text/font-weight/700.png", false), 0)}
@@ -1224,13 +1208,10 @@ use crate::run_test;
 #[test] fn resvg_text_font_size_ex_on_the_root_element() {assert_eq!(run_test("svg/resvg/text/font-size/ex-on-the-root-element.svg", "ref/resvg/text/font-size/ex-on-the-root-element.png", "diff/resvg/text/font-size/ex-on-the-root-element.png", false), 0)}
 #[test] fn resvg_text_font_size_em_on_the_root_element() {assert_eq!(run_test("svg/resvg/text/font-size/em-on-the-root-element.svg", "ref/resvg/text/font-size/em-on-the-root-element.png", "diff/resvg/text/font-size/em-on-the-root-element.png", false), 0)}
 #[test] fn resvg_text_font_size_mixed_values() {assert_eq!(run_test("svg/resvg/text/font-size/mixed-values.svg", "ref/resvg/text/font-size/mixed-values.png", "diff/resvg/text/font-size/mixed-values.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_direction_rtl() {assert_eq!(run_test("svg/resvg/text/direction/rtl.svg", "ref/resvg/text/direction/rtl.png", "diff/resvg/text/direction/rtl.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_direction_rtl_with_vertical_writing_mode() {assert_eq!(run_test("svg/resvg/text/direction/rtl-with-vertical-writing-mode.svg", "ref/resvg/text/direction/rtl-with-vertical-writing-mode.png", "diff/resvg/text/direction/rtl-with-vertical-writing-mode.png", false), 0)}
+#[test] fn resvg_text_direction_rtl() {assert_eq!(run_test("svg/resvg/text/direction/rtl.svg", "ref/resvg/text/direction/rtl.png", "diff/resvg/text/direction/rtl.png", false), 0)}
+#[test] fn resvg_text_direction_rtl_with_vertical_writing_mode() {assert_eq!(run_test("svg/resvg/text/direction/rtl-with-vertical-writing-mode.svg", "ref/resvg/text/direction/rtl-with-vertical-writing-mode.png", "diff/resvg/text/direction/rtl-with-vertical-writing-mode.png", false), 0)}
 #[test] fn resvg_text_text_escaped_text_4() {assert_eq!(run_test("svg/resvg/text/text/escaped-text-4.svg", "ref/resvg/text/text/escaped-text-4.png", "diff/resvg/text/text/escaped-text-4.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_text_xml_lang_ja() {assert_eq!(run_test("svg/resvg/text/text/xml-lang=ja.svg", "ref/resvg/text/text/xml-lang=ja.png", "diff/resvg/text/text/xml-lang=ja.png", false), 0)}
+#[test] fn resvg_text_text_xml_lang_ja() {assert_eq!(run_test("svg/resvg/text/text/xml-lang=ja.svg", "ref/resvg/text/text/xml-lang=ja.png", "diff/resvg/text/text/xml-lang=ja.png", false), 0)}
 #[test] fn resvg_text_text_dx_and_dy_with_multiple_values() {assert_eq!(run_test("svg/resvg/text/text/dx-and-dy-with-multiple-values.svg", "ref/resvg/text/text/dx-and-dy-with-multiple-values.png", "diff/resvg/text/text/dx-and-dy-with-multiple-values.png", false), 0)}
 #[test] fn resvg_text_text_complex_graphemes() {assert_eq!(run_test("svg/resvg/text/text/complex-graphemes.svg", "ref/resvg/text/text/complex-graphemes.png", "diff/resvg/text/text/complex-graphemes.png", false), 0)}
 #[test] fn resvg_text_text_escaped_text_2() {assert_eq!(run_test("svg/resvg/text/text/escaped-text-2.svg", "ref/resvg/text/text/escaped-text-2.png", "diff/resvg/text/text/escaped-text-2.png", false), 0)}
@@ -1244,10 +1225,8 @@ use crate::run_test;
 #[test] fn resvg_text_text_x_and_y_with_less_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-less-values-than-characters.svg", "ref/resvg/text/text/x-and-y-with-less-values-than-characters.png", "diff/resvg/text/text/x-and-y-with-less-values-than-characters.png", false), 0)}
 #[test] fn resvg_text_text_transform() {assert_eq!(run_test("svg/resvg/text/text/transform.svg", "ref/resvg/text/text/transform.png", "diff/resvg/text/text/transform.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_multiple_values_underline_and_pattern() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.svg", "ref/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.png", "diff/resvg/text/text/rotate-with-multiple-values-underline-and-pattern.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_text_rotate_on_Arabic() {assert_eq!(run_test("svg/resvg/text/text/rotate-on-Arabic.svg", "ref/resvg/text/text/rotate-on-Arabic.png", "diff/resvg/text/text/rotate-on-Arabic.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_text_bidi_reordering() {assert_eq!(run_test("svg/resvg/text/text/bidi-reordering.svg", "ref/resvg/text/text/bidi-reordering.png", "diff/resvg/text/text/bidi-reordering.png", false), 0)}
+#[test] fn resvg_text_text_rotate_on_Arabic() {assert_eq!(run_test("svg/resvg/text/text/rotate-on-Arabic.svg", "ref/resvg/text/text/rotate-on-Arabic.png", "diff/resvg/text/text/rotate-on-Arabic.png", false), 0)}
+#[test] fn resvg_text_text_bidi_reordering() {assert_eq!(run_test("svg/resvg/text/text/bidi-reordering.svg", "ref/resvg/text/text/bidi-reordering.png", "diff/resvg/text/text/bidi-reordering.png", false), 0)}
 #[test] fn resvg_text_text_nested() {assert_eq!(run_test("svg/resvg/text/text/nested.svg", "ref/resvg/text/text/nested.png", "diff/resvg/text/text/nested.png", false), 0)}
 #[test] fn resvg_text_text_zalgo() {assert_eq!(run_test("svg/resvg/text/text/zalgo.svg", "ref/resvg/text/text/zalgo.png", "diff/resvg/text/text/zalgo.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_more_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-more-values-than-characters.svg", "ref/resvg/text/text/rotate-with-more-values-than-characters.png", "diff/resvg/text/text/rotate-with-more-values-than-characters.png", false), 0)}
@@ -1256,8 +1235,7 @@ use crate::run_test;
 #[test] fn resvg_text_text_dx_and_dy_with_more_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/dx-and-dy-with-more-values-than-characters.svg", "ref/resvg/text/text/dx-and-dy-with-more-values-than-characters.png", "diff/resvg/text/text/dx-and-dy-with-more-values-than-characters.png", false), 0)}
 // need to investigate
 #[ignore] #[test] fn resvg_text_text_emojis() {assert_eq!(run_test("svg/resvg/text/text/emojis.svg", "ref/resvg/text/text/emojis.png", "diff/resvg/text/text/emojis.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_text_x_and_y_with_multiple_values_and_arabic_text() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.svg", "ref/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.png", "diff/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.png", false), 0)}
+#[test] fn resvg_text_text_x_and_y_with_multiple_values_and_arabic_text() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.svg", "ref/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.png", "diff/resvg/text/text/x-and-y-with-multiple-values-and-arabic-text.png", false), 0)}
 #[test] fn resvg_text_text_simple_case() {assert_eq!(run_test("svg/resvg/text/text/simple-case.svg", "ref/resvg/text/text/simple-case.png", "diff/resvg/text/text/simple-case.png", false), 0)}
 #[test] fn resvg_text_text_x_and_y_with_multiple_values_and_tspan() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-multiple-values-and-tspan.svg", "ref/resvg/text/text/x-and-y-with-multiple-values-and-tspan.png", "diff/resvg/text/text/x-and-y-with-multiple-values-and-tspan.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_less_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-less-values-than-characters.svg", "ref/resvg/text/text/rotate-with-less-values-than-characters.png", "diff/resvg/text/text/rotate-with-less-values-than-characters.png", false), 0)}
@@ -1267,8 +1245,7 @@ use crate::run_test;
 // need to investigate
 #[ignore] #[test] fn resvg_text_text_compound_emojis() {assert_eq!(run_test("svg/resvg/text/text/compound-emojis.svg", "ref/resvg/text/text/compound-emojis.png", "diff/resvg/text/text/compound-emojis.png", false), 0)}
 #[test] fn resvg_text_text_xml_space() {assert_eq!(run_test("svg/resvg/text/text/xml-space.svg", "ref/resvg/text/text/xml-space.png", "diff/resvg/text/text/xml-space.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_text_fill_rule_evenodd() {assert_eq!(run_test("svg/resvg/text/text/fill-rule=evenodd.svg", "ref/resvg/text/text/fill-rule=evenodd.png", "diff/resvg/text/text/fill-rule=evenodd.png", false), 0)}
+#[test] fn resvg_text_text_fill_rule_evenodd() {assert_eq!(run_test("svg/resvg/text/text/fill-rule=evenodd.svg", "ref/resvg/text/text/fill-rule=evenodd.png", "diff/resvg/text/text/fill-rule=evenodd.png", false), 0)}
 #[test] fn resvg_text_text_complex_graphemes_and_coordinates_list() {assert_eq!(run_test("svg/resvg/text/text/complex-graphemes-and-coordinates-list.svg", "ref/resvg/text/text/complex-graphemes-and-coordinates-list.png", "diff/resvg/text/text/complex-graphemes-and-coordinates-list.png", false), 0)}
 #[test] fn resvg_text_text_x_and_y_with_dx_and_dy_lists() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-dx-and-dy-lists.svg", "ref/resvg/text/text/x-and-y-with-dx-and-dy-lists.png", "diff/resvg/text/text/x-and-y-with-dx-and-dy-lists.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_multiple_values_and_complex_text() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-multiple-values-and-complex-text.svg", "ref/resvg/text/text/rotate-with-multiple-values-and-complex-text.png", "diff/resvg/text/text/rotate-with-multiple-values-and-complex-text.png", false), 0)}
@@ -1280,18 +1257,15 @@ use crate::run_test;
 #[test] fn resvg_text_text_x_and_y_with_more_values_than_characters() {assert_eq!(run_test("svg/resvg/text/text/x-and-y-with-more-values-than-characters.svg", "ref/resvg/text/text/x-and-y-with-more-values-than-characters.png", "diff/resvg/text/text/x-and-y-with-more-values-than-characters.png", false), 0)}
 #[test] fn resvg_text_text_rotate_with_multiple_values() {assert_eq!(run_test("svg/resvg/text/text/rotate-with-multiple-values.svg", "ref/resvg/text/text/rotate-with-multiple-values.png", "diff/resvg/text/text/rotate-with-multiple-values.png", false), 0)}
 #[test] fn resvg_text_text_em_and_ex_coordinates() {assert_eq!(run_test("svg/resvg/text/text/em-and-ex-coordinates.svg", "ref/resvg/text/text/em-and-ex-coordinates.png", "diff/resvg/text/text/em-and-ex-coordinates.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_simple_case() {assert_eq!(run_test("svg/resvg/text/font/simple-case.svg", "ref/resvg/text/font/simple-case.png", "diff/resvg/text/font/simple-case.png", false), 0)}
+#[test] fn resvg_text_font_simple_case() {assert_eq!(run_test("svg/resvg/text/font/simple-case.svg", "ref/resvg/text/font/simple-case.png", "diff/resvg/text/font/simple-case.png", false), 0)}
 #[test] fn resvg_text_glyph_orientation_vertical_simple_case() {assert_eq!(run_test("svg/resvg/text/glyph-orientation-vertical/simple-case.svg", "ref/resvg/text/glyph-orientation-vertical/simple-case.png", "diff/resvg/text/glyph-orientation-vertical/simple-case.png", false), 0)}
 #[test] fn resvg_text_textLength_zero() {assert_eq!(run_test("svg/resvg/text/textLength/zero.svg", "ref/resvg/text/textLength/zero.png", "diff/resvg/text/textLength/zero.png", false), 0)}
 #[test] fn resvg_text_textLength_150_on_parent() {assert_eq!(run_test("svg/resvg/text/textLength/150-on-parent.svg", "ref/resvg/text/textLength/150-on-parent.png", "diff/resvg/text/textLength/150-on-parent.png", false), 0)}
 #[test] fn resvg_text_textLength_on_a_single_tspan() {assert_eq!(run_test("svg/resvg/text/textLength/on-a-single-tspan.svg", "ref/resvg/text/textLength/on-a-single-tspan.png", "diff/resvg/text/textLength/on-a-single-tspan.png", false), 0)}
 #[test] fn resvg_text_textLength_75percent() {assert_eq!(run_test("svg/resvg/text/textLength/75percent.svg", "ref/resvg/text/textLength/75percent.png", "diff/resvg/text/textLength/75percent.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_textLength_arabic() {assert_eq!(run_test("svg/resvg/text/textLength/arabic.svg", "ref/resvg/text/textLength/arabic.png", "diff/resvg/text/textLength/arabic.png", false), 0)}
+#[test] fn resvg_text_textLength_arabic() {assert_eq!(run_test("svg/resvg/text/textLength/arabic.svg", "ref/resvg/text/textLength/arabic.png", "diff/resvg/text/textLength/arabic.png", false), 0)}
 #[test] fn resvg_text_textLength_150() {assert_eq!(run_test("svg/resvg/text/textLength/150.svg", "ref/resvg/text/textLength/150.png", "diff/resvg/text/textLength/150.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_textLength_arabic_with_lengthAdjust() {assert_eq!(run_test("svg/resvg/text/textLength/arabic-with-lengthAdjust.svg", "ref/resvg/text/textLength/arabic-with-lengthAdjust.png", "diff/resvg/text/textLength/arabic-with-lengthAdjust.png", false), 0)}
+#[test] fn resvg_text_textLength_arabic_with_lengthAdjust() {assert_eq!(run_test("svg/resvg/text/textLength/arabic-with-lengthAdjust.svg", "ref/resvg/text/textLength/arabic-with-lengthAdjust.png", "diff/resvg/text/textLength/arabic-with-lengthAdjust.png", false), 0)}
 #[test] fn resvg_text_textLength_150_on_tspan() {assert_eq!(run_test("svg/resvg/text/textLength/150-on-tspan.svg", "ref/resvg/text/textLength/150-on-tspan.png", "diff/resvg/text/textLength/150-on-tspan.png", false), 0)}
 #[test] fn resvg_text_textLength_inherit() {assert_eq!(run_test("svg/resvg/text/textLength/inherit.svg", "ref/resvg/text/textLength/inherit.png", "diff/resvg/text/textLength/inherit.png", false), 0)}
 #[test] fn resvg_text_textLength_on_text_and_tspan() {assert_eq!(run_test("svg/resvg/text/textLength/on-text-and-tspan.svg", "ref/resvg/text/textLength/on-text-and-tspan.png", "diff/resvg/text/textLength/on-text-and-tspan.png", false), 0)}
@@ -1302,25 +1276,17 @@ use crate::run_test;
 #[test] fn resvg_text_font_style_italic() {assert_eq!(run_test("svg/resvg/text/font-style/italic.svg", "ref/resvg/text/font-style/italic.png", "diff/resvg/text/font-style/italic.png", false), 0)}
 #[test] fn resvg_text_font_style_oblique() {assert_eq!(run_test("svg/resvg/text/font-style/oblique.svg", "ref/resvg/text/font-style/oblique.png", "diff/resvg/text/font-style/oblique.png", false), 0)}
 #[test] fn resvg_text_font_family_font_list() {assert_eq!(run_test("svg/resvg/text/font-family/font-list.svg", "ref/resvg/text/font-family/font-list.png", "diff/resvg/text/font-family/font-list.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_source_sans_pro() {assert_eq!(run_test("svg/resvg/text/font-family/source-sans-pro.svg", "ref/resvg/text/font-family/source-sans-pro.png", "diff/resvg/text/font-family/source-sans-pro.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_serif() {assert_eq!(run_test("svg/resvg/text/font-family/serif.svg", "ref/resvg/text/font-family/serif.png", "diff/resvg/text/font-family/serif.png", false), 0)}
+#[test] fn resvg_text_font_family_source_sans_pro() {assert_eq!(run_test("svg/resvg/text/font-family/source-sans-pro.svg", "ref/resvg/text/font-family/source-sans-pro.png", "diff/resvg/text/font-family/source-sans-pro.png", false), 0)}
+#[test] fn resvg_text_font_family_serif() {assert_eq!(run_test("svg/resvg/text/font-family/serif.svg", "ref/resvg/text/font-family/serif.png", "diff/resvg/text/font-family/serif.png", false), 0)}
 #[test] fn resvg_text_font_family_noto_sans() {assert_eq!(run_test("svg/resvg/text/font-family/noto-sans.svg", "ref/resvg/text/font-family/noto-sans.png", "diff/resvg/text/font-family/noto-sans.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_fantasy() {assert_eq!(run_test("svg/resvg/text/font-family/fantasy.svg", "ref/resvg/text/font-family/fantasy.png", "diff/resvg/text/font-family/fantasy.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_monospace() {assert_eq!(run_test("svg/resvg/text/font-family/monospace.svg", "ref/resvg/text/font-family/monospace.png", "diff/resvg/text/font-family/monospace.png", false), 0)}
+#[test] fn resvg_text_font_family_fantasy() {assert_eq!(run_test("svg/resvg/text/font-family/fantasy.svg", "ref/resvg/text/font-family/fantasy.png", "diff/resvg/text/font-family/fantasy.png", false), 0)}
+#[test] fn resvg_text_font_family_monospace() {assert_eq!(run_test("svg/resvg/text/font-family/monospace.svg", "ref/resvg/text/font-family/monospace.png", "diff/resvg/text/font-family/monospace.png", false), 0)}
 #[test] fn resvg_text_font_family_fallback_2() {assert_eq!(run_test("svg/resvg/text/font-family/fallback-2.svg", "ref/resvg/text/font-family/fallback-2.png", "diff/resvg/text/font-family/fallback-2.png", false), 0)}
 #[test] fn resvg_text_font_family_double_quoted() {assert_eq!(run_test("svg/resvg/text/font-family/double-quoted.svg", "ref/resvg/text/font-family/double-quoted.png", "diff/resvg/text/font-family/double-quoted.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_cursive() {assert_eq!(run_test("svg/resvg/text/font-family/cursive.svg", "ref/resvg/text/font-family/cursive.png", "diff/resvg/text/font-family/cursive.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_fallback_1() {assert_eq!(run_test("svg/resvg/text/font-family/fallback-1.svg", "ref/resvg/text/font-family/fallback-1.png", "diff/resvg/text/font-family/fallback-1.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_bold_sans_serif() {assert_eq!(run_test("svg/resvg/text/font-family/bold-sans-serif.svg", "ref/resvg/text/font-family/bold-sans-serif.png", "diff/resvg/text/font-family/bold-sans-serif.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_font_family_sans_serif() {assert_eq!(run_test("svg/resvg/text/font-family/sans-serif.svg", "ref/resvg/text/font-family/sans-serif.png", "diff/resvg/text/font-family/sans-serif.png", false), 0)}
+#[test] fn resvg_text_font_family_cursive() {assert_eq!(run_test("svg/resvg/text/font-family/cursive.svg", "ref/resvg/text/font-family/cursive.png", "diff/resvg/text/font-family/cursive.png", false), 0)}
+#[test] fn resvg_text_font_family_fallback_1() {assert_eq!(run_test("svg/resvg/text/font-family/fallback-1.svg", "ref/resvg/text/font-family/fallback-1.png", "diff/resvg/text/font-family/fallback-1.png", false), 0)}
+#[test] fn resvg_text_font_family_bold_sans_serif() {assert_eq!(run_test("svg/resvg/text/font-family/bold-sans-serif.svg", "ref/resvg/text/font-family/bold-sans-serif.png", "diff/resvg/text/font-family/bold-sans-serif.png", false), 0)}
+#[test] fn resvg_text_font_family_sans_serif() {assert_eq!(run_test("svg/resvg/text/font-family/sans-serif.svg", "ref/resvg/text/font-family/sans-serif.png", "diff/resvg/text/font-family/sans-serif.png", false), 0)}
 #[test] fn resvg_text_text_decoration_underline() {assert_eq!(run_test("svg/resvg/text/text-decoration/underline.svg", "ref/resvg/text/text-decoration/underline.png", "diff/resvg/text/text-decoration/underline.png", false), 0)}
 #[test] fn resvg_text_text_decoration_line_through() {assert_eq!(run_test("svg/resvg/text/text-decoration/line-through.svg", "ref/resvg/text/text-decoration/line-through.png", "diff/resvg/text/text-decoration/line-through.png", false), 0)}
 #[test] fn resvg_text_text_decoration_all_types_inline_comma_separated() {assert_eq!(run_test("svg/resvg/text/text-decoration/all-types-inline-comma-separated.svg", "ref/resvg/text/text-decoration/all-types-inline-comma-separated.png", "diff/resvg/text/text-decoration/all-types-inline-comma-separated.png", false), 0)}
@@ -1350,8 +1316,7 @@ use crate::run_test;
 #[test] fn resvg_text_textPath_dy_with_tiny_coordinates() {assert_eq!(run_test("svg/resvg/text/textPath/dy-with-tiny-coordinates.svg", "ref/resvg/text/textPath/dy-with-tiny-coordinates.png", "diff/resvg/text/textPath/dy-with-tiny-coordinates.png", false), 0)}
 #[test] fn resvg_text_textPath_with_path() {assert_eq!(run_test("svg/resvg/text/textPath/with-path.svg", "ref/resvg/text/textPath/with-path.png", "diff/resvg/text/textPath/with-path.png", false), 0)}
 #[test] fn resvg_text_textPath_with_filter() {assert_eq!(run_test("svg/resvg/text/textPath/with-filter.svg", "ref/resvg/text/textPath/with-filter.png", "diff/resvg/text/textPath/with-filter.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_textPath_complex() {assert_eq!(run_test("svg/resvg/text/textPath/complex.svg", "ref/resvg/text/textPath/complex.png", "diff/resvg/text/textPath/complex.png", false), 0)}
+#[test] fn resvg_text_textPath_complex() {assert_eq!(run_test("svg/resvg/text/textPath/complex.svg", "ref/resvg/text/textPath/complex.png", "diff/resvg/text/textPath/complex.png", false), 0)}
 #[test] fn resvg_text_textPath_invalid_link() {assert_eq!(run_test("svg/resvg/text/textPath/invalid-link.svg", "ref/resvg/text/textPath/invalid-link.png", "diff/resvg/text/textPath/invalid-link.png", false), 0)}
 #[test] fn resvg_text_textPath_mixed_children_2() {assert_eq!(run_test("svg/resvg/text/textPath/mixed-children-2.svg", "ref/resvg/text/textPath/mixed-children-2.png", "diff/resvg/text/textPath/mixed-children-2.png", false), 0)}
 #[test] fn resvg_text_textPath_startOffset_9999() {assert_eq!(run_test("svg/resvg/text/textPath/startOffset=9999.svg", "ref/resvg/text/textPath/startOffset=9999.png", "diff/resvg/text/textPath/startOffset=9999.png", false), 0)}
@@ -1359,8 +1324,7 @@ use crate::run_test;
 #[test] fn resvg_text_textPath_nested() {assert_eq!(run_test("svg/resvg/text/textPath/nested.svg", "ref/resvg/text/textPath/nested.png", "diff/resvg/text/textPath/nested.png", false), 0)}
 #[test] fn resvg_text_textPath_with_transform_outside_a_referenced_path() {assert_eq!(run_test("svg/resvg/text/textPath/with-transform-outside-a-referenced-path.svg", "ref/resvg/text/textPath/with-transform-outside-a-referenced-path.png", "diff/resvg/text/textPath/with-transform-outside-a-referenced-path.png", false), 0)}
 #[test] fn resvg_text_textPath_with_text_anchor() {assert_eq!(run_test("svg/resvg/text/textPath/with-text-anchor.svg", "ref/resvg/text/textPath/with-text-anchor.png", "diff/resvg/text/textPath/with-text-anchor.png", false), 0)}
-// font is not part of test suite yet
-#[ignore] #[test] fn resvg_text_textPath_writing_mode_tb() {assert_eq!(run_test("svg/resvg/text/textPath/writing-mode=tb.svg", "ref/resvg/text/textPath/writing-mode=tb.png", "diff/resvg/text/textPath/writing-mode=tb.png", false), 0)}
+#[test] fn resvg_text_textPath_writing_mode_tb() {assert_eq!(run_test("svg/resvg/text/textPath/writing-mode=tb.svg", "ref/resvg/text/textPath/writing-mode=tb.png", "diff/resvg/text/textPath/writing-mode=tb.png", false), 0)}
 #[test] fn resvg_text_textPath_with_big_letter_spacing() {assert_eq!(run_test("svg/resvg/text/textPath/with-big-letter-spacing.svg", "ref/resvg/text/textPath/with-big-letter-spacing.png", "diff/resvg/text/textPath/with-big-letter-spacing.png", false), 0)}
 #[test] fn resvg_text_textPath_path_with_ClosePath() {assert_eq!(run_test("svg/resvg/text/textPath/path-with-ClosePath.svg", "ref/resvg/text/textPath/path-with-ClosePath.png", "diff/resvg/text/textPath/path-with-ClosePath.png", false), 0)}
 #[test] fn resvg_text_textPath_simple_case() {assert_eq!(run_test("svg/resvg/text/textPath/simple-case.svg", "ref/resvg/text/textPath/simple-case.png", "diff/resvg/text/textPath/simple-case.png", false), 0)}
