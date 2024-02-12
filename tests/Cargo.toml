@@ -27,3 +27,4 @@ oxipng = { workspace = true }
 clap = { workspace = true }
 termcolor = { workspace = true }
 regex = { workspace = true }
+once_cell.workspace = true

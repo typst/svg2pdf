@@ -5,10 +5,10 @@ use std::cmp::max;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use fontdb::Database;
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
 use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 use oxipng::{InFile, OutFile};
 use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
@@ -21,6 +21,12 @@ pub const SVG_DIR: &str = "svg";
 pub const REF_DIR: &str = "ref";
 pub const DIFF_DIR: &str = "diff";
 pub const PDF_DIR: &str = "pdf";
+
+static FONTDB: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| {
+    let mut fontdb = fontdb::Database::new();
+    fontdb.load_fonts_dir("fonts");
+    std::sync::Mutex::new(fontdb)
+});
 
 lazy_static! {
     pub static ref SVG_FILES: Vec<PathBuf> = {
@@ -106,67 +112,45 @@ impl TestFile {
     }
 }
 
-pub struct Runner {
-    fontdb: Database,
+pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
+    let document = PDFIUM.load_pdf_from_byte_slice(pdf, None);
+
+    let render_config = PdfRenderConfig::new()
+        .clear_before_rendering(true)
+        .set_clear_color(PdfColor::new(255, 255, 255, 0));
+
+    document
+        .unwrap()
+        .pages()
+        .first()
+        .unwrap()
+        .render_with_config(&render_config)
+        .unwrap()
+        .as_image()
+        .into_rgba8()
 }
 
-impl Default for Runner {
-    fn default() -> Self {
-        let mut fontdb = fontdb::Database::new();
-        // We need Noto Sans because many test files use it
-        fontdb.load_font_file("fonts/NotoSans-Regular.ttf").unwrap();
-        fontdb.load_font_file("fonts/NotoSans-Bold.ttf").unwrap();
-        fontdb.load_font_file("fonts/NotoSans-Italic.ttf").unwrap();
-
-        Self { fontdb }
-    }
+pub fn read_svg(svg_string: &str) -> Tree {
+    let options = usvg::Options::default();
+    let mut tree = Tree::from_str(svg_string, &options).unwrap();
+    tree.postprocess(PostProcessingSteps::default(), &FONTDB.lock().unwrap());
+    tree.calculate_bounding_boxes();
+    tree
 }
 
-impl Runner {
-    pub fn render_pdf(&self, pdf: &[u8]) -> RgbaImage {
-        let document = PDFIUM.load_pdf_from_byte_slice(pdf, None);
-
-        let render_config = PdfRenderConfig::new()
-            .clear_before_rendering(true)
-            .set_clear_color(PdfColor::new(255, 255, 255, 0));
-
-        document
-            .unwrap()
-            .pages()
-            .first()
-            .unwrap()
-            .render_with_config(&render_config)
-            .unwrap()
-            .as_image()
-            .into_rgba8()
-    }
-
-    pub fn read_svg(&self, svg_string: &str) -> Tree {
-        let options = usvg::Options::default();
-        let mut tree = Tree::from_str(svg_string, &options).unwrap();
-        tree.postprocess(PostProcessingSteps::default(), &self.fontdb);
-        tree.calculate_bounding_boxes();
-        tree
-    }
-
-    pub fn convert_svg(
-        &self,
-        svg_string: &str,
-        test_runner: &Runner,
-    ) -> (Vec<u8>, RgbaImage) {
-        let scale_factor = 1.0;
-        let tree = self.read_svg(svg_string);
-        let pdf = svg2pdf::convert_tree(
-            &tree,
-            Options {
-                dpi: 72.0 * scale_factor,
-                raster_scale: 1.5,
-                ..Options::default()
-            },
-        );
-        let image = test_runner.render_pdf(pdf.as_slice());
-        (pdf, image)
-    }
+pub fn convert_svg(svg_string: &str) -> (Vec<u8>, RgbaImage) {
+    let scale_factor = 1.0;
+    let tree = read_svg(svg_string);
+    let pdf = svg2pdf::convert_tree(
+        &tree,
+        Options {
+            dpi: 72.0 * scale_factor,
+            raster_scale: 1.5,
+            ..Options::default()
+        },
+    );
+    let image = render_pdf(pdf.as_slice());
+    (pdf, image)
 }
 
 pub fn save_image(image: &RgbaImage, path: &Path) {
@@ -192,12 +176,9 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
 }
 
 pub fn render(svg_path: &str, ref_path: &str, diff_path: &str) -> i32 {
-    let runner = Runner::default();
-
     let expected_image = Reader::open(ref_path).unwrap().decode().unwrap().into_rgba8();
 
-    let (_, actual_image) =
-        runner.convert_svg(&fs::read_to_string(svg_path).unwrap(), &runner);
+    let (_, actual_image) = convert_svg(&fs::read_to_string(svg_path).unwrap());
 
     let width = max(expected_image.width(), actual_image.width());
     let height = max(expected_image.height(), actual_image.height());
