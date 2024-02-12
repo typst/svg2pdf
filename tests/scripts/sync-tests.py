@@ -7,7 +7,7 @@ RESVG_SVG_DIR = Path("../../../resvg/crates/resvg/tests/tests")
 SVG2PDF_SVG_DIR = Path("../svg/resvg")
 SVG2PDF_REF_DIR = Path("../ref/resvg")
 
-resvg_svg_files = set([p.relative_to(RESVG_SVG_DIR) for p in RESVG_SVG_DIR.rglob("*")])
+resvg_svg_files = set([p.relative_to(RESVG_SVG_DIR) for p in RESVG_SVG_DIR.rglob("*") if p.suffix == ".svg"])
 svg2pdf_svg_files = set([p.relative_to(SVG2PDF_SVG_DIR) for p in SVG2PDF_SVG_DIR.rglob("*")])
 svg2pdf_ref_files = set([p.relative_to(SVG2PDF_REF_DIR) for p in SVG2PDF_REF_DIR.rglob("*")])
 
@@ -15,18 +15,24 @@ svg2pdf_ref_files = set([p.relative_to(SVG2PDF_REF_DIR) for p in SVG2PDF_REF_DIR
 def sync_existing_tests():
     print("Sync tests...")
     for file in resvg_svg_files:
-        if file.is_file() and file.suffix == ".svg":
-            with open(RESVG_SVG_DIR / file, "r", encoding="utf-8") as resvg_file:
-                content = resvg_file.read()
+        absolute_path = RESVG_SVG_DIR / file
+        assert absolute_path.is_file()
 
-                path = SVG2PDF_SVG_DIR / file
-                print(path)
-                print(path.parent)
-                if not path.parent.exists():
-                    path.parent.mkdir(parents=True, exist_ok=True)
+        if str(file) == "structure/svg/not-UTF-8-encoding.svg":
+            continue
 
-                with open(path, "w+") as svg2pdf_file:
-                    svg2pdf_file.write(content)
+        with open(absolute_path, "r") as resvg_file:
+            content = resvg_file.read()
+
+            path = SVG2PDF_SVG_DIR / file
+            print(path)
+            print(path.parent)
+            if not path.parent.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(path, "w+") as svg2pdf_file:
+                svg2pdf_file.write(content)
+
 
 
 def find_superfluous_tests():
