@@ -19,6 +19,13 @@ use svg2pdf::Options;
 static FONTDB: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| {
     let mut fontdb = fontdb::Database::new();
     fontdb.load_fonts_dir("fonts");
+
+    fontdb.set_serif_family("Noto Serif");
+    fontdb.set_sans_serif_family("Noto Sans");
+    fontdb.set_cursive_family("Yellowtail");
+    fontdb.set_fantasy_family("Sedgwick Ave Display");
+    fontdb.set_monospace_family("Noto Mono");
+
     std::sync::Mutex::new(fontdb)
 });
 
