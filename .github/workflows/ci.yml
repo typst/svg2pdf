@@ -14,7 +14,7 @@ jobs:
         shell: bash
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -27,7 +27,7 @@ jobs:
           curl -LO https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F5880/pdfium-linux-x64.tgz
           mkdir pdfium-linux-x64
           tar -xvzf ./pdfium-linux-x64.tgz -C pdfium-linux-x64
-          mv ./pdfium-linux-x64/lib/libpdfium.so ./tests/pdfium_lib
+          mv ./pdfium-linux-x64/lib/libpdfium.so ./tests/pdfium
 
       - name: Build svg2pdf
         run: cargo build --all --release
@@ -46,7 +46,7 @@ jobs:
     name: Check clippy, formatting, and documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: cargo clippy --all-targets

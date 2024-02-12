@@ -8,36 +8,12 @@ repository.workspace = true
 license.workspace = true
 publish = false
 
-[lib]
-test = false
-doctest = false
-
-[[test]]
-name = "tests"
-path = "src/tests.rs"
-harness = false
-
-[[bin]]
-name = "generate"
-path = "src/generate.rs"
-test = false
-
-[[bin]]
-name = "typst"
-path = "src/typst.rs"
-test = false
-
 [dependencies]
 fontdb = { workspace = true }
 svg2pdf = { workspace = true }
 usvg = { workspace = true }
-pdfium-render = { workspace = true }
-walkdir = { workspace = true }
-lazy_static = { workspace = true }
+pdfium-render = { workspace = true, features = ["sync"] }
 pdf-writer = { workspace = true }
 image = { workspace = true }
-indicatif = { workspace = true }
 oxipng = { workspace = true }
-clap = { workspace = true }
-termcolor = { workspace = true }
-regex = { workspace = true }
+once_cell = { workspace = true }
