@@ -16,6 +16,12 @@ pub fn convert_(
     let mut fontdb = fontdb::Database::new();
     fontdb.load_system_fonts();
 
+    fontdb.set_serif_family("Times New Roman");
+    fontdb.set_sans_serif_family("Arial");
+    fontdb.set_cursive_family("Comic Sans MS");
+    fontdb.set_fantasy_family("Impact");
+    fontdb.set_monospace_family("Courier New");
+
     // Convert the file.
     let name = Path::new(input.file_name().ok_or("Input path does not point to a file")?);
     let output = output.unwrap_or_else(|| name.with_extension("pdf"));
