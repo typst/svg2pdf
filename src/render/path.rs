@@ -2,7 +2,7 @@ use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::{Chunk, Content, Finish};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{Fill, FillRule, Node, Opacity, Paint, PaintOrder};
+use usvg::{Fill, FillRule, LineCap, Node, Opacity, Paint, PaintOrder};
 use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
 
@@ -95,11 +95,15 @@ fn stroke(
     ctx: &mut Context,
     accumulated_transform: Transform,
 ) {
-    if path.data.bounds().width() == 0.0 && path.data.bounds().height() == 0.0 {
-        return;
-    }
-
     if let Some(stroke) = path.stroke.as_ref() {
+        if path.data.bounds().width() == 0.0
+            && path.data.bounds().height() == 0.0
+            // Zero length butt should not be rendered
+            && stroke.linecap == LineCap::Butt
+        {
+            return;
+        }
+
         let paint = &stroke.paint;
         let path_bbox = bbox_to_non_zero_rect(node.bounding_box());
 
