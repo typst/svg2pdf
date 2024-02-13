@@ -17,7 +17,6 @@ NO_FONT = "font is not part of test suite yet"
 IGNORE_TESTS = {
     # The following test cases still need to be investigated
     "svg/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.svg": INVESTIGATE,
-    "svg/resvg/filters/filter/with-mask-on-parent.svg": INVESTIGATE,
     "svg/resvg/masking/mask/recursive-on-child.svg": INVESTIGATE,
     "svg/resvg/paint-servers/pattern/nested-objectBoundingBox.svg": INVESTIGATE,
     "svg/resvg/paint-servers/radialGradient/fr=0.2.svg": INVESTIGATE,
@@ -79,6 +78,7 @@ IGNORE_TESTS = {
     "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=reflect.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg": NO_REPEAT,
+    "svg/custom/masking/mask/mask-and-image-with-transparency.svg": "bug",
 }
 
 

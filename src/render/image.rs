@@ -127,15 +127,21 @@ fn handle_transparent_image(image: &DynamicImage) -> (Vec<u8>, Filter, Option<Ve
 
     let encoded_mask: Option<Vec<u8>> = if color.has_alpha() {
         if bits / channels > 8 {
-            Some(
-                image
-                    .to_rgba16()
-                    .pixels()
-                    .flat_map(|&Rgba([.., a])| a.to_be_bytes())
-                    .collect(),
-            )
+            let image = image.to_rgba16();
+
+            if image.pixels().any(|&Rgba([.., a])| a != u16::MAX) {
+                Some(image.pixels().flat_map(|&Rgba([.., a])| a.to_be_bytes()).collect())
+            } else {
+                None
+            }
         } else {
-            Some(image.to_rgba8().pixels().map(|&Rgba([.., a])| a).collect())
+            let image = image.to_rgba8();
+
+            if image.pixels().any(|&Rgba([.., a])| a != u8::MAX) {
+                Some(image.pixels().map(|&Rgba([.., a])| a).collect())
+            } else {
+                None
+            }
         }
     } else {
         None
