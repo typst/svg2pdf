@@ -111,9 +111,6 @@ def main():
             if str(test_file.svg_path()) in IGNORE_TESTS:
                 test_string += f"// {IGNORE_TESTS[str(test_file.svg_path())]}\n"
                 test_string += "#[ignore] "
-            elif not test_file.has_ref():
-                test_string += f"// unknown reason\n"
-                test_string += "#[ignore] "
 
             test_string += "#[test] "
 
