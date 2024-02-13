@@ -129,8 +129,6 @@ fn stroke(
                 content.set_stroke_pattern(None, pattern_name.to_pdf_name());
             }
             Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                // In XPDF, the opacity will only be applied to the gradient if we also set the
-                // fill opacity. Unfortunately, in muPDF it still doesn't work.
                 set_opacity_gs(
                     chunk,
                     content,
