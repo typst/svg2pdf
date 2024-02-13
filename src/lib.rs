@@ -50,8 +50,7 @@ pub use usvg;
 
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
-use usvg::utils::view_box_to_transform;
-use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree};
+use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, ViewBox};
 
 use crate::render::tree_to_stream;
 use crate::util::context::Context;
@@ -389,12 +388,12 @@ fn initial_transform(
     // Account for the custom viewport that has been passed in the Options struct. If nothing has
     // been passed, pdf_size should be the same as tree.size, so the transform will just be the
     // default transform.
-    let custom_viewport_transform = view_box_to_transform(
-        NonZeroRect::from_xywh(0.0, 0.0, tree.size().width(), tree.size().height())
+    let view_box = ViewBox {
+        rect: NonZeroRect::from_xywh(0.0, 0.0, tree.size().width(), tree.size().height())
             .unwrap(),
-        aspect.unwrap_or(AspectRatio { defer: false, align: Align::None, slice: false }),
-        pdf_size,
-    );
+        aspect: aspect.unwrap_or(AspectRatio { defer: false, align: Align::None, slice: false }),
+    };
+    let custom_viewport_transform = view_box.to_transform(pdf_size);
 
     // Account for the direction of the y axis and the shift of the origin in the coordinate system.
     let pdf_transform = Transform::from_row(1.0, 0.0, 0.0, -1.0, 0.0, pdf_size.height());

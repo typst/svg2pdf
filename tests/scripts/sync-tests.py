@@ -11,6 +11,8 @@ resvg_svg_files = set([p.relative_to(RESVG_SVG_DIR) for p in RESVG_SVG_DIR.rglob
 svg2pdf_svg_files = set([p.relative_to(SVG2PDF_SVG_DIR) for p in SVG2PDF_SVG_DIR.rglob("*")])
 svg2pdf_ref_files = set([p.relative_to(SVG2PDF_REF_DIR) for p in SVG2PDF_REF_DIR.rglob("*")])
 
+print(resvg_svg_files)
+
 
 def sync_existing_tests():
     print("Sync tests...")

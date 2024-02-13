@@ -3,8 +3,7 @@ use std::sync::Arc;
 
 use pdf_writer::types::{PaintType, TilingType};
 use pdf_writer::{Chunk, Content, Filter};
-use usvg::utils::view_box_to_transform;
-use usvg::{Opacity, Pattern, Size, Transform};
+use usvg::{Opacity, Pattern, Size, Transform, ViewBox};
 
 use super::group;
 use crate::util::context::Context;
@@ -32,9 +31,7 @@ pub fn create(
     content.save_state();
 
     if let Some(view_box) = pattern.view_box() {
-        let view_box_transform = view_box_to_transform(
-            view_box.rect,
-            view_box.aspect,
+        let view_box_transform = view_box.to_transform(
             Size::from_wh(pattern_rect.width(), pattern_rect.height()).unwrap(),
         );
         content.transform(view_box_transform.to_pdf_transform());
