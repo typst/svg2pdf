@@ -35,7 +35,6 @@ IGNORE_TESTS = {
     "svg/resvg/text/text/compound-emojis.svg": INVESTIGATE,
     "svg/resvg/text/text/compound-emojis-and-coordinates-list.svg": INVESTIGATE,
     "svg/resvg/text/text/emojis.svg": INVESTIGATE,
-
     # The following test cases need to be excluded due to technical reasons
     "svg/resvg/filters/feMorphology/huge-radius.svg": "will timeout CI",
     "svg/resvg/filters/filter/huge-region.svg": "will sigkill",
@@ -68,13 +67,12 @@ IGNORE_TESTS = {
     "svg/resvg/structure/image/width-and-height-set-to-auto.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/zero-height.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/zero-width.svg": NO_RELATIVE_PATHS,
-
     # The following test cases are not implemented in svg2pdf yet
     "svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.svg": NO_REFLECT,
     "svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.svg": NO_REFLECT,
     "svg/resvg/paint-servers/linearGradient/spreadMethod=reflect.svg": NO_REFLECT,
     "svg/resvg/paint-servers/linearGradient/spreadMethod=repeat.svg": NO_REPEAT,
-    "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.svg":NO_REFLECT,
+    "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=reflect.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg": NO_REPEAT,
