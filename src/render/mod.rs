@@ -67,7 +67,9 @@ impl Render for Node {
                 ctx,
             ),
             #[cfg(not(feature = "image"))]
-            Node::Image(_) => {},
+            Node::Image(_) => {
+                log::warn!("Images have been disabled in this build of svg2pdf.")
+            }
             Node::Text(ref text) => {
                 group::render(
                     text.flattened(),

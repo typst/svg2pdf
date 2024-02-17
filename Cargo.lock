@@ -1161,6 +1161,7 @@ name = "svg2pdf"
 version = "0.9.1"
 dependencies = [
  "image",
+ "log",
  "miniz_oxide",
  "once_cell",
  "pdf-writer",
@@ -1178,6 +1179,7 @@ dependencies = [
  "clap_mangen",
  "fontdb",
  "image",
+ "log",
  "miniz_oxide",
  "pdf-writer",
  "svg2pdf",

@@ -22,6 +22,7 @@ doc = false
 clap = { workspace = true }
 fontdb = { workspace = true }
 image = { workspace = true }
+log = { workspace = true }
 miniz_oxide = { workspace = true }
 pdf-writer = { workspace = true }
 svg2pdf = { workspace = true }

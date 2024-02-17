@@ -12,7 +12,8 @@ readme = "README.md"
 license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
-svg2pdf = { path = ".", version = "0.9.1", default-features = false }
+log = "0.4.20"
+svg2pdf = { path = ".", default-features = false, version = "0.9.1" }
 clap = { version = "4.4.2", features = ["derive"] }
 clap_complete = "4.4.3"
 clap_mangen = "0.2.14"
@@ -52,6 +53,7 @@ miniz_oxide = { workspace = true }
 once_cell = { workspace = true }
 pdf-writer = { workspace = true }
 usvg = { workspace = true }
+log = { workspace = true }
 image = { workspace = true, optional = true }
 tiny-skia = {workspace = true, optional = true}
 resvg = {workspace = true, optional = true}
