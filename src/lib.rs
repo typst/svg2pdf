@@ -14,7 +14,7 @@ This example reads an SVG file and writes the corresponding PDF back to the disk
 
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
-use usvg::fontdb;
+use svg2pdf::usvg::fontdb;
 
 let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
 let svg = std::fs::read_to_string(path)?;
@@ -261,7 +261,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf;
 /// use pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str};
-/// use usvg::fontdb;
+/// use svg2pdf::usvg::fontdb;
 ///
 /// // Allocate the indirect reference IDs and names.
 /// let catalog_id = Ref::new(1);
