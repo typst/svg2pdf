@@ -16,14 +16,8 @@ NO_FONT = "font is not part of test suite yet"
 
 IGNORE_TESTS = {
     # The following test cases still need to be investigated
-    "svg/resvg/filters/fePointLight/primitiveUnits=objectBoundingBox.svg": INVESTIGATE,
-    "svg/resvg/masking/mask/recursive-on-child.svg": INVESTIGATE,
     "svg/resvg/paint-servers/pattern/nested-objectBoundingBox.svg": INVESTIGATE,
-    "svg/resvg/paint-servers/radialGradient/fr=0.2.svg": INVESTIGATE,
-    "svg/resvg/paint-servers/radialGradient/fr=0.5.svg": INVESTIGATE,
-    "svg/resvg/paint-servers/radialGradient/fr=0.7.svg": INVESTIGATE,
-    "svg/resvg/paint-servers/radialGradient/fr=-1.svg": INVESTIGATE,
-    "svg/resvg/paint-servers/radialGradient/invalid-gradientUnits.svg": INVESTIGATE,
+
     "svg/resvg/painting/stroke-dasharray/n-0.svg": INVESTIGATE,
     "svg/resvg/structure/image/image-with-float-size-scaling.svg": INVESTIGATE,
     "svg/resvg/structure/svg/funcIRI-parsing.svg": INVESTIGATE,
@@ -35,7 +29,9 @@ IGNORE_TESTS = {
     "svg/resvg/text/text/compound-emojis.svg": INVESTIGATE,
     "svg/resvg/text/text/compound-emojis-and-coordinates-list.svg": INVESTIGATE,
     "svg/resvg/text/text/emojis.svg": INVESTIGATE,
+
     # The following test cases need to be excluded due to technical reasons
+    # and are not considered as wrong.
     "svg/resvg/filters/feMorphology/huge-radius.svg": "will timeout CI",
     "svg/resvg/filters/filter/huge-region.svg": "will sigkill",
     "svg/resvg/structure/svg/negative-size.svg": "invalid size",
@@ -45,8 +41,6 @@ IGNORE_TESTS = {
     "svg/resvg/filters/feImage/simple-case.svg": NO_RELATIVE_PATHS,
     "svg/resvg/painting/marker/with-an-image-child.svg": NO_RELATIVE_PATHS,
     "svg/resvg/painting/mix-blend-mode/color-dodge.svg": "pdfium bug",
-    "svg/resvg/painting/stroke-linecap/zero-length-path-with-round.svg": NO_SUPPORT,
-    "svg/resvg/painting/stroke-linecap/zero-length-path-with-square.svg": NO_SUPPORT,
     "svg/resvg/painting/stroke-linejoin/miter-clip.svg": NO_SUPPORT,
     "svg/resvg/structure/image/external-gif.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/external-jpeg.svg": NO_RELATIVE_PATHS,
@@ -67,16 +61,23 @@ IGNORE_TESTS = {
     "svg/resvg/structure/image/width-and-height-set-to-auto.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/zero-height.svg": NO_RELATIVE_PATHS,
     "svg/resvg/structure/image/zero-width.svg": NO_RELATIVE_PATHS,
-    # The following test cases are not implemented in svg2pdf yet
+
+    # The following test cases should work but are not implemented in svg2pdf yet.
     "svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order.svg": NO_REFLECT,
     "svg/resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient.svg": NO_REFLECT,
     "svg/resvg/paint-servers/linearGradient/spreadMethod=reflect.svg": NO_REFLECT,
     "svg/resvg/paint-servers/linearGradient/spreadMethod=repeat.svg": NO_REPEAT,
-    "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.svg": NO_REFLECT,
+    "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order.svg":NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=reflect.svg": NO_REFLECT,
     "svg/resvg/paint-servers/radialGradient/spreadMethod=repeat.svg": NO_REPEAT,
-    "svg/custom/masking/mask/mask-and-image-with-transparency.svg": "bug",
+    "svg/custom/masking/mask/mask-and-image-with-transparency.svg": "bug. we currently override the soft mask that"
+                                                                    "is in place in the content stream by creating an"
+                                                                    "SMask entry in the Image XObject for transparency",
+    "svg/resvg/masking/mask/recursive-on-child.svg": "bug. the soft mask that will be created as part of the gradient"
+                                                     "will override the soft mask currently in place when rendering",
+    "svg/resvg/painting/stroke-linecap/zero-length-path-with-round.svg": "need to check how Chrome does it",
+    "svg/resvg/painting/stroke-linecap/zero-length-path-with-square.svg": "need to check how Firefox does it",
 }
 
 
