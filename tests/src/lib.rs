@@ -1,5 +1,6 @@
 #[rustfmt::skip]
-mod test;
+mod library;
+mod cli;
 
 use std::cmp::max;
 use std::fs;

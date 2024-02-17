@@ -5,7 +5,7 @@ import shutil
 from common import SVG_DIR, ROOT, TestFile
 from pathlib import Path
 
-OUT_PATH = ROOT / "src" / "test.rs"
+OUT_PATH = ROOT / "src" / "library.rs"
 
 NO_RELATIVE_PATHS = "no relative paths supported"
 INVESTIGATE = "need to investigate"

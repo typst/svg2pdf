@@ -25,7 +25,7 @@ that cover certain other edge cases and some integration tests specific to `svg2
 
 # Tests
 
-We use a Python script to generate the `test.rs` file, which tests all of the svg files
+We use a Python script to generate the `library.rs` file, which tests all of the svg files
 that are part of the test suites. SVG files which don't have a corresponding reference image
 will be skipped. To regenerate this file, you can simply run `./scripts/gen-tests.py` and
 it should work out of the box. 
