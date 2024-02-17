@@ -25,7 +25,6 @@ pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 termcolor = "1.2"
 usvg = { version = "0.40", default-features = false, features = ["text"] }
-walkdir = "2.3.3"
 tiny-skia = "0.11.4"
 resvg = "0.40"
 
