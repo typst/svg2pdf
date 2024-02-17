@@ -1,18 +1,16 @@
 use std::rc::Rc;
 
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{Group, SharedMask, Transform, Units};
+use usvg::{Group, Mask, Transform};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{
-    bbox_to_non_zero_rect, clip_to_rect, MaskTypeExt, NameExt, RectExt, TransformExt,
-};
+use crate::util::helper::{clip_to_rect, MaskTypeExt, NameExt, RectExt};
 
 /// Render a mask into a content stream.
 pub fn render(
     group: &Group,
-    mask: SharedMask,
+    mask: &Mask,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
@@ -24,41 +22,27 @@ pub fn render(
 /// the mask
 pub fn create(
     parent: &Group,
-    mask: SharedMask,
+    mask: &Mask,
     chunk: &mut Chunk,
     ctx: &mut Context,
 ) -> Rc<String> {
-    let mask = mask.borrow();
-
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();
 
     let mut content = Content::new();
     content.save_state();
 
-    if let Some(recursive_mask) = &mask.mask {
-        render(parent, recursive_mask.clone(), chunk, &mut content, ctx);
+    if let Some(mask) = mask.mask() {
+        render(parent, mask, chunk, &mut content, ctx);
     }
 
-    let parent_svg_bbox = bbox_to_non_zero_rect(parent.bounding_box);
-
-    let actual_rect = match mask.units {
-        Units::ObjectBoundingBox => mask.rect.bbox_transform(parent_svg_bbox),
-        Units::UserSpaceOnUse => mask.rect,
-    };
+    let rect = mask.rect();
 
     // In addition to setting the bounding box, we also apply a clip path to the mask rect to
     // circumvent a bug in Firefox where the bounding box is not applied properly for some transforms.
     // If we don't do this, the "half-width-region-with-rotation.svg" test case won't render properly.
-    clip_to_rect(actual_rect, &mut content);
-
-    let mut accumulated_transform = Transform::default();
-    if mask.content_units == Units::ObjectBoundingBox {
-        content.transform(Transform::from_bbox(parent_svg_bbox).to_pdf_transform());
-        accumulated_transform = Transform::from_bbox(parent_svg_bbox);
-    }
-
-    group::render(&mask.root, chunk, &mut content, ctx, accumulated_transform);
+    clip_to_rect(rect, &mut content);
+    group::render(mask.root(), chunk, &mut content, ctx, Transform::default(), None);
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);
@@ -78,12 +62,12 @@ pub fn create(
         .color_space()
         .icc_based(ctx.deferrer.srgb_ref());
 
-    x_object.bbox(actual_rect.to_pdf_rect());
+    x_object.bbox(rect.to_pdf_rect());
     x_object.finish();
 
     let gs_ref = ctx.alloc_ref();
     let mut gs = chunk.ext_graphics(gs_ref);
-    gs.soft_mask().subtype(mask.kind.to_pdf_mask_type()).group(x_ref);
+    gs.soft_mask().subtype(mask.kind().to_pdf_mask_type()).group(x_ref);
 
     ctx.deferrer.add_graphics_state(gs_ref)
 }

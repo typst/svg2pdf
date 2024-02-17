@@ -11,7 +11,7 @@ use once_cell::sync::Lazy;
 use oxipng::{InFile, OutFile};
 use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
-use usvg::{PostProcessingSteps, Tree, TreeParsing, TreePostProc};
+use usvg::Tree;
 
 use svg2pdf::Options;
 
@@ -64,10 +64,7 @@ pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
 /// Converts an SVG string into a usvg Tree
 pub fn read_svg(svg_string: &str) -> Tree {
     let options = usvg::Options::default();
-    let mut tree = Tree::from_str(svg_string, &options).unwrap();
-    tree.postprocess(PostProcessingSteps::default(), &FONTDB.lock().unwrap());
-    tree.calculate_bounding_boxes();
-    tree
+    Tree::from_str(svg_string, &options, &FONTDB.lock().unwrap()).unwrap()
 }
 
 /// Converts an image into a PDF and returns the PDF as well as a rendered version

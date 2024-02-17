@@ -28,7 +28,7 @@ pub fn tree_to_stream(
     let initial_transform = initial_transform.pre_concat(ctx.get_view_box_transform());
     content.transform(initial_transform.to_pdf_transform());
 
-    group::render(&tree.root, chunk, content, ctx, initial_transform);
+    group::render(tree.root(), chunk, content, ctx, initial_transform, None);
     content.restore_state();
 }
 
@@ -52,18 +52,29 @@ impl Render for Node {
     ) {
         match self {
             Node::Path(ref path) => {
-                path::render(self, path, chunk, content, ctx, accumulated_transform)
+                path::render(path, chunk, content, ctx, accumulated_transform)
             }
             Node::Group(ref group) => {
-                group::render(group, chunk, content, ctx, accumulated_transform)
+                group::render(group, chunk, content, ctx, accumulated_transform, None)
             }
             #[cfg(feature = "image")]
-            Node::Image(ref image) => image::render(image, chunk, content, ctx),
+            Node::Image(ref image) => image::render(
+                image.visibility(),
+                image.kind(),
+                image.view_box(),
+                chunk,
+                content,
+                ctx,
+            ),
             Node::Text(ref text) => {
-                // Texts should be flattened beforehand.
-                if let Some(ref root) = text.flattened {
-                    group::render(root, chunk, content, ctx, accumulated_transform);
-                }
+                group::render(
+                    text.flattened(),
+                    chunk,
+                    content,
+                    ctx,
+                    accumulated_transform,
+                    None,
+                );
             }
         }
     }

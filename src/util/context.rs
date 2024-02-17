@@ -5,7 +5,6 @@ compressed and access to an instance of the deferrer + allocator.
 */
 
 use pdf_writer::{Content, Ref};
-use usvg::utils::view_box_to_transform;
 use usvg::{NonZeroRect, Size, Transform, Tree, ViewBox};
 
 use super::defer::Deferrer;
@@ -28,8 +27,8 @@ impl Context {
     /// Create a new context.
     pub fn new(tree: &Tree, options: Options, start_ref: Option<i32>) -> Self {
         Self {
-            view_box: tree.view_box,
-            size: tree.size,
+            view_box: tree.view_box(),
+            size: tree.size(),
             deferrer: Deferrer::new_with_start_ref(start_ref.unwrap_or(1)),
             options,
         }
@@ -44,7 +43,7 @@ impl Context {
     /// i.e. the initial transform passed by the user + the view box transform to account for the
     /// view box of the SVG).
     pub fn get_view_box_transform(&self) -> Transform {
-        view_box_to_transform(self.view_box.rect, self.view_box.aspect, self.size)
+        self.view_box.to_transform(self.size)
     }
 
     /// Returns a [`usvg` Rect](usvg::Rect) with the dimensions of the whole SVG.

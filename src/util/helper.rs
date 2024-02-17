@@ -127,15 +127,15 @@ pub trait StopExt {
 impl StopExt for usvg::Stop {
     fn opacity_stops(&self) -> Stop<1> {
         Stop {
-            color: [self.opacity.get()],
-            offset: self.offset.get(),
+            color: [self.opacity().get()],
+            offset: self.offset().get(),
         }
     }
 
     fn color_stops(&self) -> Stop<3> {
         Stop {
-            color: self.color.to_pdf_color(),
-            offset: self.offset.get(),
+            color: self.color().to_pdf_color(),
+            offset: self.offset().get(),
         }
     }
 }
@@ -149,11 +149,11 @@ impl GroupExt for usvg::Group {
     // clip paths, which shouldn't strictly be necessary but only bloats the file size in PDF.
     fn is_isolated(&self) -> bool {
         // According to the SVG spec, any of these makes a group isolated.
-        self.isolate
-            || self.mask.is_some()
-            || self.blend_mode != usvg::BlendMode::Normal
-            || !self.filters.is_empty()
-            || self.opacity.get() != 1.0
+        self.isolate()
+            || self.mask().is_some()
+            || self.blend_mode() != usvg::BlendMode::Normal
+            || !self.filters().is_empty()
+            || self.opacity().get() != 1.0
     }
 }
 

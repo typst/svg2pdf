@@ -7,9 +7,19 @@ RESVG_SVG_DIR = Path("../../../resvg/crates/resvg/tests/tests")
 SVG2PDF_SVG_DIR = Path("../svg/resvg")
 SVG2PDF_REF_DIR = Path("../ref/resvg")
 
-resvg_svg_files = set([p.relative_to(RESVG_SVG_DIR) for p in RESVG_SVG_DIR.rglob("*") if p.suffix == ".svg"])
-svg2pdf_svg_files = set([p.relative_to(SVG2PDF_SVG_DIR) for p in SVG2PDF_SVG_DIR.rglob("*")])
-svg2pdf_ref_files = set([p.relative_to(SVG2PDF_REF_DIR) for p in SVG2PDF_REF_DIR.rglob("*")])
+resvg_svg_files = set(
+    [
+        p.relative_to(RESVG_SVG_DIR)
+        for p in RESVG_SVG_DIR.rglob("*")
+        if p.suffix == ".svg"
+    ]
+)
+svg2pdf_svg_files = set(
+    [p.relative_to(SVG2PDF_SVG_DIR) for p in SVG2PDF_SVG_DIR.rglob("*")]
+)
+svg2pdf_ref_files = set(
+    [p.relative_to(SVG2PDF_REF_DIR) for p in SVG2PDF_REF_DIR.rglob("*")]
+)
 
 
 def sync_existing_tests():
@@ -32,13 +42,16 @@ def sync_existing_tests():
                 svg2pdf_file.write(content)
 
 
-
 def find_superfluous_tests():
-    superfluous_tests = [str(p) for p in svg2pdf_svg_files - resvg_svg_files if p.suffix == ".svg"]
+    superfluous_tests = [
+        str(p) for p in svg2pdf_svg_files - resvg_svg_files if p.suffix == ".svg"
+    ]
     if len(superfluous_tests) == 0:
         print("No superfluous tests found.")
     else:
-        print(f"Found {len(superfluous_tests)} superfluous tests: {sorted(superfluous_tests)}")
+        print(
+            f"Found {len(superfluous_tests)} superfluous tests: {sorted(superfluous_tests)}"
+        )
 
 
 def find_superfluous_ref_images():
@@ -48,7 +61,9 @@ def find_superfluous_ref_images():
     if len(superfluous_refs) == 0:
         print("No superfluous refs found.")
     else:
-        print(f"Found {len(superfluous_refs)} superfluous tests: {sorted(superfluous_refs)}")
+        print(
+            f"Found {len(superfluous_refs)} superfluous tests: {sorted(superfluous_refs)}"
+        )
 
 
 sync_existing_tests()
