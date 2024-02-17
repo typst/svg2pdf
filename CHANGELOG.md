@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed dpi ratio calculation. Thanks to [@Ultraxime](https://github.com/Ultraxime).
 
 ### Changed
-- Bumped resvg to v0.37 and fontdb to 0.16.
+- Bumped resvg to v0.40 and fontdb to 0.16.
+- `convert_str` now requires a `fontdb` as an argument as well.
 - (Internal) reworked the test suite.
 - (Internal) synced test suite with resvg test suite.
