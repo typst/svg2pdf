@@ -42,7 +42,7 @@ pub fn create(
     // circumvent a bug in Firefox where the bounding box is not applied properly for some transforms.
     // If we don't do this, the "half-width-region-with-rotation.svg" test case won't render properly.
     clip_to_rect(rect, &mut content);
-    group::render(&mask.root(), chunk, &mut content, ctx, Transform::default(), None);
+    group::render(mask.root(), chunk, &mut content, ctx, Transform::default(), None);
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);

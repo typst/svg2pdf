@@ -28,7 +28,7 @@ pub fn tree_to_stream(
     let initial_transform = initial_transform.pre_concat(ctx.get_view_box_transform());
     content.transform(initial_transform.to_pdf_transform());
 
-    group::render(&tree.root(), chunk, content, ctx, initial_transform, None);
+    group::render(tree.root(), chunk, content, ctx, initial_transform, None);
     content.restore_state();
 }
 

@@ -174,7 +174,7 @@ fn function(
         // We manually pad the stops if necessary so that they are always in the range from 0-1
         if let Some(first) = stops.first() {
             if first.offset != 0.0 {
-                let mut new_stop = first.clone();
+                let mut new_stop = *first;
                 new_stop.offset = 0.0;
                 stops.insert(0, new_stop);
             }
@@ -182,7 +182,7 @@ fn function(
 
         if let Some(last) = stops.last() {
             if last.offset != 1.0 {
-                let mut new_stop = last.clone();
+                let mut new_stop = *last;
                 new_stop.offset = 1.0;
                 stops.push(new_stop);
             }

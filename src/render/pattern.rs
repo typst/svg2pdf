@@ -38,7 +38,7 @@ pub fn create(
     }
 
     group::render(
-        &pattern.root(),
+        pattern.root(),
         chunk,
         &mut content,
         ctx,

@@ -38,8 +38,8 @@ pub fn render(
     // of more complex clipping paths, even if this means that Safari will in some cases not
     // display them correctly.
 
-    let is_simple_clip_path = is_simple_clip_path(&clip_path.root());
-    let clip_rules = collect_clip_rules(&clip_path.root());
+    let is_simple_clip_path = is_simple_clip_path(clip_path.root());
+    let clip_rules = collect_clip_rules(clip_path.root());
 
     if is_simple_clip_path
         && (clip_rules.iter().all(|f| *f == FillRule::NonZero)
@@ -49,7 +49,6 @@ pub fn render(
                 && clip_rules.len() == 1))
     {
         create_simple_clip_path(
-            group,
             clip_path,
             content,
             clip_rules.first().copied().unwrap_or(FillRule::NonZero),
@@ -94,13 +93,12 @@ fn collect_clip_rules(group: &Group) -> Vec<FillRule> {
 }
 
 fn create_simple_clip_path(
-    parent: &Group,
     clip_path: &ClipPath,
     content: &mut Content,
     clip_rule: FillRule,
 ) {
     if let Some(clip_path) = clip_path.clip_path() {
-        create_simple_clip_path(parent, clip_path, content, clip_rule);
+        create_simple_clip_path(clip_path, content, clip_rule);
     }
 
     // Just a dummy operation, so that in case the clip path only has hidden children the clip
@@ -110,7 +108,7 @@ fn create_simple_clip_path(
     let base_transform = clip_path.transform();
 
     let mut segments = vec![];
-    extend_segments_from_group(&clip_path.root(), &base_transform, &mut segments);
+    extend_segments_from_group(clip_path.root(), &base_transform, &mut segments);
     draw_path(segments.into_iter(), content);
 
     if clip_rule == FillRule::NonZero {
@@ -189,14 +187,7 @@ fn create_complex_clip_path(
 
     let pdf_bbox = bbox_to_non_zero_rect(Some(parent.bounding_box())).to_pdf_rect();
 
-    group::render(
-        &clip_path.root(),
-        chunk,
-        &mut content,
-        ctx,
-        Transform::default(),
-        None,
-    );
+    group::render(clip_path.root(), chunk, &mut content, ctx, Transform::default(), None);
     content.restore_state();
 
     let content_stream = ctx.finish_content(content);
