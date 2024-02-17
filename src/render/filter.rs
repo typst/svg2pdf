@@ -24,12 +24,16 @@ pub fn render(
         pixmap_size.height().round() as u32,
     )?;
 
-    let initial_transform = Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale)
-        .pre_concat(Transform::from_translate(-layer_bbox.x(), -layer_bbox.y()))
-        // This one is a hack because resvg::render_node will take the absolute layer bbox into consideration
-        // and translate by -layer_bbox.x() and -layer_bbox.y(), but we don't want that, so we
-        // inverse it.
-        .pre_concat(Transform::from_translate(group.abs_layer_bounding_box().x(), group.abs_layer_bounding_box().y()));
+    let initial_transform =
+        Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale)
+            .pre_concat(Transform::from_translate(-layer_bbox.x(), -layer_bbox.y()))
+            // This one is a hack because resvg::render_node will take the absolute layer bbox into consideration
+            // and translate by -layer_bbox.x() and -layer_bbox.y(), but we don't want that, so we
+            // inverse it.
+            .pre_concat(Transform::from_translate(
+                group.abs_layer_bounding_box().x(),
+                group.abs_layer_bounding_box().y(),
+            ));
 
     resvg::render_node(
         &Node::Group(Box::new(group.clone())),

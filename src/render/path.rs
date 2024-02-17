@@ -9,9 +9,7 @@ use usvg::{Stroke, Transform};
 use super::{gradient, pattern};
 use crate::util::context::Context;
 use crate::util::defer::SRGB;
-use crate::util::helper::{
-    ColorExt, LineCapExt, LineJoinExt, NameExt,
-};
+use crate::util::helper::{ColorExt, LineCapExt, LineJoinExt, NameExt};
 
 /// Render a path into a content stream.
 pub fn render(

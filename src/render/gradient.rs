@@ -19,7 +19,7 @@ struct GradientProperties {
     coords: Vec<f32>,
     shading_type: FunctionShadingType,
     stops: Vec<usvg::Stop>,
-    transform: Transform
+    transform: Transform,
 }
 
 impl GradientProperties {

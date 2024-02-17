@@ -4,35 +4,43 @@ This crate allows to convert static (i.e. non-interactive) SVG files to
 either standalone PDF files or Form XObjects that can be embedded in another
 PDF file and used just like images.
 
-The conversion will translate the SVG content to PDF without rasterizing them,
-so no quality is lost.
+The conversion will translate the SVG content to PDF without rasterizing them
+(the only exception being objects with filters on them, but in this case only
+this single group will be rasterized, while the remaining contents of the SVG
+will still be turned into a vector graphic), so no quality is lost.
 
 ## Example
 This example reads an SVG file and writes the corresponding PDF back to the disk.
 
 ```
-// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-// let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
-// let svg = std::fs::read_to_string(path)?;
-//
-// // This can only fail if the SVG is malformed. This one is not.
-// let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default())?;
-//
-// // ... and now you have a Vec<u8> which you could write to a file or
-// // transmit over the network!
-// std::fs::write("target/time_series.pdf", pdf)?;
-// # Ok(()) }
+# fn main() -> Result<(), Box<dyn std::error::Error>> {
+use usvg::fontdb;
+
+let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
+let svg = std::fs::read_to_string(path)?;
+let mut db = fontdb::Database::new();
+db.load_system_fonts();
+
+// This can only fail if the SVG is malformed. This one is not.
+let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default(), &db)?;
+
+// ... and now you have a Vec<u8> which you could write to a file or
+// transmit over the network!
+std::fs::write("target/time_series.pdf", pdf)?;
+# Ok(()) }
 ```
 
 ## Supported features
-In general, a large part of the SVG specification is supported, including features like:
-- Path drawing with fills and strokes
+In general, a very large part of the SVG specification is supported, including
+but not limited to:
+- Paths with simple and complex fills
 - Gradients
 - Patterns
 - Clip paths
 - Masks
-- Transformation matrices
-- Respecting the `keepAspectRatio` attribute
+- Transformations
+- Viewbox
+- Text (although it will be converted into paths)
 - Raster images and nested SVGs
 
 ## Unsupported features
@@ -40,7 +48,9 @@ Among the unsupported features are currently:
 - The `spreadMethod` attribute of gradients
 - Filters
 - Raster images are not color managed but use PDF's DeviceRGB color space
-- A number of features that were added in SVG2
+- A number of features that were added in SVG2, See
+[here](https://github.com/RazrFalcon/resvg/blob/master/docs/svg2-changelog.md) for a more
+comprehensive list.
  */
 
 mod render;
@@ -50,7 +60,7 @@ pub use usvg;
 
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
-use usvg::{Align, AspectRatio, NonZeroRect, Size, Transform, Tree, ViewBox};
+use usvg::{fontdb, Align, AspectRatio, NonZeroRect, Size, Transform, Tree, ViewBox};
 
 use crate::render::tree_to_stream;
 use crate::util::context::Context;
@@ -131,6 +141,22 @@ impl Default for Options {
     }
 }
 
+/// Convert an SVG source string to a standalone PDF buffer.
+///
+/// Returns an error if the SVG string is malformed.
+pub fn convert_str(
+    src: &str,
+    options: Options,
+    fontdb: &fontdb::Database,
+) -> Result<Vec<u8>, usvg::Error> {
+    let mut usvg_options = usvg::Options::default();
+    if let Some(size) = options.viewport {
+        usvg_options.default_size = size;
+    }
+    let tree = Tree::from_str(src, &usvg_options, fontdb)?;
+    Ok(convert_tree(&tree, options))
+}
+
 /// Convert a [`usvg` tree](Tree) into a standalone PDF buffer.
 ///
 /// ## Example
@@ -139,7 +165,7 @@ impl Default for Options {
 ///
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// use svg2pdf::usvg::{fontdb, PostProcessingSteps, TreeParsing, TreePostProc};
+/// use svg2pdf::usvg::fontdb;
 /// use svg2pdf::Options;
 ///
 /// let input = "tests/svg/custom/integration/matplotlib/step.svg";
@@ -235,6 +261,7 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf;
 /// use pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str};
+/// use usvg::fontdb;
 ///
 /// // Allocate the indirect reference IDs and names.
 /// let catalog_id = Ref::new(1);
@@ -272,7 +299,9 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
 /// // We need to load its source first and manually parse it into a usvg Tree.
 /// let path = "tests/svg/custom/integration/matplotlib/step.svg";
 /// let svg = std::fs::read_to_string(path)?;
-/// let tree = svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default())?;
+/// let mut db = fontdb::Database::new();
+/// db.load_system_fonts();
+/// let tree = svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default(), &db)?;
 ///
 /// // Then, we will write it to the page as the 6th indirect object.
 /// //
@@ -391,7 +420,11 @@ fn initial_transform(
     let view_box = ViewBox {
         rect: NonZeroRect::from_xywh(0.0, 0.0, tree.size().width(), tree.size().height())
             .unwrap(),
-        aspect: aspect.unwrap_or(AspectRatio { defer: false, align: Align::None, slice: false }),
+        aspect: aspect.unwrap_or(AspectRatio {
+            defer: false,
+            align: Align::None,
+            slice: false,
+        }),
     };
     let custom_viewport_transform = view_box.to_transform(pdf_size);
 

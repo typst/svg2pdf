@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use pdf_writer::types::{PaintType, TilingType};
 use pdf_writer::{Chunk, Content, Filter};
-use usvg::{Opacity, Pattern, Size, Transform, ViewBox};
+use usvg::{Opacity, Pattern, Size, Transform};
 
 use super::group;
 use crate::util::context::Context;
