@@ -28,6 +28,11 @@ svg2pdf = { workspace = true }
 termcolor = { workspace = true }
 usvg = { workspace = true}
 
+[features]
+default = ["svg2pdf/default"]
+image = ["svg2pdf/image"]
+filters = ["svg2pdf/filters"]
+
 [build-dependencies]
 clap = { workspace = true, features = ["string"] }
 clap_complete = { workspace = true }

@@ -12,7 +12,7 @@ readme = "README.md"
 license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
-svg2pdf = { path = ".", version = "0.9.1" }
+svg2pdf = { path = ".", version = "0.9.1", default-features = false }
 clap = { version = "4.4.2", features = ["derive"] }
 clap_complete = "4.4.3"
 clap_mangen = "0.2.14"
@@ -45,7 +45,7 @@ bench = false
 [features]
 default = ["image", "filters"]
 image = ["dep:image"]
-filters = ["dep:tiny-skia", "dep:resvg"]
+filters = ["image", "dep:tiny-skia", "dep:resvg"]
 
 [dependencies]
 miniz_oxide = { workspace = true }

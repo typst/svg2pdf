@@ -66,6 +66,8 @@ impl Render for Node {
                 content,
                 ctx,
             ),
+            #[cfg(not(feature = "image"))]
+            Node::Image(_) => {},
             Node::Text(ref text) => {
                 group::render(
                     text.flattened(),
