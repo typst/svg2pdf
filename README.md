@@ -10,24 +10,9 @@ This crate allows to convert static (i.e. non-interactive) SVG files to
 either standalone PDF files or Form XObjects that can be embedded in another
 PDF file and used just like images.
 
-Apart from groups with filters on them, the conversion will translate 
-the SVG content to PDF without rasterizing it, so no quality is lost.
-
-## Example
-
-This example reads an SVG file and writes the corresponding PDF back to the disk.
-
-```rust
-let path = "tests/svg/custom/integration/matplotlib/time_series.svg";
-let svg = std::fs::read_to_string(path)?;
-
-// This can only fail if the SVG is malformed. This one is not.
-let pdf = svg2pdf::convert_str(&svg, svg2pdf::Options::default())?;
-
-// ... and now you have a Vec<u8> which you could write to a file or
-// transmit over the network!
-std::fs::write("target/time_series.pdf", pdf)?;
-```
+See the [documentation](https://docs.rs/svg2pdf/latest/svg2pdf/) for a more detailed
+description, including which features are supported and which are not, as well as for
+examples on how to use this library.
 
 ## CLI
 
@@ -43,28 +28,6 @@ You can then convert SVGs to PDFs by running commands like these:
 ```bash
 svg2pdf your.svg
 ```
-
-## Supported features
-In general, a large part of the SVG specification is supported, including
-features like:
-- Path drawing with fills and strokes
-- Gradients
-- Patterns
-- Clip paths
-- Masks
-- Filters
-- Transformation matrices
-- Respecting the `keepAspectRatio` attribute
-- Raster images and nested SVGs
-
-## Unsupported features
-Among the unsupported features are currently:
-- The `spreadMethod` attribute of gradients
-- Text will be converted into shapes before converting to PDF. It is planned
-to add support for text preservation in a future update.
-- Raster images are not color managed but use PDF's DeviceRGB color space
-- A number of features that were added in SVG2 
-(see [here](https://github.com/RazrFalcon/resvg/blob/master/docs/svg2-changelog.md))
 
 ## Contributing
 We are looking forward to receiving your bugs and feature requests in the Issues
