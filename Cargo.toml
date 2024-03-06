@@ -55,5 +55,5 @@ pdf-writer = { workspace = true }
 usvg = { workspace = true }
 log = { workspace = true }
 image = { workspace = true, optional = true }
-tiny-skia = {workspace = true, optional = true}
-resvg = {workspace = true, optional = true}
+tiny-skia = {workspace = true, optional = true }
+resvg = {workspace = true, optional = true }
