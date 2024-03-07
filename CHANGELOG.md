@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Bumped resvg to v0.40.
+- `convert_str` now requires a `fontdb` as an argument as well.
+
+## [0.10.0]
+
 ### Added
 - Added ability to list the available fonts found by svg2pdf. Thanks to [@rgreinho](https://github.com/rgreinho).
 - Added support for filter rendering.
@@ -16,7 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed dpi ratio calculation. Thanks to [@Ultraxime](https://github.com/Ultraxime).
 
 ### Changed
-- Bumped resvg to v0.40 and fontdb to 0.16.
-- `convert_str` now requires a `fontdb` as an argument as well.
+- Bumped resvg to v0.38 and fontdb to 0.16.
 - (Internal) reworked the test suite.
 - (Internal) synced test suite with resvg test suite.
+
+[Unreleased]: https://github.com/typst/svg2pdf/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/typst/svg2pdf/compare/v0.9.1...v0.10.0
