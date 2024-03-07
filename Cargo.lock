@@ -1202,7 +1202,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "svg2pdf"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "image",
  "miniz_oxide",
@@ -1215,7 +1215,7 @@ dependencies = [
 
 [[package]]
 name = "svg2pdf-cli"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -1231,7 +1231,7 @@ dependencies = [
 
 [[package]]
 name = "svg2pdf-tests"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "fontdb",
  "image",
