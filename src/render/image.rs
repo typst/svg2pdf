@@ -216,7 +216,8 @@ fn create_svg_image(
     let image_name = ctx.deferrer.add_x_object(image_ref);
     // convert_tree_into will automatically scale it in a way so that its dimensions are 1x1, like
     // regular ImageXObjects. So afterwards, we can just treat them the same.
-    let next_ref = convert_tree_into(tree, Options::default(), chunk, image_ref);
+    let next_ref =
+        convert_tree_into(tree, Options::default(), chunk, image_ref, ctx.fontdb.clone());
     ctx.deferrer.set_next_ref(next_ref.get());
     (image_name, tree.size())
 }

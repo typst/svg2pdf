@@ -14,6 +14,7 @@ pub mod image;
 pub mod mask;
 pub mod path;
 pub mod pattern;
+pub mod text;
 
 /// Write a tree into a stream. Assumes that the stream belongs to transparency group and has the
 /// right bounding boxes.
@@ -71,14 +72,15 @@ impl Render for Node {
                 log::warn!("Images have been disabled in this build of svg2pdf.")
             }
             Node::Text(ref text) => {
-                group::render(
-                    text.flattened(),
-                    chunk,
-                    content,
-                    ctx,
-                    accumulated_transform,
-                    None,
-                );
+                text::render(text, chunk, content, ctx, accumulated_transform);
+                // group::render(
+                //     text.flattened(),
+                //     chunk,
+                //     content,
+                //     ctx,
+                //     accumulated_transform,
+                //     None,
+                // );
             }
         }
     }

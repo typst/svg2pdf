@@ -807,6 +807,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
+name = "owned_ttf_parser"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4586edfe4c648c71797a74c84bacb32b52b212eff5dfe2bb9f2c599844023e7"
+dependencies = [
+ "ttf-parser",
+]
+
+[[package]]
 name = "oxipng"
 version = "9.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -993,8 +1002,6 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 [[package]]
 name = "resvg"
 version = "0.40.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "024e40e1ba7313fc315b1720298988c0cd6f8bfe3754b52838aafecebd11355a"
 dependencies = [
  "gif",
  "jpeg-decoder",
@@ -1157,6 +1164,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5ee073c9e4cd00e28217186dbe12796d692868f432bf2e97ee73bed0c56dfa01"
 
 [[package]]
+name = "subsetter"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09eab8a83bff89ba2200bd4c59be45c7c787f988431b936099a5a266c957f2f9"
+
+[[package]]
 name = "svg2pdf"
 version = "0.9.1"
 dependencies = [
@@ -1164,9 +1177,12 @@ dependencies = [
  "log",
  "miniz_oxide",
  "once_cell",
+ "owned_ttf_parser",
  "pdf-writer",
  "resvg",
+ "subsetter",
  "tiny-skia",
+ "unicode-properties",
  "usvg",
 ]
 
@@ -1184,6 +1200,7 @@ dependencies = [
  "pdf-writer",
  "svg2pdf",
  "termcolor",
+ "ttf-parser",
  "usvg",
 ]
 
@@ -1346,8 +1363,6 @@ checksum = "b1d386ff53b415b7fe27b50bb44679e2cc4660272694b7b6f3326d8480823a94"
 [[package]]
 name = "usvg"
 version = "0.40.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c04150a94f0bfc3b2c15d4e151524d14cd06765fc6641d8b1c59a248360d4474"
 dependencies = [
  "base64",
  "data-url",

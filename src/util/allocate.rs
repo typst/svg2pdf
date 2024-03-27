@@ -23,6 +23,7 @@ pub struct Allocator {
     /// The next number that will be used for the name of a shading in a resource
     /// dictionary, e.g. "sh0".
     next_shadings_num: i32,
+    next_fonts_num: i32,
 }
 
 impl Default for Allocator {
@@ -33,6 +34,7 @@ impl Default for Allocator {
             next_graphics_state_num: 0,
             next_patterns_num: 0,
             next_shadings_num: 0,
+            next_fonts_num: 0,
         }
     }
 }
@@ -82,5 +84,12 @@ impl Allocator {
         let num = self.next_shadings_num;
         self.next_shadings_num += 1;
         format!("sh{}", num)
+    }
+
+    /// Allocate a new shading name.
+    pub fn alloc_font_name(&mut self) -> String {
+        let num = self.next_fonts_num;
+        self.next_fonts_num += 1;
+        format!("fo{}", num)
     }
 }

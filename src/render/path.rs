@@ -29,12 +29,12 @@ pub fn render(
     // higher file sizes depending on the SVG.
     match path.paint_order() {
         PaintOrder::FillAndStroke => {
-            fill(path, chunk, content, ctx, accumulated_transform);
-            stroke(path, chunk, content, ctx, accumulated_transform);
+            fill_path(path, chunk, content, ctx, accumulated_transform);
+            stroke_path(path, chunk, content, ctx, accumulated_transform);
         }
         PaintOrder::StrokeAndFill => {
-            stroke(path, chunk, content, ctx, accumulated_transform);
-            fill(path, chunk, content, ctx, accumulated_transform);
+            stroke_path(path, chunk, content, ctx, accumulated_transform);
+            fill_path(path, chunk, content, ctx, accumulated_transform);
         }
     }
 }
@@ -84,7 +84,7 @@ pub fn draw_path(path_data: impl Iterator<Item = PathSegment>, content: &mut Con
     }
 }
 
-fn stroke(
+pub(crate) fn stroke_path(
     path: &Path,
     chunk: &mut Chunk,
     content: &mut Content,
@@ -95,79 +95,94 @@ fn stroke(
         return;
     }
 
-    if let Some(stroke) = path.stroke().as_ref() {
-        let paint = &stroke.paint();
-
-        content.save_state();
-
-        match paint {
-            Paint::Color(c) => {
-                set_opacity_gs(chunk, content, ctx, Some(stroke.opacity()), None);
-                content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
-                content.set_stroke_color(c.to_pdf_color());
-            }
-            Paint::Pattern(p) => {
-                // Instead of setting the opacity via an external graphics state, we to it
-                // by passing the opacity on to the pattern. The reason is that, for example
-                // if we use a pattern as a stroke and set a stroke-opacity of 0.5, when rendering
-                // the pattern, the opacity would only apply to strokes in that pattern, instead of
-                // the whole pattern itself. This is why we need to handle this case differently.
-                let pattern_name = pattern::create(
-                    p.clone(),
-                    chunk,
-                    ctx,
-                    accumulated_transform,
-                    Some(stroke.opacity()),
-                );
-                content.set_stroke_color_space(Pattern);
-                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
-            }
-            Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                // In XPDF, the opacity will only be applied to the gradient if we also set the
-                // fill opacity. Unfortunately, in muPDF it still doesn't work.
-                set_opacity_gs(
-                    chunk,
-                    content,
-                    ctx,
-                    Some(stroke.opacity()),
-                    Some(stroke.opacity()),
-                );
-
-                if let Some(soft_mask) =
-                    gradient::create_shading_soft_mask(paint, chunk, ctx)
-                {
-                    content.set_parameters(soft_mask.to_pdf_name());
-                }
-
-                let pattern_name = gradient::create_shading_pattern(
-                    paint,
-                    chunk,
-                    ctx,
-                    &accumulated_transform,
-                );
-                content.set_stroke_color_space(Pattern);
-                content.set_stroke_pattern(None, pattern_name.to_pdf_name());
-            }
-        }
-
-        content.set_line_width(stroke.width().get());
-        content.set_miter_limit(stroke.miterlimit().get());
-        content.set_line_cap(stroke.linecap().to_pdf_line_cap());
-        content.set_line_join(stroke.linejoin().to_pdf_line_join());
-
-        if let Some(dasharray) = &stroke.dasharray() {
-            content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset());
-        } else {
-            content.set_dash_pattern(vec![], 0.0);
-        }
-
+    let operation = |content: &mut Content, stroke: &Stroke| {
         draw_path(path.data().segments(), content);
         finish_path(Some(stroke), None, content);
-        content.restore_state();
+    };
+
+    if let Some(path_stroke) = path.stroke() {
+        stroke(path_stroke, chunk, content, ctx, operation, accumulated_transform);
     }
 }
 
-fn fill(
+pub(crate) fn stroke(
+    stroke: &Stroke,
+    chunk: &mut Chunk,
+    content: &mut Content,
+    ctx: &mut Context,
+    operation: impl Fn(&mut Content, &Stroke),
+    accumulated_transform: Transform,
+) {
+    let paint = &stroke.paint();
+
+    content.save_state();
+
+    match paint {
+        Paint::Color(c) => {
+            set_opacity_gs(chunk, content, ctx, Some(stroke.opacity()), None);
+            content.set_stroke_color_space(ColorSpaceOperand::Named(SRGB));
+            content.set_stroke_color(c.to_pdf_color());
+        }
+        Paint::Pattern(p) => {
+            // Instead of setting the opacity via an external graphics state, we to it
+            // by passing the opacity on to the pattern. The reason is that, for example
+            // if we use a pattern as a stroke and set a stroke-opacity of 0.5, when rendering
+            // the pattern, the opacity would only apply to strokes in that pattern, instead of
+            // the whole pattern itself. This is why we need to handle this case differently.
+            let pattern_name = pattern::create(
+                p.clone(),
+                chunk,
+                ctx,
+                accumulated_transform,
+                Some(stroke.opacity()),
+            );
+            content.set_stroke_color_space(Pattern);
+            content.set_stroke_pattern(None, pattern_name.to_pdf_name());
+        }
+        Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
+            // In XPDF, the opacity will only be applied to the gradient if we also set the
+            // fill opacity. Unfortunately, in muPDF it still doesn't work.
+            set_opacity_gs(
+                chunk,
+                content,
+                ctx,
+                Some(stroke.opacity()),
+                Some(stroke.opacity()),
+            );
+
+            if let Some(soft_mask) = gradient::create_shading_soft_mask(paint, chunk, ctx)
+            {
+                content.set_parameters(soft_mask.to_pdf_name());
+            }
+
+            let pattern_name = gradient::create_shading_pattern(
+                paint,
+                chunk,
+                ctx,
+                &accumulated_transform,
+            );
+            content.set_stroke_color_space(Pattern);
+            content.set_stroke_pattern(None, pattern_name.to_pdf_name());
+        }
+    }
+
+    content.set_line_width(stroke.width().get());
+    content.set_miter_limit(stroke.miterlimit().get());
+    content.set_line_cap(stroke.linecap().to_pdf_line_cap());
+    content.set_line_join(stroke.linejoin().to_pdf_line_join());
+
+    if let Some(dasharray) = &stroke.dasharray() {
+        content.set_dash_pattern(dasharray.iter().cloned(), stroke.dashoffset());
+    } else {
+        content.set_dash_pattern(vec![], 0.0);
+    }
+
+    operation(content, stroke);
+
+    content.restore_state();
+}
+
+pub(crate) fn fill_path(
     path: &Path,
     chunk: &mut Chunk,
     content: &mut Content,
@@ -178,53 +193,67 @@ fn fill(
         return;
     }
 
-    if let Some(fill) = path.fill().as_ref() {
-        let paint = &fill.paint();
-
-        content.save_state();
-
-        match paint {
-            Paint::Color(c) => {
-                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity()));
-                content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
-                content.set_fill_color(c.to_pdf_color());
-            }
-            Paint::Pattern(p) => {
-                // See note in the `stroke` function.
-                let pattern_name = pattern::create(
-                    p.clone(),
-                    chunk,
-                    ctx,
-                    accumulated_transform,
-                    Some(fill.opacity()),
-                );
-                content.set_fill_color_space(Pattern);
-                content.set_fill_pattern(None, pattern_name.to_pdf_name());
-            }
-            Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
-                set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity()));
-
-                if let Some(soft_mask) =
-                    gradient::create_shading_soft_mask(paint, chunk, ctx)
-                {
-                    content.set_parameters(soft_mask.to_pdf_name());
-                };
-
-                let pattern_name = gradient::create_shading_pattern(
-                    paint,
-                    chunk,
-                    ctx,
-                    &accumulated_transform,
-                );
-                content.set_fill_color_space(Pattern);
-                content.set_fill_pattern(None, pattern_name.to_pdf_name());
-            }
-        }
-
+    let operation = |content: &mut Content, fill: &Fill| {
         draw_path(path.data().segments(), content);
         finish_path(None, Some(fill), content);
-        content.restore_state();
+    };
+
+    if let Some(path_fill) = path.fill() {
+        fill(path_fill, chunk, content, ctx, operation, accumulated_transform);
     }
+}
+
+pub(crate) fn fill(
+    fill: &Fill,
+    chunk: &mut Chunk,
+    content: &mut Content,
+    ctx: &mut Context,
+    operation: impl Fn(&mut Content, &Fill),
+    accumulated_transform: Transform,
+) {
+    let paint = &fill.paint();
+
+    content.save_state();
+
+    match paint {
+        Paint::Color(c) => {
+            set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity()));
+            content.set_fill_color_space(ColorSpaceOperand::Named(SRGB));
+            content.set_fill_color(c.to_pdf_color());
+        }
+        Paint::Pattern(p) => {
+            // See note in the `stroke` function.
+            let pattern_name = pattern::create(
+                p.clone(),
+                chunk,
+                ctx,
+                accumulated_transform,
+                Some(fill.opacity()),
+            );
+            content.set_fill_color_space(Pattern);
+            content.set_fill_pattern(None, pattern_name.to_pdf_name());
+        }
+        Paint::LinearGradient(_) | Paint::RadialGradient(_) => {
+            set_opacity_gs(chunk, content, ctx, None, Some(fill.opacity()));
+
+            if let Some(soft_mask) = gradient::create_shading_soft_mask(paint, chunk, ctx)
+            {
+                content.set_parameters(soft_mask.to_pdf_name());
+            };
+
+            let pattern_name = gradient::create_shading_pattern(
+                paint,
+                chunk,
+                ctx,
+                &accumulated_transform,
+            );
+            content.set_fill_color_space(Pattern);
+            content.set_fill_pattern(None, pattern_name.to_pdf_name());
+        }
+    }
+
+    operation(content, fill);
+    content.restore_state();
 }
 
 fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
@@ -238,7 +267,7 @@ fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Conte
     };
 }
 
-fn set_opacity_gs(
+pub(crate) fn set_opacity_gs(
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,

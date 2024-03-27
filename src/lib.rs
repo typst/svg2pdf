@@ -58,6 +58,7 @@ mod util;
 
 pub use usvg;
 
+use crate::render::text::write_font;
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
 use usvg::{fontdb, Align, AspectRatio, NonZeroRect, Size, Transform, Tree, ViewBox};
@@ -154,7 +155,7 @@ pub fn convert_str(
         usvg_options.default_size = size;
     }
     let tree = Tree::from_str(src, &usvg_options, fontdb)?;
-    Ok(convert_tree(&tree, options))
+    Ok(convert_tree(&tree, options, fontdb.clone()))
 }
 
 /// Convert a [`usvg` tree](Tree) into a standalone PDF buffer.
@@ -182,9 +183,9 @@ pub fn convert_str(
 /// std::fs::write(output, pdf)?;
 /// # Ok(()) }
 /// ```
-pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
+pub fn convert_tree(tree: &Tree, options: Options, fontdb: fontdb::Database) -> Vec<u8> {
     let pdf_size = pdf_size(tree, options);
-    let mut ctx = Context::new(tree, options, None);
+    let mut ctx = Context::new(tree, options, None, fontdb);
     let mut pdf = Pdf::new();
 
     let catalog_ref = ctx.alloc_ref();
@@ -228,6 +229,11 @@ pub fn convert_tree(tree: &Tree, options: Options) -> Vec<u8> {
         .icc_based(ctx.deferrer.srgb_ref());
     page.contents(content_ref);
     page.finish();
+
+    let font_ids = ctx.fonts.keys().copied().collect::<Vec<_>>();
+    for font_id in font_ids {
+        write_font(&mut pdf, &mut ctx, font_id).unwrap();
+    }
 
     write_color_spaces(&mut ctx, &mut pdf);
 
@@ -334,9 +340,10 @@ pub fn convert_tree_into(
     options: Options,
     chunk: &mut Chunk,
     start_ref: Ref,
+    fontdb: fontdb::Database,
 ) -> Ref {
     let pdf_size = pdf_size(tree, options);
-    let mut ctx = Context::new(tree, options, Some(start_ref.get()));
+    let mut ctx = Context::new(tree, options, Some(start_ref.get()), fontdb);
 
     let x_ref = ctx.alloc_ref();
     ctx.deferrer.push();

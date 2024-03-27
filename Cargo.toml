@@ -25,9 +25,12 @@ oxipng = { version = "9", default-features = false, features = ["filetime", "par
 pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 termcolor = "1.2"
-usvg = { version = "0.40", default-features = false, features = ["text"] }
+usvg = { path = "../resvg/crates/usvg", default-features = false, features = ["text"] }
 tiny-skia = "0.11.4"
-resvg = "0.40"
+owned_ttf_parser = "0.20.0"
+unicode-properties = "0.1.1"
+resvg = {path = "../resvg/crates/resvg"}
+subsetter = "0.1.1"
 
 [package]
 name = "svg2pdf"
@@ -49,11 +52,14 @@ image = ["dep:image"]
 filters = ["image", "dep:tiny-skia", "dep:resvg"]
 
 [dependencies]
+unicode-properties = { workspace = true }
 miniz_oxide = { workspace = true }
 once_cell = { workspace = true }
 pdf-writer = { workspace = true }
 usvg = { workspace = true }
+owned_ttf_parser = { workspace = true }
 log = { workspace = true }
 image = { workspace = true, optional = true }
 tiny-skia = {workspace = true, optional = true }
 resvg = {workspace = true, optional = true }
+subsetter = { workspace = true }

@@ -79,6 +79,7 @@ pub fn convert_svg(svg_string: &str) -> (Vec<u8>, RgbaImage) {
             raster_scale: 1.5,
             ..Options::default()
         },
+        FONTDB.lock().unwrap().clone(),
     );
     let image = render_pdf(pdf.as_slice());
     (pdf, image)
@@ -108,8 +109,10 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
         || pixel1.0[3] != pixel2.0[3]
 }
 
+const REPLACE: bool = false;
+
 /// Runs a single test instance.
-pub fn run_test(svg_path: &str, ref_path: &str, diff_path: &str, replace: bool) -> i32 {
+pub fn run_test(svg_path: &str, ref_path: &str, diff_path: &str) -> i32 {
     let (_, actual_image) = convert_svg(&fs::read_to_string(svg_path).unwrap());
 
     // Just as a convenience, if the test is supposed to run but there doesn't exist
@@ -168,7 +171,7 @@ pub fn run_test(svg_path: &str, ref_path: &str, diff_path: &str, replace: bool) 
             .save_with_format(diff_path, image::ImageFormat::Png)
             .unwrap();
 
-        if replace {
+        if REPLACE {
             save_image(&actual_image, Path::new(ref_path));
         }
     }

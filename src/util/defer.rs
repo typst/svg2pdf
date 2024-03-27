@@ -28,6 +28,7 @@ enum PendingResourceType {
     Pattern,
     GraphicsState,
     Shading,
+    Font,
 }
 
 impl PendingResourceType {
@@ -37,6 +38,7 @@ impl PendingResourceType {
             PendingResourceType::Pattern => allocator.alloc_pattern_name(),
             PendingResourceType::GraphicsState => allocator.alloc_graphics_state_name(),
             PendingResourceType::Shading => allocator.alloc_shading_name(),
+            PendingResourceType::Font => allocator.alloc_font_name(),
         }
     }
 
@@ -46,6 +48,7 @@ impl PendingResourceType {
             PendingResourceType::Pattern => resources.patterns(),
             PendingResourceType::GraphicsState => resources.ext_g_states(),
             PendingResourceType::Shading => resources.shadings(),
+            PendingResourceType::Font => resources.fonts(),
         }
     }
 
@@ -55,6 +58,7 @@ impl PendingResourceType {
             PendingResourceType::Pattern,
             PendingResourceType::GraphicsState,
             PendingResourceType::Shading,
+            PendingResourceType::Font,
         ]
         .iter()
         .copied()
@@ -169,6 +173,11 @@ impl Deferrer {
     /// Add a new GraphicsState entry. Returns the name of the GraphicsState.
     pub fn add_graphics_state(&mut self, reference: Ref) -> Rc<String> {
         self.add_entry(reference, PendingResourceType::GraphicsState)
+    }
+
+    /// Add a new GraphicsState entry. Returns the name of the GraphicsState.
+    pub fn add_font(&mut self, reference: Ref) -> Rc<String> {
+        self.add_entry(reference, PendingResourceType::Font)
     }
 
     /// Write all of the entries into a `Resources` dictionary.

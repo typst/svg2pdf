@@ -27,6 +27,7 @@ miniz_oxide = { workspace = true }
 pdf-writer = { workspace = true }
 svg2pdf = { workspace = true }
 termcolor = { workspace = true }
+ttf-parser = "0.20.0"
 usvg = { workspace = true }
 
 [features]
