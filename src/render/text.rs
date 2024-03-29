@@ -1,22 +1,18 @@
-use crate::render::path::{draw_path, set_opacity_gs};
-use crate::render::{gradient, group, path, pattern};
+use crate::render::path;
+use crate::util::allocate::RefAllocator;
 use crate::util::context::{Context, Font};
-use crate::util::defer::SRGB;
-use crate::util::helper::{
-    deflate, ColorExt, LineCapExt, LineJoinExt, NameExt, TransformExt,
-};
-use owned_ttf_parser::{name_id, AsFaceRef, Face, GlyphId, OwnedFace, PlatformId, Tag};
-use pdf_writer::types::ColorSpaceOperand::Pattern;
+use crate::util::helper::{deflate, TransformExt};
+use crate::util::resources::ResourceContainer;
 use pdf_writer::types::{
-    CidFontType, ColorSpaceOperand, FontFlags, SystemInfo, TextRenderingMode, UnicodeCmap,
+    CidFontType, FontFlags, SystemInfo, TextRenderingMode, UnicodeCmap,
 };
-use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref, Str};
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
-use tiny_skia::Transform;
+use pdf_writer::{Chunk, Content, Filter, Finish, Name, Str};
+use siphasher::sip128::{Hasher128, SipHasher13};
+use std::collections::{BTreeMap, HashMap};
+use std::hash::Hash;
+use ttf_parser::{name_id, Face, GlyphId, PlatformId, Tag};
 use unicode_properties::{GeneralCategory, UnicodeGeneralCategory};
-use usvg::fontdb::ID;
-use usvg::layout::Span;
-use usvg::{Fill, Paint, PaintOrder, Stroke, Visibility};
+use usvg::{Fill, PaintOrder, Stroke, Transform, Visibility};
 
 const CFF: Tag = Tag::from_bytes(b"CFF ");
 const CFF2: Tag = Tag::from_bytes(b"CFF2");
@@ -27,18 +23,18 @@ const SYSTEM_INFO: SystemInfo = SystemInfo {
     supplement: 0,
 };
 
-pub fn write_font(chunk: &mut Chunk, ctx: &mut Context, id: ID) -> Option<()> {
-    let mut font = ctx.fonts.remove(&id).unwrap();
-
-    let owned_ttf = OwnedFace::from_vec(font.face_data, font.face_index).unwrap();
-    let ttf = owned_ttf.as_face_ref();
+/// Write all font objects into the chunk.
+pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) {
+    // We've already parsed all fonts when creating the font objects, so each font
+    // should be valid.
+    let ttf = Face::parse(&font.face_data, font.face_index).unwrap();
     let units_per_em = ttf.units_per_em();
 
     let type0_ref = font.reference;
-    let cid_ref = ctx.alloc_ref();
-    let descriptor_ref = ctx.alloc_ref();
-    let cmap_ref = ctx.alloc_ref();
-    let data_ref = ctx.alloc_ref();
+    let cid_ref = alloc.alloc_ref();
+    let descriptor_ref = alloc.alloc_ref();
+    let cmap_ref = alloc.alloc_ref();
+    let data_ref = alloc.alloc_ref();
 
     let glyph_set = &mut font.glyph_set;
 
@@ -55,7 +51,7 @@ pub fn write_font(chunk: &mut Chunk, ctx: &mut Context, id: ID) -> Option<()> {
     let postscript_name = find_name(&ttf, name_id::POST_SCRIPT_NAME)
         .unwrap_or_else(|| "unknown".to_string());
 
-    let subset_tag = subset_tag();
+    let subset_tag = subset_tag(glyph_set);
     let base_font = format!("{subset_tag}+{postscript_name}");
     let base_font_type0 =
         if is_cff { format!("{base_font}-Identity-H") } else { base_font.clone() };
@@ -137,15 +133,20 @@ pub fn write_font(chunk: &mut Chunk, ctx: &mut Context, id: ID) -> Option<()> {
         .cap_height(cap_height as f32)
         .stem_v(stem_v);
 
-    font_descriptor.font_file2(data_ref);
+    if is_cff {
+        font_descriptor.font_file3(data_ref);
+    } else {
+        font_descriptor.font_file2(data_ref);
+    }
+
     font_descriptor.finish();
 
-    let cmap = create_cmap(ttf, glyph_set);
+    let cmap = create_cmap(&ttf, glyph_set);
     chunk.cmap(cmap_ref, &cmap.finish());
 
     // Subset and write the font's bytes.
     let glyphs: Vec<_> = glyph_set.keys().copied().collect();
-    let data = subset_font(owned_ttf.as_slice(), font.face_index, &glyphs);
+    let data = subset_font(&font.face_data, font.face_index, &glyphs);
 
     let mut stream = chunk.stream(data_ref, &data);
     stream.filter(Filter::FlateDecode);
@@ -154,7 +155,6 @@ pub fn write_font(chunk: &mut Chunk, ctx: &mut Context, id: ID) -> Option<()> {
     }
 
     stream.finish();
-    Some(())
 }
 
 /// Create a /ToUnicode CMap.
@@ -200,8 +200,7 @@ fn subset_font(font_data: &[u8], index: u32, glyphs: &[u16]) -> Vec<u8> {
     let mut data = subsetted.as_deref().unwrap_or(data);
 
     // Extract the standalone CFF font program if applicable.
-
-    let face = owned_ttf_parser::RawFace::parse(data, 0).unwrap();
+    let face = ttf_parser::RawFace::parse(data, index).unwrap();
     if let Some(cff) = face.table(CFF) {
         data = cff;
     }
@@ -209,24 +208,26 @@ fn subset_font(font_data: &[u8], index: u32, glyphs: &[u16]) -> Vec<u8> {
     deflate(data)
 }
 
+/// Render some text into a content stream.
 pub fn render(
     text: &usvg::Text,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
+    rc: &mut ResourceContainer,
     accumulated_transform: Transform,
 ) {
     let mut font_names = HashMap::new();
-    let ctx_fonts = ctx.fonts.clone();
+
+    // TODO: Don't clone here...
+    let fonts = ctx.fonts.clone();
 
     for span in text.layouted() {
         for glyph in &span.positioned_glyphs {
-            if let Some(font) = ctx_fonts.get(&glyph.font) {
-                if !font_names.contains_key(&font.reference) {
-                    font_names
-                        .insert(font.reference, ctx.deferrer.add_font(font.reference));
-                }
-            }
+            let Some(font) = ctx.font_ref(glyph.font) else { continue };
+            font_names
+                .entry(font.reference)
+                .or_insert_with(|| rc.add_font(font.reference));
         }
     }
 
@@ -237,49 +238,46 @@ pub fn render(
 
         let operation = |content: &mut Content| {
             for glyph in &span.positioned_glyphs {
-                if let Some(font) = ctx_fonts.get(&glyph.font).cloned() {
-                    let name = font_names.get(&font.reference).unwrap();
+                let Some(font) = fonts.get(&glyph.font).and_then(|f| f.as_ref()) else {
+                    continue;
+                };
 
-                    let gid = glyph.glyph_id.0;
-                    let ts = glyph
-                        .transform
-                        .pre_scale(font.units_per_em as f32, font.units_per_em as f32)
-                        // The glyphs in usvg are already scaled according the font size, but we
-                        // we want to leverage the native PDF font size feature instead, so we downscale
-                        // it to a font size of 1.
-                        .pre_scale(
-                            1.0 / span.font_size.get(),
-                            1.0 / span.font_size.get(),
-                        );
-                    content.save_state();
-                    content.begin_text();
-                    content.set_text_matrix(ts.to_pdf_transform());
-                    content.set_font(Name(name.as_bytes()), span.font_size.get());
+                let name = font_names.get(&font.reference).unwrap();
 
-                    content.show(Str(&[(gid >> 8) as u8, (gid & 0xff) as u8]));
-
-                    content.end_text();
-                    content.restore_state();
-                }
+                let gid = glyph.glyph_id.0;
+                let ts = glyph
+                    .transform
+                    .pre_scale(font.units_per_em as f32, font.units_per_em as f32)
+                    // The glyphs in usvg are already scaled according the font size, but
+                    // we want to leverage the native PDF font size feature instead, so we downscale
+                    // it to a font size of 1.
+                    .pre_scale(1.0 / span.font_size.get(), 1.0 / span.font_size.get());
+                content.save_state();
+                content.begin_text();
+                content.set_text_matrix(ts.to_pdf_transform());
+                content.set_font(Name(name.as_bytes()), span.font_size.get());
+                content.show(Str(&[(gid >> 8) as u8, (gid & 0xff) as u8]));
+                content.end_text();
+                content.restore_state();
             }
         };
 
-        let stroke_operation = |content: &mut Content, stroke: &Stroke| {
+        let stroke_operation = |content: &mut Content, _: &Stroke| {
             content.set_text_rendering_mode(TextRenderingMode::Stroke);
             operation(content);
         };
 
-        let fill_operation = |content: &mut Content, fill: &Fill| {
+        let fill_operation = |content: &mut Content, _: &Fill| {
             content.set_text_rendering_mode(TextRenderingMode::Fill);
             operation(content);
         };
 
         if let Some(overline) = &span.overline {
-            path::render(overline, chunk, content, ctx, accumulated_transform);
+            path::render(overline, chunk, content, ctx, rc, accumulated_transform);
         }
 
         if let Some(underline) = &span.underline {
-            path::render(underline, chunk, content, ctx, accumulated_transform);
+            path::render(underline, chunk, content, ctx, rc, accumulated_transform);
         }
 
         content.save_state();
@@ -291,16 +289,20 @@ pub fn render(
                         chunk,
                         content,
                         ctx,
+                        rc,
                         fill_operation,
                         accumulated_transform,
+                        text.bounding_box(),
                     );
                     path::stroke(
                         stroke,
                         chunk,
                         content,
                         ctx,
+                        rc,
                         stroke_operation,
                         accumulated_transform,
+                        text.bounding_box(),
                     );
                 }
                 PaintOrder::StrokeAndFill => {
@@ -309,16 +311,20 @@ pub fn render(
                         chunk,
                         content,
                         ctx,
+                        rc,
                         stroke_operation,
                         accumulated_transform,
+                        text.bounding_box(),
                     );
                     path::fill(
                         fill,
                         chunk,
                         content,
                         ctx,
+                        rc,
                         fill_operation,
                         accumulated_transform,
+                        text.bounding_box(),
                     );
                 }
             },
@@ -328,8 +334,10 @@ pub fn render(
                     chunk,
                     content,
                     ctx,
+                    rc,
                     stroke_operation,
                     accumulated_transform,
+                    text.bounding_box(),
                 );
             }
             (Some(fill), None) => {
@@ -338,36 +346,44 @@ pub fn render(
                     chunk,
                     content,
                     ctx,
+                    rc,
                     fill_operation,
                     accumulated_transform,
+                    text.bounding_box(),
                 );
             }
-            // TODO: Should actually be invisible text
-            (None, None) => {}
+            (None, None) => {
+                content.set_text_rendering_mode(TextRenderingMode::Invisible);
+                operation(content);
+            }
         };
 
         content.restore_state();
 
         if let Some(line_through) = &span.line_through {
-            path::render(line_through, chunk, content, ctx, accumulated_transform);
+            path::render(line_through, chunk, content, ctx, rc, accumulated_transform);
         }
     }
 }
 
 /// Produce a unique 6 letter tag for a glyph set.
-fn subset_tag() -> String {
-    // TODO: Actually implement it
-    "AAAAAA".to_string()
-    // const LEN: usize = 6;
-    // const BASE: u128 = 26;
-    // // TODO: Randomize
-    // let mut hash = typst::util::hash128(&glyphs);
-    // let mut letter = [b'A'; LEN];
-    // for l in letter.iter_mut() {
-    //     *l = b'A' + (hash % BASE) as u8;
-    //     hash /= BASE;
-    // }
-    // std::str::from_utf8(&letter).unwrap().into()
+fn subset_tag(glyphs: &mut BTreeMap<u16, String>) -> String {
+    const LEN: usize = 6;
+    const BASE: u128 = 26;
+    let mut hash = hash128(&glyphs);
+    let mut letter = [b'A'; LEN];
+    for l in letter.iter_mut() {
+        *l = b'A' + (hash % BASE) as u8;
+        hash /= BASE;
+    }
+    std::str::from_utf8(&letter).unwrap().into()
+}
+
+/// Calculate a 128-bit siphash of a value.
+pub fn hash128<T: Hash + ?Sized>(value: &T) -> u128 {
+    let mut state = SipHasher13::new();
+    value.hash(&mut state);
+    state.finish128().as_u128()
 }
 
 /// Try to find and decode the name with the given id.

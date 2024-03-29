@@ -1,11 +1,10 @@
-use std::rc::Rc;
-
-use pdf_writer::{Chunk, Content, Filter, Finish};
+use pdf_writer::{Chunk, Content, Filter, Finish, Ref};
 use usvg::{Group, Mask, Transform};
 
 use super::group;
 use crate::util::context::Context;
 use crate::util::helper::{clip_to_rect, MaskTypeExt, NameExt, RectExt};
+use crate::util::resources::ResourceContainer;
 
 /// Render a mask into a content stream.
 pub fn render(
@@ -14,26 +13,23 @@ pub fn render(
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
+    rc: &mut ResourceContainer,
 ) {
-    content.set_parameters(create(group, mask, chunk, ctx).to_pdf_name());
+    let mask_ref = create(group, mask, chunk, ctx);
+    let mask_name = rc.add_graphics_state(mask_ref);
+    content.set_parameters(mask_name.to_pdf_name());
 }
 
-/// Turn a mask into an graphics state object. Returns the name (= the name in the `Resources` dictionary) of
-/// the mask
-pub fn create(
-    parent: &Group,
-    mask: &Mask,
-    chunk: &mut Chunk,
-    ctx: &mut Context,
-) -> Rc<String> {
+/// Create a mask and return the object reference to it.
+pub fn create(parent: &Group, mask: &Mask, chunk: &mut Chunk, ctx: &mut Context) -> Ref {
     let x_ref = ctx.alloc_ref();
-    ctx.deferrer.push();
+    let mut rc = ResourceContainer::new();
 
     let mut content = Content::new();
     content.save_state();
 
     if let Some(mask) = mask.mask() {
-        render(parent, mask, chunk, &mut content, ctx);
+        render(parent, mask, chunk, &mut content, ctx, &mut rc);
     }
 
     let rect = mask.rect();
@@ -42,13 +38,21 @@ pub fn create(
     // circumvent a bug in Firefox where the bounding box is not applied properly for some transforms.
     // If we don't do this, the "half-width-region-with-rotation.svg" test case won't render properly.
     clip_to_rect(rect, &mut content);
-    group::render(mask.root(), chunk, &mut content, ctx, Transform::default(), None);
+    group::render(
+        mask.root(),
+        chunk,
+        &mut content,
+        ctx,
+        Transform::default(),
+        None,
+        &mut rc,
+    );
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);
 
     let mut x_object = chunk.form_xobject(x_ref, &content_stream);
-    ctx.deferrer.pop(&mut x_object.resources());
+    rc.finish(&mut x_object.resources());
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
@@ -60,7 +64,7 @@ pub fn create(
         .isolated(false)
         .knockout(false)
         .color_space()
-        .icc_based(ctx.deferrer.srgb_ref());
+        .icc_based(ctx.srgb_ref());
 
     x_object.bbox(rect.to_pdf_rect());
     x_object.finish();
@@ -69,5 +73,5 @@ pub fn create(
     let mut gs = chunk.ext_graphics(gs_ref);
     gs.soft_mask().subtype(mask.kind().to_pdf_mask_type()).group(x_ref);
 
-    ctx.deferrer.add_graphics_state(gs_ref)
+    gs_ref
 }

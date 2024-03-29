@@ -5,10 +5,11 @@ use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Chunk, Content, Filter, Finish};
 use usvg::{ImageKind, Size, Transform, Tree, ViewBox, Visibility};
 
+use crate::render::tree_to_xobject;
 use crate::util::context::Context;
 use crate::util::helper;
 use crate::util::helper::{image_rect, NameExt, TransformExt};
-use crate::{convert_tree_into, Options};
+use crate::util::resources::ResourceContainer;
 
 /// Render an image into a content stream.
 pub fn render(
@@ -18,6 +19,7 @@ pub fn render(
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
+    rc: &mut ResourceContainer,
 ) {
     if visibility != Visibility::Visible {
         return;
@@ -38,12 +40,13 @@ pub fn render(
                 Filter::DctDecode,
                 &dynamic_image,
                 None,
+                rc,
             )
         }
         ImageKind::PNG(content) => {
             let dynamic_image =
                 image::load_from_memory_with_format(content, ImageFormat::Png).unwrap();
-            // Alpha channels need to br written separately as a soft mask, hence the extra processing
+            // Alpha channels need to be written separately as a soft mask, hence the extra processing
             // step.
             let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
             create_raster_image(
@@ -53,6 +56,7 @@ pub fn render(
                 filter,
                 &dynamic_image,
                 alpha_mask.as_deref(),
+                rc,
             )
         }
         ImageKind::GIF(content) => {
@@ -68,10 +72,11 @@ pub fn render(
                 filter,
                 &dynamic_image,
                 alpha_mask.as_deref(),
+                rc,
             )
         }
         // SVGs just get rendered recursively.
-        ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx),
+        ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx, rc),
     };
 
     // Get the dimensions of the actual rect that is needed to scale the image into the image view
@@ -164,6 +169,7 @@ fn create_raster_image(
     filter: Filter,
     dynamic_image: &DynamicImage,
     alpha_mask: Option<&[u8]>,
+    rc: &mut ResourceContainer,
 ) -> (Rc<String>, Size) {
     let color = dynamic_image.color();
     let alpha_mask = alpha_mask.map(|mask_bytes| {
@@ -181,7 +187,7 @@ fn create_raster_image(
         Size::from_wh(dynamic_image.width() as f32, dynamic_image.height() as f32)
             .unwrap();
     let image_ref = ctx.alloc_ref();
-    let image_name = ctx.deferrer.add_x_object(image_ref);
+    let image_name = rc.add_x_object(image_ref);
 
     let mut image_x_object = chunk.image_xobject(image_ref, samples);
     image_x_object.filter(filter);
@@ -211,13 +217,9 @@ fn create_svg_image(
     tree: &Tree,
     chunk: &mut Chunk,
     ctx: &mut Context,
+    rc: &mut ResourceContainer,
 ) -> (Rc<String>, Size) {
-    let image_ref = ctx.alloc_ref();
-    let image_name = ctx.deferrer.add_x_object(image_ref);
-    // convert_tree_into will automatically scale it in a way so that its dimensions are 1x1, like
-    // regular ImageXObjects. So afterwards, we can just treat them the same.
-    let next_ref =
-        convert_tree_into(tree, Options::default(), chunk, image_ref, ctx.fontdb.clone());
-    ctx.deferrer.set_next_ref(next_ref.get());
+    let image_ref = tree_to_xobject(tree, chunk, ctx);
+    let image_name = rc.add_x_object(image_ref);
     (image_name, tree.size())
 }

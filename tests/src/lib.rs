@@ -70,16 +70,11 @@ pub fn read_svg(svg_string: &str) -> Tree {
 /// Converts an image into a PDF and returns the PDF as well as a rendered version
 /// of it.
 pub fn convert_svg(svg_string: &str) -> (Vec<u8>, RgbaImage) {
-    let scale_factor = 1.0;
     let tree = read_svg(svg_string);
-    let pdf = svg2pdf::convert_tree(
+    let pdf = svg2pdf::to_pdf(
         &tree,
-        Options {
-            dpi: 72.0 * scale_factor,
-            raster_scale: 1.5,
-            ..Options::default()
-        },
-        FONTDB.lock().unwrap().clone(),
+        Options { raster_scale: 1.5, compress: true },
+        &FONTDB.lock().unwrap(),
     );
     let image = render_pdf(pdf.as_slice());
     (pdf, image)

@@ -1,25 +1,24 @@
-use std::rc::Rc;
 use std::sync::Arc;
 
 use pdf_writer::types::{PaintType, TilingType};
-use pdf_writer::{Chunk, Content, Filter};
+use pdf_writer::{Chunk, Content, Filter, Ref};
 use usvg::{Opacity, Pattern, Size, Transform};
 
 use super::group;
 use crate::util::context::Context;
 use crate::util::helper::TransformExt;
+use crate::util::resources::ResourceContainer;
 
-/// Turn a pattern into a tiling pattern. Returns the name (= the name in the `Resources` dictionary) of
-/// the pattern
+/// Turn a pattern into a PDF tiling pattern.
 pub fn create(
     pattern: Arc<Pattern>,
     chunk: &mut Chunk,
     ctx: &mut Context,
     matrix: Transform,
     initial_opacity: Option<Opacity>,
-) -> Rc<String> {
+) -> Ref {
     let pattern_ref = ctx.alloc_ref();
-    ctx.deferrer.push();
+    let mut rc = ResourceContainer::new();
 
     let pattern_rect = pattern.rect();
 
@@ -44,6 +43,7 @@ pub fn create(
         ctx,
         Transform::default(),
         initial_opacity,
+        &mut rc,
     );
 
     content.restore_state();
@@ -56,7 +56,7 @@ pub fn create(
         tiling_pattern.filter(Filter::FlateDecode);
     }
 
-    ctx.deferrer.pop(&mut tiling_pattern.resources());
+    rc.finish(&mut tiling_pattern.resources());
 
     // We already account for the x/y of the pattern by appending it to the matrix above, so here we just need to take the height / width
     // in consideration
@@ -71,5 +71,5 @@ pub fn create(
         .x_step(final_bbox.x2 - final_bbox.x1)
         .y_step(final_bbox.y2 - final_bbox.y1);
 
-    ctx.deferrer.add_pattern(pattern_ref)
+    pattern_ref
 }

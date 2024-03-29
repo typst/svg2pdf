@@ -1,16 +1,27 @@
-/*! Allocate new object IDs and resource names.
-
-For each object in a PDF document, a unique numerical ID needs to be assigned to it. The task of
-the allocator is to keep track of the current ID. In addition to that, it allows us to generate
-names that will be used for the named resources of an object.
- */
-
 use pdf_writer::Ref;
 
-/// The struct that holds all of the necessary counters.
-pub struct Allocator {
-    /// The next id for indirect object references.
-    next_ref_id: i32,
+/// Struct that keeps track of ref allocations in a PDF.
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub struct RefAllocator {
+    /// The next free id for indirect object references.
+    ref_alloc: Ref,
+}
+
+impl RefAllocator {
+    /// Create a new allocator with a specific start ID.
+    pub fn new() -> Self {
+        Self { ref_alloc: Ref::new(1) }
+    }
+
+    /// Allocate a new reference ID.
+    pub fn alloc_ref(&mut self) -> Ref {
+        self.ref_alloc.bump()
+    }
+}
+
+/// Struct that keeps track name allocations in a XObject/Page.
+#[derive(Clone, Copy, Eq, PartialEq, Default)]
+pub struct NameAllocator {
     /// The next number that will be used for the name of an XObject in a resource
     /// dictionary, e.g. "xo0".
     next_x_object_num: i32,
@@ -23,41 +34,15 @@ pub struct Allocator {
     /// The next number that will be used for the name of a shading in a resource
     /// dictionary, e.g. "sh0".
     next_shadings_num: i32,
+    /// The next number that will be used for the name of a font in a resource
+    /// dictionary, e.g. "fo0".
     next_fonts_num: i32,
+    /// The next number that will be used for the name of a color space in a resource
+    /// dictionary, e.g. "cs0".
+    next_color_space_num: i32,
 }
 
-impl Default for Allocator {
-    fn default() -> Self {
-        Self {
-            next_ref_id: 1,
-            next_x_object_num: 0,
-            next_graphics_state_num: 0,
-            next_patterns_num: 0,
-            next_shadings_num: 0,
-            next_fonts_num: 0,
-        }
-    }
-}
-
-impl Allocator {
-    /// Manually set the next reference ID that should be used. Make sure that you only set it
-    /// to a value that was higher than before, otherwise duplicate IDs might be assigned.
-    pub fn set_next_ref(&mut self, next_ref: i32) {
-        self.next_ref_id = next_ref
-    }
-
-    /// Create a new allocator with a specific start ID.
-    pub fn new_with_start_ref(start_ref: i32) -> Self {
-        Self { next_ref_id: start_ref, ..Allocator::default() }
-    }
-
-    /// Allocate a new reference ID.
-    pub fn alloc_ref(&mut self) -> Ref {
-        let reference = Ref::new(self.next_ref_id);
-        self.next_ref_id += 1;
-        reference
-    }
-
+impl NameAllocator {
     /// Allocate a new XObject name.
     pub fn alloc_x_object_name(&mut self) -> String {
         let num = self.next_x_object_num;
@@ -91,5 +76,12 @@ impl Allocator {
         let num = self.next_fonts_num;
         self.next_fonts_num += 1;
         format!("fo{}", num)
+    }
+
+    /// Allocate a new color space name.
+    pub fn alloc_color_space_name(&mut self) -> String {
+        let num = self.next_color_space_num;
+        self.next_color_space_num += 1;
+        format!("cs{}", num)
     }
 }

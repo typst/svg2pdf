@@ -22,7 +22,7 @@ fn run() -> Result<(), String> {
 
     // If an input argument was provided, convert the svg file to pdf.
     if let Some(input) = args.input {
-        return convert::convert_(&input, args.output, args.dpi);
+        return convert::convert_(&input, args.output);
     };
 
     // Otherwise execute the command provided if any.

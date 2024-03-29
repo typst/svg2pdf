@@ -25,12 +25,13 @@ oxipng = { version = "9", default-features = false, features = ["filetime", "par
 pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 termcolor = "1.2"
-usvg = { path = "../resvg/crates/usvg", default-features = false, features = ["text"] }
+usvg = { git = "https://github.com/RazrFalcon/resvg", default-features = false, features = ["text"] }
 tiny-skia = "0.11.4"
-owned_ttf_parser = "0.20.0"
 unicode-properties = "0.1.1"
-resvg = {path = "../resvg/crates/resvg"}
+resvg = {git = "https://github.com/RazrFalcon/resvg"}
 subsetter = "0.1.1"
+ttf-parser = { version = "0.20.0" }
+siphasher = { version = "1.0.1"}
 
 [package]
 name = "svg2pdf"
@@ -57,9 +58,11 @@ miniz_oxide = { workspace = true }
 once_cell = { workspace = true }
 pdf-writer = { workspace = true }
 usvg = { workspace = true }
-owned_ttf_parser = { workspace = true }
 log = { workspace = true }
 image = { workspace = true, optional = true }
 tiny-skia = {workspace = true, optional = true }
 resvg = {workspace = true, optional = true }
 subsetter = { workspace = true }
+ttf-parser = { workspace = true }
+siphasher = { workspace = true }
+
