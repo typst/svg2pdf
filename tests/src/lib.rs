@@ -1,9 +1,9 @@
 #[rustfmt::skip]
-mod library;
+mod integration;
 
 use std::cmp::max;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
@@ -106,21 +106,10 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
 
 const REPLACE: bool = false;
 
-/// Runs a single test instance.
-pub fn run_test(svg_path: &str, ref_path: &str, diff_path: &str) -> i32 {
-    let (_, actual_image) = convert_svg(&fs::read_to_string(svg_path).unwrap());
-
-    // Just as a convenience, if the test is supposed to run but there doesn't exist
-    // a reference image yet, we create a new one. This allows us to conveniently generate
-    // new reference images for test cases.
-    if !Path::new(ref_path).exists() {
-        fs::create_dir_all(Path::new(ref_path).parent().unwrap()).unwrap();
-        save_image(&actual_image, Path::new(ref_path));
-        return 1;
-    }
-
-    let expected_image = Reader::open(ref_path).unwrap().decode().unwrap().into_rgba8();
-
+pub fn get_diff(
+    expected_image: &RgbaImage,
+    actual_image: &RgbaImage,
+) -> (RgbaImage, i32) {
     let width = max(expected_image.width(), actual_image.width());
     let height = max(expected_image.height(), actual_image.height());
 
@@ -159,15 +148,51 @@ pub fn run_test(svg_path: &str, ref_path: &str, diff_path: &str) -> i32 {
         }
     }
 
+    (diff_image, pixel_diff)
+}
+
+pub fn get_svg_path(test_name: &str) -> PathBuf {
+    PathBuf::from("svg").join(String::from(test_name) + ".svg")
+}
+
+pub fn get_ref_path(test_name: &str) -> PathBuf {
+    PathBuf::from("ref").join(String::from(test_name) + ".png")
+}
+
+pub fn get_diff_path(test_name: &str) -> PathBuf {
+    PathBuf::from("diff").join(String::from(test_name) + ".png")
+}
+
+/// Runs a single test instance.
+pub fn run_test(test_name: &str) -> i32 {
+    let svg_path = get_svg_path(test_name);
+    let ref_path = get_ref_path(test_name);
+    let diff_path = get_diff_path(test_name);
+
+    let (_, actual_image) = convert_svg(&fs::read_to_string(svg_path).unwrap());
+
+    // Just as a convenience, if the test is supposed to run but there doesn't exist
+    // a reference image yet, we create a new one. This allows us to conveniently generate
+    // new reference images for test cases.
+    if !ref_path.exists() {
+        fs::create_dir_all(ref_path.parent().unwrap()).unwrap();
+        save_image(&actual_image, &ref_path);
+        return 1;
+    }
+
+    let expected_image = Reader::open(&ref_path).unwrap().decode().unwrap().into_rgba8();
+
+    let (diff_image, pixel_diff) = get_diff(&expected_image, &actual_image);
+
     if pixel_diff > 0 {
-        fs::create_dir_all(Path::new(diff_path).parent().unwrap()).unwrap();
+        fs::create_dir_all(&diff_path.parent().unwrap()).unwrap();
 
         diff_image
-            .save_with_format(diff_path, image::ImageFormat::Png)
+            .save_with_format(&diff_path, image::ImageFormat::Png)
             .unwrap();
 
         if REPLACE {
-            save_image(&actual_image, Path::new(ref_path));
+            save_image(&actual_image, &ref_path);
         }
     }
 

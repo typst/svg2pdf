@@ -10,7 +10,7 @@ publish = false
 
 [dependencies]
 fontdb = { workspace = true }
-svg2pdf = { workspace = true }
+svg2pdf = { workspace = true, default-features = true }
 usvg = { workspace = true }
 pdfium-render = { workspace = true, features = ["sync"] }
 pdf-writer = { workspace = true }

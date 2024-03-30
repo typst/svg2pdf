@@ -5,7 +5,7 @@ import shutil
 from common import SVG_DIR, ROOT, TestFile
 from pathlib import Path
 
-OUT_PATH = ROOT / "src" / "library.rs"
+OUT_PATH = ROOT / "src" / "integration.rs"
 
 NO_RELATIVE_PATHS = "no relative paths supported"
 INVESTIGATE = "need to investigate"
@@ -107,7 +107,7 @@ def main():
 
             test_string += "#[test] "
 
-            test_string += f'fn {function_name}() {{assert_eq!(run_test("{test_file.svg_path()}", "{test_file.ref_path()}", "{test_file.diff_path()}"), 0)}}\n'
+            test_string += f'fn {function_name}() {{assert_eq!(run_test("{test_file.test_name()}"), 0)}}\n'
 
     with open(Path(OUT_PATH), "w") as file:
         file.write(test_string)
