@@ -1,8 +1,8 @@
 use pdf_writer::types::{BlendMode, LineCapStyle, LineJoinStyle, MaskType};
 use pdf_writer::{Content, Name, Rect};
-use usvg::{LineCap, LineJoin, NonZeroRect, Transform};
 #[cfg(feature = "image")]
 use usvg::Size;
+use usvg::{LineCap, LineJoin, NonZeroRect, Transform};
 
 use crate::render::gradient::Stop;
 
