@@ -69,11 +69,16 @@ pub fn read_svg(svg_string: &str) -> Tree {
 
 /// Converts an image into a PDF and returns the PDF as well as a rendered version
 /// of it.
-pub fn convert_svg(svg_string: &str) -> (Vec<u8>, RgbaImage) {
-    let tree = read_svg(svg_string);
+pub fn convert_svg(svg_path: &Path) -> (Vec<u8>, RgbaImage) {
+    let svg = fs::read_to_string(svg_path).unwrap();
+    let tree = read_svg(&svg);
     let pdf = svg2pdf::to_pdf(
         &tree,
-        Options { raster_scale: 1.5, compress: true },
+        Options {
+            raster_scale: 1.5,
+            compress: true,
+            embed_text: true,
+        },
         &FONTDB.lock().unwrap(),
     );
     let image = render_pdf(pdf.as_slice());
@@ -169,7 +174,7 @@ pub fn run_test(test_name: &str) -> i32 {
     let ref_path = get_ref_path(test_name);
     let diff_path = get_diff_path(test_name);
 
-    let (_, actual_image) = convert_svg(&fs::read_to_string(svg_path).unwrap());
+    let (_, actual_image) = convert_svg(&svg_path);
 
     // Just as a convenience, if the test is supposed to run but there doesn't exist
     // a reference image yet, we create a new one. This allows us to conveniently generate

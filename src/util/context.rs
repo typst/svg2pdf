@@ -38,7 +38,9 @@ impl Context {
             sgray_ref: None,
         };
 
-        text::fill_fonts(tree.root(), &mut ctx, fontdb);
+        if options.embed_text {
+            text::fill_fonts(tree.root(), &mut ctx, fontdb);
+        }
 
         ctx
     }

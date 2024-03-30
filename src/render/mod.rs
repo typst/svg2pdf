@@ -112,15 +112,19 @@ impl Render for Node {
             }
             #[cfg(feature = "text")]
             Node::Text(ref text) => {
-                text::render(text, chunk, content, ctx, rc, accumulated_transform);
-                // group::render(
-                //     text.flattened(),
-                //     chunk,
-                //     content,
-                //     ctx,
-                //     accumulated_transform,
-                //     None,
-                // );
+                if ctx.options.embed_text {
+                    text::render(text, chunk, content, ctx, rc, accumulated_transform);
+                } else {
+                    group::render(
+                        text.flattened(),
+                        chunk,
+                        content,
+                        ctx,
+                        accumulated_transform,
+                        None,
+                        rc,
+                    );
+                }
             }
             #[cfg(not(feature = "text"))]
             Node::Text(_) => {
