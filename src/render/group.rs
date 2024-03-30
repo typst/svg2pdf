@@ -27,7 +27,9 @@ pub fn render(
 
     #[cfg(not(feature = "filters"))]
     if !group.filters().is_empty() {
-        log::warn!("Filters have been disabled in this build of svg2pdf.")
+        log::warn!(
+            "Failed convert filter because the filters feature was disabled. Skipping."
+        )
     }
 
     let initial_opacity = initial_opacity.unwrap_or(Opacity::ONE);

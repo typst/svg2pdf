@@ -1,18 +1,18 @@
 use crate::render::path;
 use crate::util::allocate::RefAllocator;
-use crate::util::context::{Context, Font};
+use crate::util::context::Context;
 use crate::util::helper::{deflate, TransformExt};
 use crate::util::resources::ResourceContainer;
 use pdf_writer::types::{
     CidFontType, FontFlags, SystemInfo, TextRenderingMode, UnicodeCmap,
 };
-use pdf_writer::{Chunk, Content, Filter, Finish, Name, Str};
+use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref, Str};
 use siphasher::sip128::{Hasher128, SipHasher13};
 use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
 use ttf_parser::{name_id, Face, GlyphId, PlatformId, Tag};
 use unicode_properties::{GeneralCategory, UnicodeGeneralCategory};
-use usvg::{Fill, PaintOrder, Stroke, Transform, Visibility};
+use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform, Visibility};
 
 const CFF: Tag = Tag::from_bytes(b"CFF ");
 const CFF2: Tag = Tag::from_bytes(b"CFF2");
@@ -471,5 +471,65 @@ where
         let (head, tail) = self.slice.split_at(count);
         self.slice = tail;
         Some((key, head))
+    }
+}
+
+#[derive(Clone)]
+pub struct Font {
+    pub glyph_set: BTreeMap<u16, String>,
+    pub reference: Ref,
+    pub face_data: Vec<u8>,
+    pub units_per_em: u16,
+    pub face_index: u32,
+}
+
+pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
+    for child in group.children() {
+        match child {
+            Node::Text(t) => {
+                let allocator = &mut ctx.ref_allocator;
+                for span in t.layouted() {
+                    for g in &span.positioned_glyphs {
+                        let font = ctx.fonts.entry(g.font).or_insert_with(|| {
+                            fontdb
+                                .with_face_data(g.font, |data, face_index| {
+                                    // TODO: Currently, we are parsing each font twice, once here
+                                    // and once again when writing the fonts. We should probably
+                                    // improve on that...
+                                    if let Ok(ttf) =
+                                        ttf_parser::Face::parse(data, face_index)
+                                    {
+                                        let reference = allocator.alloc_ref();
+                                        let glyph_set = BTreeMap::new();
+                                        return Some(Font {
+                                            reference,
+                                            face_data: Vec::from(data),
+                                            units_per_em: ttf.units_per_em(),
+                                            glyph_set,
+                                            face_index,
+                                        });
+                                    }
+
+                                    None
+                                })
+                                .flatten()
+                        });
+
+                        if let Some(ref mut font) = font {
+                            font.glyph_set.insert(g.glyph_id.0, g.text.clone());
+                        }
+                    }
+                }
+            }
+            Node::Group(group) => fill_fonts(group, ctx, fontdb),
+            Node::Image(image) => {
+                if let ImageKind::SVG(svg) = image.kind() {
+                    fill_fonts(svg.root(), ctx, fontdb);
+                }
+            }
+            _ => {}
+        }
+
+        child.subroots(|subroot| fill_fonts(subroot, ctx, fontdb));
     }
 }

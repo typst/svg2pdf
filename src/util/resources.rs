@@ -141,6 +141,7 @@ impl ResourceContainer {
     }
 
     /// Add a new Font as a resource. Returns the name of the Font.
+    #[cfg(feature = "text")]
     pub fn add_font(&mut self, reference: Ref) -> Rc<String> {
         self.add_resource_entry(reference, PendingResourceType::Font)
     }

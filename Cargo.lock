@@ -1171,6 +1171,7 @@ checksum = "09eab8a83bff89ba2200bd4c59be45c7c787f988431b936099a5a266c957f2f9"
 name = "svg2pdf"
 version = "0.9.1"
 dependencies = [
+ "fontdb",
  "image",
  "log",
  "miniz_oxide",
@@ -1193,7 +1194,6 @@ dependencies = [
  "clap_complete",
  "clap_mangen",
  "fontdb",
- "image",
  "log",
  "miniz_oxide",
  "pdf-writer",
@@ -1348,9 +1348,9 @@ checksum = "e4259d9d4425d9f0661581b804cb85fe66a4c631cadd8f490d1c13a35d5d9291"
 
 [[package]]
 name = "unicode-script"
-version = "0.5.5"
+version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d817255e1bed6dfd4ca47258685d14d2bdcfbc64fdc9e3819bd5848057b8ecc"
+checksum = "ad8d71f5726e5f285a935e9fe8edfd53f0491eb6e9a5774097fdabee7cd8c9cd"
 
 [[package]]
 name = "unicode-vo"

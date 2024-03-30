@@ -15,6 +15,7 @@ pub mod image;
 pub mod mask;
 pub mod path;
 pub mod pattern;
+#[cfg(feature = "text")]
 pub mod text;
 
 /// Write a tree into a stream. Assumes that the stream belongs to transparency group and the object
@@ -107,8 +108,9 @@ impl Render for Node {
             ),
             #[cfg(not(feature = "image"))]
             Node::Image(_) => {
-                log::warn!("Images have been disabled in this build of svg2pdf.")
+                log::warn!("Failed convert image because the image feature was disabled. Skipping.")
             }
+            #[cfg(feature = "text")]
             Node::Text(ref text) => {
                 text::render(text, chunk, content, ctx, rc, accumulated_transform);
                 // group::render(
@@ -119,6 +121,10 @@ impl Render for Node {
                 //     accumulated_transform,
                 //     None,
                 // );
+            }
+            #[cfg(not(feature = "text"))]
+            Node::Text(_) => {
+                log::warn!("Failed convert text because the text feature was disabled. Skipping.")
             }
         }
     }

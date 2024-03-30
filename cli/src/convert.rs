@@ -30,10 +30,20 @@ pub fn convert_(input: &PathBuf, output: Option<PathBuf>) -> Result<(), String> 
 
     let options = usvg::Options::default();
 
-    let tree =
-        usvg::Tree::from_str(&svg, &options, &fontdb).map_err(|err| err.to_string())?;
+    let tree = usvg::Tree::from_str(
+        &svg,
+        &options,
+        #[cfg(feature = "text")]
+        &fontdb,
+    )
+    .map_err(|err| err.to_string())?;
 
-    let pdf = svg2pdf::to_pdf(&tree, Options::default(), &fontdb);
+    let pdf = svg2pdf::to_pdf(
+        &tree,
+        Options::default(),
+        #[cfg(feature = "text")]
+        &fontdb,
+    );
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 

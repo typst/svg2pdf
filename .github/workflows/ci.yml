@@ -49,6 +49,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@cargo-hack
       - run: cargo clippy --all-targets
       - run: cargo fmt --check --all
       - run: cargo doc --workspace --no-deps
+      - run: cargo hack check --each-feature -p svg2pdf
+      - run: cargo hack check --each-feature -p svg2pdf-cli
