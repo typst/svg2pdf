@@ -128,7 +128,7 @@ impl Default for Options {
 /// # Ok(()) }
 /// ```
 pub fn to_pdf(tree: &Tree, options: Options, fontdb: &fontdb::Database) -> Vec<u8> {
-    let mut ctx = Context::new(tree, options, &fontdb);
+    let mut ctx = Context::new(tree, options, fontdb);
     let mut pdf = Pdf::new();
 
     let catalog_ref = ctx.alloc_ref();
@@ -279,7 +279,7 @@ pub fn to_chunk(
 ) -> (Chunk, Ref) {
     let mut chunk = Chunk::new();
 
-    let mut ctx = Context::new(tree, options, &fontdb);
+    let mut ctx = Context::new(tree, options, fontdb);
     let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx);
     ctx.write_global_objects(&mut chunk);
     (chunk, x_ref)

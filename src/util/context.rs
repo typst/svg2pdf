@@ -90,7 +90,7 @@ impl Context {
             sgray_ref: None,
         };
 
-        fill_fonts(tree.root(), &mut ctx, &fontdb);
+        fill_fonts(tree.root(), &mut ctx, fontdb);
 
         ctx
     }
@@ -120,7 +120,7 @@ impl Context {
 
     pub fn write_global_objects(&mut self, pdf: &mut Chunk) {
         let allocator = &mut self.ref_allocator;
-        for (_, font) in &mut self.fonts {
+        for font in self.fonts.values_mut() {
             if let Some(font) = font.as_mut() {
                 write_font(pdf, allocator, font);
             }

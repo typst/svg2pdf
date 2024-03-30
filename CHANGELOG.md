@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TODO: The CLI options have been (temporarily) removed. They will be readded before the next release.
 - TODO: Add tests for CLI and svg options
 - TODO: Add CLI option to convert text to paths.
+- TODO: Add CI test to test builds with different feature
+- TODO: Add text feature?
 
 ### Changed
 - Bumped resvg to v0.40.

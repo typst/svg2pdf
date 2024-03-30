@@ -40,9 +40,7 @@ pub fn tree_to_stream(
     content.restore_state();
 }
 
-/// Convert a tree into a XObject of size 1x1, similar to an image. The Ref of that
-/// XObject is guaranteed to be the current highest, so you can use `ref.next()` to
-/// get the next free ID.
+/// Convert a tree into a XObject of size 1x1, similar to an image.
 pub fn tree_to_xobject(tree: &Tree, chunk: &mut Chunk, ctx: &mut Context) -> Ref {
     let bbox = tree.size().to_non_zero_rect(0.0, 0.0);
     let x_ref = ctx.alloc_ref();

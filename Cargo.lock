@@ -1199,7 +1199,6 @@ dependencies = [
  "pdf-writer",
  "svg2pdf",
  "termcolor",
- "ttf-parser",
  "usvg",
 ]
 

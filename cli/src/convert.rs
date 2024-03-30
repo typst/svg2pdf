@@ -33,7 +33,7 @@ pub fn convert_(input: &PathBuf, output: Option<PathBuf>) -> Result<(), String> 
     let tree =
         usvg::Tree::from_str(&svg, &options, &fontdb).map_err(|err| err.to_string())?;
 
-    let pdf = svg2pdf::to_pdf(&tree, Options::default(), fontdb);
+    let pdf = svg2pdf::to_pdf(&tree, Options::default(), &fontdb);
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 
