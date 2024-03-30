@@ -175,7 +175,7 @@ pub fn to_pdf(tree: &Tree, options: Options, fontdb: &fontdb::Database) -> Vec<u
     pdf.finish()
 }
 
-/// Convert a [Tree](Tree) into a [`Chunk`].
+/// Convert a [Tree] into a [`Chunk`].
 ///
 /// IMPORTANT: The fontdb that is passed to this function needs to be the
 /// same one that was used to convert the SVG string into a [`usvg` tree](Tree)!
