@@ -13,23 +13,23 @@ will still be turned into a vector graphic), so no quality is lost.
 This example reads an SVG file and writes the corresponding PDF back to the disk.
 
 ```
-* # fn main() -> Result<(), Box<dyn std::error::Error>> {
-* use svg2pdf::usvg::fontdb;
-* use svg2pdf::ConversionOptions;
-*
-* let input = "tests/svg/custom/integration/matplotlib/stairs.svg";
-* let output = "target/stairs.pdf";
-*
-* let svg = std::fs::read_to_string(input)?;
-* let options = svg2pdf::usvg::Options::default();
-* let mut db = fontdb::Database::new();
-* db.load_system_fonts();
-* let tree = svg2pdf::usvg::Tree::from_str(&svg, &options, &db)?;
-*
-* let pdf = svg2pdf::to_pdf(&tree, Options::default(), &db);
-* std::fs::write(output, pdf)?;
-* # Ok(()) }
-* ```
+# fn main() -> Result<(), Box<dyn std::error::Error>> {
+use svg2pdf::usvg::fontdb;
+use svg2pdf::Options;
+
+let input = "tests/svg/custom/integration/matplotlib/stairs.svg";
+let output = "target/stairs.pdf";
+
+let svg = std::fs::read_to_string(input)?;
+let options = svg2pdf::usvg::Options::default();
+let mut db = fontdb::Database::new();
+db.load_system_fonts();
+let tree = svg2pdf::usvg::Tree::from_str(&svg, &options, &db)?;
+
+let pdf = svg2pdf::to_pdf(&tree, Options::default(), &db);
+std::fs::write(output, pdf)?;
+# Ok(()) }
+```
 
 ## Supported features
 In general, a very large part of the SVG specification is supported, including
