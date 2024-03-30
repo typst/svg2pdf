@@ -1,6 +1,5 @@
 use pdf_writer::types::{BlendMode, LineCapStyle, LineJoinStyle, MaskType};
 use pdf_writer::{Content, Name, Rect};
-#[cfg(feature = "image")]
 use usvg::Size;
 use usvg::{LineCap, LineJoin, NonZeroRect, Transform};
 
