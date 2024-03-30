@@ -993,8 +993,7 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 [[package]]
 name = "resvg"
 version = "0.40.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "024e40e1ba7313fc315b1720298988c0cd6f8bfe3754b52838aafecebd11355a"
+source = "git+https://github.com/RazrFalcon/resvg#ee3a7e33c8ce2ce8b399240332ef4439149307e7"
 dependencies = [
  "gif",
  "jpeg-decoder",
@@ -1118,6 +1117,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38b58827f4464d87d377d175e90bf58eb00fd8716ff0a62f80356b5e61555d0d"
 
 [[package]]
+name = "siphasher"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56199f7ddabf13fe5074ce809e7d3f42b42ae711800501b5b16ea82ad029c39d"
+
+[[package]]
 name = "slotmap"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1157,6 +1162,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5ee073c9e4cd00e28217186dbe12796d692868f432bf2e97ee73bed0c56dfa01"
 
 [[package]]
+name = "subsetter"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09eab8a83bff89ba2200bd4c59be45c7c787f988431b936099a5a266c957f2f9"
+
+[[package]]
 name = "svg2pdf"
 version = "0.9.1"
 dependencies = [
@@ -1166,7 +1177,11 @@ dependencies = [
  "once_cell",
  "pdf-writer",
  "resvg",
+ "siphasher 1.0.1",
+ "subsetter",
  "tiny-skia",
+ "ttf-parser",
+ "unicode-properties",
  "usvg",
 ]
 
@@ -1208,7 +1223,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59d7618f12b51be8171a7cfdda1e7a93f79cbc57c4e7adf89a749cf671125241"
 dependencies = [
  "kurbo 0.10.4",
- "siphasher",
+ "siphasher 0.3.11",
 ]
 
 [[package]]
@@ -1346,8 +1361,7 @@ checksum = "b1d386ff53b415b7fe27b50bb44679e2cc4660272694b7b6f3326d8480823a94"
 [[package]]
 name = "usvg"
 version = "0.40.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c04150a94f0bfc3b2c15d4e151524d14cd06765fc6641d8b1c59a248360d4474"
+source = "git+https://github.com/RazrFalcon/resvg#ee3a7e33c8ce2ce8b399240332ef4439149307e7"
 dependencies = [
  "base64",
  "data-url",
@@ -1360,7 +1374,7 @@ dependencies = [
  "roxmltree",
  "rustybuzz",
  "simplecss",
- "siphasher",
+ "siphasher 0.3.11",
  "strict-num",
  "svgtypes",
  "tiny-skia-path",

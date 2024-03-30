@@ -1,11 +1,12 @@
-use std::rc::Rc;
-
 use pdf_writer::types::{FunctionShadingType, MaskType};
 use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref};
-use usvg::{Paint, Transform};
+use usvg::{Paint, Rect, Transform};
 
 use crate::util::context::Context;
-use crate::util::helper::{NameExt, RectExt, StopExt, TransformExt};
+use crate::util::helper::{
+    bbox_to_non_zero_rect, NameExt, RectExt, StopExt, TransformExt,
+};
+use crate::util::resources::ResourceContainer;
 
 /// An alternative representation of a usvg::Stop that allows us to store
 /// both, RGB gradients and grayscale gradients.
@@ -42,8 +43,7 @@ impl GradientProperties {
     }
 }
 
-/// Turn a (gradient) paint into a shading pattern object. Returns the name (= the name
-/// in the `Resources` dictionary) of the object. Stop opacities will be ignored and
+/// Turn a (gradient) paint into a shading pattern object. Stop opacities will be ignored and
 /// need to be rendered separately using `create_shading_soft_mask`. The paint
 /// needs to be either a linear gradient or a radial gradient.
 pub fn create_shading_pattern(
@@ -51,21 +51,23 @@ pub fn create_shading_pattern(
     chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: &Transform,
-) -> Rc<String> {
+) -> Ref {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
     shading_pattern(&properties, chunk, ctx, accumulated_transform)
 }
 
 /// Return a soft mask that will render the stop opacities of a gradient into a gray scale
-/// shading.
+/// shading. If no soft mask is necessary (because no stops have an opacity),
+/// `None` will be returned.
 pub fn create_shading_soft_mask(
     paint: &Paint,
     chunk: &mut Chunk,
     ctx: &mut Context,
-) -> Option<Rc<String>> {
+    bbox: Rect,
+) -> Option<Ref> {
     let properties = GradientProperties::try_from_paint(paint).unwrap();
     if properties.stops.iter().any(|stop| stop.opacity().get() < 1.0) {
-        Some(shading_soft_mask(&properties, chunk, ctx))
+        Some(shading_soft_mask(&properties, chunk, ctx, bbox))
     } else {
         None
     }
@@ -76,7 +78,7 @@ fn shading_pattern(
     chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: &Transform,
-) -> Rc<String> {
+) -> Ref {
     let pattern_ref = ctx.alloc_ref();
 
     let matrix = accumulated_transform.pre_concat(properties.transform);
@@ -87,19 +89,20 @@ fn shading_pattern(
     shading_pattern.matrix(matrix.to_pdf_transform());
     shading_pattern.finish();
 
-    ctx.deferrer.add_pattern(pattern_ref)
+    pattern_ref
 }
 
 fn shading_soft_mask(
     properties: &GradientProperties,
     chunk: &mut Chunk,
     ctx: &mut Context,
-) -> Rc<String> {
-    ctx.deferrer.push();
+    bbox: Rect,
+) -> Ref {
+    let mut rc = ResourceContainer::new();
     let x_object_id = ctx.alloc_ref();
     let shading_ref = shading_function(properties, chunk, ctx, true);
-    let shading_name = ctx.deferrer.add_shading(shading_ref);
-    let bbox = ctx.get_rect().to_pdf_rect();
+    let shading_name = rc.add_shading(shading_ref);
+    let bbox = bbox_to_non_zero_rect(Some(bbox)).to_pdf_rect();
 
     let transform = properties.transform;
 
@@ -109,7 +112,7 @@ fn shading_soft_mask(
     let content_stream = ctx.finish_content(content);
 
     let mut x_object = chunk.form_xobject(x_object_id, &content_stream);
-    ctx.deferrer.pop(&mut x_object.resources());
+    rc.finish(&mut x_object.resources());
 
     x_object
         .group()
@@ -117,7 +120,7 @@ fn shading_soft_mask(
         .isolated(false)
         .knockout(false)
         .color_space()
-        .icc_based(ctx.deferrer.sgray_ref());
+        .icc_based(ctx.sgray_ref());
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
@@ -133,7 +136,7 @@ fn shading_soft_mask(
         .group(x_object_id)
         .finish();
 
-    ctx.deferrer.add_graphics_state(gs_ref)
+    gs_ref
 }
 
 fn shading_function(
@@ -148,9 +151,9 @@ fn shading_function(
     let mut shading = chunk.function_shading(shading_ref);
     shading.shading_type(properties.shading_type);
     if use_opacities {
-        shading.color_space().icc_based(ctx.deferrer.sgray_ref());
+        shading.color_space().icc_based(ctx.sgray_ref());
     } else {
-        shading.color_space().icc_based(ctx.deferrer.srgb_ref());
+        shading.color_space().icc_based(ctx.srgb_ref());
     }
 
     shading.function(function_ref);
@@ -214,7 +217,6 @@ fn select_function<const COUNT: usize>(
     }
 }
 
-/// Create a stitching function for multiple gradient stops.
 fn stitching_function<const COUNT: usize>(
     stops: &[Stop<COUNT>],
     chunk: &mut Chunk,
@@ -246,7 +248,6 @@ fn stitching_function<const COUNT: usize>(
     reference
 }
 
-/// Create an exponential function for two gradient stops.
 fn exponential_function<const COUNT: usize>(
     first_stop: &Stop<COUNT>,
     second_stop: &Stop<COUNT>,

@@ -1,6 +1,5 @@
-use pdf_writer::{Chunk, Content, Filter, Finish};
+use pdf_writer::{Chunk, Content, Filter, Finish, Ref};
 use std::ops::Mul;
-use std::rc::Rc;
 use usvg::{Opacity, Transform};
 
 #[cfg(feature = "filters")]
@@ -8,6 +7,7 @@ use super::filter;
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
 use crate::util::helper::{BlendModeExt, GroupExt, NameExt, RectExt, TransformExt};
+use crate::util::resources::ResourceContainer;
 
 /// Render a group into a content stream.
 pub fn render(
@@ -17,10 +17,11 @@ pub fn render(
     ctx: &mut Context,
     accumulated_transform: Transform,
     initial_opacity: Option<Opacity>,
+    rc: &mut ResourceContainer,
 ) {
     #[cfg(feature = "filters")]
     if !group.filters().is_empty() {
-        filter::render(group, chunk, content, ctx);
+        filter::render(group, chunk, content, ctx, rc);
         return;
     }
 
@@ -31,7 +32,6 @@ pub fn render(
 
     let initial_opacity = initial_opacity.unwrap_or(Opacity::ONE);
 
-    // Filters will be ignored
     if group.is_isolated() || initial_opacity.get() != 1.0 {
         content.save_state();
         let gs_ref = ctx.alloc_ref();
@@ -41,31 +41,30 @@ pub fn render(
             .blend_mode(group.blend_mode().to_pdf_blend_mode());
 
         gs.finish();
-        content.set_parameters(ctx.deferrer.add_graphics_state(gs_ref).to_pdf_name());
+        content.set_parameters(rc.add_graphics_state(gs_ref).to_pdf_name());
 
         // We don't need to pass the accumulated transform here because if a pattern appears in a
         // XObject, it will be mapped to the coordinate space of where the XObject was invoked, meaning
         // that it will also be affected by the transforms in the content stream. If we passed on the
         // accumulated transform, they would be applied twice.
-        content.x_object(
-            create_x_object(group, chunk, ctx, Transform::default()).to_pdf_name(),
-        );
+        let x_ref = create_x_object(group, chunk, ctx, Transform::default());
+        let x_name = rc.add_x_object(x_ref);
+        content.x_object(x_name.to_pdf_name());
         content.restore_state();
     } else {
-        create_to_stream(group, chunk, content, ctx, accumulated_transform);
+        create_to_stream(group, chunk, content, ctx, accumulated_transform, rc);
     }
 }
 
-/// Turn a group into an XObject. Returns the name (= the name in the `Resources` dictionary) of
-/// the group
+/// Turn a group into an XObject.
 fn create_x_object(
     group: &usvg::Group,
     chunk: &mut Chunk,
     ctx: &mut Context,
     accumulated_transform: Transform,
-) -> Rc<String> {
+) -> Ref {
     let x_ref = ctx.alloc_ref();
-    ctx.deferrer.push();
+    let mut rc = ResourceContainer::new();
 
     let pdf_bbox = group
         .layer_bounding_box()
@@ -75,12 +74,12 @@ fn create_x_object(
 
     let mut content = Content::new();
 
-    create_to_stream(group, chunk, &mut content, ctx, accumulated_transform);
+    create_to_stream(group, chunk, &mut content, ctx, accumulated_transform, &mut rc);
 
     let content_stream = ctx.finish_content(content);
 
     let mut x_object = chunk.form_xobject(x_ref, &content_stream);
-    ctx.deferrer.pop(&mut x_object.resources());
+    rc.finish(&mut x_object.resources());
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
@@ -92,12 +91,12 @@ fn create_x_object(
         .isolated(group.is_isolated())
         .knockout(false)
         .color_space()
-        .icc_based(ctx.deferrer.srgb_ref());
+        .icc_based(ctx.srgb_ref());
 
     x_object.bbox(pdf_bbox);
     x_object.finish();
 
-    ctx.deferrer.add_x_object(x_ref)
+    x_ref
 }
 
 /// Write a group into a content stream. Opacities will be ignored. If opacities are needed,
@@ -108,21 +107,22 @@ fn create_to_stream(
     content: &mut Content,
     ctx: &mut Context,
     accumulated_transform: Transform,
+    rc: &mut ResourceContainer,
 ) {
     content.save_state();
     content.transform(group.transform().to_pdf_transform());
     let accumulated_transform = accumulated_transform.pre_concat(group.transform());
 
     if let Some(mask) = &group.mask() {
-        mask::render(group, mask, chunk, content, ctx);
+        mask::render(group, mask, chunk, content, ctx, rc);
     }
 
     if let Some(clip_path) = &group.clip_path() {
-        clip_path::render(group, clip_path, chunk, content, ctx);
+        clip_path::render(group, clip_path, chunk, content, ctx, rc);
     }
 
     for child in group.children() {
-        child.render(chunk, content, ctx, accumulated_transform);
+        child.render(chunk, content, ctx, accumulated_transform, rc);
     }
 
     content.restore_state();

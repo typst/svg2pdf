@@ -4,14 +4,10 @@ use svg2pdf::Options;
 
 /// Execute a font listing command.
 pub fn _convert(command: ConvertCommand) -> Result<(), String> {
-    convert_(&command.input, command.output, command.dpi)
+    convert_(&command.input, command.output)
 }
 
-pub fn convert_(
-    input: &PathBuf,
-    output: Option<PathBuf>,
-    dpi: f32,
-) -> Result<(), String> {
+pub fn convert_(input: &PathBuf, output: Option<PathBuf>) -> Result<(), String> {
     if let Ok(()) = log::set_logger(&LOGGER) {
         log::set_max_level(log::LevelFilter::Warn);
     }
@@ -37,7 +33,7 @@ pub fn convert_(
     let tree =
         usvg::Tree::from_str(&svg, &options, &fontdb).map_err(|err| err.to_string())?;
 
-    let pdf = svg2pdf::convert_tree(&tree, Options { dpi, ..Options::default() });
+    let pdf = svg2pdf::to_pdf(&tree, Options::default(), &fontdb);
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 

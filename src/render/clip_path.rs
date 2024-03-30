@@ -1,7 +1,5 @@
-use std::rc::Rc;
-
 use pdf_writer::types::MaskType;
-use pdf_writer::{Chunk, Content, Filter, Finish};
+use pdf_writer::{Chunk, Content, Filter, Finish, Ref};
 use usvg::tiny_skia_path::PathSegment;
 use usvg::{ClipPath, FillRule, Group, Node, Transform, Visibility};
 
@@ -9,6 +7,7 @@ use super::group;
 use super::path::draw_path;
 use crate::util::context::Context;
 use crate::util::helper::{bbox_to_non_zero_rect, NameExt, RectExt, TransformExt};
+use crate::util::resources::ResourceContainer;
 
 /// Render a clip path into a content stream.
 pub fn render(
@@ -17,6 +16,7 @@ pub fn render(
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
+    rc: &mut ResourceContainer,
 ) {
     // Unfortunately, clip paths are a bit tricky to deal with, the reason being that clip paths in
     // SVGs can be much more complex than in PDF. In SVG, clip paths can have transforms, as well as
@@ -44,7 +44,7 @@ pub fn render(
     if is_simple_clip_path
         && (clip_rules.iter().all(|f| *f == FillRule::NonZero)
         // For even odd, there must be at most one shape in the group, because
-        // overlapping shapes with evenodd render wrongly in PDF
+        // overlapping shapes with evenodd render differently in PDF
             || (clip_rules.iter().all(|f| *f == FillRule::EvenOdd)
                 && clip_rules.len() == 1))
     {
@@ -54,9 +54,9 @@ pub fn render(
             clip_rules.first().copied().unwrap_or(FillRule::NonZero),
         );
     } else {
-        content.set_parameters(
-            create_complex_clip_path(group, clip_path, chunk, ctx).to_pdf_name(),
-        );
+        let clip_path_ref = create_complex_clip_path(group, clip_path, chunk, ctx);
+        let clip_path_name = rc.add_graphics_state(clip_path_ref);
+        content.set_parameters(clip_path_name.to_pdf_name());
     }
 }
 
@@ -158,10 +158,11 @@ fn extend_segments_from_group(
                 extend_segments_from_group(group, &group_transform, segments);
             }
             Node::Text(ref text) => {
-                // TODO: Need to change this once unconverted text is supported
+                // We could in theory preserve text in clip paths by using the appropriate
+                // rendering mode, but for now we just use the flattened version.
                 extend_segments_from_group(text.flattened(), transform, segments);
             }
-            // Images are not valid in a clip path. Text will be converted into shapes beforehand.
+            // Images are not valid in a clip path.
             _ => {}
         }
     }
@@ -172,33 +173,41 @@ fn create_complex_clip_path(
     clip_path: &ClipPath,
     chunk: &mut Chunk,
     ctx: &mut Context,
-) -> Rc<String> {
-    ctx.deferrer.push();
-    let x_object_reference = ctx.alloc_ref();
+) -> Ref {
+    let mut rc = ResourceContainer::new();
+    let x_ref = ctx.alloc_ref();
 
     let mut content = Content::new();
     content.save_state();
 
     if let Some(clip_path) = clip_path.clip_path() {
-        render(parent, clip_path, chunk, &mut content, ctx);
+        render(parent, clip_path, chunk, &mut content, ctx, &mut rc);
     }
 
     content.transform(clip_path.transform().to_pdf_transform());
 
     let pdf_bbox = bbox_to_non_zero_rect(Some(parent.bounding_box())).to_pdf_rect();
 
-    group::render(clip_path.root(), chunk, &mut content, ctx, Transform::default(), None);
+    group::render(
+        clip_path.root(),
+        chunk,
+        &mut content,
+        ctx,
+        Transform::default(),
+        None,
+        &mut rc,
+    );
     content.restore_state();
 
     let content_stream = ctx.finish_content(content);
 
-    let mut x_object = chunk.form_xobject(x_object_reference, &content_stream);
+    let mut x_object = chunk.form_xobject(x_ref, &content_stream);
 
     if ctx.options.compress {
         x_object.filter(Filter::FlateDecode);
     }
 
-    ctx.deferrer.pop(&mut x_object.resources());
+    rc.finish(&mut x_object.resources());
 
     x_object
         .group()
@@ -206,14 +215,14 @@ fn create_complex_clip_path(
         .isolated(false)
         .knockout(false)
         .color_space()
-        .icc_based(ctx.deferrer.srgb_ref());
+        .icc_based(ctx.srgb_ref());
 
     x_object.bbox(pdf_bbox);
     x_object.finish();
 
     let gs_ref = ctx.alloc_ref();
     let mut gs = chunk.ext_graphics(gs_ref);
-    gs.soft_mask().subtype(MaskType::Alpha).group(x_object_reference);
+    gs.soft_mask().subtype(MaskType::Alpha).group(x_ref);
 
-    ctx.deferrer.add_graphics_state(gs_ref)
+    gs_ref
 }

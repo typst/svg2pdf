@@ -1,16 +1,18 @@
 use crate::render::image;
 use crate::util::context::Context;
+use crate::util::resources::ResourceContainer;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
 use usvg::{AspectRatio, Group, ImageKind, Node, ViewBox, Visibility};
 
-/// Render a group with filters as an image
+/// Render a group with filters as an image.
 pub fn render(
     group: &Group,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
+    rc: &mut ResourceContainer,
 ) -> Option<()> {
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
     let layer_bbox = group.layer_bounding_box().transform(group.transform())?;
@@ -50,6 +52,7 @@ pub fn render(
         chunk,
         content,
         ctx,
+        rc,
     );
 
     Some(())
