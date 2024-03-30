@@ -20,8 +20,8 @@ doc = false
 
 [dependencies]
 clap = { workspace = true }
-fontdb = { workspace = true }
-image = { workspace = true }
+# TODO: Don't include if not build with text feature
+fontdb = { workspace = true}
 log = { workspace = true }
 miniz_oxide = { workspace = true }
 pdf-writer = { workspace = true }
@@ -30,9 +30,10 @@ termcolor = { workspace = true }
 usvg = { workspace = true }
 
 [features]
-default = ["svg2pdf/default"]
+default = ["image", "filters", "text"]
 image = ["svg2pdf/image"]
 filters = ["svg2pdf/filters"]
+text = ["svg2pdf/text", "usvg/text"]
 
 [build-dependencies]
 clap = { workspace = true, features = ["string"] }

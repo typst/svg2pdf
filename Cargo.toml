@@ -25,10 +25,10 @@ oxipng = { version = "9", default-features = false, features = ["filetime", "par
 pdf-writer = "0.9"
 pdfium-render = "0.8.6"
 termcolor = "1.2"
-usvg = { git = "https://github.com/RazrFalcon/resvg", default-features = false, features = ["text"] }
+usvg = { git = "https://github.com/RazrFalcon/resvg", default-features = false}
 tiny-skia = "0.11.4"
 unicode-properties = "0.1.1"
-resvg = {git = "https://github.com/RazrFalcon/resvg"}
+resvg = {git = "https://github.com/RazrFalcon/resvg", default-features = false}
 subsetter = "0.1.1"
 ttf-parser = { version = "0.20.0" }
 siphasher = { version = "1.0.1"}
@@ -48,21 +48,25 @@ license = { workspace = true }
 bench = false
 
 [features]
-default = ["image", "filters"]
+default = ["image", "filters", "text"]
+text = ["usvg/text", "resvg/text", "dep:siphasher",
+    "dep:subsetter", "dep:ttf-parser", "dep:unicode-properties",
+    "dep:fontdb"]
 image = ["dep:image"]
-filters = ["image", "dep:tiny-skia", "dep:resvg"]
+filters = ["image", "dep:tiny-skia", "resvg/raster-images"]
 
 [dependencies]
-unicode-properties = { workspace = true }
+unicode-properties = { workspace = true, optional = true }
 miniz_oxide = { workspace = true }
 once_cell = { workspace = true }
 pdf-writer = { workspace = true }
+fontdb = { workspace = true, optional = true}
 usvg = { workspace = true }
 log = { workspace = true }
 image = { workspace = true, optional = true }
 tiny-skia = {workspace = true, optional = true }
 resvg = {workspace = true, optional = true }
-subsetter = { workspace = true }
-ttf-parser = { workspace = true }
-siphasher = { workspace = true }
+subsetter = { workspace = true, optional = true }
+ttf-parser = { workspace = true, optional = true }
+siphasher = { workspace = true, optional = true }
 

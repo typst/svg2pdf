@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Added support for text embedding.
+- Added a `text` feature flag.
 - The `convert_str` method has been removed. You should now always convert your SVG string into a `usvg` 
  tree yourself.
 - The `convert_tree` method has been renamed into `to_pdf`, and now requires you to provide the fontdb
@@ -17,8 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TODO: The CLI options have been (temporarily) removed. They will be readded before the next release.
 - TODO: Add tests for CLI and svg options
 - TODO: Add CLI option to convert text to paths.
-- TODO: Add CI test to test builds with different feature
-- TODO: Add text feature?
 
 ### Changed
 - Bumped resvg to v0.40.

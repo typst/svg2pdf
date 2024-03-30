@@ -60,7 +60,9 @@ pub use usvg;
 
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Rect, Ref, TextStr};
-use usvg::{fontdb, Tree};
+#[cfg(feature = "text")]
+use usvg::fontdb;
+use usvg::Tree;
 
 use crate::render::{tree_to_stream, tree_to_xobject};
 use crate::util::context::Context;
@@ -127,8 +129,18 @@ impl Default for Options {
 /// std::fs::write(output, pdf)?;
 /// # Ok(()) }
 /// ```
-pub fn to_pdf(tree: &Tree, options: Options, fontdb: &fontdb::Database) -> Vec<u8> {
-    let mut ctx = Context::new(tree, options, fontdb);
+pub fn to_pdf(
+    tree: &Tree,
+    options: Options,
+    #[cfg(feature = "text")] fontdb: &fontdb::Database,
+) -> Vec<u8> {
+    let mut ctx = Context::new(
+        #[cfg(feature = "text")]
+        tree,
+        options,
+        #[cfg(feature = "text")]
+        fontdb,
+    );
     let mut pdf = Pdf::new();
 
     let catalog_ref = ctx.alloc_ref();
@@ -275,11 +287,17 @@ pub fn to_pdf(tree: &Tree, options: Options, fontdb: &fontdb::Database) -> Vec<u
 pub fn to_chunk(
     tree: &Tree,
     options: Options,
-    fontdb: &fontdb::Database,
+    #[cfg(feature = "text")] fontdb: &fontdb::Database,
 ) -> (Chunk, Ref) {
     let mut chunk = Chunk::new();
 
-    let mut ctx = Context::new(tree, options, fontdb);
+    let mut ctx = Context::new(
+        #[cfg(feature = "text")]
+        tree,
+        options,
+        #[cfg(feature = "text")]
+        fontdb,
+    );
     let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx);
     ctx.write_global_objects(&mut chunk);
     (chunk, x_ref)
