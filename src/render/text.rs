@@ -200,7 +200,7 @@ fn subset_font(font_data: &[u8], index: u32, glyphs: &[u16]) -> Vec<u8> {
     let mut data = subsetted.as_deref().unwrap_or(data);
 
     // Extract the standalone CFF font program if applicable.
-    let face = ttf_parser::RawFace::parse(data, index).unwrap();
+    let face = ttf_parser::RawFace::parse(data, 0).unwrap();
     if let Some(cff) = face.table(CFF) {
         data = cff;
     }
