@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 #[allow(unused_imports)]
 use {
+    std::collections::HashMap,
     crate::{convert_svg, run_test_impl},
     crate::{render_pdf, FONTDB},
     pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str},
