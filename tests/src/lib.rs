@@ -1,5 +1,5 @@
 #[rustfmt::skip]
-mod integration;
+mod render;
 mod api;
 
 use std::cmp::max;
@@ -150,10 +150,6 @@ pub fn get_diff(
     (diff_image, pixel_diff)
 }
 
-pub fn get_svg_path(test_name: &str) -> PathBuf {
-    PathBuf::from("svg").join(String::from(test_name) + ".svg")
-}
-
 pub fn get_ref_path(test_name: &str) -> PathBuf {
     PathBuf::from("ref").join(String::from(test_name) + ".png")
 }
@@ -166,23 +162,10 @@ pub fn get_pdf_path(test_name: &str) -> PathBuf {
     PathBuf::from("pdf").join(String::from(test_name) + ".pdf")
 }
 
-/// Runs a single test instance.
-pub fn run_test(test_name: &str, options: Options) -> i32 {
-    let svg_path = get_svg_path(test_name);
+pub fn run_test_impl(pdf: Vec<u8>, actual_image: RgbaImage, test_name: &str) -> i32 {
     let ref_path = get_ref_path(test_name);
     let diff_path = get_diff_path(test_name);
     let pdf_path = get_pdf_path(test_name);
-
-    run_test_impl(&svg_path, &ref_path, &diff_path, &pdf_path, options)
-}
-pub fn run_test_impl(
-    svg_path: &Path,
-    ref_path: &Path,
-    diff_path: &Path,
-    pdf_path: &Path,
-    options: Options,
-) -> i32 {
-    let (pdf, actual_image) = convert_svg(&svg_path, options);
 
     // Just as a convenience, if the test is supposed to run but there doesn't exist
     // a reference image yet, we create a new one. This allows us to conveniently generate
