@@ -1,5 +1,6 @@
 #[rustfmt::skip]
 mod integration;
+mod api;
 
 use std::cmp::max;
 use std::fs;
@@ -69,18 +70,10 @@ pub fn read_svg(svg_string: &str) -> Tree {
 
 /// Converts an image into a PDF and returns the PDF as well as a rendered version
 /// of it.
-pub fn convert_svg(svg_path: &Path) -> (Vec<u8>, RgbaImage) {
+pub fn convert_svg(svg_path: &Path, options: Options) -> (Vec<u8>, RgbaImage) {
     let svg = fs::read_to_string(svg_path).unwrap();
     let tree = read_svg(&svg);
-    let pdf = svg2pdf::to_pdf(
-        &tree,
-        Options {
-            raster_scale: 1.5,
-            compress: true,
-            embed_text: true,
-        },
-        &FONTDB.lock().unwrap(),
-    );
+    let pdf = svg2pdf::to_pdf(&tree, options, &FONTDB.lock().unwrap());
     let image = render_pdf(pdf.as_slice());
     (pdf, image)
 }
@@ -110,6 +103,7 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
 }
 
 const REPLACE: bool = false;
+const PDF: bool = false;
 
 pub fn get_diff(
     expected_image: &RgbaImage,
@@ -168,13 +162,27 @@ pub fn get_diff_path(test_name: &str) -> PathBuf {
     PathBuf::from("diff").join(String::from(test_name) + ".png")
 }
 
+pub fn get_pdf_path(test_name: &str) -> PathBuf {
+    PathBuf::from("pdf").join(String::from(test_name) + ".pdf")
+}
+
 /// Runs a single test instance.
-pub fn run_test(test_name: &str) -> i32 {
+pub fn run_test(test_name: &str, options: Options) -> i32 {
     let svg_path = get_svg_path(test_name);
     let ref_path = get_ref_path(test_name);
     let diff_path = get_diff_path(test_name);
+    let pdf_path = get_pdf_path(test_name);
 
-    let (_, actual_image) = convert_svg(&svg_path);
+    run_test_impl(&svg_path, &ref_path, &diff_path, &pdf_path, options)
+}
+pub fn run_test_impl(
+    svg_path: &Path,
+    ref_path: &Path,
+    diff_path: &Path,
+    pdf_path: &Path,
+    options: Options,
+) -> i32 {
+    let (pdf, actual_image) = convert_svg(&svg_path, options);
 
     // Just as a convenience, if the test is supposed to run but there doesn't exist
     // a reference image yet, we create a new one. This allows us to conveniently generate
@@ -183,6 +191,11 @@ pub fn run_test(test_name: &str) -> i32 {
         fs::create_dir_all(ref_path.parent().unwrap()).unwrap();
         save_image(&actual_image, &ref_path);
         return 1;
+    }
+
+    if PDF {
+        fs::create_dir_all(pdf_path.parent().unwrap()).unwrap();
+        fs::write(pdf_path, pdf).unwrap();
     }
 
     let expected_image = Reader::open(&ref_path).unwrap().decode().unwrap().into_rgba8();

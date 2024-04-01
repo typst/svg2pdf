@@ -4,1791 +4,1791 @@
 
 #[allow(unused_imports)]
 use crate::run_test;
-
-#[test] fn resvg_filters_feDisplacementMap_simple_case() {assert_eq!(run_test("resvg/filters/feDisplacementMap/simple-case"), 0)}
-#[test] fn resvg_filters_feOffset_negative_offset() {assert_eq!(run_test("resvg/filters/feOffset/negative-offset"), 0)}
-#[test] fn resvg_filters_feOffset_fractional_offset() {assert_eq!(run_test("resvg/filters/feOffset/fractional-offset"), 0)}
-#[test] fn resvg_filters_feOffset_complex_transform() {assert_eq!(run_test("resvg/filters/feOffset/complex-transform"), 0)}
-#[test] fn resvg_filters_feOffset_no_offset() {assert_eq!(run_test("resvg/filters/feOffset/no-offset"), 0)}
-#[test] fn resvg_filters_feOffset_with_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feOffset/with-primitiveUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_filters_feOffset_simple_case() {assert_eq!(run_test("resvg/filters/feOffset/simple-case"), 0)}
-#[test] fn resvg_filters_feOffset_only_dx() {assert_eq!(run_test("resvg/filters/feOffset/only-dx"), 0)}
-#[test] fn resvg_filters_feOffset_percentage_values() {assert_eq!(run_test("resvg/filters/feOffset/percentage-values"), 0)}
-#[test] fn resvg_filters_feOffset_only_dy() {assert_eq!(run_test("resvg/filters/feOffset/only-dy"), 0)}
-#[test] fn resvg_filters_feColorMatrix_invalid_type() {assert_eq!(run_test("resvg/filters/feColorMatrix/invalid-type"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_matrix() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_hueRotate_without_an_angle() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=hueRotate-without-an-angle"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_saturate_without_a_coefficient() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate-without-a-coefficient"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_hueRotate() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=hueRotate"), 0)}
-#[test] fn resvg_filters_feColorMatrix_without_attributes() {assert_eq!(run_test("resvg/filters/feColorMatrix/without-attributes"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_matrix_without_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-without-values"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_saturate_with_negative_coefficient() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_luminanceToAlpha() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=luminanceToAlpha"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_matrix_with_too_many_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-too-many-values"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_matrix_with_non_normalized_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-non-normalized-values"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_saturate() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate"), 0)}
-#[test] fn resvg_filters_feColorMatrix_without_a_type() {assert_eq!(run_test("resvg/filters/feColorMatrix/without-a-type"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_matrix_with_empty_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-empty-values"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_matrix_with_not_enough_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-not-enough-values"), 0)}
-#[test] fn resvg_filters_feColorMatrix_type_saturate_with_a_large_coefficient() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient"), 0)}
-#[test] fn resvg_filters_feBlend_with_subregion_on_input_2() {assert_eq!(run_test("resvg/filters/feBlend/with-subregion-on-input-2"), 0)}
-#[test] fn resvg_filters_feBlend_mode_darken() {assert_eq!(run_test("resvg/filters/feBlend/mode=darken"), 0)}
-#[test] fn resvg_filters_feBlend_with_subregion_on_input_1() {assert_eq!(run_test("resvg/filters/feBlend/with-subregion-on-input-1"), 0)}
-#[test] fn resvg_filters_feBlend_mode_lighten() {assert_eq!(run_test("resvg/filters/feBlend/mode=lighten"), 0)}
-#[test] fn resvg_filters_feBlend_mode_screen() {assert_eq!(run_test("resvg/filters/feBlend/mode=screen"), 0)}
-#[test] fn resvg_filters_feBlend_mode_hue() {assert_eq!(run_test("resvg/filters/feBlend/mode=hue"), 0)}
-#[test] fn resvg_filters_feBlend_mode_color_burn() {assert_eq!(run_test("resvg/filters/feBlend/mode=color-burn"), 0)}
-#[test] fn resvg_filters_feBlend_mode_normal() {assert_eq!(run_test("resvg/filters/feBlend/mode=normal"), 0)}
-#[test] fn resvg_filters_feBlend_empty() {assert_eq!(run_test("resvg/filters/feBlend/empty"), 0)}
-#[test] fn resvg_filters_feBlend_mode_multiply() {assert_eq!(run_test("resvg/filters/feBlend/mode=multiply"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_with_large_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-with-large-values"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_on_blue_with_sRGB_interpolation() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-blue-with-sRGB-interpolation"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_100__100() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=100--100"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_invalid_type() {assert_eq!(run_test("resvg/filters/feComponentTransfer/invalid-type"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_mixed_types() {assert_eq!(run_test("resvg/filters/feComponentTransfer/mixed-types"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_linear_with_invalid_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=linear-with-invalid-values"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_no_children() {assert_eq!(run_test("resvg/filters/feComponentTransfer/no-children"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_1px() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=1px"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_1_0_1() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=1-0-1"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_linear_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=linear-on-blue"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_without_tableValues() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-without-tableValues"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_with_an_empty_tableValues() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-with-an-empty-tableValues"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_identity_on_all() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=identity-on-all"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_discrete_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=discrete-on-blue"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_gamma_with_invalid_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=gamma-with-invalid-values"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_on_blue_twice() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-blue-twice"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_gamma_with_an_invalid_offset() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=gamma-with-an-invalid-offset"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_gamma_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=gamma-on-blue"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-blue"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_on_alpha() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-alpha"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_1() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=1"), 0)}
-#[test] fn resvg_filters_feComponentTransfer_type_linear_with_large_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=linear-with-large-values"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_with_feSpotLight_and_specular_and_exponent() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feSpotLight-and-specular-and-exponent"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_with_feDistantLight() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feDistantLight"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_lighting_color_hsla() {assert_eq!(run_test("resvg/filters/feSpecularLighting/lighting-color=hsla"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_specularExponent_256() {assert_eq!(run_test("resvg/filters/feSpecularLighting/specularExponent=256"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_with_feSpotLight_and_specularConstant_5() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feSpotLight-and-specularConstant=5"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_with_fePointLight() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-fePointLight"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_specularExponent_0() {assert_eq!(run_test("resvg/filters/feSpecularLighting/specularExponent=0"), 0)}
-#[test] fn resvg_filters_feSpecularLighting_with_feSpotLight() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feSpotLight"), 0)}
-#[test] fn resvg_filters_flood_color_hsla_color() {assert_eq!(run_test("resvg/filters/flood-color/hsla-color"), 0)}
-#[test] fn resvg_filters_flood_color_simple_case() {assert_eq!(run_test("resvg/filters/flood-color/simple-case"), 0)}
-#[test] fn resvg_filters_flood_color_inheritance_1() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-1"), 0)}
-#[test] fn resvg_filters_flood_color_inheritance_3() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-3"), 0)}
-#[test] fn resvg_filters_flood_color_inheritance_2() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-2"), 0)}
-#[test] fn resvg_filters_flood_color_inheritance_5() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-5"), 0)}
-#[test] fn resvg_filters_flood_color_inheritance_4() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-4"), 0)}
-#[test] fn resvg_filters_feComposite_with_subregion_on_input_2() {assert_eq!(run_test("resvg/filters/feComposite/with-subregion-on-input-2"), 0)}
-#[test] fn resvg_filters_feComposite_operator_xor() {assert_eq!(run_test("resvg/filters/feComposite/operator=xor"), 0)}
-#[test] fn resvg_filters_feComposite_operator_in() {assert_eq!(run_test("resvg/filters/feComposite/operator=in"), 0)}
-#[test] fn resvg_filters_feComposite_with_subregion_on_input_1() {assert_eq!(run_test("resvg/filters/feComposite/with-subregion-on-input-1"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic"), 0)}
-#[test] fn resvg_filters_feComposite_operator_over() {assert_eq!(run_test("resvg/filters/feComposite/operator=over"), 0)}
-#[test] fn resvg_filters_feComposite_operator_out() {assert_eq!(run_test("resvg/filters/feComposite/operator=out"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic_with_opacity_on_sRGB() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-opacity-on-sRGB"), 0)}
-#[test] fn resvg_filters_feComposite_empty() {assert_eq!(run_test("resvg/filters/feComposite/empty"), 0)}
-#[test] fn resvg_filters_feComposite_operator_atop() {assert_eq!(run_test("resvg/filters/feComposite/operator=atop"), 0)}
-#[test] fn resvg_filters_feComposite_invalid_operator() {assert_eq!(run_test("resvg/filters/feComposite/invalid-operator"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic_with_large_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-large-k1-4"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic_with_some_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-some-k1-4"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic_without_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-without-k1-4"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic_and_invalid_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-and-invalid-k1-4"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic_on_sRGB() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-on-sRGB"), 0)}
-#[test] fn resvg_filters_feComposite_default_operator() {assert_eq!(run_test("resvg/filters/feComposite/default-operator"), 0)}
-#[test] fn resvg_filters_feComposite_operator_arithmetic_with_opacity() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-opacity"), 0)}
-#[test] fn resvg_filters_filter_functions_two_drop_shadow_function() {assert_eq!(run_test("resvg/filters/filter-functions/two-drop-shadow-function"), 0)}
-#[test] fn resvg_filters_filter_functions_two_exact_urls() {assert_eq!(run_test("resvg/filters/filter-functions/two-exact-urls"), 0)}
-#[test] fn resvg_filters_filter_functions_color_adjust_functions_0percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-0percent"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_999deg() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-999deg"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_default_value() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-default-value"), 0)}
-#[test] fn resvg_filters_filter_functions_color_adjust_functions_default_value() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-default-value"), 0)}
-#[test] fn resvg_filters_filter_functions_color_adjust_functions_2() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-2"), 0)}
-#[test] fn resvg_filters_filter_functions_color_adjust_functions_100percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-100percent"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_color_last() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-color-last"), 0)}
-#[test] fn resvg_filters_filter_functions_blur_function_percent_value() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-percent-value"), 0)}
-#[test] fn resvg_filters_filter_functions_nested_filters() {assert_eq!(run_test("resvg/filters/filter-functions/nested-filters"), 0)}
-#[test] fn resvg_filters_filter_functions_color_adjust_functions_50percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-50percent"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_only_X_offset() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-only-X-offset"), 0)}
-#[test] fn resvg_filters_filter_functions_blur_function() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function"), 0)}
-#[test] fn resvg_filters_filter_functions_color_adjust_functions_negative() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-negative"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_only_offset() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-only-offset"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_percent_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-percent-values"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_em_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-em-values"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_extra_value() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-extra-value"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_zero() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-zero"), 0)}
-#[test] fn resvg_filters_filter_functions_url_and_grayscale() {assert_eq!(run_test("resvg/filters/filter-functions/url-and-grayscale"), 0)}
-#[test] fn resvg_filters_filter_functions_blur_function_mm_value() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-mm-value"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_filter_region() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-filter-region"), 0)}
-#[test] fn resvg_filters_filter_functions_blur_function_no_values() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-no-values"), 0)}
-#[test] fn resvg_filters_filter_functions_one_invalid_function_in_list() {assert_eq!(run_test("resvg/filters/filter-functions/one-invalid-function-in-list"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function"), 0)}
-#[test] fn resvg_filters_filter_functions_blur_function_two_values() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-two-values"), 0)}
-#[test] fn resvg_filters_filter_functions_one_invalid_url_in_list() {assert_eq!(run_test("resvg/filters/filter-functions/one-invalid-url-in-list"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_45rad() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45rad"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_currentColor() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-currentColor"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_45grad() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45grad"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_no_color() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-no-color"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_45deg() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45deg"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_comma_spearated() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-comma-spearated"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_no_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-no-values"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_color_as_attribute() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-color-as-attribute"), 0)}
-#[test] fn resvg_filters_filter_functions_grayscale_and_opacity() {assert_eq!(run_test("resvg/filters/filter-functions/grayscale-and-opacity"), 0)}
-#[test] fn resvg_filters_filter_functions_two_urls() {assert_eq!(run_test("resvg/filters/filter-functions/two-urls"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_45() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45"), 0)}
-#[test] fn resvg_filters_filter_functions_color_adjust_functions_200percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-200percent"), 0)}
-#[test] fn resvg_filters_filter_functions_hue_rotate_function_0_25turn() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-0.25turn"), 0)}
-#[test] fn resvg_filters_filter_functions_drop_shadow_function_mm_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-mm-values"), 0)}
-#[test] fn resvg_filters_filter_functions_blur_function_negative_value() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-negative-value"), 0)}
-#[test] fn resvg_filters_feTile_complex_transform() {assert_eq!(run_test("resvg/filters/feTile/complex-transform"), 0)}
-#[test] fn resvg_filters_feTile_empty_region() {assert_eq!(run_test("resvg/filters/feTile/empty-region"), 0)}
-#[test] fn resvg_filters_feTile_simple_case() {assert_eq!(run_test("resvg/filters/feTile/simple-case"), 0)}
-#[test] fn resvg_filters_feTile_with_region() {assert_eq!(run_test("resvg/filters/feTile/with-region"), 0)}
-#[test] fn resvg_filters_feTile_with_subregion_1() {assert_eq!(run_test("resvg/filters/feTile/with-subregion-1"), 0)}
-#[test] fn resvg_filters_feTile_with_subregion_3() {assert_eq!(run_test("resvg/filters/feTile/with-subregion-3"), 0)}
-#[test] fn resvg_filters_feTile_with_subregion_2() {assert_eq!(run_test("resvg/filters/feTile/with-subregion-2"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_stdDeviation_with_multiple_values() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation-with-multiple-values"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_stdDeviation_with_two_values() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation-with-two-values"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_small_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/small-stdDeviation"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_stdDeviation_5_0() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation=5-0"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_complex_transform() {assert_eq!(run_test("resvg/filters/feGaussianBlur/complex-transform"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_stdDeviation_0_5() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation=0-5"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_negative_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/negative-stdDeviation"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_simple_case() {assert_eq!(run_test("resvg/filters/feGaussianBlur/simple-case"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_no_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/no-stdDeviation"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_stdDeviation_with_two_different_values() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation-with-two-different-values"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_empty_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/empty-stdDeviation"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_huge_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/huge-stdDeviation"), 0)}
-#[test] fn resvg_filters_feGaussianBlur_tiny_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/tiny-stdDeviation"), 0)}
-#[test] fn resvg_filters_feTurbulence_baseFrequency__0_05() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=-0.05"), 0)}
-#[test] fn resvg_filters_feTurbulence_type_fractalNoise() {assert_eq!(run_test("resvg/filters/feTurbulence/type=fractalNoise"), 0)}
-#[test] fn resvg_filters_feTurbulence_complex_transform() {assert_eq!(run_test("resvg/filters/feTurbulence/complex-transform"), 0)}
-#[test] fn resvg_filters_feTurbulence_numOctaves__1() {assert_eq!(run_test("resvg/filters/feTurbulence/numOctaves=-1"), 0)}
-#[test] fn resvg_filters_feTurbulence_seed_1_5() {assert_eq!(run_test("resvg/filters/feTurbulence/seed=1.5"), 0)}
-#[test] fn resvg_filters_feTurbulence_no_attributes() {assert_eq!(run_test("resvg/filters/feTurbulence/no-attributes"), 0)}
-#[test] fn resvg_filters_feTurbulence_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feTurbulence/primitiveUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_filters_feTurbulence_color_interpolation_filters_sRGB() {assert_eq!(run_test("resvg/filters/feTurbulence/color-interpolation-filters=sRGB"), 0)}
-#[test] fn resvg_filters_feTurbulence_numOctaves_5() {assert_eq!(run_test("resvg/filters/feTurbulence/numOctaves=5"), 0)}
-#[test] fn resvg_filters_feTurbulence_numOctaves_0() {assert_eq!(run_test("resvg/filters/feTurbulence/numOctaves=0"), 0)}
-#[test] fn resvg_filters_feTurbulence_seed__20() {assert_eq!(run_test("resvg/filters/feTurbulence/seed=-20"), 0)}
-#[test] fn resvg_filters_feTurbulence_stitchTiles_stitch() {assert_eq!(run_test("resvg/filters/feTurbulence/stitchTiles=stitch"), 0)}
-#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05-0"), 0)}
-#[test] fn resvg_filters_feTurbulence_seed_20() {assert_eq!(run_test("resvg/filters/feTurbulence/seed=20"), 0)}
-#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0_05() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05-0.05"), 0)}
-#[test] fn resvg_filters_feTurbulence_type_invalid() {assert_eq!(run_test("resvg/filters/feTurbulence/type=invalid"), 0)}
-#[test] fn resvg_filters_feTurbulence_baseFrequency_0_01() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.01"), 0)}
-#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0_01() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05-0.01"), 0)}
-#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05__0_01() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05--0.01"), 0)}
-#[test] fn resvg_filters_enable_background_with_filter() {assert_eq!(run_test("resvg/filters/enable-background/with-filter"), 0)}
-#[test] fn resvg_filters_enable_background_with_filter_on_the_same_element() {assert_eq!(run_test("resvg/filters/enable-background/with-filter-on-the-same-element"), 0)}
-#[test] fn resvg_filters_enable_background_with_opacity_1() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-1"), 0)}
-#[test] fn resvg_filters_enable_background_accumulate() {assert_eq!(run_test("resvg/filters/enable-background/accumulate"), 0)}
-#[test] fn resvg_filters_enable_background_with_opacity_2() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-2"), 0)}
-#[test] fn resvg_filters_enable_background_with_opacity_3() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-3"), 0)}
-#[test] fn resvg_filters_enable_background_stop_on_the_first_new_1() {assert_eq!(run_test("resvg/filters/enable-background/stop-on-the-first-new-1"), 0)}
-#[test] fn resvg_filters_enable_background_stop_on_the_first_new_2() {assert_eq!(run_test("resvg/filters/enable-background/stop-on-the-first-new-2"), 0)}
-#[test] fn resvg_filters_enable_background_with_opacity_4() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-4"), 0)}
-#[test] fn resvg_filters_enable_background_accumulate_with_new() {assert_eq!(run_test("resvg/filters/enable-background/accumulate-with-new"), 0)}
-#[test] fn resvg_filters_enable_background_new_with_invalid_region_1() {assert_eq!(run_test("resvg/filters/enable-background/new-with-invalid-region-1"), 0)}
-#[test] fn resvg_filters_enable_background_new_with_invalid_region_2() {assert_eq!(run_test("resvg/filters/enable-background/new-with-invalid-region-2"), 0)}
-#[test] fn resvg_filters_enable_background_new_with_invalid_region_3() {assert_eq!(run_test("resvg/filters/enable-background/new-with-invalid-region-3"), 0)}
-#[test] fn resvg_filters_enable_background_with_mask() {assert_eq!(run_test("resvg/filters/enable-background/with-mask"), 0)}
-#[test] fn resvg_filters_enable_background_inherit() {assert_eq!(run_test("resvg/filters/enable-background/inherit"), 0)}
-#[test] fn resvg_filters_enable_background_with_clip_path() {assert_eq!(run_test("resvg/filters/enable-background/with-clip-path"), 0)}
-#[test] fn resvg_filters_enable_background_new() {assert_eq!(run_test("resvg/filters/enable-background/new"), 0)}
-#[test] fn resvg_filters_enable_background_filter_on_shape() {assert_eq!(run_test("resvg/filters/enable-background/filter-on-shape"), 0)}
-#[test] fn resvg_filters_enable_background_shapes_after_filter() {assert_eq!(run_test("resvg/filters/enable-background/shapes-after-filter"), 0)}
-#[test] fn resvg_filters_enable_background_with_transform() {assert_eq!(run_test("resvg/filters/enable-background/with-transform"), 0)}
-#[test] fn resvg_filters_enable_background_new_with_region() {assert_eq!(run_test("resvg/filters/enable-background/new-with-region"), 0)}
-#[test] fn resvg_filters_feMorphology_radius_10_1() {assert_eq!(run_test("resvg/filters/feMorphology/radius=10-1"), 0)}
-#[test] fn resvg_filters_feMorphology_source_with_opacity() {assert_eq!(run_test("resvg/filters/feMorphology/source-with-opacity"), 0)}
-#[test] fn resvg_filters_feMorphology_radius_10_0() {assert_eq!(run_test("resvg/filters/feMorphology/radius=10-0"), 0)}
-#[test] fn resvg_filters_feMorphology_empty_radius() {assert_eq!(run_test("resvg/filters/feMorphology/empty-radius"), 0)}
-#[test] fn resvg_filters_feMorphology_radius_0_5_with_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feMorphology/radius=0.5-with-objectBoundingBox"), 0)}
+use svg2pdf::Options;
+#[test] fn resvg_filters_feDisplacementMap_simple_case() {assert_eq!(run_test("resvg/filters/feDisplacementMap/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_negative_offset() {assert_eq!(run_test("resvg/filters/feOffset/negative-offset", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_fractional_offset() {assert_eq!(run_test("resvg/filters/feOffset/fractional-offset", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_complex_transform() {assert_eq!(run_test("resvg/filters/feOffset/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_no_offset() {assert_eq!(run_test("resvg/filters/feOffset/no-offset", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_with_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feOffset/with-primitiveUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_simple_case() {assert_eq!(run_test("resvg/filters/feOffset/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_only_dx() {assert_eq!(run_test("resvg/filters/feOffset/only-dx", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_percentage_values() {assert_eq!(run_test("resvg/filters/feOffset/percentage-values", Options::default()), 0)}
+#[test] fn resvg_filters_feOffset_only_dy() {assert_eq!(run_test("resvg/filters/feOffset/only-dy", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_invalid_type() {assert_eq!(run_test("resvg/filters/feColorMatrix/invalid-type", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_matrix() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_hueRotate_without_an_angle() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=hueRotate-without-an-angle", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_saturate_without_a_coefficient() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate-without-a-coefficient", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_hueRotate() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=hueRotate", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_without_attributes() {assert_eq!(run_test("resvg/filters/feColorMatrix/without-attributes", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_matrix_without_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-without-values", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_saturate_with_negative_coefficient() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate-with-negative-coefficient", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_luminanceToAlpha() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=luminanceToAlpha", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_matrix_with_too_many_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-too-many-values", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_matrix_with_non_normalized_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-non-normalized-values", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_saturate() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_without_a_type() {assert_eq!(run_test("resvg/filters/feColorMatrix/without-a-type", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_matrix_with_empty_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-empty-values", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_matrix_with_not_enough_values() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=matrix-with-not-enough-values", Options::default()), 0)}
+#[test] fn resvg_filters_feColorMatrix_type_saturate_with_a_large_coefficient() {assert_eq!(run_test("resvg/filters/feColorMatrix/type=saturate-with-a-large-coefficient", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_with_subregion_on_input_2() {assert_eq!(run_test("resvg/filters/feBlend/with-subregion-on-input-2", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_mode_darken() {assert_eq!(run_test("resvg/filters/feBlend/mode=darken", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_with_subregion_on_input_1() {assert_eq!(run_test("resvg/filters/feBlend/with-subregion-on-input-1", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_mode_lighten() {assert_eq!(run_test("resvg/filters/feBlend/mode=lighten", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_mode_screen() {assert_eq!(run_test("resvg/filters/feBlend/mode=screen", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_mode_hue() {assert_eq!(run_test("resvg/filters/feBlend/mode=hue", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_mode_color_burn() {assert_eq!(run_test("resvg/filters/feBlend/mode=color-burn", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_mode_normal() {assert_eq!(run_test("resvg/filters/feBlend/mode=normal", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_empty() {assert_eq!(run_test("resvg/filters/feBlend/empty", Options::default()), 0)}
+#[test] fn resvg_filters_feBlend_mode_multiply() {assert_eq!(run_test("resvg/filters/feBlend/mode=multiply", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_with_large_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-with-large-values", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_on_blue_with_sRGB_interpolation() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-blue-with-sRGB-interpolation", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_100__100() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=100--100", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_invalid_type() {assert_eq!(run_test("resvg/filters/feComponentTransfer/invalid-type", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_mixed_types() {assert_eq!(run_test("resvg/filters/feComponentTransfer/mixed-types", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_linear_with_invalid_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=linear-with-invalid-values", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_no_children() {assert_eq!(run_test("resvg/filters/feComponentTransfer/no-children", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_1px() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=1px", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_1_0_1() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=1-0-1", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_linear_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=linear-on-blue", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_without_tableValues() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-without-tableValues", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_with_an_empty_tableValues() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-with-an-empty-tableValues", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_identity_on_all() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=identity-on-all", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_discrete_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=discrete-on-blue", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_gamma_with_invalid_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=gamma-with-invalid-values", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_on_blue_twice() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-blue-twice", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_gamma_with_an_invalid_offset() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=gamma-with-an-invalid-offset", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_gamma_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=gamma-on-blue", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_on_blue() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-blue", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_on_alpha() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-on-alpha", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_table_and_tableValues_1() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=table-and-tableValues=1", Options::default()), 0)}
+#[test] fn resvg_filters_feComponentTransfer_type_linear_with_large_values() {assert_eq!(run_test("resvg/filters/feComponentTransfer/type=linear-with-large-values", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_with_feSpotLight_and_specular_and_exponent() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feSpotLight-and-specular-and-exponent", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_with_feDistantLight() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feDistantLight", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_lighting_color_hsla() {assert_eq!(run_test("resvg/filters/feSpecularLighting/lighting-color=hsla", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_specularExponent_256() {assert_eq!(run_test("resvg/filters/feSpecularLighting/specularExponent=256", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_with_feSpotLight_and_specularConstant_5() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feSpotLight-and-specularConstant=5", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_with_fePointLight() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-fePointLight", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_specularExponent_0() {assert_eq!(run_test("resvg/filters/feSpecularLighting/specularExponent=0", Options::default()), 0)}
+#[test] fn resvg_filters_feSpecularLighting_with_feSpotLight() {assert_eq!(run_test("resvg/filters/feSpecularLighting/with-feSpotLight", Options::default()), 0)}
+#[test] fn resvg_filters_flood_color_hsla_color() {assert_eq!(run_test("resvg/filters/flood-color/hsla-color", Options::default()), 0)}
+#[test] fn resvg_filters_flood_color_simple_case() {assert_eq!(run_test("resvg/filters/flood-color/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_flood_color_inheritance_1() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-1", Options::default()), 0)}
+#[test] fn resvg_filters_flood_color_inheritance_3() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-3", Options::default()), 0)}
+#[test] fn resvg_filters_flood_color_inheritance_2() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-2", Options::default()), 0)}
+#[test] fn resvg_filters_flood_color_inheritance_5() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-5", Options::default()), 0)}
+#[test] fn resvg_filters_flood_color_inheritance_4() {assert_eq!(run_test("resvg/filters/flood-color/inheritance-4", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_with_subregion_on_input_2() {assert_eq!(run_test("resvg/filters/feComposite/with-subregion-on-input-2", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_xor() {assert_eq!(run_test("resvg/filters/feComposite/operator=xor", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_in() {assert_eq!(run_test("resvg/filters/feComposite/operator=in", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_with_subregion_on_input_1() {assert_eq!(run_test("resvg/filters/feComposite/with-subregion-on-input-1", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_over() {assert_eq!(run_test("resvg/filters/feComposite/operator=over", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_out() {assert_eq!(run_test("resvg/filters/feComposite/operator=out", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic_with_opacity_on_sRGB() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-opacity-on-sRGB", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_empty() {assert_eq!(run_test("resvg/filters/feComposite/empty", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_atop() {assert_eq!(run_test("resvg/filters/feComposite/operator=atop", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_invalid_operator() {assert_eq!(run_test("resvg/filters/feComposite/invalid-operator", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic_with_large_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-large-k1-4", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic_with_some_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-some-k1-4", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic_without_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-without-k1-4", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic_and_invalid_k1_4() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-and-invalid-k1-4", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic_on_sRGB() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-on-sRGB", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_default_operator() {assert_eq!(run_test("resvg/filters/feComposite/default-operator", Options::default()), 0)}
+#[test] fn resvg_filters_feComposite_operator_arithmetic_with_opacity() {assert_eq!(run_test("resvg/filters/feComposite/operator=arithmetic-with-opacity", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_two_drop_shadow_function() {assert_eq!(run_test("resvg/filters/filter-functions/two-drop-shadow-function", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_two_exact_urls() {assert_eq!(run_test("resvg/filters/filter-functions/two-exact-urls", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_color_adjust_functions_0percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-0percent", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_999deg() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-999deg", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_default_value() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-default-value", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_color_adjust_functions_default_value() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-default-value", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_color_adjust_functions_2() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_color_adjust_functions_100percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-100percent", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_color_last() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-color-last", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_blur_function_percent_value() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-percent-value", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_nested_filters() {assert_eq!(run_test("resvg/filters/filter-functions/nested-filters", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_color_adjust_functions_50percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-50percent", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_only_X_offset() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-only-X-offset", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_blur_function() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_color_adjust_functions_negative() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-negative", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_only_offset() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-only-offset", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_percent_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-percent-values", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_em_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-em-values", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_extra_value() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-extra-value", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_zero() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-zero", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_url_and_grayscale() {assert_eq!(run_test("resvg/filters/filter-functions/url-and-grayscale", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_blur_function_mm_value() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-mm-value", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_filter_region() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-filter-region", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_blur_function_no_values() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-no-values", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_one_invalid_function_in_list() {assert_eq!(run_test("resvg/filters/filter-functions/one-invalid-function-in-list", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_blur_function_two_values() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-two-values", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_one_invalid_url_in_list() {assert_eq!(run_test("resvg/filters/filter-functions/one-invalid-url-in-list", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_45rad() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45rad", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_currentColor() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-currentColor", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_45grad() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45grad", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_no_color() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-no-color", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_45deg() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45deg", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_comma_spearated() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-comma-spearated", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_no_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-no-values", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_color_as_attribute() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-color-as-attribute", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_grayscale_and_opacity() {assert_eq!(run_test("resvg/filters/filter-functions/grayscale-and-opacity", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_two_urls() {assert_eq!(run_test("resvg/filters/filter-functions/two-urls", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_45() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-45", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_color_adjust_functions_200percent() {assert_eq!(run_test("resvg/filters/filter-functions/color-adjust-functions-200percent", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_hue_rotate_function_0_25turn() {assert_eq!(run_test("resvg/filters/filter-functions/hue-rotate-function-0.25turn", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_drop_shadow_function_mm_values() {assert_eq!(run_test("resvg/filters/filter-functions/drop-shadow-function-mm-values", Options::default()), 0)}
+#[test] fn resvg_filters_filter_functions_blur_function_negative_value() {assert_eq!(run_test("resvg/filters/filter-functions/blur-function-negative-value", Options::default()), 0)}
+#[test] fn resvg_filters_feTile_complex_transform() {assert_eq!(run_test("resvg/filters/feTile/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feTile_empty_region() {assert_eq!(run_test("resvg/filters/feTile/empty-region", Options::default()), 0)}
+#[test] fn resvg_filters_feTile_simple_case() {assert_eq!(run_test("resvg/filters/feTile/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_feTile_with_region() {assert_eq!(run_test("resvg/filters/feTile/with-region", Options::default()), 0)}
+#[test] fn resvg_filters_feTile_with_subregion_1() {assert_eq!(run_test("resvg/filters/feTile/with-subregion-1", Options::default()), 0)}
+#[test] fn resvg_filters_feTile_with_subregion_3() {assert_eq!(run_test("resvg/filters/feTile/with-subregion-3", Options::default()), 0)}
+#[test] fn resvg_filters_feTile_with_subregion_2() {assert_eq!(run_test("resvg/filters/feTile/with-subregion-2", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_stdDeviation_with_multiple_values() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation-with-multiple-values", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_stdDeviation_with_two_values() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation-with-two-values", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_small_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/small-stdDeviation", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_stdDeviation_5_0() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation=5-0", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_complex_transform() {assert_eq!(run_test("resvg/filters/feGaussianBlur/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_stdDeviation_0_5() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation=0-5", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_negative_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/negative-stdDeviation", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_simple_case() {assert_eq!(run_test("resvg/filters/feGaussianBlur/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_no_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/no-stdDeviation", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_stdDeviation_with_two_different_values() {assert_eq!(run_test("resvg/filters/feGaussianBlur/stdDeviation-with-two-different-values", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_empty_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/empty-stdDeviation", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_huge_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/huge-stdDeviation", Options::default()), 0)}
+#[test] fn resvg_filters_feGaussianBlur_tiny_stdDeviation() {assert_eq!(run_test("resvg/filters/feGaussianBlur/tiny-stdDeviation", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_baseFrequency__0_05() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=-0.05", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_type_fractalNoise() {assert_eq!(run_test("resvg/filters/feTurbulence/type=fractalNoise", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_complex_transform() {assert_eq!(run_test("resvg/filters/feTurbulence/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_numOctaves__1() {assert_eq!(run_test("resvg/filters/feTurbulence/numOctaves=-1", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_seed_1_5() {assert_eq!(run_test("resvg/filters/feTurbulence/seed=1.5", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_no_attributes() {assert_eq!(run_test("resvg/filters/feTurbulence/no-attributes", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feTurbulence/primitiveUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_color_interpolation_filters_sRGB() {assert_eq!(run_test("resvg/filters/feTurbulence/color-interpolation-filters=sRGB", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_numOctaves_5() {assert_eq!(run_test("resvg/filters/feTurbulence/numOctaves=5", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_numOctaves_0() {assert_eq!(run_test("resvg/filters/feTurbulence/numOctaves=0", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_seed__20() {assert_eq!(run_test("resvg/filters/feTurbulence/seed=-20", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_stitchTiles_stitch() {assert_eq!(run_test("resvg/filters/feTurbulence/stitchTiles=stitch", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05-0", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_seed_20() {assert_eq!(run_test("resvg/filters/feTurbulence/seed=20", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0_05() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05-0.05", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_type_invalid() {assert_eq!(run_test("resvg/filters/feTurbulence/type=invalid", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_baseFrequency_0_01() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.01", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05_0_01() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05-0.01", Options::default()), 0)}
+#[test] fn resvg_filters_feTurbulence_baseFrequency_0_05__0_01() {assert_eq!(run_test("resvg/filters/feTurbulence/baseFrequency=0.05--0.01", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_filter() {assert_eq!(run_test("resvg/filters/enable-background/with-filter", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_filter_on_the_same_element() {assert_eq!(run_test("resvg/filters/enable-background/with-filter-on-the-same-element", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_1() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-1", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_accumulate() {assert_eq!(run_test("resvg/filters/enable-background/accumulate", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_2() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-2", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_3() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-3", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_stop_on_the_first_new_1() {assert_eq!(run_test("resvg/filters/enable-background/stop-on-the-first-new-1", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_stop_on_the_first_new_2() {assert_eq!(run_test("resvg/filters/enable-background/stop-on-the-first-new-2", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_opacity_4() {assert_eq!(run_test("resvg/filters/enable-background/with-opacity-4", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_accumulate_with_new() {assert_eq!(run_test("resvg/filters/enable-background/accumulate-with-new", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_new_with_invalid_region_1() {assert_eq!(run_test("resvg/filters/enable-background/new-with-invalid-region-1", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_new_with_invalid_region_2() {assert_eq!(run_test("resvg/filters/enable-background/new-with-invalid-region-2", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_new_with_invalid_region_3() {assert_eq!(run_test("resvg/filters/enable-background/new-with-invalid-region-3", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_mask() {assert_eq!(run_test("resvg/filters/enable-background/with-mask", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_inherit() {assert_eq!(run_test("resvg/filters/enable-background/inherit", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_clip_path() {assert_eq!(run_test("resvg/filters/enable-background/with-clip-path", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_new() {assert_eq!(run_test("resvg/filters/enable-background/new", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_filter_on_shape() {assert_eq!(run_test("resvg/filters/enable-background/filter-on-shape", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_shapes_after_filter() {assert_eq!(run_test("resvg/filters/enable-background/shapes-after-filter", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_with_transform() {assert_eq!(run_test("resvg/filters/enable-background/with-transform", Options::default()), 0)}
+#[test] fn resvg_filters_enable_background_new_with_region() {assert_eq!(run_test("resvg/filters/enable-background/new-with-region", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_radius_10_1() {assert_eq!(run_test("resvg/filters/feMorphology/radius=10-1", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_source_with_opacity() {assert_eq!(run_test("resvg/filters/feMorphology/source-with-opacity", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_radius_10_0() {assert_eq!(run_test("resvg/filters/feMorphology/radius=10-0", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_empty_radius() {assert_eq!(run_test("resvg/filters/feMorphology/empty-radius", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_radius_0_5_with_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feMorphology/radius=0.5-with-objectBoundingBox", Options::default()), 0)}
 // will timeout CI
-#[ignore] #[test] fn resvg_filters_feMorphology_huge_radius() {assert_eq!(run_test("resvg/filters/feMorphology/huge-radius"), 0)}
-#[test] fn resvg_filters_feMorphology_operator_dilate() {assert_eq!(run_test("resvg/filters/feMorphology/operator=dilate"), 0)}
-#[test] fn resvg_filters_feMorphology_simple_case() {assert_eq!(run_test("resvg/filters/feMorphology/simple-case"), 0)}
-#[test] fn resvg_filters_feMorphology_radius_1_10() {assert_eq!(run_test("resvg/filters/feMorphology/radius=1-10"), 0)}
-#[test] fn resvg_filters_feMorphology_no_radius() {assert_eq!(run_test("resvg/filters/feMorphology/no-radius"), 0)}
-#[test] fn resvg_filters_feMorphology_radius_0_5() {assert_eq!(run_test("resvg/filters/feMorphology/radius=0.5"), 0)}
-#[test] fn resvg_filters_feMorphology_radius_with_too_many_values() {assert_eq!(run_test("resvg/filters/feMorphology/radius-with-too-many-values"), 0)}
-#[test] fn resvg_filters_feMorphology_negative_radius() {assert_eq!(run_test("resvg/filters/feMorphology/negative-radius"), 0)}
-#[test] fn resvg_filters_feMorphology_zero_radius() {assert_eq!(run_test("resvg/filters/feMorphology/zero-radius"), 0)}
-#[test] fn resvg_filters_feMerge_complex_transform() {assert_eq!(run_test("resvg/filters/feMerge/complex-transform"), 0)}
-#[test] fn resvg_filters_feMerge_color_interpolation_filters_linearRGB() {assert_eq!(run_test("resvg/filters/feMerge/color-interpolation-filters=linearRGB"), 0)}
-#[test] fn resvg_filters_feMerge_color_interpolation_filters_sRGB() {assert_eq!(run_test("resvg/filters/feMerge/color-interpolation-filters=sRGB"), 0)}
-#[test] fn resvg_filters_feDropShadow_hsla_color() {assert_eq!(run_test("resvg/filters/feDropShadow/hsla-color"), 0)}
-#[test] fn resvg_filters_feDropShadow_with_offset_clipped() {assert_eq!(run_test("resvg/filters/feDropShadow/with-offset-clipped"), 0)}
-#[test] fn resvg_filters_feDropShadow_with_flood_opacity() {assert_eq!(run_test("resvg/filters/feDropShadow/with-flood-opacity"), 0)}
-#[test] fn resvg_filters_feDropShadow_with_offset() {assert_eq!(run_test("resvg/filters/feDropShadow/with-offset"), 0)}
-#[test] fn resvg_filters_feDropShadow_stdDeviation_0() {assert_eq!(run_test("resvg/filters/feDropShadow/stdDeviation=0"), 0)}
-#[test] fn resvg_filters_feDropShadow_only_stdDeviation() {assert_eq!(run_test("resvg/filters/feDropShadow/only-stdDeviation"), 0)}
-#[test] fn resvg_filters_feDropShadow_with_flood_color() {assert_eq!(run_test("resvg/filters/feDropShadow/with-flood-color"), 0)}
-#[test] fn resvg_filters_feDropShadow_with_percent_offset() {assert_eq!(run_test("resvg/filters/feDropShadow/with-percent-offset"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_order_4() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=4"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_order_with_a_negative_value_1() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order-with-a-negative-value-1"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_edgeMode_none() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/edgeMode=none"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_not_enough_values() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/kernelMatrix-with-not-enough-values"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_order_with_a_negative_value_2() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order-with-a-negative-value-2"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_order_0() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=0"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_bias_9999() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/bias=9999"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_edgeMode_wrap() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/edgeMode=wrap"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_edgeMode_wrap_with_matrix_larger_than_target() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_divisor_0() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/divisor=0"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_targetX_2() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=2"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_zero_sum_and_no_divisor() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/kernelMatrix-with-zero-sum-and-no-divisor"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_targetX_3() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=3"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_empty_kernelMatrix() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/empty-kernelMatrix"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_unset_order() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/unset-order"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_targetX_0() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=0"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_bias_0_5() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/bias=0.5"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_targetX__1() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=-1"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_order_4_4() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=4-4"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_custom_divisor() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/custom-divisor"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_no_kernelMatrix() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/no-kernelMatrix"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_preserveAlpha_true() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/preserveAlpha=true"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_bias__0_5() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/bias=-0.5"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_too_many_values() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/kernelMatrix-with-too-many-values"), 0)}
-#[test] fn resvg_filters_feConvolveMatrix_order_4_2() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=4-2"), 0)}
-#[test] fn resvg_filters_flood_opacity_simple_case() {assert_eq!(run_test("resvg/filters/flood-opacity/simple-case"), 0)}
-#[test] fn resvg_filters_flood_opacity_50percent() {assert_eq!(run_test("resvg/filters/flood-opacity/50percent"), 0)}
-#[test] fn resvg_filters_feDistantLight_negative_azimuth_and_elevation() {assert_eq!(run_test("resvg/filters/feDistantLight/negative-azimuth-and-elevation"), 0)}
-#[test] fn resvg_filters_feDistantLight_only_azimuth() {assert_eq!(run_test("resvg/filters/feDistantLight/only-azimuth"), 0)}
-#[test] fn resvg_filters_feDistantLight_only_elevation() {assert_eq!(run_test("resvg/filters/feDistantLight/only-elevation"), 0)}
-#[test] fn resvg_filters_feDistantLight_default_attributes() {assert_eq!(run_test("resvg/filters/feDistantLight/default-attributes"), 0)}
-#[test] fn resvg_filters_fePointLight_complex_transform() {assert_eq!(run_test("resvg/filters/fePointLight/complex-transform"), 0)}
-#[test] fn resvg_filters_fePointLight_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/fePointLight/primitiveUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_filters_fePointLight_custom_attributes() {assert_eq!(run_test("resvg/filters/fePointLight/custom-attributes"), 0)}
-#[test] fn resvg_filters_fePointLight_default_attributes() {assert_eq!(run_test("resvg/filters/fePointLight/default-attributes"), 0)}
-#[test] fn resvg_filters_filter_in_to_invalid_1() {assert_eq!(run_test("resvg/filters/filter/in-to-invalid-1"), 0)}
-#[test] fn resvg_filters_filter_invalid_primitive_2() {assert_eq!(run_test("resvg/filters/filter/invalid-primitive-2"), 0)}
-#[test] fn resvg_filters_filter_transform_on_shape_with_filter_region() {assert_eq!(run_test("resvg/filters/filter/transform-on-shape-with-filter-region"), 0)}
-#[test] fn resvg_filters_filter_region_with_stroke() {assert_eq!(run_test("resvg/filters/filter/region-with-stroke"), 0)}
-#[test] fn resvg_filters_filter_with_transform_outside_of_canvas() {assert_eq!(run_test("resvg/filters/filter/with-transform-outside-of-canvas"), 0)}
-#[test] fn resvg_filters_filter_in_SourceAlpha() {assert_eq!(run_test("resvg/filters/filter/in=SourceAlpha"), 0)}
-#[test] fn resvg_filters_filter_on_a_vertical_line() {assert_eq!(run_test("resvg/filters/filter/on-a-vertical-line"), 0)}
+#[ignore] #[test] fn resvg_filters_feMorphology_huge_radius() {assert_eq!(run_test("resvg/filters/feMorphology/huge-radius", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_operator_dilate() {assert_eq!(run_test("resvg/filters/feMorphology/operator=dilate", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_simple_case() {assert_eq!(run_test("resvg/filters/feMorphology/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_radius_1_10() {assert_eq!(run_test("resvg/filters/feMorphology/radius=1-10", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_no_radius() {assert_eq!(run_test("resvg/filters/feMorphology/no-radius", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_radius_0_5() {assert_eq!(run_test("resvg/filters/feMorphology/radius=0.5", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_radius_with_too_many_values() {assert_eq!(run_test("resvg/filters/feMorphology/radius-with-too-many-values", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_negative_radius() {assert_eq!(run_test("resvg/filters/feMorphology/negative-radius", Options::default()), 0)}
+#[test] fn resvg_filters_feMorphology_zero_radius() {assert_eq!(run_test("resvg/filters/feMorphology/zero-radius", Options::default()), 0)}
+#[test] fn resvg_filters_feMerge_complex_transform() {assert_eq!(run_test("resvg/filters/feMerge/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feMerge_color_interpolation_filters_linearRGB() {assert_eq!(run_test("resvg/filters/feMerge/color-interpolation-filters=linearRGB", Options::default()), 0)}
+#[test] fn resvg_filters_feMerge_color_interpolation_filters_sRGB() {assert_eq!(run_test("resvg/filters/feMerge/color-interpolation-filters=sRGB", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_hsla_color() {assert_eq!(run_test("resvg/filters/feDropShadow/hsla-color", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_with_offset_clipped() {assert_eq!(run_test("resvg/filters/feDropShadow/with-offset-clipped", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_with_flood_opacity() {assert_eq!(run_test("resvg/filters/feDropShadow/with-flood-opacity", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_with_offset() {assert_eq!(run_test("resvg/filters/feDropShadow/with-offset", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_stdDeviation_0() {assert_eq!(run_test("resvg/filters/feDropShadow/stdDeviation=0", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_only_stdDeviation() {assert_eq!(run_test("resvg/filters/feDropShadow/only-stdDeviation", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_with_flood_color() {assert_eq!(run_test("resvg/filters/feDropShadow/with-flood-color", Options::default()), 0)}
+#[test] fn resvg_filters_feDropShadow_with_percent_offset() {assert_eq!(run_test("resvg/filters/feDropShadow/with-percent-offset", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_order_4() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=4", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_order_with_a_negative_value_1() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order-with-a-negative-value-1", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_edgeMode_none() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/edgeMode=none", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_not_enough_values() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/kernelMatrix-with-not-enough-values", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_order_with_a_negative_value_2() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order-with-a-negative-value-2", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_order_0() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=0", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_bias_9999() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/bias=9999", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_edgeMode_wrap() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/edgeMode=wrap", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_edgeMode_wrap_with_matrix_larger_than_target() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/edgeMode=wrap-with-matrix-larger-than-target", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_divisor_0() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/divisor=0", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_targetX_2() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=2", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_zero_sum_and_no_divisor() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/kernelMatrix-with-zero-sum-and-no-divisor", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_targetX_3() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=3", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_empty_kernelMatrix() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/empty-kernelMatrix", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_unset_order() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/unset-order", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_targetX_0() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=0", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_bias_0_5() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/bias=0.5", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_targetX__1() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/targetX=-1", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_order_4_4() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=4-4", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_custom_divisor() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/custom-divisor", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_no_kernelMatrix() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/no-kernelMatrix", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_preserveAlpha_true() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/preserveAlpha=true", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_bias__0_5() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/bias=-0.5", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_kernelMatrix_with_too_many_values() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/kernelMatrix-with-too-many-values", Options::default()), 0)}
+#[test] fn resvg_filters_feConvolveMatrix_order_4_2() {assert_eq!(run_test("resvg/filters/feConvolveMatrix/order=4-2", Options::default()), 0)}
+#[test] fn resvg_filters_flood_opacity_simple_case() {assert_eq!(run_test("resvg/filters/flood-opacity/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_flood_opacity_50percent() {assert_eq!(run_test("resvg/filters/flood-opacity/50percent", Options::default()), 0)}
+#[test] fn resvg_filters_feDistantLight_negative_azimuth_and_elevation() {assert_eq!(run_test("resvg/filters/feDistantLight/negative-azimuth-and-elevation", Options::default()), 0)}
+#[test] fn resvg_filters_feDistantLight_only_azimuth() {assert_eq!(run_test("resvg/filters/feDistantLight/only-azimuth", Options::default()), 0)}
+#[test] fn resvg_filters_feDistantLight_only_elevation() {assert_eq!(run_test("resvg/filters/feDistantLight/only-elevation", Options::default()), 0)}
+#[test] fn resvg_filters_feDistantLight_default_attributes() {assert_eq!(run_test("resvg/filters/feDistantLight/default-attributes", Options::default()), 0)}
+#[test] fn resvg_filters_fePointLight_complex_transform() {assert_eq!(run_test("resvg/filters/fePointLight/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_fePointLight_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/fePointLight/primitiveUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_filters_fePointLight_custom_attributes() {assert_eq!(run_test("resvg/filters/fePointLight/custom-attributes", Options::default()), 0)}
+#[test] fn resvg_filters_fePointLight_default_attributes() {assert_eq!(run_test("resvg/filters/fePointLight/default-attributes", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_to_invalid_1() {assert_eq!(run_test("resvg/filters/filter/in-to-invalid-1", Options::default()), 0)}
+#[test] fn resvg_filters_filter_invalid_primitive_2() {assert_eq!(run_test("resvg/filters/filter/invalid-primitive-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_transform_on_shape_with_filter_region() {assert_eq!(run_test("resvg/filters/filter/transform-on-shape-with-filter-region", Options::default()), 0)}
+#[test] fn resvg_filters_filter_region_with_stroke() {assert_eq!(run_test("resvg/filters/filter/region-with-stroke", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_transform_outside_of_canvas() {assert_eq!(run_test("resvg/filters/filter/with-transform-outside-of-canvas", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_SourceAlpha() {assert_eq!(run_test("resvg/filters/filter/in=SourceAlpha", Options::default()), 0)}
+#[test] fn resvg_filters_filter_on_a_vertical_line() {assert_eq!(run_test("resvg/filters/filter/on-a-vertical-line", Options::default()), 0)}
 // will sigkill
-#[ignore] #[test] fn resvg_filters_filter_huge_region() {assert_eq!(run_test("resvg/filters/filter/huge-region"), 0)}
-#[test] fn resvg_filters_filter_invalid_primitive_1() {assert_eq!(run_test("resvg/filters/filter/invalid-primitive-1"), 0)}
-#[test] fn resvg_filters_filter_in_to_invalid_2() {assert_eq!(run_test("resvg/filters/filter/in-to-invalid-2"), 0)}
-#[test] fn resvg_filters_filter_path_bbox() {assert_eq!(run_test("resvg/filters/filter/path-bbox"), 0)}
-#[test] fn resvg_filters_filter_content_outside_the_canvas() {assert_eq!(run_test("resvg/filters/filter/content-outside-the-canvas"), 0)}
-#[test] fn resvg_filters_filter_transform_on_filter() {assert_eq!(run_test("resvg/filters/filter/transform-on-filter"), 0)}
-#[test] fn resvg_filters_filter_with_region_and_subregion() {assert_eq!(run_test("resvg/filters/filter/with-region-and-subregion"), 0)}
-#[test] fn resvg_filters_filter_with_region_and_filterUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/filters/filter/with-region-and-filterUnits=userSpaceOnUse"), 0)}
-#[test] fn resvg_filters_filter_in_BackgroundAlpha_with_enable_background() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundAlpha-with-enable-background"), 0)}
-#[test] fn resvg_filters_filter_in_StrokePaint() {assert_eq!(run_test("resvg/filters/filter/in=StrokePaint"), 0)}
-#[test] fn resvg_filters_filter_no_children() {assert_eq!(run_test("resvg/filters/filter/no-children"), 0)}
-#[test] fn resvg_filters_filter_on_an_empty_group_1() {assert_eq!(run_test("resvg/filters/filter/on-an-empty-group-1"), 0)}
-#[test] fn resvg_filters_filter_invalid_subregion() {assert_eq!(run_test("resvg/filters/filter/invalid-subregion"), 0)}
-#[test] fn resvg_filters_filter_everything_via_xlink_href() {assert_eq!(run_test("resvg/filters/filter/everything-via-xlink-href"), 0)}
-#[test] fn resvg_filters_filter_zero_sized_subregion() {assert_eq!(run_test("resvg/filters/filter/zero-sized-subregion"), 0)}
-#[test] fn resvg_filters_filter_on_zero_sized_shape() {assert_eq!(run_test("resvg/filters/filter/on-zero-sized-shape"), 0)}
-#[test] fn resvg_filters_filter_with_region_outside_the_viewbox() {assert_eq!(run_test("resvg/filters/filter/with-region-outside-the-viewbox"), 0)}
-#[test] fn resvg_filters_filter_on_an_empty_group_2() {assert_eq!(run_test("resvg/filters/filter/on-an-empty-group-2"), 0)}
-#[test] fn resvg_filters_filter_in_BackgroundAlpha() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundAlpha"), 0)}
-#[test] fn resvg_filters_filter_with_clip_path_and_mask() {assert_eq!(run_test("resvg/filters/filter/with-clip-path-and-mask"), 0)}
-#[test] fn resvg_filters_filter_with_mask_on_parent() {assert_eq!(run_test("resvg/filters/filter/with-mask-on-parent"), 0)}
-#[test] fn resvg_filters_filter_with_region_outside_the_canvas() {assert_eq!(run_test("resvg/filters/filter/with-region-outside-the-canvas"), 0)}
-#[test] fn resvg_filters_filter_transform_on_shape() {assert_eq!(run_test("resvg/filters/filter/transform-on-shape"), 0)}
-#[test] fn resvg_filters_filter_in_BackgroundImage_with_enable_background() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundImage-with-enable-background"), 0)}
-#[test] fn resvg_filters_filter_subregion_bigger_that_region() {assert_eq!(run_test("resvg/filters/filter/subregion-bigger-that-region"), 0)}
-#[test] fn resvg_filters_filter_global_transform() {assert_eq!(run_test("resvg/filters/filter/global-transform"), 0)}
-#[test] fn resvg_filters_filter_in_FillPaint_with_gradient() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-with-gradient"), 0)}
-#[test] fn resvg_filters_filter_in_FillPaint_with_pattern() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-with-pattern"), 0)}
-#[test] fn resvg_filters_filter_simple_case() {assert_eq!(run_test("resvg/filters/filter/simple-case"), 0)}
-#[test] fn resvg_filters_filter_on_the_root_svg() {assert_eq!(run_test("resvg/filters/filter/on-the-root-svg"), 0)}
-#[test] fn resvg_filters_filter_some_attributes_via_xlink_href() {assert_eq!(run_test("resvg/filters/filter/some-attributes-via-xlink-href"), 0)}
-#[test] fn resvg_filters_filter_invalid_region() {assert_eq!(run_test("resvg/filters/filter/invalid-region"), 0)}
-#[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_2() {assert_eq!(run_test("resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2"), 0)}
-#[test] fn resvg_filters_filter_content_outside_the_canvas_2() {assert_eq!(run_test("resvg/filters/filter/content-outside-the-canvas-2"), 0)}
-#[test] fn resvg_filters_filter_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/filter/primitiveUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_filters_filter_color_interpolation_filters_sRGB() {assert_eq!(run_test("resvg/filters/filter/color-interpolation-filters=sRGB"), 0)}
-#[test] fn resvg_filters_filter_with_region() {assert_eq!(run_test("resvg/filters/filter/with-region"), 0)}
-#[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_1() {assert_eq!(run_test("resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1"), 0)}
-#[test] fn resvg_filters_filter_in_FillPaint_with_target_on_g() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-with-target-on-g"), 0)}
-#[test] fn resvg_filters_filter_in_FillPaint() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint"), 0)}
-#[test] fn resvg_filters_filter_negative_subregion() {assert_eq!(run_test("resvg/filters/filter/negative-subregion"), 0)}
-#[test] fn resvg_filters_filter_in_FillPaint_on_g_without_children() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-on-g-without-children"), 0)}
-#[test] fn resvg_filters_filter_with_mask() {assert_eq!(run_test("resvg/filters/filter/with-mask"), 0)}
-#[test] fn resvg_filters_filter_invalid_filterUnits() {assert_eq!(run_test("resvg/filters/filter/invalid-filterUnits"), 0)}
-#[test] fn resvg_filters_filter_with_multiple_transforms_1() {assert_eq!(run_test("resvg/filters/filter/with-multiple-transforms-1"), 0)}
-#[test] fn resvg_filters_filter_with_subregion_1() {assert_eq!(run_test("resvg/filters/filter/with-subregion-1"), 0)}
-#[test] fn resvg_filters_filter_on_a_thin_rect() {assert_eq!(run_test("resvg/filters/filter/on-a-thin-rect"), 0)}
-#[test] fn resvg_filters_filter_default_color_interpolation_filters() {assert_eq!(run_test("resvg/filters/filter/default-color-interpolation-filters"), 0)}
-#[test] fn resvg_filters_filter_with_clip_path() {assert_eq!(run_test("resvg/filters/filter/with-clip-path"), 0)}
-#[test] fn resvg_filters_filter_with_subregion_3() {assert_eq!(run_test("resvg/filters/filter/with-subregion-3"), 0)}
-#[test] fn resvg_filters_filter_none() {assert_eq!(run_test("resvg/filters/filter/none"), 0)}
-#[test] fn resvg_filters_filter_recursive_xlink_href() {assert_eq!(run_test("resvg/filters/filter/recursive-xlink-href"), 0)}
-#[test] fn resvg_filters_filter_with_multiple_transforms_2() {assert_eq!(run_test("resvg/filters/filter/with-multiple-transforms-2"), 0)}
-#[test] fn resvg_filters_filter_with_subregion_2() {assert_eq!(run_test("resvg/filters/filter/with-subregion-2"), 0)}
-#[test] fn resvg_filters_filter_complex_order_and_xlink_href() {assert_eq!(run_test("resvg/filters/filter/complex-order-and-xlink-href"), 0)}
-#[test] fn resvg_filters_filter_on_group_with_child_outside_of_canvas() {assert_eq!(run_test("resvg/filters/filter/on-group-with-child-outside-of-canvas"), 0)}
-#[test] fn resvg_filters_filter_initial_transform() {assert_eq!(run_test("resvg/filters/filter/initial-transform"), 0)}
-#[test] fn resvg_filters_filter_unresolved_xlink_href() {assert_eq!(run_test("resvg/filters/filter/unresolved-xlink-href"), 0)}
-#[test] fn resvg_filters_filter_invalid_xlink_href() {assert_eq!(run_test("resvg/filters/filter/invalid-xlink-href"), 0)}
-#[test] fn resvg_filters_filter_invalid_FuncIRI() {assert_eq!(run_test("resvg/filters/filter/invalid-FuncIRI"), 0)}
-#[test] fn resvg_filters_filter_multiple_primitives_4() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-4"), 0)}
-#[test] fn resvg_filters_filter_in_BackgroundImage() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundImage"), 0)}
-#[test] fn resvg_filters_filter_self_recursive_xlink_href() {assert_eq!(run_test("resvg/filters/filter/self-recursive-xlink-href"), 0)}
-#[test] fn resvg_filters_filter_multiple_primitives_1() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-1"), 0)}
-#[test] fn resvg_filters_filter_multiple_primitives_3() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-3"), 0)}
-#[test] fn resvg_filters_filter_without_region_and_filterUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/filters/filter/without-region-and-filterUnits=userSpaceOnUse"), 0)}
-#[test] fn resvg_filters_filter_multiple_primitives_2() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-2"), 0)}
-#[test] fn resvg_filters_feImage_link_to_use() {assert_eq!(run_test("resvg/filters/feImage/link-to-use"), 0)}
-#[test] fn resvg_filters_feImage_link_to_g() {assert_eq!(run_test("resvg/filters/feImage/link-to-g"), 0)}
-#[test] fn resvg_filters_feImage_empty() {assert_eq!(run_test("resvg/filters/feImage/empty"), 0)}
-#[test] fn resvg_filters_feImage_link_to_an_element_with_transform() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-with-transform"), 0)}
-#[test] fn resvg_filters_feImage_with_x_y() {assert_eq!(run_test("resvg/filters/feImage/with-x-y"), 0)}
-#[test] fn resvg_filters_feImage_link_to_an_invalid_element() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-invalid-element"), 0)}
-#[test] fn resvg_filters_feImage_link_on_an_element_with_transform() {assert_eq!(run_test("resvg/filters/feImage/link-on-an-element-with-transform"), 0)}
-#[test] fn resvg_filters_feImage_embedded_png() {assert_eq!(run_test("resvg/filters/feImage/embedded-png"), 0)}
+#[ignore] #[test] fn resvg_filters_filter_huge_region() {assert_eq!(run_test("resvg/filters/filter/huge-region", Options::default()), 0)}
+#[test] fn resvg_filters_filter_invalid_primitive_1() {assert_eq!(run_test("resvg/filters/filter/invalid-primitive-1", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_to_invalid_2() {assert_eq!(run_test("resvg/filters/filter/in-to-invalid-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_path_bbox() {assert_eq!(run_test("resvg/filters/filter/path-bbox", Options::default()), 0)}
+#[test] fn resvg_filters_filter_content_outside_the_canvas() {assert_eq!(run_test("resvg/filters/filter/content-outside-the-canvas", Options::default()), 0)}
+#[test] fn resvg_filters_filter_transform_on_filter() {assert_eq!(run_test("resvg/filters/filter/transform-on-filter", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_region_and_subregion() {assert_eq!(run_test("resvg/filters/filter/with-region-and-subregion", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_region_and_filterUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/filters/filter/with-region-and-filterUnits=userSpaceOnUse", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_BackgroundAlpha_with_enable_background() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundAlpha-with-enable-background", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_StrokePaint() {assert_eq!(run_test("resvg/filters/filter/in=StrokePaint", Options::default()), 0)}
+#[test] fn resvg_filters_filter_no_children() {assert_eq!(run_test("resvg/filters/filter/no-children", Options::default()), 0)}
+#[test] fn resvg_filters_filter_on_an_empty_group_1() {assert_eq!(run_test("resvg/filters/filter/on-an-empty-group-1", Options::default()), 0)}
+#[test] fn resvg_filters_filter_invalid_subregion() {assert_eq!(run_test("resvg/filters/filter/invalid-subregion", Options::default()), 0)}
+#[test] fn resvg_filters_filter_everything_via_xlink_href() {assert_eq!(run_test("resvg/filters/filter/everything-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_filters_filter_zero_sized_subregion() {assert_eq!(run_test("resvg/filters/filter/zero-sized-subregion", Options::default()), 0)}
+#[test] fn resvg_filters_filter_on_zero_sized_shape() {assert_eq!(run_test("resvg/filters/filter/on-zero-sized-shape", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_region_outside_the_viewbox() {assert_eq!(run_test("resvg/filters/filter/with-region-outside-the-viewbox", Options::default()), 0)}
+#[test] fn resvg_filters_filter_on_an_empty_group_2() {assert_eq!(run_test("resvg/filters/filter/on-an-empty-group-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_BackgroundAlpha() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundAlpha", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_clip_path_and_mask() {assert_eq!(run_test("resvg/filters/filter/with-clip-path-and-mask", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_mask_on_parent() {assert_eq!(run_test("resvg/filters/filter/with-mask-on-parent", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_region_outside_the_canvas() {assert_eq!(run_test("resvg/filters/filter/with-region-outside-the-canvas", Options::default()), 0)}
+#[test] fn resvg_filters_filter_transform_on_shape() {assert_eq!(run_test("resvg/filters/filter/transform-on-shape", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_BackgroundImage_with_enable_background() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundImage-with-enable-background", Options::default()), 0)}
+#[test] fn resvg_filters_filter_subregion_bigger_that_region() {assert_eq!(run_test("resvg/filters/filter/subregion-bigger-that-region", Options::default()), 0)}
+#[test] fn resvg_filters_filter_global_transform() {assert_eq!(run_test("resvg/filters/filter/global-transform", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_with_gradient() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-with-gradient", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_with_pattern() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-with-pattern", Options::default()), 0)}
+#[test] fn resvg_filters_filter_simple_case() {assert_eq!(run_test("resvg/filters/filter/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_filter_on_the_root_svg() {assert_eq!(run_test("resvg/filters/filter/on-the-root-svg", Options::default()), 0)}
+#[test] fn resvg_filters_filter_some_attributes_via_xlink_href() {assert_eq!(run_test("resvg/filters/filter/some-attributes-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_filters_filter_invalid_region() {assert_eq!(run_test("resvg/filters/filter/invalid-region", Options::default()), 0)}
+#[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_2() {assert_eq!(run_test("resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_content_outside_the_canvas_2() {assert_eq!(run_test("resvg/filters/filter/content-outside-the-canvas-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/filter/primitiveUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_filters_filter_color_interpolation_filters_sRGB() {assert_eq!(run_test("resvg/filters/filter/color-interpolation-filters=sRGB", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_region() {assert_eq!(run_test("resvg/filters/filter/with-region", Options::default()), 0)}
+#[test] fn resvg_filters_filter_subregion_and_primitiveUnits_objectBoundingBox_1() {assert_eq!(run_test("resvg/filters/filter/subregion-and-primitiveUnits=objectBoundingBox-1", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_with_target_on_g() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-with-target-on-g", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint", Options::default()), 0)}
+#[test] fn resvg_filters_filter_negative_subregion() {assert_eq!(run_test("resvg/filters/filter/negative-subregion", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_FillPaint_on_g_without_children() {assert_eq!(run_test("resvg/filters/filter/in=FillPaint-on-g-without-children", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_mask() {assert_eq!(run_test("resvg/filters/filter/with-mask", Options::default()), 0)}
+#[test] fn resvg_filters_filter_invalid_filterUnits() {assert_eq!(run_test("resvg/filters/filter/invalid-filterUnits", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_multiple_transforms_1() {assert_eq!(run_test("resvg/filters/filter/with-multiple-transforms-1", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_subregion_1() {assert_eq!(run_test("resvg/filters/filter/with-subregion-1", Options::default()), 0)}
+#[test] fn resvg_filters_filter_on_a_thin_rect() {assert_eq!(run_test("resvg/filters/filter/on-a-thin-rect", Options::default()), 0)}
+#[test] fn resvg_filters_filter_default_color_interpolation_filters() {assert_eq!(run_test("resvg/filters/filter/default-color-interpolation-filters", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_clip_path() {assert_eq!(run_test("resvg/filters/filter/with-clip-path", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_subregion_3() {assert_eq!(run_test("resvg/filters/filter/with-subregion-3", Options::default()), 0)}
+#[test] fn resvg_filters_filter_none() {assert_eq!(run_test("resvg/filters/filter/none", Options::default()), 0)}
+#[test] fn resvg_filters_filter_recursive_xlink_href() {assert_eq!(run_test("resvg/filters/filter/recursive-xlink-href", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_multiple_transforms_2() {assert_eq!(run_test("resvg/filters/filter/with-multiple-transforms-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_with_subregion_2() {assert_eq!(run_test("resvg/filters/filter/with-subregion-2", Options::default()), 0)}
+#[test] fn resvg_filters_filter_complex_order_and_xlink_href() {assert_eq!(run_test("resvg/filters/filter/complex-order-and-xlink-href", Options::default()), 0)}
+#[test] fn resvg_filters_filter_on_group_with_child_outside_of_canvas() {assert_eq!(run_test("resvg/filters/filter/on-group-with-child-outside-of-canvas", Options::default()), 0)}
+#[test] fn resvg_filters_filter_initial_transform() {assert_eq!(run_test("resvg/filters/filter/initial-transform", Options::default()), 0)}
+#[test] fn resvg_filters_filter_unresolved_xlink_href() {assert_eq!(run_test("resvg/filters/filter/unresolved-xlink-href", Options::default()), 0)}
+#[test] fn resvg_filters_filter_invalid_xlink_href() {assert_eq!(run_test("resvg/filters/filter/invalid-xlink-href", Options::default()), 0)}
+#[test] fn resvg_filters_filter_invalid_FuncIRI() {assert_eq!(run_test("resvg/filters/filter/invalid-FuncIRI", Options::default()), 0)}
+#[test] fn resvg_filters_filter_multiple_primitives_4() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-4", Options::default()), 0)}
+#[test] fn resvg_filters_filter_in_BackgroundImage() {assert_eq!(run_test("resvg/filters/filter/in=BackgroundImage", Options::default()), 0)}
+#[test] fn resvg_filters_filter_self_recursive_xlink_href() {assert_eq!(run_test("resvg/filters/filter/self-recursive-xlink-href", Options::default()), 0)}
+#[test] fn resvg_filters_filter_multiple_primitives_1() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-1", Options::default()), 0)}
+#[test] fn resvg_filters_filter_multiple_primitives_3() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-3", Options::default()), 0)}
+#[test] fn resvg_filters_filter_without_region_and_filterUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/filters/filter/without-region-and-filterUnits=userSpaceOnUse", Options::default()), 0)}
+#[test] fn resvg_filters_filter_multiple_primitives_2() {assert_eq!(run_test("resvg/filters/filter/multiple-primitives-2", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_use() {assert_eq!(run_test("resvg/filters/feImage/link-to-use", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_g() {assert_eq!(run_test("resvg/filters/feImage/link-to-g", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_empty() {assert_eq!(run_test("resvg/filters/feImage/empty", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_an_element_with_transform() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-with-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_x_y() {assert_eq!(run_test("resvg/filters/feImage/with-x-y", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_an_invalid_element() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-invalid-element", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_on_an_element_with_transform() {assert_eq!(run_test("resvg/filters/feImage/link-on-an-element-with-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_embedded_png() {assert_eq!(run_test("resvg/filters/feImage/embedded-png", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_filters_feImage_simple_case() {assert_eq!(run_test("resvg/filters/feImage/simple-case"), 0)}
-#[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_2() {assert_eq!(run_test("resvg/filters/feImage/with-x-y-and-protruding-subregion-2"), 0)}
-#[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_1() {assert_eq!(run_test("resvg/filters/feImage/with-x-y-and-protruding-subregion-1"), 0)}
-#[test] fn resvg_filters_feImage_with_subregion_5() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-5"), 0)}
-#[test] fn resvg_filters_feImage_link_to_an_element_with_opacity() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-with-opacity"), 0)}
-#[test] fn resvg_filters_feImage_preserveAspectRatio_none() {assert_eq!(run_test("resvg/filters/feImage/preserveAspectRatio=none"), 0)}
-#[test] fn resvg_filters_feImage_with_subregion_4() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-4"), 0)}
-#[test] fn resvg_filters_feImage_svg() {assert_eq!(run_test("resvg/filters/feImage/svg"), 0)}
-#[test] fn resvg_filters_feImage_with_subregion_1() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-1"), 0)}
-#[test] fn resvg_filters_feImage_link_on_an_element_with_complex_transform() {assert_eq!(run_test("resvg/filters/feImage/link-on-an-element-with-complex-transform"), 0)}
-#[test] fn resvg_filters_feImage_with_subregion_3() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-3"), 0)}
-#[test] fn resvg_filters_feImage_link_to_an_element() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element"), 0)}
-#[test] fn resvg_filters_feImage_with_subregion_2() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-2"), 0)}
-#[test] fn resvg_filters_feImage_chained_feImage() {assert_eq!(run_test("resvg/filters/feImage/chained-feImage"), 0)}
-#[test] fn resvg_filters_feImage_self_recursive() {assert_eq!(run_test("resvg/filters/feImage/self-recursive"), 0)}
-#[test] fn resvg_filters_feImage_link_to_an_element_outside_defs_1() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-outside-defs-1"), 0)}
-#[test] fn resvg_filters_feImage_recursive_links_2() {assert_eq!(run_test("resvg/filters/feImage/recursive-links-2"), 0)}
-#[test] fn resvg_filters_feImage_link_to_an_element_outside_defs_2() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-outside-defs-2"), 0)}
-#[test] fn resvg_filters_feImage_recursive_links_1() {assert_eq!(run_test("resvg/filters/feImage/recursive-links-1"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_single_light_source() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_desc() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-desc"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_lighting_color_inherit() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=inherit"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_lighting_color_hsla() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=hsla"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_title_and_desc() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-title-and-desc"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_invalid_child() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-invalid-child"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_complex_transform() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/complex-transform"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_lighting_color_currentColor() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=currentColor"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_surfaceScale_1_33() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=1.33"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_no_light_source() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/no-light-source"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_diffuseConstant__1() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/diffuseConstant=-1"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_surfaceScale_5() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=5"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_surfaceScale__10() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=-10"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_title() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-title"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_surfaceScale_0() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=0"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_lighting_color_seagreen() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=seagreen"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_linearRGB_color_interpolation() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/linearRGB-color-interpolation"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_diffuseConstant_0() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/diffuseConstant=0"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_comment() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-comment"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_lighting_color_currentColor_without_color() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=currentColor-without-color"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_multiple_light_sources() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/multiple-light-sources"), 0)}
-#[test] fn resvg_filters_feDiffuseLighting_diffuseConstant_5() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/diffuseConstant=5"), 0)}
-#[test] fn resvg_filters_feFlood_complex_transform() {assert_eq!(run_test("resvg/filters/feFlood/complex-transform"), 0)}
-#[test] fn resvg_filters_feFlood_with_opacity_on_target_element() {assert_eq!(run_test("resvg/filters/feFlood/with-opacity-on-target-element"), 0)}
-#[test] fn resvg_filters_feFlood_with_opacity() {assert_eq!(run_test("resvg/filters/feFlood/with-opacity"), 0)}
-#[test] fn resvg_filters_feFlood_subregion_with_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feFlood/subregion-with-primitiveUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_filters_feFlood_default_values() {assert_eq!(run_test("resvg/filters/feFlood/default-values"), 0)}
-#[test] fn resvg_filters_feFlood_partial_subregion() {assert_eq!(run_test("resvg/filters/feFlood/partial-subregion"), 0)}
-#[test] fn resvg_filters_feFlood_seagreen() {assert_eq!(run_test("resvg/filters/feFlood/seagreen"), 0)}
-#[test] fn resvg_filters_feFlood_subregion_inheritance() {assert_eq!(run_test("resvg/filters/feFlood/subregion-inheritance"), 0)}
-#[test] fn resvg_filters_feSpotLight_with_all_pointsAt() {assert_eq!(run_test("resvg/filters/feSpotLight/with-all-pointsAt"), 0)}
-#[test] fn resvg_filters_feSpotLight_complex_transform() {assert_eq!(run_test("resvg/filters/feSpotLight/complex-transform"), 0)}
-#[test] fn resvg_filters_feSpotLight_limitingConeAngle_0() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle=0"), 0)}
-#[test] fn resvg_filters_feSpotLight_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_filters_feSpotLight_limitingConeAngle_anti_aliasing() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle-anti-aliasing"), 0)}
-#[test] fn resvg_filters_feSpotLight_specularExponent_10() {assert_eq!(run_test("resvg/filters/feSpotLight/specularExponent=10"), 0)}
-#[test] fn resvg_filters_feSpotLight_specularExponent__10() {assert_eq!(run_test("resvg/filters/feSpotLight/specularExponent=-10"), 0)}
-#[test] fn resvg_filters_feSpotLight_custom_attributes() {assert_eq!(run_test("resvg/filters/feSpotLight/custom-attributes"), 0)}
-#[test] fn resvg_filters_feSpotLight_specularExponent_0_5() {assert_eq!(run_test("resvg/filters/feSpotLight/specularExponent=0.5"), 0)}
-#[test] fn resvg_filters_feSpotLight_limitingConeAngle_30() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle=30"), 0)}
-#[test] fn resvg_filters_feSpotLight_limitingConeAngle__30() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle=-30"), 0)}
-#[test] fn resvg_filters_feSpotLight_default_attributes() {assert_eq!(run_test("resvg/filters/feSpotLight/default-attributes"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fy_resolving_1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fy-resolving-1"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fy_resolving_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fy-resolving-2"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fy_resolving_3() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fy-resolving-3"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_hsla_color() {assert_eq!(run_test("resvg/paint-servers/radialGradient/hsla-color"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_only_required() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-only-required"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_gradientTransform_and_transform() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientTransform-and-transform"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fr__1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=-1"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_no_stops() {assert_eq!(run_test("resvg/paint-servers/radialGradient/no-stops"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fr_0_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=0.2"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_spreadMethod_pad() {assert_eq!(run_test("resvg/paint-servers/radialGradient/spreadMethod=pad"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_invalid_gradientUnits() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-gradientUnits"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_gradientUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientUnits=objectBoundingBox-with-percent"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_invalid_spreadMethod() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-spreadMethod"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fr_0_5() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=0.5"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fx_resolving_1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fx-resolving-1"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_from_linearGradient() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href-from-linearGradient"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_many_stops() {assert_eq!(run_test("resvg/paint-servers/radialGradient/many-stops"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fx_resolving_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fx-resolving-2"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fx_resolving_3() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fx-resolving-3"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_fr_0_7() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=0.7"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientTransform"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-2"), 0)}
+#[ignore] #[test] fn resvg_filters_feImage_simple_case() {assert_eq!(run_test("resvg/filters/feImage/simple-case", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_2() {assert_eq!(run_test("resvg/filters/feImage/with-x-y-and-protruding-subregion-2", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_x_y_and_protruding_subregion_1() {assert_eq!(run_test("resvg/filters/feImage/with-x-y-and-protruding-subregion-1", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_subregion_5() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-5", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_an_element_with_opacity() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-with-opacity", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_preserveAspectRatio_none() {assert_eq!(run_test("resvg/filters/feImage/preserveAspectRatio=none", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_subregion_4() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-4", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_svg() {assert_eq!(run_test("resvg/filters/feImage/svg", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_subregion_1() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-1", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_on_an_element_with_complex_transform() {assert_eq!(run_test("resvg/filters/feImage/link-on-an-element-with-complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_subregion_3() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-3", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_an_element() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_with_subregion_2() {assert_eq!(run_test("resvg/filters/feImage/with-subregion-2", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_chained_feImage() {assert_eq!(run_test("resvg/filters/feImage/chained-feImage", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_self_recursive() {assert_eq!(run_test("resvg/filters/feImage/self-recursive", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_an_element_outside_defs_1() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-outside-defs-1", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_recursive_links_2() {assert_eq!(run_test("resvg/filters/feImage/recursive-links-2", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_link_to_an_element_outside_defs_2() {assert_eq!(run_test("resvg/filters/feImage/link-to-an-element-outside-defs-2", Options::default()), 0)}
+#[test] fn resvg_filters_feImage_recursive_links_1() {assert_eq!(run_test("resvg/filters/feImage/recursive-links-1", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_single_light_source() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_desc() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-desc", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_lighting_color_inherit() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=inherit", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_lighting_color_hsla() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=hsla", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_title_and_desc() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-title-and-desc", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_invalid_child() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-invalid-child", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_complex_transform() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_lighting_color_currentColor() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=currentColor", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_surfaceScale_1_33() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=1.33", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_no_light_source() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/no-light-source", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_diffuseConstant__1() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/diffuseConstant=-1", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_surfaceScale_5() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=5", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_surfaceScale__10() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=-10", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_title() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-title", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_surfaceScale_0() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/surfaceScale=0", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_lighting_color_seagreen() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=seagreen", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_linearRGB_color_interpolation() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/linearRGB-color-interpolation", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_diffuseConstant_0() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/diffuseConstant=0", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_single_light_source_with_comment() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/single-light-source-with-comment", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_lighting_color_currentColor_without_color() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/lighting-color=currentColor-without-color", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_multiple_light_sources() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/multiple-light-sources", Options::default()), 0)}
+#[test] fn resvg_filters_feDiffuseLighting_diffuseConstant_5() {assert_eq!(run_test("resvg/filters/feDiffuseLighting/diffuseConstant=5", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_complex_transform() {assert_eq!(run_test("resvg/filters/feFlood/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_with_opacity_on_target_element() {assert_eq!(run_test("resvg/filters/feFlood/with-opacity-on-target-element", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_with_opacity() {assert_eq!(run_test("resvg/filters/feFlood/with-opacity", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_subregion_with_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feFlood/subregion-with-primitiveUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_default_values() {assert_eq!(run_test("resvg/filters/feFlood/default-values", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_partial_subregion() {assert_eq!(run_test("resvg/filters/feFlood/partial-subregion", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_seagreen() {assert_eq!(run_test("resvg/filters/feFlood/seagreen", Options::default()), 0)}
+#[test] fn resvg_filters_feFlood_subregion_inheritance() {assert_eq!(run_test("resvg/filters/feFlood/subregion-inheritance", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_with_all_pointsAt() {assert_eq!(run_test("resvg/filters/feSpotLight/with-all-pointsAt", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_complex_transform() {assert_eq!(run_test("resvg/filters/feSpotLight/complex-transform", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_limitingConeAngle_0() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle=0", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_primitiveUnits_objectBoundingBox() {assert_eq!(run_test("resvg/filters/feSpotLight/primitiveUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_limitingConeAngle_anti_aliasing() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle-anti-aliasing", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_specularExponent_10() {assert_eq!(run_test("resvg/filters/feSpotLight/specularExponent=10", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_specularExponent__10() {assert_eq!(run_test("resvg/filters/feSpotLight/specularExponent=-10", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_custom_attributes() {assert_eq!(run_test("resvg/filters/feSpotLight/custom-attributes", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_specularExponent_0_5() {assert_eq!(run_test("resvg/filters/feSpotLight/specularExponent=0.5", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_limitingConeAngle_30() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle=30", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_limitingConeAngle__30() {assert_eq!(run_test("resvg/filters/feSpotLight/limitingConeAngle=-30", Options::default()), 0)}
+#[test] fn resvg_filters_feSpotLight_default_attributes() {assert_eq!(run_test("resvg/filters/feSpotLight/default-attributes", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fy_resolving_1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fy-resolving-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fy_resolving_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fy-resolving-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fy_resolving_3() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fy-resolving-3", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_hsla_color() {assert_eq!(run_test("resvg/paint-servers/radialGradient/hsla-color", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_only_required() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-only-required", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_gradientTransform_and_transform() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientTransform-and-transform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fr__1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_no_stops() {assert_eq!(run_test("resvg/paint-servers/radialGradient/no-stops", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fr_0_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=0.2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_spreadMethod_pad() {assert_eq!(run_test("resvg/paint-servers/radialGradient/spreadMethod=pad", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_invalid_gradientUnits() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-gradientUnits", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_gradientUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientUnits=objectBoundingBox-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_invalid_spreadMethod() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-spreadMethod", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fr_0_5() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=0.5", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fx_resolving_1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fx-resolving-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_from_linearGradient() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href-from-linearGradient", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_many_stops() {assert_eq!(run_test("resvg/paint-servers/radialGradient/many-stops", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fx_resolving_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fx-resolving-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fx_resolving_3() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fx-resolving-3", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_fr_0_7() {assert_eq!(run_test("resvg/paint-servers/radialGradient/fr=0.7", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientTransform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_2() {assert_eq!(run_test("resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-2", Options::default()), 0)}
 // spreadMethod reflect not supported
-#[ignore] #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_linearGradient() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-1"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_complex_order() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href-complex-order"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_single_stop() {assert_eq!(run_test("resvg/paint-servers/radialGradient/single-stop"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_invalid_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-gradientTransform"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href-from-rect"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_zero_r() {assert_eq!(run_test("resvg/paint-servers/radialGradient/zero-r"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_recursive_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/recursive-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_negative_r() {assert_eq!(run_test("resvg/paint-servers/radialGradient/negative-r"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_focal_point_correction() {assert_eq!(run_test("resvg/paint-servers/radialGradient/focal-point-correction"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_linearGradient() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-linearGradient", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_zero_r_with_stop_opacity_1() {assert_eq!(run_test("resvg/paint-servers/radialGradient/zero-r-with-stop-opacity-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_complex_order() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href-complex-order", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_single_stop() {assert_eq!(run_test("resvg/paint-servers/radialGradient/single-stop", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_invalid_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-gradientTransform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_stops_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/radialGradient/stops-via-xlink-href-from-rect", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_zero_r() {assert_eq!(run_test("resvg/paint-servers/radialGradient/zero-r", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_recursive_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/recursive-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_negative_r() {assert_eq!(run_test("resvg/paint-servers/radialGradient/negative-r", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_focal_point_correction() {assert_eq!(run_test("resvg/paint-servers/radialGradient/focal-point-correction", Options::default()), 0)}
 // spreadMethod repeat not supported
-#[ignore] #[test] fn resvg_paint_servers_radialGradient_spreadMethod_repeat() {assert_eq!(run_test("resvg/paint-servers/radialGradient/spreadMethod=repeat"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_unresolved_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/unresolved-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_invalid_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-rect"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_radialGradient_spreadMethod_repeat() {assert_eq!(run_test("resvg/paint-servers/radialGradient/spreadMethod=repeat", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_unresolved_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/unresolved-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_invalid_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/invalid-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-from-rect", Options::default()), 0)}
 // spreadMethod reflect not supported
-#[ignore] #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_complex_order() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_xlink_href_not_to_gradient() {assert_eq!(run_test("resvg/paint-servers/radialGradient/xlink-href-not-to-gradient"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse-with-percent"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_self_recursive_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/self-recursive-xlink-href"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_radialGradient_attributes_via_xlink_href_complex_order() {assert_eq!(run_test("resvg/paint-servers/radialGradient/attributes-via-xlink-href-complex-order", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_xlink_href_not_to_gradient() {assert_eq!(run_test("resvg/paint-servers/radialGradient/xlink-href-not-to-gradient", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/paint-servers/radialGradient/gradientUnits=userSpaceOnUse-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_self_recursive_xlink_href() {assert_eq!(run_test("resvg/paint-servers/radialGradient/self-recursive-xlink-href", Options::default()), 0)}
 // spreadMethod reflect not supported
-#[ignore] #[test] fn resvg_paint_servers_radialGradient_spreadMethod_reflect() {assert_eq!(run_test("resvg/paint-servers/radialGradient/spreadMethod=reflect"), 0)}
-#[test] fn resvg_paint_servers_radialGradient_default_attributes() {assert_eq!(run_test("resvg/paint-servers/radialGradient/default-attributes"), 0)}
-#[test] fn resvg_paint_servers_stop_opacity_simple_case() {assert_eq!(run_test("resvg/paint-servers/stop-opacity/simple-case"), 0)}
-#[test] fn resvg_paint_servers_stop_opacity_50percent() {assert_eq!(run_test("resvg/paint-servers/stop-opacity/50percent"), 0)}
-#[test] fn resvg_paint_servers_stop_hsla_color() {assert_eq!(run_test("resvg/paint-servers/stop/hsla-color"), 0)}
-#[test] fn resvg_paint_servers_stop_zero_offset_in_the_middle() {assert_eq!(run_test("resvg/paint-servers/stop/zero-offset-in-the-middle"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_with_smaller_offset() {assert_eq!(run_test("resvg/paint-servers/stop/stop-with-smaller-offset"), 0)}
-#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_3() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-3"), 0)}
-#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_2() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-2"), 0)}
-#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_1() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-1"), 0)}
-#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_5() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-5"), 0)}
-#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_4() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-4"), 0)}
-#[test] fn resvg_paint_servers_stop_offset_clamping_with_percent() {assert_eq!(run_test("resvg/paint-servers/stop/offset-clamping-with-percent"), 0)}
-#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_6() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-6"), 0)}
-#[test] fn resvg_paint_servers_stop_offset_clamping() {assert_eq!(run_test("resvg/paint-servers/stop/offset-clamping"), 0)}
-#[test] fn resvg_paint_servers_stop_missing_offset_1() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-1"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_2() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-2"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_3() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-3"), 0)}
-#[test] fn resvg_paint_servers_stop_missing_offset_2() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-2"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_1() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-1"), 0)}
-#[test] fn resvg_paint_servers_stop_missing_offset_3() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-3"), 0)}
-#[test] fn resvg_paint_servers_stop_invalid_offset_1() {assert_eq!(run_test("resvg/paint-servers/stop/invalid-offset-1"), 0)}
-#[test] fn resvg_paint_servers_stop_missing_offset_7() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-7"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_4() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-4"), 0)}
-#[test] fn resvg_paint_servers_stop_no_stop_color() {assert_eq!(run_test("resvg/paint-servers/stop/no-stop-color"), 0)}
-#[test] fn resvg_paint_servers_stop_missing_offset_6() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-6"), 0)}
-#[test] fn resvg_paint_servers_stop_invalid_offset_2() {assert_eq!(run_test("resvg/paint-servers/stop/invalid-offset-2"), 0)}
-#[test] fn resvg_paint_servers_stop_missing_offset_4() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-4"), 0)}
-#[test] fn resvg_paint_servers_stop_missing_offset_5() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-5"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_4() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-4"), 0)}
-#[test] fn resvg_paint_servers_stop_offset_with_percent() {assert_eq!(run_test("resvg/paint-servers/stop/offset-with-percent"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_5() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-5"), 0)}
-#[test] fn resvg_paint_servers_stop_equal_stop_color() {assert_eq!(run_test("resvg/paint-servers/stop/equal-stop-color"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_2() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-2"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_3() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-3"), 0)}
-#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_1() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-1"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_hsla_color() {assert_eq!(run_test("resvg/paint-servers/linearGradient/hsla-color"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_only_required() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-only-required"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_gradientTransform_and_transform() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientTransform-and-transform"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_no_stops() {assert_eq!(run_test("resvg/paint-servers/linearGradient/no-stops"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_invalid_child_3() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-child-3"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_invalid_child_2() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-child-2"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_spreadMethod_pad() {assert_eq!(run_test("resvg/paint-servers/linearGradient/spreadMethod=pad"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_invalid_gradientUnits() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-gradientUnits"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_complex_order_2() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-complex-order-2"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_invalid_child_1() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-child-1"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_gradientUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientUnits=objectBoundingBox-with-percent"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_invalid_spreadMethod() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-spreadMethod"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_complex_order_1() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-complex-order-1"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_many_stops() {assert_eq!(run_test("resvg/paint-servers/linearGradient/many-stops"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_from_radialGradient() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-from-radialGradient"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientTransform"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_3() {assert_eq!(run_test("resvg/paint-servers/linearGradient/recursive-xlink-href-3"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_radialGradient_spreadMethod_reflect() {assert_eq!(run_test("resvg/paint-servers/radialGradient/spreadMethod=reflect", Options::default()), 0)}
+#[test] fn resvg_paint_servers_radialGradient_default_attributes() {assert_eq!(run_test("resvg/paint-servers/radialGradient/default-attributes", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_opacity_simple_case() {assert_eq!(run_test("resvg/paint-servers/stop-opacity/simple-case", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_opacity_50percent() {assert_eq!(run_test("resvg/paint-servers/stop-opacity/50percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_hsla_color() {assert_eq!(run_test("resvg/paint-servers/stop/hsla-color", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_zero_offset_in_the_middle() {assert_eq!(run_test("resvg/paint-servers/stop/zero-offset-in-the-middle", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_with_smaller_offset() {assert_eq!(run_test("resvg/paint-servers/stop/stop-with-smaller-offset", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_3() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-3", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_2() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_1() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_5() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-5", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_4() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-4", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_offset_clamping_with_percent() {assert_eq!(run_test("resvg/paint-servers/stop/offset-clamping-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stops_with_equal_offset_6() {assert_eq!(run_test("resvg/paint-servers/stop/stops-with-equal-offset-6", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_offset_clamping() {assert_eq!(run_test("resvg/paint-servers/stop/offset-clamping", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_missing_offset_1() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_2() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_3() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-3", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_missing_offset_2() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_1() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_missing_offset_3() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-3", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_invalid_offset_1() {assert_eq!(run_test("resvg/paint-servers/stop/invalid-offset-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_missing_offset_7() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-7", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_currentColor_4() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-currentColor-4", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_no_stop_color() {assert_eq!(run_test("resvg/paint-servers/stop/no-stop-color", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_missing_offset_6() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-6", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_invalid_offset_2() {assert_eq!(run_test("resvg/paint-servers/stop/invalid-offset-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_missing_offset_4() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-4", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_missing_offset_5() {assert_eq!(run_test("resvg/paint-servers/stop/missing-offset-5", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_4() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-4", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_offset_with_percent() {assert_eq!(run_test("resvg/paint-servers/stop/offset-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_5() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-5", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_equal_stop_color() {assert_eq!(run_test("resvg/paint-servers/stop/equal-stop-color", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_2() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_3() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-3", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_stop_color_with_inherit_1() {assert_eq!(run_test("resvg/paint-servers/stop/stop-color-with-inherit-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_hsla_color() {assert_eq!(run_test("resvg/paint-servers/linearGradient/hsla-color", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_only_required() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-only-required", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_gradientTransform_and_transform() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientTransform-and-transform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_no_stops() {assert_eq!(run_test("resvg/paint-servers/linearGradient/no-stops", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_child_3() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-child-3", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_child_2() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-child-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_spreadMethod_pad() {assert_eq!(run_test("resvg/paint-servers/linearGradient/spreadMethod=pad", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_gradientUnits() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-gradientUnits", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_complex_order_2() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-complex-order-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_child_1() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-child-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_gradientUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientUnits=objectBoundingBox-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_spreadMethod() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-spreadMethod", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_complex_order_1() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-complex-order-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_many_stops() {assert_eq!(run_test("resvg/paint-servers/linearGradient/many-stops", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_from_radialGradient() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-from-radialGradient", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientTransform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_3() {assert_eq!(run_test("resvg/paint-servers/linearGradient/recursive-xlink-href-3", Options::default()), 0)}
 // spreadMethod reflect not supported
-#[ignore] #[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_radialGradient() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_2() {assert_eq!(run_test("resvg/paint-servers/linearGradient/recursive-xlink-href-2"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_1() {assert_eq!(run_test("resvg/paint-servers/linearGradient/recursive-xlink-href-1"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_stroke() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-stroke"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_single_stop() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_invalid_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-gradientTransform"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-from-rect"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_radialGradient() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-radialGradient", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_2() {assert_eq!(run_test("resvg/paint-servers/linearGradient/recursive-xlink-href-2", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_recursive_xlink_href_1() {assert_eq!(run_test("resvg/paint-servers/linearGradient/recursive-xlink-href-1", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_stroke() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-stroke", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_single_stop() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_gradientTransform() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-gradientTransform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_stops_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/linearGradient/stops-via-xlink-href-from-rect", Options::default()), 0)}
 // spreadMethod repeat not supported
-#[ignore] #[test] fn resvg_paint_servers_linearGradient_spreadMethod_repeat() {assert_eq!(run_test("resvg/paint-servers/linearGradient/spreadMethod=repeat"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_unresolved_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/unresolved-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_invalid_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-rect"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill_and_stroke() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_linearGradient_spreadMethod_repeat() {assert_eq!(run_test("resvg/paint-servers/linearGradient/spreadMethod=repeat", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_unresolved_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/unresolved-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_invalid_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/invalid-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_from_rect() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-from-rect", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_single_stop_with_opacity_used_by_fill_and_stroke() {assert_eq!(run_test("resvg/paint-servers/linearGradient/single-stop-with-opacity-used-by-fill-and-stroke", Options::default()), 0)}
 // spreadMethod reflect not supported
-#[ignore] #[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_complex_order() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse-with-percent"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_self_recursive_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/self-recursive-xlink-href"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_linearGradient_attributes_via_xlink_href_complex_order() {assert_eq!(run_test("resvg/paint-servers/linearGradient/attributes-via-xlink-href-complex-order", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_gradientUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/paint-servers/linearGradient/gradientUnits=userSpaceOnUse-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_self_recursive_xlink_href() {assert_eq!(run_test("resvg/paint-servers/linearGradient/self-recursive-xlink-href", Options::default()), 0)}
 // spreadMethod reflect not supported
-#[ignore] #[test] fn resvg_paint_servers_linearGradient_spreadMethod_reflect() {assert_eq!(run_test("resvg/paint-servers/linearGradient/spreadMethod=reflect"), 0)}
-#[test] fn resvg_paint_servers_linearGradient_default_attributes() {assert_eq!(run_test("resvg/paint-servers/linearGradient/default-attributes"), 0)}
-#[test] fn resvg_paint_servers_stop_color_simple_case() {assert_eq!(run_test("resvg/paint-servers/stop-color/simple-case"), 0)}
-#[test] fn resvg_paint_servers_pattern_display_none_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/display=none-on-child"), 0)}
-#[test] fn resvg_paint_servers_pattern_transform_and_patternTransform() {assert_eq!(run_test("resvg/paint-servers/pattern/transform-and-patternTransform"), 0)}
-#[test] fn resvg_paint_servers_pattern_recursive_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/recursive-on-child"), 0)}
-#[test] fn resvg_paint_servers_pattern_patternUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/paint-servers/pattern/patternUnits=userSpaceOnUse-with-percent"), 0)}
-#[test] fn resvg_paint_servers_pattern_with_viewBox() {assert_eq!(run_test("resvg/paint-servers/pattern/with-viewBox"), 0)}
-#[test] fn resvg_paint_servers_pattern_no_children() {assert_eq!(run_test("resvg/paint-servers/pattern/no-children"), 0)}
-#[test] fn resvg_paint_servers_pattern_attributes_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/attributes-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_pattern_tiny_pattern_upscaled() {assert_eq!(run_test("resvg/paint-servers/pattern/tiny-pattern-upscaled"), 0)}
-#[test] fn resvg_paint_servers_pattern_patternContentUnits_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/patternContentUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_paint_servers_pattern_patternUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/paint-servers/pattern/patternUnits=objectBoundingBox-with-percent"), 0)}
-#[test] fn resvg_paint_servers_pattern_patternContentUnits_with_viewBox() {assert_eq!(run_test("resvg/paint-servers/pattern/patternContentUnits-with-viewBox"), 0)}
-#[test] fn resvg_paint_servers_pattern_everything_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/everything-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_pattern_out_of_order_referencing() {assert_eq!(run_test("resvg/paint-servers/pattern/out-of-order-referencing"), 0)}
-#[test] fn resvg_paint_servers_pattern_with_patternTransform() {assert_eq!(run_test("resvg/paint-servers/pattern/with-patternTransform"), 0)}
-#[test] fn resvg_paint_servers_pattern_with_x_and_y() {assert_eq!(run_test("resvg/paint-servers/pattern/with-x-and-y"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_linearGradient_spreadMethod_reflect() {assert_eq!(run_test("resvg/paint-servers/linearGradient/spreadMethod=reflect", Options::default()), 0)}
+#[test] fn resvg_paint_servers_linearGradient_default_attributes() {assert_eq!(run_test("resvg/paint-servers/linearGradient/default-attributes", Options::default()), 0)}
+#[test] fn resvg_paint_servers_stop_color_simple_case() {assert_eq!(run_test("resvg/paint-servers/stop-color/simple-case", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_display_none_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/display=none-on-child", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_transform_and_patternTransform() {assert_eq!(run_test("resvg/paint-servers/pattern/transform-and-patternTransform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_recursive_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/recursive-on-child", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_patternUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/paint-servers/pattern/patternUnits=userSpaceOnUse-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_with_viewBox() {assert_eq!(run_test("resvg/paint-servers/pattern/with-viewBox", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_no_children() {assert_eq!(run_test("resvg/paint-servers/pattern/no-children", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_attributes_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/attributes-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_tiny_pattern_upscaled() {assert_eq!(run_test("resvg/paint-servers/pattern/tiny-pattern-upscaled", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_patternContentUnits_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/patternContentUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_patternUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/paint-servers/pattern/patternUnits=objectBoundingBox-with-percent", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_patternContentUnits_with_viewBox() {assert_eq!(run_test("resvg/paint-servers/pattern/patternContentUnits-with-viewBox", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_everything_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/everything-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_out_of_order_referencing() {assert_eq!(run_test("resvg/paint-servers/pattern/out-of-order-referencing", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_with_patternTransform() {assert_eq!(run_test("resvg/paint-servers/pattern/with-patternTransform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_with_x_and_y() {assert_eq!(run_test("resvg/paint-servers/pattern/with-x-and-y", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_paint_servers_pattern_nested_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/nested-objectBoundingBox"), 0)}
-#[test] fn resvg_paint_servers_pattern_preserveAspectRatio() {assert_eq!(run_test("resvg/paint-servers/pattern/preserveAspectRatio"), 0)}
-#[test] fn resvg_paint_servers_pattern_simple_case() {assert_eq!(run_test("resvg/paint-servers/pattern/simple-case"), 0)}
-#[test] fn resvg_paint_servers_pattern_missing_width() {assert_eq!(run_test("resvg/paint-servers/pattern/missing-width"), 0)}
-#[test] fn resvg_paint_servers_pattern_missing_height() {assert_eq!(run_test("resvg/paint-servers/pattern/missing-height"), 0)}
-#[test] fn resvg_paint_servers_pattern_patternUnits_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/patternUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_paint_servers_pattern_children_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/children-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_pattern_invalid_patternUnits_and_patternContentUnits() {assert_eq!(run_test("resvg/paint-servers/pattern/invalid-patternUnits-and-patternContentUnits"), 0)}
-#[test] fn resvg_paint_servers_pattern_pattern_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/pattern-on-child"), 0)}
-#[test] fn resvg_paint_servers_pattern_overflow_visible() {assert_eq!(run_test("resvg/paint-servers/pattern/overflow=visible"), 0)}
-#[test] fn resvg_paint_servers_pattern_child_with_invalid_FuncIRI() {assert_eq!(run_test("resvg/paint-servers/pattern/child-with-invalid-FuncIRI"), 0)}
-#[test] fn resvg_paint_servers_pattern_self_recursive() {assert_eq!(run_test("resvg/paint-servers/pattern/self-recursive"), 0)}
-#[test] fn resvg_paint_servers_pattern_text_child() {assert_eq!(run_test("resvg/paint-servers/pattern/text-child"), 0)}
-#[test] fn resvg_paint_servers_pattern_invalid_patternTransform() {assert_eq!(run_test("resvg/paint-servers/pattern/invalid-patternTransform"), 0)}
-#[test] fn resvg_paint_servers_pattern_viewBox_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/viewBox-via-xlink-href"), 0)}
-#[test] fn resvg_paint_servers_pattern_self_recursive_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/self-recursive-on-child"), 0)}
-#[test] fn resvg_shapes_rect_with_child() {assert_eq!(run_test("resvg/shapes/rect/with-child"), 0)}
-#[test] fn resvg_shapes_rect_y_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/y-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_vi_and_vb_values() {assert_eq!(run_test("resvg/shapes/rect/vi-and-vb-values"), 0)}
-#[test] fn resvg_shapes_rect_ry_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/ry-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_ry_attribute_clamping() {assert_eq!(run_test("resvg/shapes/rect/ry-attribute-clamping"), 0)}
-#[test] fn resvg_shapes_rect_ch_values() {assert_eq!(run_test("resvg/shapes/rect/ch-values"), 0)}
-#[test] fn resvg_shapes_rect_cap_values() {assert_eq!(run_test("resvg/shapes/rect/cap-values"), 0)}
-#[test] fn resvg_shapes_rect_zero_width_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/zero-width-attribute-processing"), 0)}
-#[test] fn resvg_shapes_rect_zero_rx_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/zero-rx-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_em_values() {assert_eq!(run_test("resvg/shapes/rect/em-values"), 0)}
-#[test] fn resvg_shapes_rect_invalid_length() {assert_eq!(run_test("resvg/shapes/rect/invalid-length"), 0)}
-#[test] fn resvg_shapes_rect_rx_attribute_clamping() {assert_eq!(run_test("resvg/shapes/rect/rx-attribute-clamping"), 0)}
-#[test] fn resvg_shapes_rect_negative_rx_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/negative-rx-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_lh_values() {assert_eq!(run_test("resvg/shapes/rect/lh-values"), 0)}
-#[test] fn resvg_shapes_rect_vw_and_vh_values() {assert_eq!(run_test("resvg/shapes/rect/vw-and-vh-values"), 0)}
-#[test] fn resvg_shapes_rect_simple_case() {assert_eq!(run_test("resvg/shapes/rect/simple-case"), 0)}
-#[test] fn resvg_shapes_rect_ic_values() {assert_eq!(run_test("resvg/shapes/rect/ic-values"), 0)}
-#[test] fn resvg_shapes_rect_negative_width_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/negative-width-attribute-processing"), 0)}
-#[test] fn resvg_shapes_rect_rounded_rect() {assert_eq!(run_test("resvg/shapes/rect/rounded-rect"), 0)}
-#[test] fn resvg_shapes_rect_missing_height_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/missing-height-attribute-processing"), 0)}
-#[test] fn resvg_shapes_rect_ex_values() {assert_eq!(run_test("resvg/shapes/rect/ex-values"), 0)}
-#[test] fn resvg_shapes_rect_negative_rx_and_ry_attributes_resolving() {assert_eq!(run_test("resvg/shapes/rect/negative-rx-and-ry-attributes-resolving"), 0)}
-#[test] fn resvg_shapes_rect_negative_height_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/negative-height-attribute-processing"), 0)}
-#[test] fn resvg_shapes_rect_rx_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/rx-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_x_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/x-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_rlh_values() {assert_eq!(run_test("resvg/shapes/rect/rlh-values"), 0)}
-#[test] fn resvg_shapes_rect_vmin_and_vmax_values() {assert_eq!(run_test("resvg/shapes/rect/vmin-and-vmax-values"), 0)}
-#[test] fn resvg_shapes_rect_percentage_values_2() {assert_eq!(run_test("resvg/shapes/rect/percentage-values-2"), 0)}
-#[test] fn resvg_shapes_rect_negative_ry_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/negative-ry-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_zero_height_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/zero-height-attribute-processing"), 0)}
-#[test] fn resvg_shapes_rect_q_values() {assert_eq!(run_test("resvg/shapes/rect/q-values"), 0)}
-#[test] fn resvg_shapes_rect_rx_and_ry_attributes_clamping_order() {assert_eq!(run_test("resvg/shapes/rect/rx-and-ry-attributes-clamping-order"), 0)}
-#[test] fn resvg_shapes_rect_missing_width_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/missing-width-attribute-processing"), 0)}
-#[test] fn resvg_shapes_rect_percentage_values_1() {assert_eq!(run_test("resvg/shapes/rect/percentage-values-1"), 0)}
-#[test] fn resvg_shapes_rect_rem_values() {assert_eq!(run_test("resvg/shapes/rect/rem-values"), 0)}
-#[test] fn resvg_shapes_rect_zero_ry_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/zero-ry-attribute-resolving"), 0)}
-#[test] fn resvg_shapes_rect_mm_values() {assert_eq!(run_test("resvg/shapes/rect/mm-values"), 0)}
-#[test] fn resvg_shapes_rect_invalid_coordinates() {assert_eq!(run_test("resvg/shapes/rect/invalid-coordinates"), 0)}
-#[test] fn resvg_shapes_polyline_not_enough_points() {assert_eq!(run_test("resvg/shapes/polyline/not-enough-points"), 0)}
-#[test] fn resvg_shapes_polyline_missing_points_attribute() {assert_eq!(run_test("resvg/shapes/polyline/missing-points-attribute"), 0)}
-#[test] fn resvg_shapes_polyline_stop_processing_on_invalid_data() {assert_eq!(run_test("resvg/shapes/polyline/stop-processing-on-invalid-data"), 0)}
-#[test] fn resvg_shapes_polyline_ignore_odd_points() {assert_eq!(run_test("resvg/shapes/polyline/ignore-odd-points"), 0)}
-#[test] fn resvg_shapes_polyline_simple_case() {assert_eq!(run_test("resvg/shapes/polyline/simple-case"), 0)}
-#[test] fn resvg_shapes_path_M_V_V_implicit() {assert_eq!(run_test("resvg/shapes/path/M-V-V-implicit"), 0)}
-#[test] fn resvg_shapes_path_M_S_S() {assert_eq!(run_test("resvg/shapes/path/M-S-S"), 0)}
-#[test] fn resvg_shapes_path_no_commawsp_between_arc_flags() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-between-arc-flags"), 0)}
-#[test] fn resvg_shapes_path_M_L_L_Z_rel() {assert_eq!(run_test("resvg/shapes/path/M-L-L-Z-rel"), 0)}
-#[test] fn resvg_shapes_path_M_H() {assert_eq!(run_test("resvg/shapes/path/M-H"), 0)}
-#[test] fn resvg_shapes_path_M_L_Z_L_L() {assert_eq!(run_test("resvg/shapes/path/M-L-Z-L-L"), 0)}
-#[test] fn resvg_shapes_path_extra_spaces() {assert_eq!(run_test("resvg/shapes/path/extra-spaces"), 0)}
-#[test] fn resvg_shapes_path_missing_coordinate_in_L() {assert_eq!(run_test("resvg/shapes/path/missing-coordinate-in-L"), 0)}
-#[test] fn resvg_shapes_path_M_Z() {assert_eq!(run_test("resvg/shapes/path/M-Z"), 0)}
-#[test] fn resvg_shapes_path_M_M() {assert_eq!(run_test("resvg/shapes/path/M-M"), 0)}
-#[test] fn resvg_shapes_path_M_L_L_implicit() {assert_eq!(run_test("resvg/shapes/path/M-L-L-implicit"), 0)}
-#[test] fn resvg_shapes_path_M_T_S_rel() {assert_eq!(run_test("resvg/shapes/path/M-T-S-rel"), 0)}
-#[test] fn resvg_shapes_path_M_L() {assert_eq!(run_test("resvg/shapes/path/M-L"), 0)}
-#[test] fn resvg_shapes_path_M_Q_T() {assert_eq!(run_test("resvg/shapes/path/M-Q-T"), 0)}
-#[test] fn resvg_shapes_path_empty() {assert_eq!(run_test("resvg/shapes/path/empty"), 0)}
-#[test] fn resvg_shapes_path_M_T_Q_rel() {assert_eq!(run_test("resvg/shapes/path/M-T-Q-rel"), 0)}
-#[test] fn resvg_shapes_path_numeric_character_references() {assert_eq!(run_test("resvg/shapes/path/numeric-character-references"), 0)}
-#[test] fn resvg_shapes_path_M_Q_T_rel() {assert_eq!(run_test("resvg/shapes/path/M-Q-T-rel"), 0)}
-#[test] fn resvg_shapes_path_M_V_V() {assert_eq!(run_test("resvg/shapes/path/M-V-V"), 0)}
-#[test] fn resvg_shapes_path_M_T_T() {assert_eq!(run_test("resvg/shapes/path/M-T-T"), 0)}
-#[test] fn resvg_shapes_path_M() {assert_eq!(run_test("resvg/shapes/path/M"), 0)}
-#[test] fn resvg_shapes_path_M_T_Q() {assert_eq!(run_test("resvg/shapes/path/M-T-Q"), 0)}
-#[test] fn resvg_shapes_path_M_T_S() {assert_eq!(run_test("resvg/shapes/path/M-T-S"), 0)}
-#[test] fn resvg_shapes_path_no_commawsp_between_and_after_arc_flags() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-between-and-after-arc-flags"), 0)}
-#[test] fn resvg_shapes_path_M_A_trimmed() {assert_eq!(run_test("resvg/shapes/path/M-A-trimmed"), 0)}
-#[test] fn resvg_shapes_path_no_commawsp_before_arc_flags() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-before-arc-flags"), 0)}
-#[test] fn resvg_shapes_path_M_rel_M_rel_implicit_M_rel_implicit() {assert_eq!(run_test("resvg/shapes/path/M-rel-M-rel-implicit-M-rel-implicit"), 0)}
-#[test] fn resvg_shapes_path_M_C_S() {assert_eq!(run_test("resvg/shapes/path/M-C-S"), 0)}
-#[test] fn resvg_shapes_path_M_M_implicit_M_implicit() {assert_eq!(run_test("resvg/shapes/path/M-M-implicit-M-implicit"), 0)}
-#[test] fn resvg_shapes_path_no_commawsp_after_sweep_flag() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-after-sweep-flag"), 0)}
-#[test] fn resvg_shapes_path_invalid_data_in_L() {assert_eq!(run_test("resvg/shapes/path/invalid-data-in-L"), 0)}
-#[test] fn resvg_shapes_path_A() {assert_eq!(run_test("resvg/shapes/path/A"), 0)}
-#[test] fn resvg_shapes_path_M_T_T_rel() {assert_eq!(run_test("resvg/shapes/path/M-T-T-rel"), 0)}
-#[test] fn resvg_shapes_path_M_H_H_implicit() {assert_eq!(run_test("resvg/shapes/path/M-H-H-implicit"), 0)}
-#[test] fn resvg_shapes_path_M_M_rel() {assert_eq!(run_test("resvg/shapes/path/M-M-rel"), 0)}
-#[test] fn resvg_shapes_path_M_L_L_Z() {assert_eq!(run_test("resvg/shapes/path/M-L-L-Z"), 0)}
-#[test] fn resvg_shapes_path_M_Q_rel_T_rel() {assert_eq!(run_test("resvg/shapes/path/M-Q-rel-T-rel"), 0)}
-#[test] fn resvg_shapes_path_multi_line_data() {assert_eq!(run_test("resvg/shapes/path/multi-line-data"), 0)}
-#[test] fn resvg_shapes_path_out_of_range_sweep_flag_value() {assert_eq!(run_test("resvg/shapes/path/out-of-range-sweep-flag-value"), 0)}
-#[test] fn resvg_shapes_path_M_C() {assert_eq!(run_test("resvg/shapes/path/M-C"), 0)}
-#[test] fn resvg_shapes_path_M_T() {assert_eq!(run_test("resvg/shapes/path/M-T"), 0)}
-#[test] fn resvg_shapes_path_M_V() {assert_eq!(run_test("resvg/shapes/path/M-V"), 0)}
-#[test] fn resvg_shapes_path_M_A() {assert_eq!(run_test("resvg/shapes/path/M-A"), 0)}
-#[test] fn resvg_shapes_path_M_S() {assert_eq!(run_test("resvg/shapes/path/M-S"), 0)}
-#[test] fn resvg_shapes_path_M_L_Z_A() {assert_eq!(run_test("resvg/shapes/path/M-L-Z-A"), 0)}
-#[test] fn resvg_shapes_path_out_of_range_large_arc_flag_value() {assert_eq!(run_test("resvg/shapes/path/out-of-range-large-arc-flag-value"), 0)}
-#[test] fn resvg_shapes_path_M_L_M_L() {assert_eq!(run_test("resvg/shapes/path/M-L-M-L"), 0)}
-#[test] fn resvg_shapes_path_negative_sweep_flag_value() {assert_eq!(run_test("resvg/shapes/path/negative-sweep-flag-value"), 0)}
-#[test] fn resvg_shapes_path_M_rel_M() {assert_eq!(run_test("resvg/shapes/path/M-rel-M"), 0)}
-#[test] fn resvg_shapes_path_M_L_M_Z() {assert_eq!(run_test("resvg/shapes/path/M-L-M-Z"), 0)}
-#[test] fn resvg_shapes_path_negative_large_arc_flag_value() {assert_eq!(run_test("resvg/shapes/path/negative-large-arc-flag-value"), 0)}
-#[test] fn resvg_shapes_path_M_H_H() {assert_eq!(run_test("resvg/shapes/path/M-H-H"), 0)}
-#[test] fn resvg_shapes_path_invalid_transform() {assert_eq!(run_test("resvg/shapes/path/invalid-transform"), 0)}
-#[test] fn resvg_shapes_path_M_L_M() {assert_eq!(run_test("resvg/shapes/path/M-L-M"), 0)}
-#[test] fn resvg_shapes_path_M_Q() {assert_eq!(run_test("resvg/shapes/path/M-Q"), 0)}
-#[test] fn resvg_shapes_polygon_not_enough_points() {assert_eq!(run_test("resvg/shapes/polygon/not-enough-points"), 0)}
-#[test] fn resvg_shapes_polygon_missing_points_attribute() {assert_eq!(run_test("resvg/shapes/polygon/missing-points-attribute"), 0)}
-#[test] fn resvg_shapes_polygon_stop_processing_on_invalid_data() {assert_eq!(run_test("resvg/shapes/polygon/stop-processing-on-invalid-data"), 0)}
-#[test] fn resvg_shapes_polygon_ignore_odd_points() {assert_eq!(run_test("resvg/shapes/polygon/ignore-odd-points"), 0)}
-#[test] fn resvg_shapes_polygon_simple_case() {assert_eq!(run_test("resvg/shapes/polygon/simple-case"), 0)}
-#[test] fn resvg_shapes_line_no_x1_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-x1-coordinate"), 0)}
-#[test] fn resvg_shapes_line_no_y2_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-y2-coordinate"), 0)}
-#[test] fn resvg_shapes_line_no_x2_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-x2-coordinate"), 0)}
-#[test] fn resvg_shapes_line_percent_units() {assert_eq!(run_test("resvg/shapes/line/percent-units"), 0)}
-#[test] fn resvg_shapes_line_no_x1_and_y1_coordinates() {assert_eq!(run_test("resvg/shapes/line/no-x1-and-y1-coordinates"), 0)}
-#[test] fn resvg_shapes_line_no_y1_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-y1-coordinate"), 0)}
-#[test] fn resvg_shapes_line_simple_case() {assert_eq!(run_test("resvg/shapes/line/simple-case"), 0)}
-#[test] fn resvg_shapes_line_no_coordinates() {assert_eq!(run_test("resvg/shapes/line/no-coordinates"), 0)}
-#[test] fn resvg_shapes_line_with_transform() {assert_eq!(run_test("resvg/shapes/line/with-transform"), 0)}
-#[test] fn resvg_shapes_line_no_x2_and_y2_coordinates() {assert_eq!(run_test("resvg/shapes/line/no-x2-and-y2-coordinates"), 0)}
-#[test] fn resvg_shapes_circle_missing_cx_and_cy_attributes() {assert_eq!(run_test("resvg/shapes/circle/missing-cx-and-cy-attributes"), 0)}
-#[test] fn resvg_shapes_circle_missing_cx_attribute() {assert_eq!(run_test("resvg/shapes/circle/missing-cx-attribute"), 0)}
-#[test] fn resvg_shapes_circle_simple_case() {assert_eq!(run_test("resvg/shapes/circle/simple-case"), 0)}
-#[test] fn resvg_shapes_circle_negative_r_attribute() {assert_eq!(run_test("resvg/shapes/circle/negative-r-attribute"), 0)}
-#[test] fn resvg_shapes_circle_missing_r_attribute() {assert_eq!(run_test("resvg/shapes/circle/missing-r-attribute"), 0)}
-#[test] fn resvg_shapes_circle_missing_cy_attribute() {assert_eq!(run_test("resvg/shapes/circle/missing-cy-attribute"), 0)}
-#[test] fn resvg_shapes_ellipse_missing_cx_and_cy_attributes() {assert_eq!(run_test("resvg/shapes/ellipse/missing-cx-and-cy-attributes"), 0)}
-#[test] fn resvg_shapes_ellipse_missing_cx_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-cx-attribute"), 0)}
-#[test] fn resvg_shapes_ellipse_negative_rx_and_ry_attributes() {assert_eq!(run_test("resvg/shapes/ellipse/negative-rx-and-ry-attributes"), 0)}
-#[test] fn resvg_shapes_ellipse_negative_ry_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/negative-ry-attribute"), 0)}
-#[test] fn resvg_shapes_ellipse_percent_values_missing_ry() {assert_eq!(run_test("resvg/shapes/ellipse/percent-values-missing-ry"), 0)}
-#[test] fn resvg_shapes_ellipse_missing_ry_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-ry-attribute"), 0)}
-#[test] fn resvg_shapes_ellipse_missing_rx_and_ry_attributes() {assert_eq!(run_test("resvg/shapes/ellipse/missing-rx-and-ry-attributes"), 0)}
-#[test] fn resvg_shapes_ellipse_simple_case() {assert_eq!(run_test("resvg/shapes/ellipse/simple-case"), 0)}
-#[test] fn resvg_shapes_ellipse_missing_rx_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-rx-attribute"), 0)}
-#[test] fn resvg_shapes_ellipse_percent_values() {assert_eq!(run_test("resvg/shapes/ellipse/percent-values"), 0)}
-#[test] fn resvg_shapes_ellipse_negative_rx_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/negative-rx-attribute"), 0)}
-#[test] fn resvg_shapes_ellipse_missing_cy_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-cy-attribute"), 0)}
-#[test] fn resvg_painting_paint_order_markers_stroke() {assert_eq!(run_test("resvg/painting/paint-order/markers-stroke"), 0)}
-#[test] fn resvg_painting_paint_order_on_text() {assert_eq!(run_test("resvg/painting/paint-order/on-text"), 0)}
-#[test] fn resvg_painting_paint_order_fill_markers_stroke() {assert_eq!(run_test("resvg/painting/paint-order/fill-markers-stroke"), 0)}
-#[test] fn resvg_painting_paint_order_markers() {assert_eq!(run_test("resvg/painting/paint-order/markers"), 0)}
-#[test] fn resvg_painting_paint_order_stroke_markers() {assert_eq!(run_test("resvg/painting/paint-order/stroke-markers"), 0)}
-#[test] fn resvg_painting_paint_order_stroke() {assert_eq!(run_test("resvg/painting/paint-order/stroke"), 0)}
-#[test] fn resvg_painting_paint_order_on_tspan() {assert_eq!(run_test("resvg/painting/paint-order/on-tspan"), 0)}
-#[test] fn resvg_painting_paint_order_duplicates() {assert_eq!(run_test("resvg/painting/paint-order/duplicates"), 0)}
-#[test] fn resvg_painting_paint_order_trailing_data() {assert_eq!(run_test("resvg/painting/paint-order/trailing-data"), 0)}
-#[test] fn resvg_painting_paint_order_stroke_markers_fill() {assert_eq!(run_test("resvg/painting/paint-order/stroke-markers-fill"), 0)}
-#[test] fn resvg_painting_paint_order_normal() {assert_eq!(run_test("resvg/painting/paint-order/normal"), 0)}
-#[test] fn resvg_painting_paint_order_invalid() {assert_eq!(run_test("resvg/painting/paint-order/invalid"), 0)}
-#[test] fn resvg_painting_paint_order_stroke_invalid() {assert_eq!(run_test("resvg/painting/paint-order/stroke-invalid"), 0)}
-#[test] fn resvg_painting_paint_order_fill() {assert_eq!(run_test("resvg/painting/paint-order/fill"), 0)}
-#[test] fn resvg_painting_context_with_pattern_on_marker() {assert_eq!(run_test("resvg/painting/context/with-pattern-on-marker"), 0)}
-#[test] fn resvg_painting_context_in_marker() {assert_eq!(run_test("resvg/painting/context/in-marker"), 0)}
-#[test] fn resvg_painting_context_with_pattern_in_use() {assert_eq!(run_test("resvg/painting/context/with-pattern-in-use"), 0)}
-#[test] fn resvg_painting_context_without_context_element() {assert_eq!(run_test("resvg/painting/context/without-context-element"), 0)}
-#[test] fn resvg_painting_context_on_shape_with_zero_size_bbox() {assert_eq!(run_test("resvg/painting/context/on-shape-with-zero-size-bbox"), 0)}
-#[test] fn resvg_painting_context_in_nested_marker() {assert_eq!(run_test("resvg/painting/context/in-nested-marker"), 0)}
-#[test] fn resvg_painting_context_in_nested_use() {assert_eq!(run_test("resvg/painting/context/in-nested-use"), 0)}
-#[test] fn resvg_painting_context_with_gradient_and_gradient_transform() {assert_eq!(run_test("resvg/painting/context/with-gradient-and-gradient-transform"), 0)}
-#[test] fn resvg_painting_context_with_gradient_on_marker() {assert_eq!(run_test("resvg/painting/context/with-gradient-on-marker"), 0)}
-#[test] fn resvg_painting_context_in_nested_use_and_marker() {assert_eq!(run_test("resvg/painting/context/in-nested-use-and-marker"), 0)}
-#[test] fn resvg_painting_context_with_text() {assert_eq!(run_test("resvg/painting/context/with-text"), 0)}
-#[test] fn resvg_painting_context_with_pattern_objectBoundingBox_in_use() {assert_eq!(run_test("resvg/painting/context/with-pattern-objectBoundingBox-in-use"), 0)}
-#[test] fn resvg_painting_context_with_pattern_and_transform_in_use() {assert_eq!(run_test("resvg/painting/context/with-pattern-and-transform-in-use"), 0)}
-#[test] fn resvg_painting_context_with_gradient_in_use() {assert_eq!(run_test("resvg/painting/context/with-gradient-in-use"), 0)}
-#[test] fn resvg_painting_context_in_use() {assert_eq!(run_test("resvg/painting/context/in-use"), 0)}
-#[test] fn resvg_painting_shape_rendering_path_with_marker() {assert_eq!(run_test("resvg/painting/shape-rendering/path-with-marker"), 0)}
-#[test] fn resvg_painting_shape_rendering_on_horizontal_line() {assert_eq!(run_test("resvg/painting/shape-rendering/on-horizontal-line"), 0)}
-#[test] fn resvg_painting_shape_rendering_optimizeSpeed_on_text() {assert_eq!(run_test("resvg/painting/shape-rendering/optimizeSpeed-on-text"), 0)}
-#[test] fn resvg_painting_shape_rendering_inheritance() {assert_eq!(run_test("resvg/painting/shape-rendering/inheritance"), 0)}
-#[test] fn resvg_painting_shape_rendering_optimizeSpeed_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/optimizeSpeed-on-circle"), 0)}
-#[test] fn resvg_painting_shape_rendering_auto_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/auto-on-circle"), 0)}
-#[test] fn resvg_painting_shape_rendering_geometricPrecision_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/geometricPrecision-on-circle"), 0)}
-#[test] fn resvg_painting_shape_rendering_crispEdges_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/crispEdges-on-circle"), 0)}
-#[test] fn resvg_painting_visibility_collapse_on_tspan() {assert_eq!(run_test("resvg/painting/visibility/collapse-on-tspan"), 0)}
-#[test] fn resvg_painting_visibility_hidden_on_shape() {assert_eq!(run_test("resvg/painting/visibility/hidden-on-shape"), 0)}
-#[test] fn resvg_painting_visibility_hidden_on_group() {assert_eq!(run_test("resvg/painting/visibility/hidden-on-group"), 0)}
-#[test] fn resvg_painting_visibility_hidden_on_tspan() {assert_eq!(run_test("resvg/painting/visibility/hidden-on-tspan"), 0)}
-#[test] fn resvg_painting_visibility_bbox_impact_1() {assert_eq!(run_test("resvg/painting/visibility/bbox-impact-1"), 0)}
-#[test] fn resvg_painting_visibility_bbox_impact_2() {assert_eq!(run_test("resvg/painting/visibility/bbox-impact-2"), 0)}
-#[test] fn resvg_painting_visibility_bbox_impact_3() {assert_eq!(run_test("resvg/painting/visibility/bbox-impact-3"), 0)}
-#[test] fn resvg_painting_stroke_dashoffset_mm_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/mm-units"), 0)}
-#[test] fn resvg_painting_stroke_dashoffset_em_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/em-units"), 0)}
-#[test] fn resvg_painting_stroke_dashoffset_negative_value() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/negative-value"), 0)}
-#[test] fn resvg_painting_stroke_dashoffset_percent_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/percent-units"), 0)}
-#[test] fn resvg_painting_stroke_dashoffset_default() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/default"), 0)}
-#[test] fn resvg_painting_stroke_dashoffset_px_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/px-units"), 0)}
-#[test] fn resvg_painting_fill_RRGGBB_uppercase_color() {assert_eq!(run_test("resvg/painting/fill/#RRGGBB-uppercase-color"), 0)}
-#[test] fn resvg_painting_fill_RGB_color() {assert_eq!(run_test("resvg/painting/fill/#RGB-color"), 0)}
-#[test] fn resvg_painting_fill_radial_gradient_on_text() {assert_eq!(run_test("resvg/painting/fill/radial-gradient-on-text"), 0)}
-#[test] fn resvg_painting_fill_named_color_in_uppercase() {assert_eq!(run_test("resvg/painting/fill/named-color-in-uppercase"), 0)}
-#[test] fn resvg_painting_fill_rgb_int_int_int() {assert_eq!(run_test("resvg/painting/fill/rgb-int-int-int"), 0)}
-#[test] fn resvg_painting_fill_random_value() {assert_eq!(run_test("resvg/painting/fill/random-value"), 0)}
-#[test] fn resvg_painting_fill_rgb_color_with_extra_spaces() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-extra-spaces"), 0)}
-#[test] fn resvg_painting_fill_named_color_in_mixedcase() {assert_eq!(run_test("resvg/painting/fill/named-color-in-mixedcase"), 0)}
-#[test] fn resvg_painting_fill_hsl_999_100percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-999-100percent-25percent"), 0)}
-#[test] fn resvg_painting_fill_hsl_with_alpha() {assert_eq!(run_test("resvg/painting/fill/hsl-with-alpha"), 0)}
-#[test] fn resvg_painting_fill_rgba_0percent_50percent_0percent_0_5() {assert_eq!(run_test("resvg/painting/fill/rgba-0percent-50percent-0percent-0.5"), 0)}
-#[test] fn resvg_painting_fill_hsl_360_100percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-360-100percent-25percent"), 0)}
-#[test] fn resvg_painting_fill_not_trimmed_attribute_value() {assert_eq!(run_test("resvg/painting/fill/not-trimmed-attribute-value"), 0)}
-#[test] fn resvg_painting_fill_funcIRI_to_a_missing_element_with_a_none_fallback() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-a-missing-element-with-a-none-fallback"), 0)}
-#[test] fn resvg_painting_fill_inherit_without_parent() {assert_eq!(run_test("resvg/painting/fill/inherit-without-parent"), 0)}
-#[test] fn resvg_painting_fill_valid_FuncIRI_with_a_fallback_ICC_color() {assert_eq!(run_test("resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color"), 0)}
-#[test] fn resvg_painting_fill_radial_gradient_on_shape() {assert_eq!(run_test("resvg/painting/fill/radial-gradient-on-shape"), 0)}
-#[test] fn resvg_painting_fill_hsl_120_200percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-120-200percent-25percent"), 0)}
-#[test] fn resvg_painting_fill_RGBA() {assert_eq!(run_test("resvg/painting/fill/#RGBA"), 0)}
-#[test] fn resvg_painting_fill_rgb_color_with_a_big_fraction_part() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-a-big-fraction-part"), 0)}
-#[test] fn resvg_painting_fill_pattern_on_shape() {assert_eq!(run_test("resvg/painting/fill/pattern-on-shape"), 0)}
-#[test] fn resvg_painting_fill_uppercase_rgb_color() {assert_eq!(run_test("resvg/painting/fill/uppercase-rgb-color"), 0)}
-#[test] fn resvg_painting_fill_double_inherit() {assert_eq!(run_test("resvg/painting/fill/double-inherit"), 0)}
-#[test] fn resvg_painting_fill_pattern_on_text() {assert_eq!(run_test("resvg/painting/fill/pattern-on-text"), 0)}
-#[test] fn resvg_painting_fill_rgba_0_127_0_50percent() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-50percent"), 0)}
-#[test] fn resvg_painting_fill_missing_FuncIRI_with_a_currentColor_fallback() {assert_eq!(run_test("resvg/painting/fill/missing-FuncIRI-with-a-currentColor-fallback"), 0)}
-#[test] fn resvg_painting_fill_rgb_0_127_0_0_5() {assert_eq!(run_test("resvg/painting/fill/rgb-0-127-0-0.5"), 0)}
-#[test] fn resvg_painting_fill_rgba_0_50percent_0_0_5() {assert_eq!(run_test("resvg/painting/fill/rgba-0-50percent-0-0.5"), 0)}
-#[test] fn resvg_painting_fill_hsl_120_100percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-120-100percent-25percent"), 0)}
-#[test] fn resvg_painting_fill_currentColor_without_parent() {assert_eq!(run_test("resvg/painting/fill/currentColor-without-parent"), 0)}
-#[test] fn resvg_painting_fill_funcIRI_to_an_invalid_element_with_a_none_fallback() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-an-invalid-element-with-a-none-fallback"), 0)}
-#[test] fn resvg_painting_fill_named_color() {assert_eq!(run_test("resvg/painting/fill/named-color"), 0)}
-#[test] fn resvg_painting_fill_invalid_RRGGBB_3() {assert_eq!(run_test("resvg/painting/fill/invalid-#RRGGBB-3"), 0)}
-#[test] fn resvg_painting_fill_hsla_with_percentage_s_and_l_values() {assert_eq!(run_test("resvg/painting/fill/hsla-with-percentage-s-and-l-values"), 0)}
-#[test] fn resvg_painting_fill_invalid_RRGGBB_2() {assert_eq!(run_test("resvg/painting/fill/invalid-#RRGGBB-2"), 0)}
-#[test] fn resvg_painting_fill_rgb_color_with_percentage_values() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-percentage-values"), 0)}
-#[test] fn resvg_painting_fill_transparent() {assert_eq!(run_test("resvg/painting/fill/transparent"), 0)}
-#[test] fn resvg_painting_fill_invalid_FuncIRI_with_a_fallback_color() {assert_eq!(run_test("resvg/painting/fill/invalid-FuncIRI-with-a-fallback-color"), 0)}
-#[test] fn resvg_painting_fill_invalid_RRGGBB_1() {assert_eq!(run_test("resvg/painting/fill/invalid-#RRGGBB-1"), 0)}
-#[test] fn resvg_painting_fill_invalid_FuncIRI_with_a_currentColor_fallback() {assert_eq!(run_test("resvg/painting/fill/invalid-FuncIRI-with-a-currentColor-fallback"), 0)}
-#[test] fn resvg_painting_fill_inherit() {assert_eq!(run_test("resvg/painting/fill/inherit"), 0)}
-#[test] fn resvg_painting_fill_rgb_color_with_percentage_overflow() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-percentage-overflow"), 0)}
-#[test] fn resvg_painting_fill_currentColor() {assert_eq!(run_test("resvg/painting/fill/currentColor"), 0)}
-#[test] fn resvg_painting_fill_none() {assert_eq!(run_test("resvg/painting/fill/none"), 0)}
-#[test] fn resvg_painting_fill_RRGGBB_color() {assert_eq!(run_test("resvg/painting/fill/#RRGGBB-color"), 0)}
-#[test] fn resvg_painting_fill_linear_gradient_on_text() {assert_eq!(run_test("resvg/painting/fill/linear-gradient-on-text"), 0)}
-#[test] fn resvg_painting_fill_icc_color() {assert_eq!(run_test("resvg/painting/fill/icc-color"), 0)}
-#[test] fn resvg_painting_fill_RRGGBBAA() {assert_eq!(run_test("resvg/painting/fill/#RRGGBBAA"), 0)}
-#[test] fn resvg_painting_fill_rgba_0_127_0_0_5() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-0.5"), 0)}
-#[test] fn resvg_painting_fill_funcIRI_with_a_fallback_color() {assert_eq!(run_test("resvg/painting/fill/funcIRI-with-a-fallback-color"), 0)}
-#[test] fn resvg_painting_fill_rgb_color_with_floats() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-floats"), 0)}
-#[test] fn resvg_painting_fill_rgba_0_127_0__1() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0--1"), 0)}
-#[test] fn resvg_painting_fill_rgb_color_with_float_percentage_values() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-float-percentage-values"), 0)}
-#[test] fn resvg_painting_fill_rgba_0_127_0_1() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-1"), 0)}
-#[test] fn resvg_painting_fill_linear_gradient_on_shape() {assert_eq!(run_test("resvg/painting/fill/linear-gradient-on-shape"), 0)}
-#[test] fn resvg_painting_fill_rgba_0_127_0_0() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-0"), 0)}
-#[test] fn resvg_painting_fill_funcIRI_to_a_missing_element_with_a_fallback_color() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-a-missing-element-with-a-fallback-color"), 0)}
-#[test] fn resvg_painting_fill_rgb_color() {assert_eq!(run_test("resvg/painting/fill/rgb-color"), 0)}
-#[test] fn resvg_painting_fill_rgba_0_127_0_2() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-2"), 0)}
-#[test] fn resvg_painting_fill_funcIRI_to_an_unsupported_element() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-an-unsupported-element"), 0)}
-#[test] fn resvg_painting_stroke_opacity_with_linearGradient() {assert_eq!(run_test("resvg/painting/stroke-opacity/with-linearGradient"), 0)}
-#[test] fn resvg_painting_stroke_opacity_on_text() {assert_eq!(run_test("resvg/painting/stroke-opacity/on-text"), 0)}
-#[test] fn resvg_painting_stroke_opacity_on_parent() {assert_eq!(run_test("resvg/painting/stroke-opacity/on-parent"), 0)}
-#[test] fn resvg_painting_stroke_opacity_with_pattern() {assert_eq!(run_test("resvg/painting/stroke-opacity/with-pattern"), 0)}
-#[test] fn resvg_painting_stroke_opacity_half_opacity() {assert_eq!(run_test("resvg/painting/stroke-opacity/half-opacity"), 0)}
-#[test] fn resvg_painting_stroke_opacity_nested() {assert_eq!(run_test("resvg/painting/stroke-opacity/nested"), 0)}
-#[test] fn resvg_painting_stroke_opacity_with_opacity() {assert_eq!(run_test("resvg/painting/stroke-opacity/with-opacity"), 0)}
-#[test] fn resvg_painting_stroke_opacity_50percent() {assert_eq!(run_test("resvg/painting/stroke-opacity/50percent"), 0)}
-#[test] fn resvg_painting_stroke_radial_gradient_on_text() {assert_eq!(run_test("resvg/painting/stroke/radial-gradient-on-text"), 0)}
-#[test] fn resvg_painting_stroke_pattern() {assert_eq!(run_test("resvg/painting/stroke/pattern"), 0)}
-#[test] fn resvg_painting_stroke_radial_gradient() {assert_eq!(run_test("resvg/painting/stroke/radial-gradient"), 0)}
-#[test] fn resvg_painting_stroke_funcIRI_to_unsupported_element() {assert_eq!(run_test("resvg/painting/stroke/funcIRI-to-unsupported-element"), 0)}
-#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_on_shape_without_a_bbox() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-on-shape-without-a-bbox"), 0)}
-#[test] fn resvg_painting_stroke_currentColor_without_a_parent() {assert_eq!(run_test("resvg/painting/stroke/currentColor-without-a-parent"), 0)}
-#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_on_path_without_a_bbox_1() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-on-path-without-a-bbox-1"), 0)}
-#[test] fn resvg_painting_stroke_linear_gradient() {assert_eq!(run_test("resvg/painting/stroke/linear-gradient"), 0)}
-#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_on_path_without_a_bbox_2() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-on-path-without-a-bbox-2"), 0)}
-#[test] fn resvg_painting_stroke_pattern_on_text() {assert_eq!(run_test("resvg/painting/stroke/pattern-on-text"), 0)}
-#[test] fn resvg_painting_stroke_named_color() {assert_eq!(run_test("resvg/painting/stroke/named-color"), 0)}
-#[test] fn resvg_painting_stroke_pattern_with_objectBoundingBox_on_zero_bbox_shape() {assert_eq!(run_test("resvg/painting/stroke/pattern-with-objectBoundingBox-on-zero-bbox-shape"), 0)}
-#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_and_fallback_on_lines() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-and-fallback-on-lines"), 0)}
-#[test] fn resvg_painting_stroke_none() {assert_eq!(run_test("resvg/painting/stroke/none"), 0)}
-#[test] fn resvg_painting_stroke_linear_gradient_on_text() {assert_eq!(run_test("resvg/painting/stroke/linear-gradient-on-text"), 0)}
-#[test] fn resvg_painting_stroke_control_points_clamping_1() {assert_eq!(run_test("resvg/painting/stroke/control-points-clamping-1"), 0)}
-#[test] fn resvg_painting_stroke_line_as_curve_2() {assert_eq!(run_test("resvg/painting/stroke/line-as-curve-2"), 0)}
-#[test] fn resvg_painting_stroke_pattern_with_objectBoundingBox_fallback_on_zero_bbox_shape() {assert_eq!(run_test("resvg/painting/stroke/pattern-with-objectBoundingBox-fallback-on-zero-bbox-shape"), 0)}
-#[test] fn resvg_painting_stroke_control_points_clamping_2() {assert_eq!(run_test("resvg/painting/stroke/control-points-clamping-2"), 0)}
-#[test] fn resvg_painting_stroke_line_as_curve_1() {assert_eq!(run_test("resvg/painting/stroke/line-as-curve-1"), 0)}
-#[test] fn resvg_painting_color_recursive_nested_context() {assert_eq!(run_test("resvg/painting/color/recursive-nested-context"), 0)}
-#[test] fn resvg_painting_color_simple_case() {assert_eq!(run_test("resvg/painting/color/simple-case"), 0)}
-#[test] fn resvg_painting_color_recursive_nested_context_without_color() {assert_eq!(run_test("resvg/painting/color/recursive-nested-context-without-color"), 0)}
-#[test] fn resvg_painting_color_inherit() {assert_eq!(run_test("resvg/painting/color/inherit"), 0)}
-#[test] fn resvg_painting_stroke_linecap_butt() {assert_eq!(run_test("resvg/painting/stroke-linecap/butt"), 0)}
-#[test] fn resvg_painting_stroke_linecap_open_path_with_square() {assert_eq!(run_test("resvg/painting/stroke-linecap/open-path-with-square"), 0)}
-#[test] fn resvg_painting_stroke_linecap_round() {assert_eq!(run_test("resvg/painting/stroke-linecap/round"), 0)}
+#[ignore] #[test] fn resvg_paint_servers_pattern_nested_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/nested-objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_preserveAspectRatio() {assert_eq!(run_test("resvg/paint-servers/pattern/preserveAspectRatio", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_simple_case() {assert_eq!(run_test("resvg/paint-servers/pattern/simple-case", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_missing_width() {assert_eq!(run_test("resvg/paint-servers/pattern/missing-width", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_missing_height() {assert_eq!(run_test("resvg/paint-servers/pattern/missing-height", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_patternUnits_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/patternUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_children_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/children-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_invalid_patternUnits_and_patternContentUnits() {assert_eq!(run_test("resvg/paint-servers/pattern/invalid-patternUnits-and-patternContentUnits", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_pattern_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/pattern-on-child", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_overflow_visible() {assert_eq!(run_test("resvg/paint-servers/pattern/overflow=visible", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_child_with_invalid_FuncIRI() {assert_eq!(run_test("resvg/paint-servers/pattern/child-with-invalid-FuncIRI", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_self_recursive() {assert_eq!(run_test("resvg/paint-servers/pattern/self-recursive", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_text_child() {assert_eq!(run_test("resvg/paint-servers/pattern/text-child", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_invalid_patternTransform() {assert_eq!(run_test("resvg/paint-servers/pattern/invalid-patternTransform", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_viewBox_via_xlink_href() {assert_eq!(run_test("resvg/paint-servers/pattern/viewBox-via-xlink-href", Options::default()), 0)}
+#[test] fn resvg_paint_servers_pattern_self_recursive_on_child() {assert_eq!(run_test("resvg/paint-servers/pattern/self-recursive-on-child", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_with_child() {assert_eq!(run_test("resvg/shapes/rect/with-child", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_y_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/y-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_vi_and_vb_values() {assert_eq!(run_test("resvg/shapes/rect/vi-and-vb-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_ry_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/ry-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_ry_attribute_clamping() {assert_eq!(run_test("resvg/shapes/rect/ry-attribute-clamping", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_ch_values() {assert_eq!(run_test("resvg/shapes/rect/ch-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_cap_values() {assert_eq!(run_test("resvg/shapes/rect/cap-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_zero_width_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/zero-width-attribute-processing", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_zero_rx_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/zero-rx-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_em_values() {assert_eq!(run_test("resvg/shapes/rect/em-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_invalid_length() {assert_eq!(run_test("resvg/shapes/rect/invalid-length", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_rx_attribute_clamping() {assert_eq!(run_test("resvg/shapes/rect/rx-attribute-clamping", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_negative_rx_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/negative-rx-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_lh_values() {assert_eq!(run_test("resvg/shapes/rect/lh-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_vw_and_vh_values() {assert_eq!(run_test("resvg/shapes/rect/vw-and-vh-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_simple_case() {assert_eq!(run_test("resvg/shapes/rect/simple-case", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_ic_values() {assert_eq!(run_test("resvg/shapes/rect/ic-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_negative_width_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/negative-width-attribute-processing", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_rounded_rect() {assert_eq!(run_test("resvg/shapes/rect/rounded-rect", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_missing_height_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/missing-height-attribute-processing", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_ex_values() {assert_eq!(run_test("resvg/shapes/rect/ex-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_negative_rx_and_ry_attributes_resolving() {assert_eq!(run_test("resvg/shapes/rect/negative-rx-and-ry-attributes-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_negative_height_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/negative-height-attribute-processing", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_rx_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/rx-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_x_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/x-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_rlh_values() {assert_eq!(run_test("resvg/shapes/rect/rlh-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_vmin_and_vmax_values() {assert_eq!(run_test("resvg/shapes/rect/vmin-and-vmax-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_percentage_values_2() {assert_eq!(run_test("resvg/shapes/rect/percentage-values-2", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_negative_ry_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/negative-ry-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_zero_height_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/zero-height-attribute-processing", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_q_values() {assert_eq!(run_test("resvg/shapes/rect/q-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_rx_and_ry_attributes_clamping_order() {assert_eq!(run_test("resvg/shapes/rect/rx-and-ry-attributes-clamping-order", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_missing_width_attribute_processing() {assert_eq!(run_test("resvg/shapes/rect/missing-width-attribute-processing", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_percentage_values_1() {assert_eq!(run_test("resvg/shapes/rect/percentage-values-1", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_rem_values() {assert_eq!(run_test("resvg/shapes/rect/rem-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_zero_ry_attribute_resolving() {assert_eq!(run_test("resvg/shapes/rect/zero-ry-attribute-resolving", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_mm_values() {assert_eq!(run_test("resvg/shapes/rect/mm-values", Options::default()), 0)}
+#[test] fn resvg_shapes_rect_invalid_coordinates() {assert_eq!(run_test("resvg/shapes/rect/invalid-coordinates", Options::default()), 0)}
+#[test] fn resvg_shapes_polyline_not_enough_points() {assert_eq!(run_test("resvg/shapes/polyline/not-enough-points", Options::default()), 0)}
+#[test] fn resvg_shapes_polyline_missing_points_attribute() {assert_eq!(run_test("resvg/shapes/polyline/missing-points-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_polyline_stop_processing_on_invalid_data() {assert_eq!(run_test("resvg/shapes/polyline/stop-processing-on-invalid-data", Options::default()), 0)}
+#[test] fn resvg_shapes_polyline_ignore_odd_points() {assert_eq!(run_test("resvg/shapes/polyline/ignore-odd-points", Options::default()), 0)}
+#[test] fn resvg_shapes_polyline_simple_case() {assert_eq!(run_test("resvg/shapes/polyline/simple-case", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_V_V_implicit() {assert_eq!(run_test("resvg/shapes/path/M-V-V-implicit", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_S_S() {assert_eq!(run_test("resvg/shapes/path/M-S-S", Options::default()), 0)}
+#[test] fn resvg_shapes_path_no_commawsp_between_arc_flags() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-between-arc-flags", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_L_Z_rel() {assert_eq!(run_test("resvg/shapes/path/M-L-L-Z-rel", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_H() {assert_eq!(run_test("resvg/shapes/path/M-H", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_Z_L_L() {assert_eq!(run_test("resvg/shapes/path/M-L-Z-L-L", Options::default()), 0)}
+#[test] fn resvg_shapes_path_extra_spaces() {assert_eq!(run_test("resvg/shapes/path/extra-spaces", Options::default()), 0)}
+#[test] fn resvg_shapes_path_missing_coordinate_in_L() {assert_eq!(run_test("resvg/shapes/path/missing-coordinate-in-L", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_Z() {assert_eq!(run_test("resvg/shapes/path/M-Z", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_M() {assert_eq!(run_test("resvg/shapes/path/M-M", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_L_implicit() {assert_eq!(run_test("resvg/shapes/path/M-L-L-implicit", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_T_S_rel() {assert_eq!(run_test("resvg/shapes/path/M-T-S-rel", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L() {assert_eq!(run_test("resvg/shapes/path/M-L", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_Q_T() {assert_eq!(run_test("resvg/shapes/path/M-Q-T", Options::default()), 0)}
+#[test] fn resvg_shapes_path_empty() {assert_eq!(run_test("resvg/shapes/path/empty", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_T_Q_rel() {assert_eq!(run_test("resvg/shapes/path/M-T-Q-rel", Options::default()), 0)}
+#[test] fn resvg_shapes_path_numeric_character_references() {assert_eq!(run_test("resvg/shapes/path/numeric-character-references", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_Q_T_rel() {assert_eq!(run_test("resvg/shapes/path/M-Q-T-rel", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_V_V() {assert_eq!(run_test("resvg/shapes/path/M-V-V", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_T_T() {assert_eq!(run_test("resvg/shapes/path/M-T-T", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M() {assert_eq!(run_test("resvg/shapes/path/M", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_T_Q() {assert_eq!(run_test("resvg/shapes/path/M-T-Q", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_T_S() {assert_eq!(run_test("resvg/shapes/path/M-T-S", Options::default()), 0)}
+#[test] fn resvg_shapes_path_no_commawsp_between_and_after_arc_flags() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-between-and-after-arc-flags", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_A_trimmed() {assert_eq!(run_test("resvg/shapes/path/M-A-trimmed", Options::default()), 0)}
+#[test] fn resvg_shapes_path_no_commawsp_before_arc_flags() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-before-arc-flags", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_rel_M_rel_implicit_M_rel_implicit() {assert_eq!(run_test("resvg/shapes/path/M-rel-M-rel-implicit-M-rel-implicit", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_C_S() {assert_eq!(run_test("resvg/shapes/path/M-C-S", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_M_implicit_M_implicit() {assert_eq!(run_test("resvg/shapes/path/M-M-implicit-M-implicit", Options::default()), 0)}
+#[test] fn resvg_shapes_path_no_commawsp_after_sweep_flag() {assert_eq!(run_test("resvg/shapes/path/no-commawsp-after-sweep-flag", Options::default()), 0)}
+#[test] fn resvg_shapes_path_invalid_data_in_L() {assert_eq!(run_test("resvg/shapes/path/invalid-data-in-L", Options::default()), 0)}
+#[test] fn resvg_shapes_path_A() {assert_eq!(run_test("resvg/shapes/path/A", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_T_T_rel() {assert_eq!(run_test("resvg/shapes/path/M-T-T-rel", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_H_H_implicit() {assert_eq!(run_test("resvg/shapes/path/M-H-H-implicit", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_M_rel() {assert_eq!(run_test("resvg/shapes/path/M-M-rel", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_L_Z() {assert_eq!(run_test("resvg/shapes/path/M-L-L-Z", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_Q_rel_T_rel() {assert_eq!(run_test("resvg/shapes/path/M-Q-rel-T-rel", Options::default()), 0)}
+#[test] fn resvg_shapes_path_multi_line_data() {assert_eq!(run_test("resvg/shapes/path/multi-line-data", Options::default()), 0)}
+#[test] fn resvg_shapes_path_out_of_range_sweep_flag_value() {assert_eq!(run_test("resvg/shapes/path/out-of-range-sweep-flag-value", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_C() {assert_eq!(run_test("resvg/shapes/path/M-C", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_T() {assert_eq!(run_test("resvg/shapes/path/M-T", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_V() {assert_eq!(run_test("resvg/shapes/path/M-V", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_A() {assert_eq!(run_test("resvg/shapes/path/M-A", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_S() {assert_eq!(run_test("resvg/shapes/path/M-S", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_Z_A() {assert_eq!(run_test("resvg/shapes/path/M-L-Z-A", Options::default()), 0)}
+#[test] fn resvg_shapes_path_out_of_range_large_arc_flag_value() {assert_eq!(run_test("resvg/shapes/path/out-of-range-large-arc-flag-value", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_M_L() {assert_eq!(run_test("resvg/shapes/path/M-L-M-L", Options::default()), 0)}
+#[test] fn resvg_shapes_path_negative_sweep_flag_value() {assert_eq!(run_test("resvg/shapes/path/negative-sweep-flag-value", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_rel_M() {assert_eq!(run_test("resvg/shapes/path/M-rel-M", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_M_Z() {assert_eq!(run_test("resvg/shapes/path/M-L-M-Z", Options::default()), 0)}
+#[test] fn resvg_shapes_path_negative_large_arc_flag_value() {assert_eq!(run_test("resvg/shapes/path/negative-large-arc-flag-value", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_H_H() {assert_eq!(run_test("resvg/shapes/path/M-H-H", Options::default()), 0)}
+#[test] fn resvg_shapes_path_invalid_transform() {assert_eq!(run_test("resvg/shapes/path/invalid-transform", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_L_M() {assert_eq!(run_test("resvg/shapes/path/M-L-M", Options::default()), 0)}
+#[test] fn resvg_shapes_path_M_Q() {assert_eq!(run_test("resvg/shapes/path/M-Q", Options::default()), 0)}
+#[test] fn resvg_shapes_polygon_not_enough_points() {assert_eq!(run_test("resvg/shapes/polygon/not-enough-points", Options::default()), 0)}
+#[test] fn resvg_shapes_polygon_missing_points_attribute() {assert_eq!(run_test("resvg/shapes/polygon/missing-points-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_polygon_stop_processing_on_invalid_data() {assert_eq!(run_test("resvg/shapes/polygon/stop-processing-on-invalid-data", Options::default()), 0)}
+#[test] fn resvg_shapes_polygon_ignore_odd_points() {assert_eq!(run_test("resvg/shapes/polygon/ignore-odd-points", Options::default()), 0)}
+#[test] fn resvg_shapes_polygon_simple_case() {assert_eq!(run_test("resvg/shapes/polygon/simple-case", Options::default()), 0)}
+#[test] fn resvg_shapes_line_no_x1_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-x1-coordinate", Options::default()), 0)}
+#[test] fn resvg_shapes_line_no_y2_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-y2-coordinate", Options::default()), 0)}
+#[test] fn resvg_shapes_line_no_x2_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-x2-coordinate", Options::default()), 0)}
+#[test] fn resvg_shapes_line_percent_units() {assert_eq!(run_test("resvg/shapes/line/percent-units", Options::default()), 0)}
+#[test] fn resvg_shapes_line_no_x1_and_y1_coordinates() {assert_eq!(run_test("resvg/shapes/line/no-x1-and-y1-coordinates", Options::default()), 0)}
+#[test] fn resvg_shapes_line_no_y1_coordinate() {assert_eq!(run_test("resvg/shapes/line/no-y1-coordinate", Options::default()), 0)}
+#[test] fn resvg_shapes_line_simple_case() {assert_eq!(run_test("resvg/shapes/line/simple-case", Options::default()), 0)}
+#[test] fn resvg_shapes_line_no_coordinates() {assert_eq!(run_test("resvg/shapes/line/no-coordinates", Options::default()), 0)}
+#[test] fn resvg_shapes_line_with_transform() {assert_eq!(run_test("resvg/shapes/line/with-transform", Options::default()), 0)}
+#[test] fn resvg_shapes_line_no_x2_and_y2_coordinates() {assert_eq!(run_test("resvg/shapes/line/no-x2-and-y2-coordinates", Options::default()), 0)}
+#[test] fn resvg_shapes_circle_missing_cx_and_cy_attributes() {assert_eq!(run_test("resvg/shapes/circle/missing-cx-and-cy-attributes", Options::default()), 0)}
+#[test] fn resvg_shapes_circle_missing_cx_attribute() {assert_eq!(run_test("resvg/shapes/circle/missing-cx-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_circle_simple_case() {assert_eq!(run_test("resvg/shapes/circle/simple-case", Options::default()), 0)}
+#[test] fn resvg_shapes_circle_negative_r_attribute() {assert_eq!(run_test("resvg/shapes/circle/negative-r-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_circle_missing_r_attribute() {assert_eq!(run_test("resvg/shapes/circle/missing-r-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_circle_missing_cy_attribute() {assert_eq!(run_test("resvg/shapes/circle/missing-cy-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_missing_cx_and_cy_attributes() {assert_eq!(run_test("resvg/shapes/ellipse/missing-cx-and-cy-attributes", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_missing_cx_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-cx-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_negative_rx_and_ry_attributes() {assert_eq!(run_test("resvg/shapes/ellipse/negative-rx-and-ry-attributes", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_negative_ry_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/negative-ry-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_percent_values_missing_ry() {assert_eq!(run_test("resvg/shapes/ellipse/percent-values-missing-ry", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_missing_ry_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-ry-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_missing_rx_and_ry_attributes() {assert_eq!(run_test("resvg/shapes/ellipse/missing-rx-and-ry-attributes", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_simple_case() {assert_eq!(run_test("resvg/shapes/ellipse/simple-case", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_missing_rx_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-rx-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_percent_values() {assert_eq!(run_test("resvg/shapes/ellipse/percent-values", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_negative_rx_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/negative-rx-attribute", Options::default()), 0)}
+#[test] fn resvg_shapes_ellipse_missing_cy_attribute() {assert_eq!(run_test("resvg/shapes/ellipse/missing-cy-attribute", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_markers_stroke() {assert_eq!(run_test("resvg/painting/paint-order/markers-stroke", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_on_text() {assert_eq!(run_test("resvg/painting/paint-order/on-text", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_fill_markers_stroke() {assert_eq!(run_test("resvg/painting/paint-order/fill-markers-stroke", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_markers() {assert_eq!(run_test("resvg/painting/paint-order/markers", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_stroke_markers() {assert_eq!(run_test("resvg/painting/paint-order/stroke-markers", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_stroke() {assert_eq!(run_test("resvg/painting/paint-order/stroke", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_on_tspan() {assert_eq!(run_test("resvg/painting/paint-order/on-tspan", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_duplicates() {assert_eq!(run_test("resvg/painting/paint-order/duplicates", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_trailing_data() {assert_eq!(run_test("resvg/painting/paint-order/trailing-data", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_stroke_markers_fill() {assert_eq!(run_test("resvg/painting/paint-order/stroke-markers-fill", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_normal() {assert_eq!(run_test("resvg/painting/paint-order/normal", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_invalid() {assert_eq!(run_test("resvg/painting/paint-order/invalid", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_stroke_invalid() {assert_eq!(run_test("resvg/painting/paint-order/stroke-invalid", Options::default()), 0)}
+#[test] fn resvg_painting_paint_order_fill() {assert_eq!(run_test("resvg/painting/paint-order/fill", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_pattern_on_marker() {assert_eq!(run_test("resvg/painting/context/with-pattern-on-marker", Options::default()), 0)}
+#[test] fn resvg_painting_context_in_marker() {assert_eq!(run_test("resvg/painting/context/in-marker", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_pattern_in_use() {assert_eq!(run_test("resvg/painting/context/with-pattern-in-use", Options::default()), 0)}
+#[test] fn resvg_painting_context_without_context_element() {assert_eq!(run_test("resvg/painting/context/without-context-element", Options::default()), 0)}
+#[test] fn resvg_painting_context_on_shape_with_zero_size_bbox() {assert_eq!(run_test("resvg/painting/context/on-shape-with-zero-size-bbox", Options::default()), 0)}
+#[test] fn resvg_painting_context_in_nested_marker() {assert_eq!(run_test("resvg/painting/context/in-nested-marker", Options::default()), 0)}
+#[test] fn resvg_painting_context_in_nested_use() {assert_eq!(run_test("resvg/painting/context/in-nested-use", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_gradient_and_gradient_transform() {assert_eq!(run_test("resvg/painting/context/with-gradient-and-gradient-transform", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_gradient_on_marker() {assert_eq!(run_test("resvg/painting/context/with-gradient-on-marker", Options::default()), 0)}
+#[test] fn resvg_painting_context_in_nested_use_and_marker() {assert_eq!(run_test("resvg/painting/context/in-nested-use-and-marker", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_text() {assert_eq!(run_test("resvg/painting/context/with-text", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_pattern_objectBoundingBox_in_use() {assert_eq!(run_test("resvg/painting/context/with-pattern-objectBoundingBox-in-use", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_pattern_and_transform_in_use() {assert_eq!(run_test("resvg/painting/context/with-pattern-and-transform-in-use", Options::default()), 0)}
+#[test] fn resvg_painting_context_with_gradient_in_use() {assert_eq!(run_test("resvg/painting/context/with-gradient-in-use", Options::default()), 0)}
+#[test] fn resvg_painting_context_in_use() {assert_eq!(run_test("resvg/painting/context/in-use", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_path_with_marker() {assert_eq!(run_test("resvg/painting/shape-rendering/path-with-marker", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_on_horizontal_line() {assert_eq!(run_test("resvg/painting/shape-rendering/on-horizontal-line", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_optimizeSpeed_on_text() {assert_eq!(run_test("resvg/painting/shape-rendering/optimizeSpeed-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_inheritance() {assert_eq!(run_test("resvg/painting/shape-rendering/inheritance", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_optimizeSpeed_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/optimizeSpeed-on-circle", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_auto_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/auto-on-circle", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_geometricPrecision_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/geometricPrecision-on-circle", Options::default()), 0)}
+#[test] fn resvg_painting_shape_rendering_crispEdges_on_circle() {assert_eq!(run_test("resvg/painting/shape-rendering/crispEdges-on-circle", Options::default()), 0)}
+#[test] fn resvg_painting_visibility_collapse_on_tspan() {assert_eq!(run_test("resvg/painting/visibility/collapse-on-tspan", Options::default()), 0)}
+#[test] fn resvg_painting_visibility_hidden_on_shape() {assert_eq!(run_test("resvg/painting/visibility/hidden-on-shape", Options::default()), 0)}
+#[test] fn resvg_painting_visibility_hidden_on_group() {assert_eq!(run_test("resvg/painting/visibility/hidden-on-group", Options::default()), 0)}
+#[test] fn resvg_painting_visibility_hidden_on_tspan() {assert_eq!(run_test("resvg/painting/visibility/hidden-on-tspan", Options::default()), 0)}
+#[test] fn resvg_painting_visibility_bbox_impact_1() {assert_eq!(run_test("resvg/painting/visibility/bbox-impact-1", Options::default()), 0)}
+#[test] fn resvg_painting_visibility_bbox_impact_2() {assert_eq!(run_test("resvg/painting/visibility/bbox-impact-2", Options::default()), 0)}
+#[test] fn resvg_painting_visibility_bbox_impact_3() {assert_eq!(run_test("resvg/painting/visibility/bbox-impact-3", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_mm_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/mm-units", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_em_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/em-units", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_negative_value() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/negative-value", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_percent_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/percent-units", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_default() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/default", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dashoffset_px_units() {assert_eq!(run_test("resvg/painting/stroke-dashoffset/px-units", Options::default()), 0)}
+#[test] fn resvg_painting_fill_RRGGBB_uppercase_color() {assert_eq!(run_test("resvg/painting/fill/#RRGGBB-uppercase-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_RGB_color() {assert_eq!(run_test("resvg/painting/fill/#RGB-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_radial_gradient_on_text() {assert_eq!(run_test("resvg/painting/fill/radial-gradient-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_fill_named_color_in_uppercase() {assert_eq!(run_test("resvg/painting/fill/named-color-in-uppercase", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_int_int_int() {assert_eq!(run_test("resvg/painting/fill/rgb-int-int-int", Options::default()), 0)}
+#[test] fn resvg_painting_fill_random_value() {assert_eq!(run_test("resvg/painting/fill/random-value", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_color_with_extra_spaces() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-extra-spaces", Options::default()), 0)}
+#[test] fn resvg_painting_fill_named_color_in_mixedcase() {assert_eq!(run_test("resvg/painting/fill/named-color-in-mixedcase", Options::default()), 0)}
+#[test] fn resvg_painting_fill_hsl_999_100percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-999-100percent-25percent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_hsl_with_alpha() {assert_eq!(run_test("resvg/painting/fill/hsl-with-alpha", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0percent_50percent_0percent_0_5() {assert_eq!(run_test("resvg/painting/fill/rgba-0percent-50percent-0percent-0.5", Options::default()), 0)}
+#[test] fn resvg_painting_fill_hsl_360_100percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-360-100percent-25percent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_not_trimmed_attribute_value() {assert_eq!(run_test("resvg/painting/fill/not-trimmed-attribute-value", Options::default()), 0)}
+#[test] fn resvg_painting_fill_funcIRI_to_a_missing_element_with_a_none_fallback() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-a-missing-element-with-a-none-fallback", Options::default()), 0)}
+#[test] fn resvg_painting_fill_inherit_without_parent() {assert_eq!(run_test("resvg/painting/fill/inherit-without-parent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_valid_FuncIRI_with_a_fallback_ICC_color() {assert_eq!(run_test("resvg/painting/fill/valid-FuncIRI-with-a-fallback-ICC-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_radial_gradient_on_shape() {assert_eq!(run_test("resvg/painting/fill/radial-gradient-on-shape", Options::default()), 0)}
+#[test] fn resvg_painting_fill_hsl_120_200percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-120-200percent-25percent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_RGBA() {assert_eq!(run_test("resvg/painting/fill/#RGBA", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_color_with_a_big_fraction_part() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-a-big-fraction-part", Options::default()), 0)}
+#[test] fn resvg_painting_fill_pattern_on_shape() {assert_eq!(run_test("resvg/painting/fill/pattern-on-shape", Options::default()), 0)}
+#[test] fn resvg_painting_fill_uppercase_rgb_color() {assert_eq!(run_test("resvg/painting/fill/uppercase-rgb-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_double_inherit() {assert_eq!(run_test("resvg/painting/fill/double-inherit", Options::default()), 0)}
+#[test] fn resvg_painting_fill_pattern_on_text() {assert_eq!(run_test("resvg/painting/fill/pattern-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0_127_0_50percent() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-50percent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_missing_FuncIRI_with_a_currentColor_fallback() {assert_eq!(run_test("resvg/painting/fill/missing-FuncIRI-with-a-currentColor-fallback", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_0_127_0_0_5() {assert_eq!(run_test("resvg/painting/fill/rgb-0-127-0-0.5", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0_50percent_0_0_5() {assert_eq!(run_test("resvg/painting/fill/rgba-0-50percent-0-0.5", Options::default()), 0)}
+#[test] fn resvg_painting_fill_hsl_120_100percent_25percent() {assert_eq!(run_test("resvg/painting/fill/hsl-120-100percent-25percent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_currentColor_without_parent() {assert_eq!(run_test("resvg/painting/fill/currentColor-without-parent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_funcIRI_to_an_invalid_element_with_a_none_fallback() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-an-invalid-element-with-a-none-fallback", Options::default()), 0)}
+#[test] fn resvg_painting_fill_named_color() {assert_eq!(run_test("resvg/painting/fill/named-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_invalid_RRGGBB_3() {assert_eq!(run_test("resvg/painting/fill/invalid-#RRGGBB-3", Options::default()), 0)}
+#[test] fn resvg_painting_fill_hsla_with_percentage_s_and_l_values() {assert_eq!(run_test("resvg/painting/fill/hsla-with-percentage-s-and-l-values", Options::default()), 0)}
+#[test] fn resvg_painting_fill_invalid_RRGGBB_2() {assert_eq!(run_test("resvg/painting/fill/invalid-#RRGGBB-2", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_color_with_percentage_values() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-percentage-values", Options::default()), 0)}
+#[test] fn resvg_painting_fill_transparent() {assert_eq!(run_test("resvg/painting/fill/transparent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_invalid_FuncIRI_with_a_fallback_color() {assert_eq!(run_test("resvg/painting/fill/invalid-FuncIRI-with-a-fallback-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_invalid_RRGGBB_1() {assert_eq!(run_test("resvg/painting/fill/invalid-#RRGGBB-1", Options::default()), 0)}
+#[test] fn resvg_painting_fill_invalid_FuncIRI_with_a_currentColor_fallback() {assert_eq!(run_test("resvg/painting/fill/invalid-FuncIRI-with-a-currentColor-fallback", Options::default()), 0)}
+#[test] fn resvg_painting_fill_inherit() {assert_eq!(run_test("resvg/painting/fill/inherit", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_color_with_percentage_overflow() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-percentage-overflow", Options::default()), 0)}
+#[test] fn resvg_painting_fill_currentColor() {assert_eq!(run_test("resvg/painting/fill/currentColor", Options::default()), 0)}
+#[test] fn resvg_painting_fill_none() {assert_eq!(run_test("resvg/painting/fill/none", Options::default()), 0)}
+#[test] fn resvg_painting_fill_RRGGBB_color() {assert_eq!(run_test("resvg/painting/fill/#RRGGBB-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_linear_gradient_on_text() {assert_eq!(run_test("resvg/painting/fill/linear-gradient-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_fill_icc_color() {assert_eq!(run_test("resvg/painting/fill/icc-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_RRGGBBAA() {assert_eq!(run_test("resvg/painting/fill/#RRGGBBAA", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0_127_0_0_5() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-0.5", Options::default()), 0)}
+#[test] fn resvg_painting_fill_funcIRI_with_a_fallback_color() {assert_eq!(run_test("resvg/painting/fill/funcIRI-with-a-fallback-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_color_with_floats() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-floats", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0_127_0__1() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0--1", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_color_with_float_percentage_values() {assert_eq!(run_test("resvg/painting/fill/rgb-color-with-float-percentage-values", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0_127_0_1() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-1", Options::default()), 0)}
+#[test] fn resvg_painting_fill_linear_gradient_on_shape() {assert_eq!(run_test("resvg/painting/fill/linear-gradient-on-shape", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0_127_0_0() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-0", Options::default()), 0)}
+#[test] fn resvg_painting_fill_funcIRI_to_a_missing_element_with_a_fallback_color() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-a-missing-element-with-a-fallback-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgb_color() {assert_eq!(run_test("resvg/painting/fill/rgb-color", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rgba_0_127_0_2() {assert_eq!(run_test("resvg/painting/fill/rgba-0-127-0-2", Options::default()), 0)}
+#[test] fn resvg_painting_fill_funcIRI_to_an_unsupported_element() {assert_eq!(run_test("resvg/painting/fill/funcIRI-to-an-unsupported-element", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_with_linearGradient() {assert_eq!(run_test("resvg/painting/stroke-opacity/with-linearGradient", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_on_text() {assert_eq!(run_test("resvg/painting/stroke-opacity/on-text", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_on_parent() {assert_eq!(run_test("resvg/painting/stroke-opacity/on-parent", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_with_pattern() {assert_eq!(run_test("resvg/painting/stroke-opacity/with-pattern", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_half_opacity() {assert_eq!(run_test("resvg/painting/stroke-opacity/half-opacity", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_nested() {assert_eq!(run_test("resvg/painting/stroke-opacity/nested", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_with_opacity() {assert_eq!(run_test("resvg/painting/stroke-opacity/with-opacity", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_opacity_50percent() {assert_eq!(run_test("resvg/painting/stroke-opacity/50percent", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_radial_gradient_on_text() {assert_eq!(run_test("resvg/painting/stroke/radial-gradient-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_pattern() {assert_eq!(run_test("resvg/painting/stroke/pattern", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_radial_gradient() {assert_eq!(run_test("resvg/painting/stroke/radial-gradient", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_funcIRI_to_unsupported_element() {assert_eq!(run_test("resvg/painting/stroke/funcIRI-to-unsupported-element", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_on_shape_without_a_bbox() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-on-shape-without-a-bbox", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_currentColor_without_a_parent() {assert_eq!(run_test("resvg/painting/stroke/currentColor-without-a-parent", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_on_path_without_a_bbox_1() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-on-path-without-a-bbox-1", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linear_gradient() {assert_eq!(run_test("resvg/painting/stroke/linear-gradient", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_on_path_without_a_bbox_2() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-on-path-without-a-bbox-2", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_pattern_on_text() {assert_eq!(run_test("resvg/painting/stroke/pattern-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_named_color() {assert_eq!(run_test("resvg/painting/stroke/named-color", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_pattern_with_objectBoundingBox_on_zero_bbox_shape() {assert_eq!(run_test("resvg/painting/stroke/pattern-with-objectBoundingBox-on-zero-bbox-shape", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_gradient_with_objectBoundingBox_and_fallback_on_lines() {assert_eq!(run_test("resvg/painting/stroke/gradient-with-objectBoundingBox-and-fallback-on-lines", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_none() {assert_eq!(run_test("resvg/painting/stroke/none", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linear_gradient_on_text() {assert_eq!(run_test("resvg/painting/stroke/linear-gradient-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_control_points_clamping_1() {assert_eq!(run_test("resvg/painting/stroke/control-points-clamping-1", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_line_as_curve_2() {assert_eq!(run_test("resvg/painting/stroke/line-as-curve-2", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_pattern_with_objectBoundingBox_fallback_on_zero_bbox_shape() {assert_eq!(run_test("resvg/painting/stroke/pattern-with-objectBoundingBox-fallback-on-zero-bbox-shape", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_control_points_clamping_2() {assert_eq!(run_test("resvg/painting/stroke/control-points-clamping-2", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_line_as_curve_1() {assert_eq!(run_test("resvg/painting/stroke/line-as-curve-1", Options::default()), 0)}
+#[test] fn resvg_painting_color_recursive_nested_context() {assert_eq!(run_test("resvg/painting/color/recursive-nested-context", Options::default()), 0)}
+#[test] fn resvg_painting_color_simple_case() {assert_eq!(run_test("resvg/painting/color/simple-case", Options::default()), 0)}
+#[test] fn resvg_painting_color_recursive_nested_context_without_color() {assert_eq!(run_test("resvg/painting/color/recursive-nested-context-without-color", Options::default()), 0)}
+#[test] fn resvg_painting_color_inherit() {assert_eq!(run_test("resvg/painting/color/inherit", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linecap_butt() {assert_eq!(run_test("resvg/painting/stroke-linecap/butt", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linecap_open_path_with_square() {assert_eq!(run_test("resvg/painting/stroke-linecap/open-path-with-square", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linecap_round() {assert_eq!(run_test("resvg/painting/stroke-linecap/round", Options::default()), 0)}
 // need to check how Firefox does it
-#[ignore] #[test] fn resvg_painting_stroke_linecap_zero_length_path_with_square() {assert_eq!(run_test("resvg/painting/stroke-linecap/zero-length-path-with-square"), 0)}
-#[test] fn resvg_painting_stroke_linecap_square() {assert_eq!(run_test("resvg/painting/stroke-linecap/square"), 0)}
+#[ignore] #[test] fn resvg_painting_stroke_linecap_zero_length_path_with_square() {assert_eq!(run_test("resvg/painting/stroke-linecap/zero-length-path-with-square", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linecap_square() {assert_eq!(run_test("resvg/painting/stroke-linecap/square", Options::default()), 0)}
 // need to check how Chrome does it
-#[ignore] #[test] fn resvg_painting_stroke_linecap_zero_length_path_with_round() {assert_eq!(run_test("resvg/painting/stroke-linecap/zero-length-path-with-round"), 0)}
-#[test] fn resvg_painting_stroke_linecap_open_path_with_butt() {assert_eq!(run_test("resvg/painting/stroke-linecap/open-path-with-butt"), 0)}
-#[test] fn resvg_painting_stroke_linecap_zero_length_path_with_butt() {assert_eq!(run_test("resvg/painting/stroke-linecap/zero-length-path-with-butt"), 0)}
-#[test] fn resvg_painting_stroke_linecap_open_path_with_round() {assert_eq!(run_test("resvg/painting/stroke-linecap/open-path-with-round"), 0)}
-#[test] fn resvg_painting_stroke_width_zero() {assert_eq!(run_test("resvg/painting/stroke-width/zero"), 0)}
-#[test] fn resvg_painting_stroke_width_percentage() {assert_eq!(run_test("resvg/painting/stroke-width/percentage"), 0)}
-#[test] fn resvg_painting_stroke_width_bold() {assert_eq!(run_test("resvg/painting/stroke-width/bold"), 0)}
-#[test] fn resvg_painting_stroke_width_default() {assert_eq!(run_test("resvg/painting/stroke-width/default"), 0)}
-#[test] fn resvg_painting_stroke_width_negative() {assert_eq!(run_test("resvg/painting/stroke-width/negative"), 0)}
-#[test] fn resvg_painting_overflow_visible_on_marker() {assert_eq!(run_test("resvg/painting/overflow/visible-on-marker"), 0)}
-#[test] fn resvg_painting_overflow_inherit_on_marker_without_parent() {assert_eq!(run_test("resvg/painting/overflow/inherit-on-marker-without-parent"), 0)}
-#[test] fn resvg_painting_overflow_auto_on_marker() {assert_eq!(run_test("resvg/painting/overflow/auto-on-marker"), 0)}
-#[test] fn resvg_painting_overflow_inherit_on_marker() {assert_eq!(run_test("resvg/painting/overflow/inherit-on-marker"), 0)}
-#[test] fn resvg_painting_overflow_scroll_on_marker() {assert_eq!(run_test("resvg/painting/overflow/scroll-on-marker"), 0)}
-#[test] fn resvg_painting_opacity_on_an_invalid_element() {assert_eq!(run_test("resvg/painting/opacity/on-an-invalid-element"), 0)}
-#[test] fn resvg_painting_opacity_clamp_value_1() {assert_eq!(run_test("resvg/painting/opacity/clamp-value-1"), 0)}
-#[test] fn resvg_painting_opacity_clamp_value_2() {assert_eq!(run_test("resvg/painting/opacity/clamp-value-2"), 0)}
-#[test] fn resvg_painting_opacity_on_the_root_svg() {assert_eq!(run_test("resvg/painting/opacity/on-the-root-svg"), 0)}
-#[test] fn resvg_painting_opacity_group_opacity() {assert_eq!(run_test("resvg/painting/opacity/group-opacity"), 0)}
-#[test] fn resvg_painting_opacity_50percent() {assert_eq!(run_test("resvg/painting/opacity/50percent"), 0)}
-#[test] fn resvg_painting_opacity_mixed_group_opacity() {assert_eq!(run_test("resvg/painting/opacity/mixed-group-opacity"), 0)}
-#[test] fn resvg_painting_opacity_invalid_value_2() {assert_eq!(run_test("resvg/painting/opacity/invalid-value-2"), 0)}
-#[test] fn resvg_painting_opacity_bBox_impact() {assert_eq!(run_test("resvg/painting/opacity/bBox-impact"), 0)}
-#[test] fn resvg_painting_isolation_isolate() {assert_eq!(run_test("resvg/painting/isolation/isolate"), 0)}
-#[test] fn resvg_painting_isolation_as_property() {assert_eq!(run_test("resvg/painting/isolation/as-property"), 0)}
-#[test] fn resvg_painting_stroke_linejoin_miter() {assert_eq!(run_test("resvg/painting/stroke-linejoin/miter"), 0)}
-#[test] fn resvg_painting_stroke_linejoin_arcs() {assert_eq!(run_test("resvg/painting/stroke-linejoin/arcs"), 0)}
-#[test] fn resvg_painting_stroke_linejoin_round() {assert_eq!(run_test("resvg/painting/stroke-linejoin/round"), 0)}
-#[test] fn resvg_painting_stroke_linejoin_bevel() {assert_eq!(run_test("resvg/painting/stroke-linejoin/bevel"), 0)}
+#[ignore] #[test] fn resvg_painting_stroke_linecap_zero_length_path_with_round() {assert_eq!(run_test("resvg/painting/stroke-linecap/zero-length-path-with-round", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linecap_open_path_with_butt() {assert_eq!(run_test("resvg/painting/stroke-linecap/open-path-with-butt", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linecap_zero_length_path_with_butt() {assert_eq!(run_test("resvg/painting/stroke-linecap/zero-length-path-with-butt", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linecap_open_path_with_round() {assert_eq!(run_test("resvg/painting/stroke-linecap/open-path-with-round", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_width_zero() {assert_eq!(run_test("resvg/painting/stroke-width/zero", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_width_percentage() {assert_eq!(run_test("resvg/painting/stroke-width/percentage", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_width_bold() {assert_eq!(run_test("resvg/painting/stroke-width/bold", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_width_default() {assert_eq!(run_test("resvg/painting/stroke-width/default", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_width_negative() {assert_eq!(run_test("resvg/painting/stroke-width/negative", Options::default()), 0)}
+#[test] fn resvg_painting_overflow_visible_on_marker() {assert_eq!(run_test("resvg/painting/overflow/visible-on-marker", Options::default()), 0)}
+#[test] fn resvg_painting_overflow_inherit_on_marker_without_parent() {assert_eq!(run_test("resvg/painting/overflow/inherit-on-marker-without-parent", Options::default()), 0)}
+#[test] fn resvg_painting_overflow_auto_on_marker() {assert_eq!(run_test("resvg/painting/overflow/auto-on-marker", Options::default()), 0)}
+#[test] fn resvg_painting_overflow_inherit_on_marker() {assert_eq!(run_test("resvg/painting/overflow/inherit-on-marker", Options::default()), 0)}
+#[test] fn resvg_painting_overflow_scroll_on_marker() {assert_eq!(run_test("resvg/painting/overflow/scroll-on-marker", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_on_an_invalid_element() {assert_eq!(run_test("resvg/painting/opacity/on-an-invalid-element", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_clamp_value_1() {assert_eq!(run_test("resvg/painting/opacity/clamp-value-1", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_clamp_value_2() {assert_eq!(run_test("resvg/painting/opacity/clamp-value-2", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_on_the_root_svg() {assert_eq!(run_test("resvg/painting/opacity/on-the-root-svg", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_group_opacity() {assert_eq!(run_test("resvg/painting/opacity/group-opacity", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_50percent() {assert_eq!(run_test("resvg/painting/opacity/50percent", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_mixed_group_opacity() {assert_eq!(run_test("resvg/painting/opacity/mixed-group-opacity", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_invalid_value_2() {assert_eq!(run_test("resvg/painting/opacity/invalid-value-2", Options::default()), 0)}
+#[test] fn resvg_painting_opacity_bBox_impact() {assert_eq!(run_test("resvg/painting/opacity/bBox-impact", Options::default()), 0)}
+#[test] fn resvg_painting_isolation_isolate() {assert_eq!(run_test("resvg/painting/isolation/isolate", Options::default()), 0)}
+#[test] fn resvg_painting_isolation_as_property() {assert_eq!(run_test("resvg/painting/isolation/as-property", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linejoin_miter() {assert_eq!(run_test("resvg/painting/stroke-linejoin/miter", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linejoin_arcs() {assert_eq!(run_test("resvg/painting/stroke-linejoin/arcs", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linejoin_round() {assert_eq!(run_test("resvg/painting/stroke-linejoin/round", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_linejoin_bevel() {assert_eq!(run_test("resvg/painting/stroke-linejoin/bevel", Options::default()), 0)}
 // not supported in PDF
-#[ignore] #[test] fn resvg_painting_stroke_linejoin_miter_clip() {assert_eq!(run_test("resvg/painting/stroke-linejoin/miter-clip"), 0)}
-#[test] fn resvg_painting_stroke_miterlimit_valid_value() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/valid-value"), 0)}
-#[test] fn resvg_painting_stroke_miterlimit_value_with_mm() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/value-with-mm"), 0)}
-#[test] fn resvg_painting_stroke_miterlimit_invalid_value() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/invalid-value"), 0)}
-#[test] fn resvg_painting_stroke_miterlimit_default() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/default"), 0)}
-#[test] fn resvg_painting_stroke_miterlimit_value_with_percent() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/value-with-percent"), 0)}
-#[test] fn resvg_painting_display_none_on_defs() {assert_eq!(run_test("resvg/painting/display/none-on-defs"), 0)}
-#[test] fn resvg_painting_display_none_on_svg() {assert_eq!(run_test("resvg/painting/display/none-on-svg"), 0)}
-#[test] fn resvg_painting_display_none_on_tref() {assert_eq!(run_test("resvg/painting/display/none-on-tref"), 0)}
-#[test] fn resvg_painting_display_none_on_rect() {assert_eq!(run_test("resvg/painting/display/none-on-rect"), 0)}
-#[test] fn resvg_painting_display_none_on_tspan_1() {assert_eq!(run_test("resvg/painting/display/none-on-tspan-1"), 0)}
-#[test] fn resvg_painting_display_none_on_clipPath() {assert_eq!(run_test("resvg/painting/display/none-on-clipPath"), 0)}
-#[test] fn resvg_painting_display_bBox_impact() {assert_eq!(run_test("resvg/painting/display/bBox-impact"), 0)}
-#[test] fn resvg_painting_display_none_on_linearGradient() {assert_eq!(run_test("resvg/painting/display/none-on-linearGradient"), 0)}
-#[test] fn resvg_painting_display_none_on_tspan_2() {assert_eq!(run_test("resvg/painting/display/none-on-tspan-2"), 0)}
-#[test] fn resvg_painting_fill_opacity_with_linearGradient() {assert_eq!(run_test("resvg/painting/fill-opacity/with-linearGradient"), 0)}
-#[test] fn resvg_painting_fill_opacity_on_text() {assert_eq!(run_test("resvg/painting/fill-opacity/on-text"), 0)}
-#[test] fn resvg_painting_fill_opacity_on_parent() {assert_eq!(run_test("resvg/painting/fill-opacity/on-parent"), 0)}
-#[test] fn resvg_painting_fill_opacity_with_pattern() {assert_eq!(run_test("resvg/painting/fill-opacity/with-pattern"), 0)}
-#[test] fn resvg_painting_fill_opacity_half_opacity() {assert_eq!(run_test("resvg/painting/fill-opacity/half-opacity"), 0)}
-#[test] fn resvg_painting_fill_opacity_nested() {assert_eq!(run_test("resvg/painting/fill-opacity/nested"), 0)}
-#[test] fn resvg_painting_fill_opacity_with_opacity() {assert_eq!(run_test("resvg/painting/fill-opacity/with-opacity"), 0)}
-#[test] fn resvg_painting_fill_opacity_50percent() {assert_eq!(run_test("resvg/painting/fill-opacity/50percent"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_0_n_with_butt_caps() {assert_eq!(run_test("resvg/painting/stroke-dasharray/0-n-with-butt-caps"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_mm_units() {assert_eq!(run_test("resvg/painting/stroke-dasharray/mm-units"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_negative_sum() {assert_eq!(run_test("resvg/painting/stroke-dasharray/negative-sum"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_em_units() {assert_eq!(run_test("resvg/painting/stroke-dasharray/em-units"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_even_count() {assert_eq!(run_test("resvg/painting/stroke-dasharray/even-count"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_ws_separator() {assert_eq!(run_test("resvg/painting/stroke-dasharray/ws-separator"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_percent_units() {assert_eq!(run_test("resvg/painting/stroke-dasharray/percent-units"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_0_n_with_square_caps() {assert_eq!(run_test("resvg/painting/stroke-dasharray/0-n-with-square-caps"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_multiple_subpaths() {assert_eq!(run_test("resvg/painting/stroke-dasharray/multiple-subpaths"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_negative_values() {assert_eq!(run_test("resvg/painting/stroke-dasharray/negative-values"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_on_a_circle() {assert_eq!(run_test("resvg/painting/stroke-dasharray/on-a-circle"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_zero_sum() {assert_eq!(run_test("resvg/painting/stroke-dasharray/zero-sum"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_none() {assert_eq!(run_test("resvg/painting/stroke-dasharray/none"), 0)}
+#[ignore] #[test] fn resvg_painting_stroke_linejoin_miter_clip() {assert_eq!(run_test("resvg/painting/stroke-linejoin/miter-clip", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_miterlimit_valid_value() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/valid-value", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_miterlimit_value_with_mm() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/value-with-mm", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_miterlimit_invalid_value() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/invalid-value", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_miterlimit_default() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/default", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_miterlimit_value_with_percent() {assert_eq!(run_test("resvg/painting/stroke-miterlimit/value-with-percent", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_defs() {assert_eq!(run_test("resvg/painting/display/none-on-defs", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_svg() {assert_eq!(run_test("resvg/painting/display/none-on-svg", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_tref() {assert_eq!(run_test("resvg/painting/display/none-on-tref", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_rect() {assert_eq!(run_test("resvg/painting/display/none-on-rect", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_tspan_1() {assert_eq!(run_test("resvg/painting/display/none-on-tspan-1", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_clipPath() {assert_eq!(run_test("resvg/painting/display/none-on-clipPath", Options::default()), 0)}
+#[test] fn resvg_painting_display_bBox_impact() {assert_eq!(run_test("resvg/painting/display/bBox-impact", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_linearGradient() {assert_eq!(run_test("resvg/painting/display/none-on-linearGradient", Options::default()), 0)}
+#[test] fn resvg_painting_display_none_on_tspan_2() {assert_eq!(run_test("resvg/painting/display/none-on-tspan-2", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_with_linearGradient() {assert_eq!(run_test("resvg/painting/fill-opacity/with-linearGradient", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_on_text() {assert_eq!(run_test("resvg/painting/fill-opacity/on-text", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_on_parent() {assert_eq!(run_test("resvg/painting/fill-opacity/on-parent", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_with_pattern() {assert_eq!(run_test("resvg/painting/fill-opacity/with-pattern", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_half_opacity() {assert_eq!(run_test("resvg/painting/fill-opacity/half-opacity", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_nested() {assert_eq!(run_test("resvg/painting/fill-opacity/nested", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_with_opacity() {assert_eq!(run_test("resvg/painting/fill-opacity/with-opacity", Options::default()), 0)}
+#[test] fn resvg_painting_fill_opacity_50percent() {assert_eq!(run_test("resvg/painting/fill-opacity/50percent", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_0_n_with_butt_caps() {assert_eq!(run_test("resvg/painting/stroke-dasharray/0-n-with-butt-caps", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_mm_units() {assert_eq!(run_test("resvg/painting/stroke-dasharray/mm-units", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_negative_sum() {assert_eq!(run_test("resvg/painting/stroke-dasharray/negative-sum", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_em_units() {assert_eq!(run_test("resvg/painting/stroke-dasharray/em-units", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_even_count() {assert_eq!(run_test("resvg/painting/stroke-dasharray/even-count", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_ws_separator() {assert_eq!(run_test("resvg/painting/stroke-dasharray/ws-separator", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_percent_units() {assert_eq!(run_test("resvg/painting/stroke-dasharray/percent-units", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_0_n_with_square_caps() {assert_eq!(run_test("resvg/painting/stroke-dasharray/0-n-with-square-caps", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_multiple_subpaths() {assert_eq!(run_test("resvg/painting/stroke-dasharray/multiple-subpaths", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_negative_values() {assert_eq!(run_test("resvg/painting/stroke-dasharray/negative-values", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_on_a_circle() {assert_eq!(run_test("resvg/painting/stroke-dasharray/on-a-circle", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_zero_sum() {assert_eq!(run_test("resvg/painting/stroke-dasharray/zero-sum", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_none() {assert_eq!(run_test("resvg/painting/stroke-dasharray/none", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_painting_stroke_dasharray_n_0() {assert_eq!(run_test("resvg/painting/stroke-dasharray/n-0"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_comma_ws_separator() {assert_eq!(run_test("resvg/painting/stroke-dasharray/comma-ws-separator"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_0_n_with_round_caps() {assert_eq!(run_test("resvg/painting/stroke-dasharray/0-n-with-round-caps"), 0)}
-#[test] fn resvg_painting_stroke_dasharray_odd_count() {assert_eq!(run_test("resvg/painting/stroke-dasharray/odd-count"), 0)}
-#[test] fn resvg_painting_marker_with_a_text_child() {assert_eq!(run_test("resvg/painting/marker/with-a-text-child"), 0)}
-#[test] fn resvg_painting_marker_orient_1_5rad() {assert_eq!(run_test("resvg/painting/marker/orient=1.5rad"), 0)}
-#[test] fn resvg_painting_marker_orient_0_25turn() {assert_eq!(run_test("resvg/painting/marker/orient=0.25turn"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-L"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_L_M_C() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-M-C"), 0)}
-#[test] fn resvg_painting_marker_marker_on_polygon() {assert_eq!(run_test("resvg/painting/marker/marker-on-polygon"), 0)}
-#[test] fn resvg_painting_marker_empty() {assert_eq!(run_test("resvg/painting/marker/empty"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_2() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-2"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_3() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-3"), 0)}
-#[test] fn resvg_painting_marker_marker_on_text() {assert_eq!(run_test("resvg/painting/marker/marker-on-text"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_1() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-1"), 0)}
-#[test] fn resvg_painting_marker_the_marker_property() {assert_eq!(run_test("resvg/painting/marker/the-marker-property"), 0)}
-#[test] fn resvg_painting_marker_nested() {assert_eq!(run_test("resvg/painting/marker/nested"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_L_C() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-C"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_4() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-4"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_5() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-5"), 0)}
-#[test] fn resvg_painting_marker_with_invalid_markerUnits() {assert_eq!(run_test("resvg/painting/marker/with-invalid-markerUnits"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_M_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-M-L"), 0)}
-#[test] fn resvg_painting_marker_only_marker_start() {assert_eq!(run_test("resvg/painting/marker/only-marker-start"), 0)}
-#[test] fn resvg_painting_marker_with_viewBox_2() {assert_eq!(run_test("resvg/painting/marker/with-viewBox-2"), 0)}
-#[test] fn resvg_painting_marker_orient_9999() {assert_eq!(run_test("resvg/painting/marker/orient=9999"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_7() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-7"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_6() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-6"), 0)}
-#[test] fn resvg_painting_marker_marker_on_line() {assert_eq!(run_test("resvg/painting/marker/marker-on-line"), 0)}
-#[test] fn resvg_painting_marker_default_clip() {assert_eq!(run_test("resvg/painting/marker/default-clip"), 0)}
-#[test] fn resvg_painting_marker_only_marker_mid() {assert_eq!(run_test("resvg/painting/marker/only-marker-mid"), 0)}
-#[test] fn resvg_painting_marker_with_markerUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/painting/marker/with-markerUnits=userSpaceOnUse"), 0)}
-#[test] fn resvg_painting_marker_with_viewBox_1() {assert_eq!(run_test("resvg/painting/marker/with-viewBox-1"), 0)}
-#[test] fn resvg_painting_marker_with_a_large_stroke() {assert_eq!(run_test("resvg/painting/marker/with-a-large-stroke"), 0)}
-#[test] fn resvg_painting_marker_recursive_2() {assert_eq!(run_test("resvg/painting/marker/recursive-2"), 0)}
-#[test] fn resvg_painting_marker_marker_on_rounded_rect() {assert_eq!(run_test("resvg/painting/marker/marker-on-rounded-rect"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_L_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-L"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_L_Z() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-Z"), 0)}
-#[test] fn resvg_painting_marker_recursive_3() {assert_eq!(run_test("resvg/painting/marker/recursive-3"), 0)}
-#[test] fn resvg_painting_marker_inheritance_1() {assert_eq!(run_test("resvg/painting/marker/inheritance-1"), 0)}
-#[test] fn resvg_painting_marker_recursive_1() {assert_eq!(run_test("resvg/painting/marker/recursive-1"), 0)}
-#[test] fn resvg_painting_marker_orient__45() {assert_eq!(run_test("resvg/painting/marker/orient=-45"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_8() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-8"), 0)}
-#[test] fn resvg_painting_marker_marker_on_circle() {assert_eq!(run_test("resvg/painting/marker/marker-on-circle"), 0)}
-#[test] fn resvg_painting_marker_orient_40grad() {assert_eq!(run_test("resvg/painting/marker/orient=40grad"), 0)}
-#[test] fn resvg_painting_marker_zero_sized_stroke() {assert_eq!(run_test("resvg/painting/marker/zero-sized-stroke"), 0)}
-#[test] fn resvg_painting_marker_inheritance_2() {assert_eq!(run_test("resvg/painting/marker/inheritance-2"), 0)}
-#[test] fn resvg_painting_marker_recursive_4() {assert_eq!(run_test("resvg/painting/marker/recursive-4"), 0)}
-#[test] fn resvg_painting_marker_recursive_5() {assert_eq!(run_test("resvg/painting/marker/recursive-5"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L"), 0)}
-#[test] fn resvg_painting_marker_percent_values() {assert_eq!(run_test("resvg/painting/marker/percent-values"), 0)}
-#[test] fn resvg_painting_marker_orient_30() {assert_eq!(run_test("resvg/painting/marker/orient=30"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_start_reverse() {assert_eq!(run_test("resvg/painting/marker/orient=auto-start-reverse"), 0)}
-#[test] fn resvg_painting_marker_marker_with_a_negative_size() {assert_eq!(run_test("resvg/painting/marker/marker-with-a-negative-size"), 0)}
-#[test] fn resvg_painting_marker_orient_auto_on_M_L_L_Z_Z_Z() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-L-Z-Z-Z"), 0)}
-#[test] fn resvg_painting_marker_zero_length_path_2() {assert_eq!(run_test("resvg/painting/marker/zero-length-path-2"), 0)}
-#[test] fn resvg_painting_marker_only_marker_end() {assert_eq!(run_test("resvg/painting/marker/only-marker-end"), 0)}
+#[ignore] #[test] fn resvg_painting_stroke_dasharray_n_0() {assert_eq!(run_test("resvg/painting/stroke-dasharray/n-0", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_comma_ws_separator() {assert_eq!(run_test("resvg/painting/stroke-dasharray/comma-ws-separator", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_0_n_with_round_caps() {assert_eq!(run_test("resvg/painting/stroke-dasharray/0-n-with-round-caps", Options::default()), 0)}
+#[test] fn resvg_painting_stroke_dasharray_odd_count() {assert_eq!(run_test("resvg/painting/stroke-dasharray/odd-count", Options::default()), 0)}
+#[test] fn resvg_painting_marker_with_a_text_child() {assert_eq!(run_test("resvg/painting/marker/with-a-text-child", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_1_5rad() {assert_eq!(run_test("resvg/painting/marker/orient=1.5rad", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_0_25turn() {assert_eq!(run_test("resvg/painting/marker/orient=0.25turn", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-L", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_L_M_C() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-M-C", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_on_polygon() {assert_eq!(run_test("resvg/painting/marker/marker-on-polygon", Options::default()), 0)}
+#[test] fn resvg_painting_marker_empty() {assert_eq!(run_test("resvg/painting/marker/empty", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_2() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-2", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_3() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-3", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_on_text() {assert_eq!(run_test("resvg/painting/marker/marker-on-text", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_1() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-1", Options::default()), 0)}
+#[test] fn resvg_painting_marker_the_marker_property() {assert_eq!(run_test("resvg/painting/marker/the-marker-property", Options::default()), 0)}
+#[test] fn resvg_painting_marker_nested() {assert_eq!(run_test("resvg/painting/marker/nested", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_L_C() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-C", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_4() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-4", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_5() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-5", Options::default()), 0)}
+#[test] fn resvg_painting_marker_with_invalid_markerUnits() {assert_eq!(run_test("resvg/painting/marker/with-invalid-markerUnits", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_M_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-M-L", Options::default()), 0)}
+#[test] fn resvg_painting_marker_only_marker_start() {assert_eq!(run_test("resvg/painting/marker/only-marker-start", Options::default()), 0)}
+#[test] fn resvg_painting_marker_with_viewBox_2() {assert_eq!(run_test("resvg/painting/marker/with-viewBox-2", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_9999() {assert_eq!(run_test("resvg/painting/marker/orient=9999", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_7() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-7", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_6() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-6", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_on_line() {assert_eq!(run_test("resvg/painting/marker/marker-on-line", Options::default()), 0)}
+#[test] fn resvg_painting_marker_default_clip() {assert_eq!(run_test("resvg/painting/marker/default-clip", Options::default()), 0)}
+#[test] fn resvg_painting_marker_only_marker_mid() {assert_eq!(run_test("resvg/painting/marker/only-marker-mid", Options::default()), 0)}
+#[test] fn resvg_painting_marker_with_markerUnits_userSpaceOnUse() {assert_eq!(run_test("resvg/painting/marker/with-markerUnits=userSpaceOnUse", Options::default()), 0)}
+#[test] fn resvg_painting_marker_with_viewBox_1() {assert_eq!(run_test("resvg/painting/marker/with-viewBox-1", Options::default()), 0)}
+#[test] fn resvg_painting_marker_with_a_large_stroke() {assert_eq!(run_test("resvg/painting/marker/with-a-large-stroke", Options::default()), 0)}
+#[test] fn resvg_painting_marker_recursive_2() {assert_eq!(run_test("resvg/painting/marker/recursive-2", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_on_rounded_rect() {assert_eq!(run_test("resvg/painting/marker/marker-on-rounded-rect", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_L_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-L", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_L_Z() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-Z", Options::default()), 0)}
+#[test] fn resvg_painting_marker_recursive_3() {assert_eq!(run_test("resvg/painting/marker/recursive-3", Options::default()), 0)}
+#[test] fn resvg_painting_marker_inheritance_1() {assert_eq!(run_test("resvg/painting/marker/inheritance-1", Options::default()), 0)}
+#[test] fn resvg_painting_marker_recursive_1() {assert_eq!(run_test("resvg/painting/marker/recursive-1", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient__45() {assert_eq!(run_test("resvg/painting/marker/orient=-45", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_C_C_8() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-C-C-8", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_on_circle() {assert_eq!(run_test("resvg/painting/marker/marker-on-circle", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_40grad() {assert_eq!(run_test("resvg/painting/marker/orient=40grad", Options::default()), 0)}
+#[test] fn resvg_painting_marker_zero_sized_stroke() {assert_eq!(run_test("resvg/painting/marker/zero-sized-stroke", Options::default()), 0)}
+#[test] fn resvg_painting_marker_inheritance_2() {assert_eq!(run_test("resvg/painting/marker/inheritance-2", Options::default()), 0)}
+#[test] fn resvg_painting_marker_recursive_4() {assert_eq!(run_test("resvg/painting/marker/recursive-4", Options::default()), 0)}
+#[test] fn resvg_painting_marker_recursive_5() {assert_eq!(run_test("resvg/painting/marker/recursive-5", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_L() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L", Options::default()), 0)}
+#[test] fn resvg_painting_marker_percent_values() {assert_eq!(run_test("resvg/painting/marker/percent-values", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_30() {assert_eq!(run_test("resvg/painting/marker/orient=30", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_start_reverse() {assert_eq!(run_test("resvg/painting/marker/orient=auto-start-reverse", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_with_a_negative_size() {assert_eq!(run_test("resvg/painting/marker/marker-with-a-negative-size", Options::default()), 0)}
+#[test] fn resvg_painting_marker_orient_auto_on_M_L_L_Z_Z_Z() {assert_eq!(run_test("resvg/painting/marker/orient=auto-on-M-L-L-Z-Z-Z", Options::default()), 0)}
+#[test] fn resvg_painting_marker_zero_length_path_2() {assert_eq!(run_test("resvg/painting/marker/zero-length-path-2", Options::default()), 0)}
+#[test] fn resvg_painting_marker_only_marker_end() {assert_eq!(run_test("resvg/painting/marker/only-marker-end", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_painting_marker_with_an_image_child() {assert_eq!(run_test("resvg/painting/marker/with-an-image-child"), 0)}
-#[test] fn resvg_painting_marker_invalid_child() {assert_eq!(run_test("resvg/painting/marker/invalid-child"), 0)}
-#[test] fn resvg_painting_marker_marker_on_rect() {assert_eq!(run_test("resvg/painting/marker/marker-on-rect"), 0)}
-#[test] fn resvg_painting_marker_on_ArcTo() {assert_eq!(run_test("resvg/painting/marker/on-ArcTo"), 0)}
-#[test] fn resvg_painting_marker_zero_length_path_1() {assert_eq!(run_test("resvg/painting/marker/zero-length-path-1"), 0)}
-#[test] fn resvg_painting_marker_target_with_subpaths_1() {assert_eq!(run_test("resvg/painting/marker/target-with-subpaths-1"), 0)}
-#[test] fn resvg_painting_marker_the_marker_property_in_CSS() {assert_eq!(run_test("resvg/painting/marker/the-marker-property-in-CSS"), 0)}
-#[test] fn resvg_painting_marker_no_stroke_on_target() {assert_eq!(run_test("resvg/painting/marker/no-stroke-on-target"), 0)}
-#[test] fn resvg_painting_marker_target_with_subpaths_2() {assert_eq!(run_test("resvg/painting/marker/target-with-subpaths-2"), 0)}
-#[test] fn resvg_painting_marker_zero_sized() {assert_eq!(run_test("resvg/painting/marker/zero-sized"), 0)}
-#[test] fn resvg_painting_marker_marker_on_polyline() {assert_eq!(run_test("resvg/painting/marker/marker-on-polyline"), 0)}
-#[test] fn resvg_painting_image_rendering_optimizeSpeed_on_SVG() {assert_eq!(run_test("resvg/painting/image-rendering/optimizeSpeed-on-SVG"), 0)}
-#[test] fn resvg_painting_image_rendering_on_feImage() {assert_eq!(run_test("resvg/painting/image-rendering/on-feImage"), 0)}
-#[test] fn resvg_painting_image_rendering_optimizeSpeed() {assert_eq!(run_test("resvg/painting/image-rendering/optimizeSpeed"), 0)}
-#[test] fn resvg_painting_fill_rule_nonzero() {assert_eq!(run_test("resvg/painting/fill-rule/nonzero"), 0)}
-#[test] fn resvg_painting_fill_rule_evenodd() {assert_eq!(run_test("resvg/painting/fill-rule/evenodd"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_exclusion() {assert_eq!(run_test("resvg/painting/mix-blend-mode/exclusion"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_xor() {assert_eq!(run_test("resvg/painting/mix-blend-mode/xor"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_multiply() {assert_eq!(run_test("resvg/painting/mix-blend-mode/multiply"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_hard_light() {assert_eq!(run_test("resvg/painting/mix-blend-mode/hard-light"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_opacity_on_group() {assert_eq!(run_test("resvg/painting/mix-blend-mode/opacity-on-group"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_color_burn() {assert_eq!(run_test("resvg/painting/mix-blend-mode/color-burn"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_difference() {assert_eq!(run_test("resvg/painting/mix-blend-mode/difference"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_hue() {assert_eq!(run_test("resvg/painting/mix-blend-mode/hue"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_as_property() {assert_eq!(run_test("resvg/painting/mix-blend-mode/as-property"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_opacity_on_element() {assert_eq!(run_test("resvg/painting/mix-blend-mode/opacity-on-element"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_saturation() {assert_eq!(run_test("resvg/painting/mix-blend-mode/saturation"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_luminosity() {assert_eq!(run_test("resvg/painting/mix-blend-mode/luminosity"), 0)}
+#[ignore] #[test] fn resvg_painting_marker_with_an_image_child() {assert_eq!(run_test("resvg/painting/marker/with-an-image-child", Options::default()), 0)}
+#[test] fn resvg_painting_marker_invalid_child() {assert_eq!(run_test("resvg/painting/marker/invalid-child", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_on_rect() {assert_eq!(run_test("resvg/painting/marker/marker-on-rect", Options::default()), 0)}
+#[test] fn resvg_painting_marker_on_ArcTo() {assert_eq!(run_test("resvg/painting/marker/on-ArcTo", Options::default()), 0)}
+#[test] fn resvg_painting_marker_zero_length_path_1() {assert_eq!(run_test("resvg/painting/marker/zero-length-path-1", Options::default()), 0)}
+#[test] fn resvg_painting_marker_target_with_subpaths_1() {assert_eq!(run_test("resvg/painting/marker/target-with-subpaths-1", Options::default()), 0)}
+#[test] fn resvg_painting_marker_the_marker_property_in_CSS() {assert_eq!(run_test("resvg/painting/marker/the-marker-property-in-CSS", Options::default()), 0)}
+#[test] fn resvg_painting_marker_no_stroke_on_target() {assert_eq!(run_test("resvg/painting/marker/no-stroke-on-target", Options::default()), 0)}
+#[test] fn resvg_painting_marker_target_with_subpaths_2() {assert_eq!(run_test("resvg/painting/marker/target-with-subpaths-2", Options::default()), 0)}
+#[test] fn resvg_painting_marker_zero_sized() {assert_eq!(run_test("resvg/painting/marker/zero-sized", Options::default()), 0)}
+#[test] fn resvg_painting_marker_marker_on_polyline() {assert_eq!(run_test("resvg/painting/marker/marker-on-polyline", Options::default()), 0)}
+#[test] fn resvg_painting_image_rendering_optimizeSpeed_on_SVG() {assert_eq!(run_test("resvg/painting/image-rendering/optimizeSpeed-on-SVG", Options::default()), 0)}
+#[test] fn resvg_painting_image_rendering_on_feImage() {assert_eq!(run_test("resvg/painting/image-rendering/on-feImage", Options::default()), 0)}
+#[test] fn resvg_painting_image_rendering_optimizeSpeed() {assert_eq!(run_test("resvg/painting/image-rendering/optimizeSpeed", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rule_nonzero() {assert_eq!(run_test("resvg/painting/fill-rule/nonzero", Options::default()), 0)}
+#[test] fn resvg_painting_fill_rule_evenodd() {assert_eq!(run_test("resvg/painting/fill-rule/evenodd", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_exclusion() {assert_eq!(run_test("resvg/painting/mix-blend-mode/exclusion", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_xor() {assert_eq!(run_test("resvg/painting/mix-blend-mode/xor", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_multiply() {assert_eq!(run_test("resvg/painting/mix-blend-mode/multiply", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_hard_light() {assert_eq!(run_test("resvg/painting/mix-blend-mode/hard-light", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_opacity_on_group() {assert_eq!(run_test("resvg/painting/mix-blend-mode/opacity-on-group", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_color_burn() {assert_eq!(run_test("resvg/painting/mix-blend-mode/color-burn", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_difference() {assert_eq!(run_test("resvg/painting/mix-blend-mode/difference", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_hue() {assert_eq!(run_test("resvg/painting/mix-blend-mode/hue", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_as_property() {assert_eq!(run_test("resvg/painting/mix-blend-mode/as-property", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_opacity_on_element() {assert_eq!(run_test("resvg/painting/mix-blend-mode/opacity-on-element", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_saturation() {assert_eq!(run_test("resvg/painting/mix-blend-mode/saturation", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_luminosity() {assert_eq!(run_test("resvg/painting/mix-blend-mode/luminosity", Options::default()), 0)}
 // pdfium bug
-#[ignore] #[test] fn resvg_painting_mix_blend_mode_color_dodge() {assert_eq!(run_test("resvg/painting/mix-blend-mode/color-dodge"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_overlay() {assert_eq!(run_test("resvg/painting/mix-blend-mode/overlay"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_lighten() {assert_eq!(run_test("resvg/painting/mix-blend-mode/lighten"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_normal() {assert_eq!(run_test("resvg/painting/mix-blend-mode/normal"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_color() {assert_eq!(run_test("resvg/painting/mix-blend-mode/color"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_screen() {assert_eq!(run_test("resvg/painting/mix-blend-mode/screen"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_soft_light() {assert_eq!(run_test("resvg/painting/mix-blend-mode/soft-light"), 0)}
-#[test] fn resvg_painting_mix_blend_mode_darken() {assert_eq!(run_test("resvg/painting/mix-blend-mode/darken"), 0)}
-#[test] fn resvg_text_alignment_baseline_two_textPath_with_middle_on_first() {assert_eq!(run_test("resvg/text/alignment-baseline/two-textPath-with-middle-on-first"), 0)}
-#[test] fn resvg_text_alignment_baseline_mathematical() {assert_eq!(run_test("resvg/text/alignment-baseline/mathematical"), 0)}
-#[test] fn resvg_text_alignment_baseline_middle_on_textPath() {assert_eq!(run_test("resvg/text/alignment-baseline/middle-on-textPath"), 0)}
-#[test] fn resvg_text_alignment_baseline_text_before_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/text-before-edge"), 0)}
-#[test] fn resvg_text_alignment_baseline_hanging_with_underline() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-with-underline"), 0)}
-#[test] fn resvg_text_alignment_baseline_baseline() {assert_eq!(run_test("resvg/text/alignment-baseline/baseline"), 0)}
-#[test] fn resvg_text_alignment_baseline_alphabetic() {assert_eq!(run_test("resvg/text/alignment-baseline/alphabetic"), 0)}
-#[test] fn resvg_text_alignment_baseline_before_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/before-edge"), 0)}
-#[test] fn resvg_text_alignment_baseline_auto() {assert_eq!(run_test("resvg/text/alignment-baseline/auto"), 0)}
-#[test] fn resvg_text_alignment_baseline_middle() {assert_eq!(run_test("resvg/text/alignment-baseline/middle"), 0)}
-#[test] fn resvg_text_alignment_baseline_text_after_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/text-after-edge"), 0)}
-#[test] fn resvg_text_alignment_baseline_hanging_on_tspan() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-on-tspan"), 0)}
-#[test] fn resvg_text_alignment_baseline_inherit() {assert_eq!(run_test("resvg/text/alignment-baseline/inherit"), 0)}
-#[test] fn resvg_text_alignment_baseline_ideographic() {assert_eq!(run_test("resvg/text/alignment-baseline/ideographic"), 0)}
-#[test] fn resvg_text_alignment_baseline_after_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/after-edge"), 0)}
-#[test] fn resvg_text_alignment_baseline_hanging_and_baseline_shift_eq_20_on_tspan() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan"), 0)}
-#[test] fn resvg_text_alignment_baseline_hanging() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging"), 0)}
-#[test] fn resvg_text_alignment_baseline_hanging_on_vertical() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-on-vertical"), 0)}
-#[test] fn resvg_text_alignment_baseline_central() {assert_eq!(run_test("resvg/text/alignment-baseline/central"), 0)}
-#[test] fn resvg_text_tspan_style_override() {assert_eq!(run_test("resvg/text/tspan/style-override"), 0)}
-#[test] fn resvg_text_tspan_multiple_coordinates() {assert_eq!(run_test("resvg/text/tspan/multiple-coordinates"), 0)}
-#[test] fn resvg_text_tspan_with_filter() {assert_eq!(run_test("resvg/text/tspan/with-filter"), 0)}
-#[test] fn resvg_text_tspan_transform() {assert_eq!(run_test("resvg/text/tspan/transform"), 0)}
-#[test] fn resvg_text_tspan_pseudo_multi_line() {assert_eq!(run_test("resvg/text/tspan/pseudo-multi-line"), 0)}
-#[test] fn resvg_text_tspan_nested_rotate() {assert_eq!(run_test("resvg/text/tspan/nested-rotate"), 0)}
-#[test] fn resvg_text_tspan_bidi_reordering() {assert_eq!(run_test("resvg/text/tspan/bidi-reordering"), 0)}
-#[test] fn resvg_text_tspan_nested() {assert_eq!(run_test("resvg/text/tspan/nested"), 0)}
-#[test] fn resvg_text_tspan_without_attributes() {assert_eq!(run_test("resvg/text/tspan/without-attributes"), 0)}
-#[test] fn resvg_text_tspan_text_shaping_across_multiple_tspan_2() {assert_eq!(run_test("resvg/text/tspan/text-shaping-across-multiple-tspan-2"), 0)}
-#[test] fn resvg_text_tspan_with_x_and_y() {assert_eq!(run_test("resvg/text/tspan/with-x-and-y"), 0)}
-#[test] fn resvg_text_tspan_text_shaping_across_multiple_tspan_1() {assert_eq!(run_test("resvg/text/tspan/text-shaping-across-multiple-tspan-1"), 0)}
-#[test] fn resvg_text_tspan_mixed_font_size() {assert_eq!(run_test("resvg/text/tspan/mixed-font-size"), 0)}
-#[test] fn resvg_text_tspan_outside_the_text() {assert_eq!(run_test("resvg/text/tspan/outside-the-text"), 0)}
-#[test] fn resvg_text_tspan_with_dy() {assert_eq!(run_test("resvg/text/tspan/with-dy"), 0)}
-#[test] fn resvg_text_tspan_xml_space_2() {assert_eq!(run_test("resvg/text/tspan/xml-space-2"), 0)}
-#[test] fn resvg_text_tspan_with_mask() {assert_eq!(run_test("resvg/text/tspan/with-mask"), 0)}
-#[test] fn resvg_text_tspan_tspan_bbox_2() {assert_eq!(run_test("resvg/text/tspan/tspan-bbox-2"), 0)}
-#[test] fn resvg_text_tspan_with_clip_path() {assert_eq!(run_test("resvg/text/tspan/with-clip-path"), 0)}
-#[test] fn resvg_text_tspan_xml_space_1() {assert_eq!(run_test("resvg/text/tspan/xml-space-1"), 0)}
-#[test] fn resvg_text_tspan_nested_whitespaces() {assert_eq!(run_test("resvg/text/tspan/nested-whitespaces"), 0)}
-#[test] fn resvg_text_tspan_with_opacity() {assert_eq!(run_test("resvg/text/tspan/with-opacity"), 0)}
-#[test] fn resvg_text_tspan_tspan_bbox_1() {assert_eq!(run_test("resvg/text/tspan/tspan-bbox-1"), 0)}
-#[test] fn resvg_text_tspan_rotate_and_display_none() {assert_eq!(run_test("resvg/text/tspan/rotate-and-display-none"), 0)}
-#[test] fn resvg_text_tspan_only_with_y() {assert_eq!(run_test("resvg/text/tspan/only-with-y"), 0)}
-#[test] fn resvg_text_tspan_mixed_xml_space_2() {assert_eq!(run_test("resvg/text/tspan/mixed-xml-space-2"), 0)}
-#[test] fn resvg_text_tspan_mixed_xml_space_3() {assert_eq!(run_test("resvg/text/tspan/mixed-xml-space-3"), 0)}
-#[test] fn resvg_text_tspan_mixed() {assert_eq!(run_test("resvg/text/tspan/mixed"), 0)}
-#[test] fn resvg_text_tspan_mixed_xml_space_1() {assert_eq!(run_test("resvg/text/tspan/mixed-xml-space-1"), 0)}
-#[test] fn resvg_text_tspan_rotate_on_child() {assert_eq!(run_test("resvg/text/tspan/rotate-on-child"), 0)}
-#[test] fn resvg_text_tspan_sequential() {assert_eq!(run_test("resvg/text/tspan/sequential"), 0)}
-#[test] fn resvg_text_writing_mode_tb_with_dy_on_second_tspan() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-dy-on-second-tspan"), 0)}
-#[test] fn resvg_text_writing_mode_tb_rl() {assert_eq!(run_test("resvg/text/writing-mode/tb-rl"), 0)}
-#[test] fn resvg_text_writing_mode_tb_with_dx_on_second_tspan() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-dx-on-second-tspan"), 0)}
-#[test] fn resvg_text_writing_mode_lr_tb() {assert_eq!(run_test("resvg/text/writing-mode/lr-tb"), 0)}
-#[test] fn resvg_text_writing_mode_mixed_languages_with_tb_and_underline() {assert_eq!(run_test("resvg/text/writing-mode/mixed-languages-with-tb-and-underline"), 0)}
-#[test] fn resvg_text_writing_mode_rl_tb() {assert_eq!(run_test("resvg/text/writing-mode/rl-tb"), 0)}
-#[test] fn resvg_text_writing_mode_lr() {assert_eq!(run_test("resvg/text/writing-mode/lr"), 0)}
-#[test] fn resvg_text_writing_mode_japanese_with_tb() {assert_eq!(run_test("resvg/text/writing-mode/japanese-with-tb"), 0)}
-#[test] fn resvg_text_writing_mode_tb() {assert_eq!(run_test("resvg/text/writing-mode/tb"), 0)}
-#[test] fn resvg_text_writing_mode_tb_with_rotate_and_underline() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-rotate-and-underline"), 0)}
-#[test] fn resvg_text_writing_mode_invalid_value() {assert_eq!(run_test("resvg/text/writing-mode/invalid-value"), 0)}
-#[test] fn resvg_text_writing_mode_tb_with_alignment() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-alignment"), 0)}
-#[test] fn resvg_text_writing_mode_vertical_rl() {assert_eq!(run_test("resvg/text/writing-mode/vertical-rl"), 0)}
-#[test] fn resvg_text_writing_mode_tb_with_dx_on_tspan() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-dx-on-tspan"), 0)}
-#[test] fn resvg_text_writing_mode_inheritance() {assert_eq!(run_test("resvg/text/writing-mode/inheritance"), 0)}
-#[test] fn resvg_text_writing_mode_on_tspan() {assert_eq!(run_test("resvg/text/writing-mode/on-tspan"), 0)}
-#[test] fn resvg_text_writing_mode_mixed_languages_with_tb() {assert_eq!(run_test("resvg/text/writing-mode/mixed-languages-with-tb"), 0)}
-#[test] fn resvg_text_writing_mode_tb_and_punctuation() {assert_eq!(run_test("resvg/text/writing-mode/tb-and-punctuation"), 0)}
-#[test] fn resvg_text_writing_mode_tb_with_rotate() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-rotate"), 0)}
-#[test] fn resvg_text_writing_mode_arabic_with_rl() {assert_eq!(run_test("resvg/text/writing-mode/arabic-with-rl"), 0)}
-#[test] fn resvg_text_writing_mode_horizontal_tb() {assert_eq!(run_test("resvg/text/writing-mode/horizontal-tb"), 0)}
-#[test] fn resvg_text_writing_mode_vertical_lr() {assert_eq!(run_test("resvg/text/writing-mode/vertical-lr"), 0)}
-#[test] fn resvg_text_writing_mode_rl() {assert_eq!(run_test("resvg/text/writing-mode/rl"), 0)}
-#[test] fn resvg_text_glyph_orientation_horizontal_simple_case() {assert_eq!(run_test("resvg/text/glyph-orientation-horizontal/simple-case"), 0)}
-#[test] fn resvg_text_letter_spacing_non_ASCII_character() {assert_eq!(run_test("resvg/text/letter-spacing/non-ASCII-character"), 0)}
-#[test] fn resvg_text_letter_spacing_large_negative() {assert_eq!(run_test("resvg/text/letter-spacing/large-negative"), 0)}
-#[test] fn resvg_text_letter_spacing_0() {assert_eq!(run_test("resvg/text/letter-spacing/0"), 0)}
-#[test] fn resvg_text_letter_spacing_mixed_spacing() {assert_eq!(run_test("resvg/text/letter-spacing/mixed-spacing"), 0)}
-#[test] fn resvg_text_letter_spacing_3() {assert_eq!(run_test("resvg/text/letter-spacing/3"), 0)}
-#[test] fn resvg_text_letter_spacing_5percent() {assert_eq!(run_test("resvg/text/letter-spacing/5percent"), 0)}
-#[test] fn resvg_text_letter_spacing__3() {assert_eq!(run_test("resvg/text/letter-spacing/-3"), 0)}
-#[test] fn resvg_text_letter_spacing_on_Arabic() {assert_eq!(run_test("resvg/text/letter-spacing/on-Arabic"), 0)}
-#[test] fn resvg_text_letter_spacing_1mm() {assert_eq!(run_test("resvg/text/letter-spacing/1mm"), 0)}
-#[test] fn resvg_text_letter_spacing_normal() {assert_eq!(run_test("resvg/text/letter-spacing/normal"), 0)}
-#[test] fn resvg_text_letter_spacing_filter_bbox() {assert_eq!(run_test("resvg/text/letter-spacing/filter-bbox"), 0)}
+#[ignore] #[test] fn resvg_painting_mix_blend_mode_color_dodge() {assert_eq!(run_test("resvg/painting/mix-blend-mode/color-dodge", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_overlay() {assert_eq!(run_test("resvg/painting/mix-blend-mode/overlay", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_lighten() {assert_eq!(run_test("resvg/painting/mix-blend-mode/lighten", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_normal() {assert_eq!(run_test("resvg/painting/mix-blend-mode/normal", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_color() {assert_eq!(run_test("resvg/painting/mix-blend-mode/color", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_screen() {assert_eq!(run_test("resvg/painting/mix-blend-mode/screen", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_soft_light() {assert_eq!(run_test("resvg/painting/mix-blend-mode/soft-light", Options::default()), 0)}
+#[test] fn resvg_painting_mix_blend_mode_darken() {assert_eq!(run_test("resvg/painting/mix-blend-mode/darken", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_two_textPath_with_middle_on_first() {assert_eq!(run_test("resvg/text/alignment-baseline/two-textPath-with-middle-on-first", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_mathematical() {assert_eq!(run_test("resvg/text/alignment-baseline/mathematical", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_middle_on_textPath() {assert_eq!(run_test("resvg/text/alignment-baseline/middle-on-textPath", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_text_before_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/text-before-edge", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_hanging_with_underline() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-with-underline", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_baseline() {assert_eq!(run_test("resvg/text/alignment-baseline/baseline", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_alphabetic() {assert_eq!(run_test("resvg/text/alignment-baseline/alphabetic", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_before_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/before-edge", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_auto() {assert_eq!(run_test("resvg/text/alignment-baseline/auto", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_middle() {assert_eq!(run_test("resvg/text/alignment-baseline/middle", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_text_after_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/text-after-edge", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_hanging_on_tspan() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_inherit() {assert_eq!(run_test("resvg/text/alignment-baseline/inherit", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_ideographic() {assert_eq!(run_test("resvg/text/alignment-baseline/ideographic", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_after_edge() {assert_eq!(run_test("resvg/text/alignment-baseline/after-edge", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_hanging_and_baseline_shift_eq_20_on_tspan() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-and-baseline-shift-eq-20-on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_hanging() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_hanging_on_vertical() {assert_eq!(run_test("resvg/text/alignment-baseline/hanging-on-vertical", Options::default()), 0)}
+#[test] fn resvg_text_alignment_baseline_central() {assert_eq!(run_test("resvg/text/alignment-baseline/central", Options::default()), 0)}
+#[test] fn resvg_text_tspan_style_override() {assert_eq!(run_test("resvg/text/tspan/style-override", Options::default()), 0)}
+#[test] fn resvg_text_tspan_multiple_coordinates() {assert_eq!(run_test("resvg/text/tspan/multiple-coordinates", Options::default()), 0)}
+#[test] fn resvg_text_tspan_with_filter() {assert_eq!(run_test("resvg/text/tspan/with-filter", Options::default()), 0)}
+#[test] fn resvg_text_tspan_transform() {assert_eq!(run_test("resvg/text/tspan/transform", Options::default()), 0)}
+#[test] fn resvg_text_tspan_pseudo_multi_line() {assert_eq!(run_test("resvg/text/tspan/pseudo-multi-line", Options::default()), 0)}
+#[test] fn resvg_text_tspan_nested_rotate() {assert_eq!(run_test("resvg/text/tspan/nested-rotate", Options::default()), 0)}
+#[test] fn resvg_text_tspan_bidi_reordering() {assert_eq!(run_test("resvg/text/tspan/bidi-reordering", Options::default()), 0)}
+#[test] fn resvg_text_tspan_nested() {assert_eq!(run_test("resvg/text/tspan/nested", Options::default()), 0)}
+#[test] fn resvg_text_tspan_without_attributes() {assert_eq!(run_test("resvg/text/tspan/without-attributes", Options::default()), 0)}
+#[test] fn resvg_text_tspan_text_shaping_across_multiple_tspan_2() {assert_eq!(run_test("resvg/text/tspan/text-shaping-across-multiple-tspan-2", Options::default()), 0)}
+#[test] fn resvg_text_tspan_with_x_and_y() {assert_eq!(run_test("resvg/text/tspan/with-x-and-y", Options::default()), 0)}
+#[test] fn resvg_text_tspan_text_shaping_across_multiple_tspan_1() {assert_eq!(run_test("resvg/text/tspan/text-shaping-across-multiple-tspan-1", Options::default()), 0)}
+#[test] fn resvg_text_tspan_mixed_font_size() {assert_eq!(run_test("resvg/text/tspan/mixed-font-size", Options::default()), 0)}
+#[test] fn resvg_text_tspan_outside_the_text() {assert_eq!(run_test("resvg/text/tspan/outside-the-text", Options::default()), 0)}
+#[test] fn resvg_text_tspan_with_dy() {assert_eq!(run_test("resvg/text/tspan/with-dy", Options::default()), 0)}
+#[test] fn resvg_text_tspan_xml_space_2() {assert_eq!(run_test("resvg/text/tspan/xml-space-2", Options::default()), 0)}
+#[test] fn resvg_text_tspan_with_mask() {assert_eq!(run_test("resvg/text/tspan/with-mask", Options::default()), 0)}
+#[test] fn resvg_text_tspan_tspan_bbox_2() {assert_eq!(run_test("resvg/text/tspan/tspan-bbox-2", Options::default()), 0)}
+#[test] fn resvg_text_tspan_with_clip_path() {assert_eq!(run_test("resvg/text/tspan/with-clip-path", Options::default()), 0)}
+#[test] fn resvg_text_tspan_xml_space_1() {assert_eq!(run_test("resvg/text/tspan/xml-space-1", Options::default()), 0)}
+#[test] fn resvg_text_tspan_nested_whitespaces() {assert_eq!(run_test("resvg/text/tspan/nested-whitespaces", Options::default()), 0)}
+#[test] fn resvg_text_tspan_with_opacity() {assert_eq!(run_test("resvg/text/tspan/with-opacity", Options::default()), 0)}
+#[test] fn resvg_text_tspan_tspan_bbox_1() {assert_eq!(run_test("resvg/text/tspan/tspan-bbox-1", Options::default()), 0)}
+#[test] fn resvg_text_tspan_rotate_and_display_none() {assert_eq!(run_test("resvg/text/tspan/rotate-and-display-none", Options::default()), 0)}
+#[test] fn resvg_text_tspan_only_with_y() {assert_eq!(run_test("resvg/text/tspan/only-with-y", Options::default()), 0)}
+#[test] fn resvg_text_tspan_mixed_xml_space_2() {assert_eq!(run_test("resvg/text/tspan/mixed-xml-space-2", Options::default()), 0)}
+#[test] fn resvg_text_tspan_mixed_xml_space_3() {assert_eq!(run_test("resvg/text/tspan/mixed-xml-space-3", Options::default()), 0)}
+#[test] fn resvg_text_tspan_mixed() {assert_eq!(run_test("resvg/text/tspan/mixed", Options::default()), 0)}
+#[test] fn resvg_text_tspan_mixed_xml_space_1() {assert_eq!(run_test("resvg/text/tspan/mixed-xml-space-1", Options::default()), 0)}
+#[test] fn resvg_text_tspan_rotate_on_child() {assert_eq!(run_test("resvg/text/tspan/rotate-on-child", Options::default()), 0)}
+#[test] fn resvg_text_tspan_sequential() {assert_eq!(run_test("resvg/text/tspan/sequential", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_dy_on_second_tspan() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-dy-on-second-tspan", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_rl() {assert_eq!(run_test("resvg/text/writing-mode/tb-rl", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_dx_on_second_tspan() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-dx-on-second-tspan", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_lr_tb() {assert_eq!(run_test("resvg/text/writing-mode/lr-tb", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_mixed_languages_with_tb_and_underline() {assert_eq!(run_test("resvg/text/writing-mode/mixed-languages-with-tb-and-underline", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_rl_tb() {assert_eq!(run_test("resvg/text/writing-mode/rl-tb", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_lr() {assert_eq!(run_test("resvg/text/writing-mode/lr", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_japanese_with_tb() {assert_eq!(run_test("resvg/text/writing-mode/japanese-with-tb", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb() {assert_eq!(run_test("resvg/text/writing-mode/tb", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_rotate_and_underline() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-rotate-and-underline", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_invalid_value() {assert_eq!(run_test("resvg/text/writing-mode/invalid-value", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_alignment() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-alignment", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_vertical_rl() {assert_eq!(run_test("resvg/text/writing-mode/vertical-rl", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_dx_on_tspan() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-dx-on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_inheritance() {assert_eq!(run_test("resvg/text/writing-mode/inheritance", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_on_tspan() {assert_eq!(run_test("resvg/text/writing-mode/on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_mixed_languages_with_tb() {assert_eq!(run_test("resvg/text/writing-mode/mixed-languages-with-tb", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_and_punctuation() {assert_eq!(run_test("resvg/text/writing-mode/tb-and-punctuation", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_tb_with_rotate() {assert_eq!(run_test("resvg/text/writing-mode/tb-with-rotate", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_arabic_with_rl() {assert_eq!(run_test("resvg/text/writing-mode/arabic-with-rl", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_horizontal_tb() {assert_eq!(run_test("resvg/text/writing-mode/horizontal-tb", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_vertical_lr() {assert_eq!(run_test("resvg/text/writing-mode/vertical-lr", Options::default()), 0)}
+#[test] fn resvg_text_writing_mode_rl() {assert_eq!(run_test("resvg/text/writing-mode/rl", Options::default()), 0)}
+#[test] fn resvg_text_glyph_orientation_horizontal_simple_case() {assert_eq!(run_test("resvg/text/glyph-orientation-horizontal/simple-case", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_non_ASCII_character() {assert_eq!(run_test("resvg/text/letter-spacing/non-ASCII-character", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_large_negative() {assert_eq!(run_test("resvg/text/letter-spacing/large-negative", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_0() {assert_eq!(run_test("resvg/text/letter-spacing/0", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_mixed_spacing() {assert_eq!(run_test("resvg/text/letter-spacing/mixed-spacing", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_3() {assert_eq!(run_test("resvg/text/letter-spacing/3", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_5percent() {assert_eq!(run_test("resvg/text/letter-spacing/5percent", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing__3() {assert_eq!(run_test("resvg/text/letter-spacing/-3", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_on_Arabic() {assert_eq!(run_test("resvg/text/letter-spacing/on-Arabic", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_1mm() {assert_eq!(run_test("resvg/text/letter-spacing/1mm", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_normal() {assert_eq!(run_test("resvg/text/letter-spacing/normal", Options::default()), 0)}
+#[test] fn resvg_text_letter_spacing_filter_bbox() {assert_eq!(run_test("resvg/text/letter-spacing/filter-bbox", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_text_letter_spacing_mixed_scripts() {assert_eq!(run_test("resvg/text/letter-spacing/mixed-scripts"), 0)}
-#[test] fn resvg_text_dominant_baseline_mathematical() {assert_eq!(run_test("resvg/text/dominant-baseline/mathematical"), 0)}
-#[test] fn resvg_text_dominant_baseline_dummy_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/dummy-tspan"), 0)}
-#[test] fn resvg_text_dominant_baseline_equal_alignment_baseline_on_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/equal-alignment-baseline-on-tspan"), 0)}
-#[test] fn resvg_text_dominant_baseline_text_before_edge() {assert_eq!(run_test("resvg/text/dominant-baseline/text-before-edge"), 0)}
-#[test] fn resvg_text_dominant_baseline_complex() {assert_eq!(run_test("resvg/text/dominant-baseline/complex"), 0)}
-#[test] fn resvg_text_dominant_baseline_alphabetic() {assert_eq!(run_test("resvg/text/dominant-baseline/alphabetic"), 0)}
-#[test] fn resvg_text_dominant_baseline_nested() {assert_eq!(run_test("resvg/text/dominant-baseline/nested"), 0)}
-#[test] fn resvg_text_dominant_baseline_use_script() {assert_eq!(run_test("resvg/text/dominant-baseline/use-script"), 0)}
-#[test] fn resvg_text_dominant_baseline_auto() {assert_eq!(run_test("resvg/text/dominant-baseline/auto"), 0)}
-#[test] fn resvg_text_dominant_baseline_middle() {assert_eq!(run_test("resvg/text/dominant-baseline/middle"), 0)}
-#[test] fn resvg_text_dominant_baseline_text_after_edge() {assert_eq!(run_test("resvg/text/dominant-baseline/text-after-edge"), 0)}
-#[test] fn resvg_text_dominant_baseline_alignment_baseline_and_baseline_shift_on_tspans() {assert_eq!(run_test("resvg/text/dominant-baseline/alignment-baseline-and-baseline-shift-on-tspans"), 0)}
-#[test] fn resvg_text_dominant_baseline_no_change() {assert_eq!(run_test("resvg/text/dominant-baseline/no-change"), 0)}
-#[test] fn resvg_text_dominant_baseline_inherit() {assert_eq!(run_test("resvg/text/dominant-baseline/inherit"), 0)}
-#[test] fn resvg_text_dominant_baseline_ideographic() {assert_eq!(run_test("resvg/text/dominant-baseline/ideographic"), 0)}
-#[test] fn resvg_text_dominant_baseline_alignment_baseline_baseline_on_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan"), 0)}
-#[test] fn resvg_text_dominant_baseline_hanging() {assert_eq!(run_test("resvg/text/dominant-baseline/hanging"), 0)}
-#[test] fn resvg_text_dominant_baseline_different_alignment_baseline_on_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/different-alignment-baseline-on-tspan"), 0)}
-#[test] fn resvg_text_dominant_baseline_reset_size() {assert_eq!(run_test("resvg/text/dominant-baseline/reset-size"), 0)}
-#[test] fn resvg_text_dominant_baseline_central() {assert_eq!(run_test("resvg/text/dominant-baseline/central"), 0)}
-#[test] fn resvg_text_dominant_baseline_sequential() {assert_eq!(run_test("resvg/text/dominant-baseline/sequential"), 0)}
-#[test] fn resvg_text_baseline_shift_10() {assert_eq!(run_test("resvg/text/baseline-shift/10"), 0)}
-#[test] fn resvg_text_baseline_shift_super() {assert_eq!(run_test("resvg/text/baseline-shift/super"), 0)}
-#[test] fn resvg_text_baseline_shift_baseline() {assert_eq!(run_test("resvg/text/baseline-shift/baseline"), 0)}
-#[test] fn resvg_text_baseline_shift_invalid_value() {assert_eq!(run_test("resvg/text/baseline-shift/invalid-value"), 0)}
-#[test] fn resvg_text_baseline_shift_sub() {assert_eq!(run_test("resvg/text/baseline-shift/sub"), 0)}
-#[test] fn resvg_text_baseline_shift__10() {assert_eq!(run_test("resvg/text/baseline-shift/-10"), 0)}
-#[test] fn resvg_text_baseline_shift_0() {assert_eq!(run_test("resvg/text/baseline-shift/0"), 0)}
-#[test] fn resvg_text_baseline_shift_inheritance_1() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-1"), 0)}
-#[test] fn resvg_text_baseline_shift__50percent() {assert_eq!(run_test("resvg/text/baseline-shift/-50percent"), 0)}
-#[test] fn resvg_text_baseline_shift_inheritance_3() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-3"), 0)}
-#[test] fn resvg_text_baseline_shift_inheritance_2() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-2"), 0)}
-#[test] fn resvg_text_baseline_shift_inheritance_5() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-5"), 0)}
-#[test] fn resvg_text_baseline_shift_nested_super() {assert_eq!(run_test("resvg/text/baseline-shift/nested-super"), 0)}
-#[test] fn resvg_text_baseline_shift_inheritance_4() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-4"), 0)}
-#[test] fn resvg_text_baseline_shift_50percent() {assert_eq!(run_test("resvg/text/baseline-shift/50percent"), 0)}
-#[test] fn resvg_text_baseline_shift_nested_length() {assert_eq!(run_test("resvg/text/baseline-shift/nested-length"), 0)}
-#[test] fn resvg_text_baseline_shift_with_rotate() {assert_eq!(run_test("resvg/text/baseline-shift/with-rotate"), 0)}
-#[test] fn resvg_text_baseline_shift_mixed_nested() {assert_eq!(run_test("resvg/text/baseline-shift/mixed-nested"), 0)}
-#[test] fn resvg_text_baseline_shift_deeply_nested_super() {assert_eq!(run_test("resvg/text/baseline-shift/deeply-nested-super"), 0)}
-#[test] fn resvg_text_baseline_shift_nested_with_baseline_2() {assert_eq!(run_test("resvg/text/baseline-shift/nested-with-baseline-2"), 0)}
-#[test] fn resvg_text_baseline_shift_2mm() {assert_eq!(run_test("resvg/text/baseline-shift/2mm"), 0)}
-#[test] fn resvg_text_baseline_shift_nested_with_baseline_1() {assert_eq!(run_test("resvg/text/baseline-shift/nested-with-baseline-1"), 0)}
-#[test] fn resvg_text_lengthAdjust_vertical() {assert_eq!(run_test("resvg/text/lengthAdjust/vertical"), 0)}
-#[test] fn resvg_text_lengthAdjust_text_on_path() {assert_eq!(run_test("resvg/text/lengthAdjust/text-on-path"), 0)}
-#[test] fn resvg_text_lengthAdjust_spacingAndGlyphs() {assert_eq!(run_test("resvg/text/lengthAdjust/spacingAndGlyphs"), 0)}
-#[test] fn resvg_text_lengthAdjust_with_underline() {assert_eq!(run_test("resvg/text/lengthAdjust/with-underline"), 0)}
-#[test] fn resvg_text_text_anchor_end_with_letter_spacing() {assert_eq!(run_test("resvg/text/text-anchor/end-with-letter-spacing"), 0)}
-#[test] fn resvg_text_text_anchor_coordinates_list() {assert_eq!(run_test("resvg/text/text-anchor/coordinates-list"), 0)}
-#[test] fn resvg_text_text_anchor_middle_on_text() {assert_eq!(run_test("resvg/text/text-anchor/middle-on-text"), 0)}
-#[test] fn resvg_text_text_anchor_text_anchor_not_on_text_chunk() {assert_eq!(run_test("resvg/text/text-anchor/text-anchor-not-on-text-chunk"), 0)}
-#[test] fn resvg_text_text_anchor_on_tspan() {assert_eq!(run_test("resvg/text/text-anchor/on-tspan"), 0)}
-#[test] fn resvg_text_text_anchor_on_tspan_with_arabic() {assert_eq!(run_test("resvg/text/text-anchor/on-tspan-with-arabic"), 0)}
-#[test] fn resvg_text_text_anchor_inheritance_1() {assert_eq!(run_test("resvg/text/text-anchor/inheritance-1"), 0)}
-#[test] fn resvg_text_text_anchor_inheritance_3() {assert_eq!(run_test("resvg/text/text-anchor/inheritance-3"), 0)}
-#[test] fn resvg_text_text_anchor_inheritance_2() {assert_eq!(run_test("resvg/text/text-anchor/inheritance-2"), 0)}
-#[test] fn resvg_text_text_anchor_invalid_value_on_text() {assert_eq!(run_test("resvg/text/text-anchor/invalid-value-on-text"), 0)}
-#[test] fn resvg_text_text_anchor_start_on_text() {assert_eq!(run_test("resvg/text/text-anchor/start-on-text"), 0)}
-#[test] fn resvg_text_text_anchor_end_on_text() {assert_eq!(run_test("resvg/text/text-anchor/end-on-text"), 0)}
-#[test] fn resvg_text_text_anchor_on_the_first_tspan() {assert_eq!(run_test("resvg/text/text-anchor/on-the-first-tspan"), 0)}
-#[test] fn resvg_text_font_stretch_narrower() {assert_eq!(run_test("resvg/text/font-stretch/narrower"), 0)}
-#[test] fn resvg_text_font_stretch_inherit() {assert_eq!(run_test("resvg/text/font-stretch/inherit"), 0)}
-#[test] fn resvg_text_font_stretch_extra_condensed() {assert_eq!(run_test("resvg/text/font-stretch/extra-condensed"), 0)}
-#[test] fn resvg_text_kerning_10percent() {assert_eq!(run_test("resvg/text/kerning/10percent"), 0)}
-#[test] fn resvg_text_kerning_0() {assert_eq!(run_test("resvg/text/kerning/0"), 0)}
-#[test] fn resvg_text_font_kerning_as_property() {assert_eq!(run_test("resvg/text/font-kerning/as-property"), 0)}
-#[test] fn resvg_text_font_kerning_none() {assert_eq!(run_test("resvg/text/font-kerning/none"), 0)}
-#[test] fn resvg_text_font_kerning_arabic_script() {assert_eq!(run_test("resvg/text/font-kerning/arabic-script"), 0)}
-#[test] fn resvg_text_tref_with_a_title_child() {assert_eq!(run_test("resvg/text/tref/with-a-title-child"), 0)}
-#[test] fn resvg_text_tref_style_attributes() {assert_eq!(run_test("resvg/text/tref/style-attributes"), 0)}
-#[test] fn resvg_text_tref_nested() {assert_eq!(run_test("resvg/text/tref/nested"), 0)}
-#[test] fn resvg_text_tref_link_to_a_complex_text() {assert_eq!(run_test("resvg/text/tref/link-to-a-complex-text"), 0)}
-#[test] fn resvg_text_tref_link_to_an_external_file_element() {assert_eq!(run_test("resvg/text/tref/link-to-an-external-file-element"), 0)}
-#[test] fn resvg_text_tref_position_attributes() {assert_eq!(run_test("resvg/text/tref/position-attributes"), 0)}
-#[test] fn resvg_text_tref_link_to_text() {assert_eq!(run_test("resvg/text/tref/link-to-text"), 0)}
-#[test] fn resvg_text_tref_link_to_a_non_SVG_element() {assert_eq!(run_test("resvg/text/tref/link-to-a-non-SVG-element"), 0)}
-#[test] fn resvg_text_tref_with_text() {assert_eq!(run_test("resvg/text/tref/with-text"), 0)}
-#[test] fn resvg_text_tref_xml_space() {assert_eq!(run_test("resvg/text/tref/xml-space"), 0)}
-#[test] fn resvg_text_tref_link_to_a_non_text_element() {assert_eq!(run_test("resvg/text/tref/link-to-a-non-text-element"), 0)}
-#[test] fn resvg_text_word_spacing_10() {assert_eq!(run_test("resvg/text/word-spacing/10"), 0)}
-#[test] fn resvg_text_word_spacing_large_negative() {assert_eq!(run_test("resvg/text/word-spacing/large-negative"), 0)}
-#[test] fn resvg_text_word_spacing_0() {assert_eq!(run_test("resvg/text/word-spacing/0"), 0)}
-#[test] fn resvg_text_word_spacing__5() {assert_eq!(run_test("resvg/text/word-spacing/-5"), 0)}
-#[test] fn resvg_text_word_spacing_5percent() {assert_eq!(run_test("resvg/text/word-spacing/5percent"), 0)}
-#[test] fn resvg_text_word_spacing_normal() {assert_eq!(run_test("resvg/text/word-spacing/normal"), 0)}
-#[test] fn resvg_text_word_spacing_2mm() {assert_eq!(run_test("resvg/text/word-spacing/2mm"), 0)}
-#[test] fn resvg_text_unicode_bidi_bidi_override() {assert_eq!(run_test("resvg/text/unicode-bidi/bidi-override"), 0)}
-#[test] fn resvg_text_font_variant_inherit() {assert_eq!(run_test("resvg/text/font-variant/inherit"), 0)}
-#[test] fn resvg_text_font_variant_small_caps() {assert_eq!(run_test("resvg/text/font-variant/small-caps"), 0)}
-#[test] fn resvg_text_font_weight_700() {assert_eq!(run_test("resvg/text/font-weight/700"), 0)}
-#[test] fn resvg_text_font_weight_lighter() {assert_eq!(run_test("resvg/text/font-weight/lighter"), 0)}
-#[test] fn resvg_text_font_weight_bolder() {assert_eq!(run_test("resvg/text/font-weight/bolder"), 0)}
+#[ignore] #[test] fn resvg_text_letter_spacing_mixed_scripts() {assert_eq!(run_test("resvg/text/letter-spacing/mixed-scripts", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_mathematical() {assert_eq!(run_test("resvg/text/dominant-baseline/mathematical", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_dummy_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/dummy-tspan", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_equal_alignment_baseline_on_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/equal-alignment-baseline-on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_text_before_edge() {assert_eq!(run_test("resvg/text/dominant-baseline/text-before-edge", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_complex() {assert_eq!(run_test("resvg/text/dominant-baseline/complex", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_alphabetic() {assert_eq!(run_test("resvg/text/dominant-baseline/alphabetic", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_nested() {assert_eq!(run_test("resvg/text/dominant-baseline/nested", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_use_script() {assert_eq!(run_test("resvg/text/dominant-baseline/use-script", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_auto() {assert_eq!(run_test("resvg/text/dominant-baseline/auto", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_middle() {assert_eq!(run_test("resvg/text/dominant-baseline/middle", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_text_after_edge() {assert_eq!(run_test("resvg/text/dominant-baseline/text-after-edge", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_alignment_baseline_and_baseline_shift_on_tspans() {assert_eq!(run_test("resvg/text/dominant-baseline/alignment-baseline-and-baseline-shift-on-tspans", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_no_change() {assert_eq!(run_test("resvg/text/dominant-baseline/no-change", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_inherit() {assert_eq!(run_test("resvg/text/dominant-baseline/inherit", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_ideographic() {assert_eq!(run_test("resvg/text/dominant-baseline/ideographic", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_alignment_baseline_baseline_on_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/alignment-baseline=baseline-on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_hanging() {assert_eq!(run_test("resvg/text/dominant-baseline/hanging", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_different_alignment_baseline_on_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/different-alignment-baseline-on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_reset_size() {assert_eq!(run_test("resvg/text/dominant-baseline/reset-size", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_central() {assert_eq!(run_test("resvg/text/dominant-baseline/central", Options::default()), 0)}
+#[test] fn resvg_text_dominant_baseline_sequential() {assert_eq!(run_test("resvg/text/dominant-baseline/sequential", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_10() {assert_eq!(run_test("resvg/text/baseline-shift/10", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_super() {assert_eq!(run_test("resvg/text/baseline-shift/super", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_baseline() {assert_eq!(run_test("resvg/text/baseline-shift/baseline", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_invalid_value() {assert_eq!(run_test("resvg/text/baseline-shift/invalid-value", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_sub() {assert_eq!(run_test("resvg/text/baseline-shift/sub", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift__10() {assert_eq!(run_test("resvg/text/baseline-shift/-10", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_0() {assert_eq!(run_test("resvg/text/baseline-shift/0", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_inheritance_1() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-1", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift__50percent() {assert_eq!(run_test("resvg/text/baseline-shift/-50percent", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_inheritance_3() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-3", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_inheritance_2() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-2", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_inheritance_5() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-5", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_nested_super() {assert_eq!(run_test("resvg/text/baseline-shift/nested-super", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_inheritance_4() {assert_eq!(run_test("resvg/text/baseline-shift/inheritance-4", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_50percent() {assert_eq!(run_test("resvg/text/baseline-shift/50percent", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_nested_length() {assert_eq!(run_test("resvg/text/baseline-shift/nested-length", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_with_rotate() {assert_eq!(run_test("resvg/text/baseline-shift/with-rotate", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_mixed_nested() {assert_eq!(run_test("resvg/text/baseline-shift/mixed-nested", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_deeply_nested_super() {assert_eq!(run_test("resvg/text/baseline-shift/deeply-nested-super", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_nested_with_baseline_2() {assert_eq!(run_test("resvg/text/baseline-shift/nested-with-baseline-2", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_2mm() {assert_eq!(run_test("resvg/text/baseline-shift/2mm", Options::default()), 0)}
+#[test] fn resvg_text_baseline_shift_nested_with_baseline_1() {assert_eq!(run_test("resvg/text/baseline-shift/nested-with-baseline-1", Options::default()), 0)}
+#[test] fn resvg_text_lengthAdjust_vertical() {assert_eq!(run_test("resvg/text/lengthAdjust/vertical", Options::default()), 0)}
+#[test] fn resvg_text_lengthAdjust_text_on_path() {assert_eq!(run_test("resvg/text/lengthAdjust/text-on-path", Options::default()), 0)}
+#[test] fn resvg_text_lengthAdjust_spacingAndGlyphs() {assert_eq!(run_test("resvg/text/lengthAdjust/spacingAndGlyphs", Options::default()), 0)}
+#[test] fn resvg_text_lengthAdjust_with_underline() {assert_eq!(run_test("resvg/text/lengthAdjust/with-underline", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_end_with_letter_spacing() {assert_eq!(run_test("resvg/text/text-anchor/end-with-letter-spacing", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_coordinates_list() {assert_eq!(run_test("resvg/text/text-anchor/coordinates-list", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_middle_on_text() {assert_eq!(run_test("resvg/text/text-anchor/middle-on-text", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_text_anchor_not_on_text_chunk() {assert_eq!(run_test("resvg/text/text-anchor/text-anchor-not-on-text-chunk", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_on_tspan() {assert_eq!(run_test("resvg/text/text-anchor/on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_on_tspan_with_arabic() {assert_eq!(run_test("resvg/text/text-anchor/on-tspan-with-arabic", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_inheritance_1() {assert_eq!(run_test("resvg/text/text-anchor/inheritance-1", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_inheritance_3() {assert_eq!(run_test("resvg/text/text-anchor/inheritance-3", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_inheritance_2() {assert_eq!(run_test("resvg/text/text-anchor/inheritance-2", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_invalid_value_on_text() {assert_eq!(run_test("resvg/text/text-anchor/invalid-value-on-text", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_start_on_text() {assert_eq!(run_test("resvg/text/text-anchor/start-on-text", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_end_on_text() {assert_eq!(run_test("resvg/text/text-anchor/end-on-text", Options::default()), 0)}
+#[test] fn resvg_text_text_anchor_on_the_first_tspan() {assert_eq!(run_test("resvg/text/text-anchor/on-the-first-tspan", Options::default()), 0)}
+#[test] fn resvg_text_font_stretch_narrower() {assert_eq!(run_test("resvg/text/font-stretch/narrower", Options::default()), 0)}
+#[test] fn resvg_text_font_stretch_inherit() {assert_eq!(run_test("resvg/text/font-stretch/inherit", Options::default()), 0)}
+#[test] fn resvg_text_font_stretch_extra_condensed() {assert_eq!(run_test("resvg/text/font-stretch/extra-condensed", Options::default()), 0)}
+#[test] fn resvg_text_kerning_10percent() {assert_eq!(run_test("resvg/text/kerning/10percent", Options::default()), 0)}
+#[test] fn resvg_text_kerning_0() {assert_eq!(run_test("resvg/text/kerning/0", Options::default()), 0)}
+#[test] fn resvg_text_font_kerning_as_property() {assert_eq!(run_test("resvg/text/font-kerning/as-property", Options::default()), 0)}
+#[test] fn resvg_text_font_kerning_none() {assert_eq!(run_test("resvg/text/font-kerning/none", Options::default()), 0)}
+#[test] fn resvg_text_font_kerning_arabic_script() {assert_eq!(run_test("resvg/text/font-kerning/arabic-script", Options::default()), 0)}
+#[test] fn resvg_text_tref_with_a_title_child() {assert_eq!(run_test("resvg/text/tref/with-a-title-child", Options::default()), 0)}
+#[test] fn resvg_text_tref_style_attributes() {assert_eq!(run_test("resvg/text/tref/style-attributes", Options::default()), 0)}
+#[test] fn resvg_text_tref_nested() {assert_eq!(run_test("resvg/text/tref/nested", Options::default()), 0)}
+#[test] fn resvg_text_tref_link_to_a_complex_text() {assert_eq!(run_test("resvg/text/tref/link-to-a-complex-text", Options::default()), 0)}
+#[test] fn resvg_text_tref_link_to_an_external_file_element() {assert_eq!(run_test("resvg/text/tref/link-to-an-external-file-element", Options::default()), 0)}
+#[test] fn resvg_text_tref_position_attributes() {assert_eq!(run_test("resvg/text/tref/position-attributes", Options::default()), 0)}
+#[test] fn resvg_text_tref_link_to_text() {assert_eq!(run_test("resvg/text/tref/link-to-text", Options::default()), 0)}
+#[test] fn resvg_text_tref_link_to_a_non_SVG_element() {assert_eq!(run_test("resvg/text/tref/link-to-a-non-SVG-element", Options::default()), 0)}
+#[test] fn resvg_text_tref_with_text() {assert_eq!(run_test("resvg/text/tref/with-text", Options::default()), 0)}
+#[test] fn resvg_text_tref_xml_space() {assert_eq!(run_test("resvg/text/tref/xml-space", Options::default()), 0)}
+#[test] fn resvg_text_tref_link_to_a_non_text_element() {assert_eq!(run_test("resvg/text/tref/link-to-a-non-text-element", Options::default()), 0)}
+#[test] fn resvg_text_word_spacing_10() {assert_eq!(run_test("resvg/text/word-spacing/10", Options::default()), 0)}
+#[test] fn resvg_text_word_spacing_large_negative() {assert_eq!(run_test("resvg/text/word-spacing/large-negative", Options::default()), 0)}
+#[test] fn resvg_text_word_spacing_0() {assert_eq!(run_test("resvg/text/word-spacing/0", Options::default()), 0)}
+#[test] fn resvg_text_word_spacing__5() {assert_eq!(run_test("resvg/text/word-spacing/-5", Options::default()), 0)}
+#[test] fn resvg_text_word_spacing_5percent() {assert_eq!(run_test("resvg/text/word-spacing/5percent", Options::default()), 0)}
+#[test] fn resvg_text_word_spacing_normal() {assert_eq!(run_test("resvg/text/word-spacing/normal", Options::default()), 0)}
+#[test] fn resvg_text_word_spacing_2mm() {assert_eq!(run_test("resvg/text/word-spacing/2mm", Options::default()), 0)}
+#[test] fn resvg_text_unicode_bidi_bidi_override() {assert_eq!(run_test("resvg/text/unicode-bidi/bidi-override", Options::default()), 0)}
+#[test] fn resvg_text_font_variant_inherit() {assert_eq!(run_test("resvg/text/font-variant/inherit", Options::default()), 0)}
+#[test] fn resvg_text_font_variant_small_caps() {assert_eq!(run_test("resvg/text/font-variant/small-caps", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_700() {assert_eq!(run_test("resvg/text/font-weight/700", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_lighter() {assert_eq!(run_test("resvg/text/font-weight/lighter", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_bolder() {assert_eq!(run_test("resvg/text/font-weight/bolder", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_text_font_weight_lighter_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/lighter-with-clamping"), 0)}
+#[ignore] #[test] fn resvg_text_font_weight_lighter_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/lighter-with-clamping", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_text_font_weight_lighter_without_parent() {assert_eq!(run_test("resvg/text/font-weight/lighter-without-parent"), 0)}
-#[test] fn resvg_text_font_weight_bold() {assert_eq!(run_test("resvg/text/font-weight/bold"), 0)}
-#[test] fn resvg_text_font_weight_inherit() {assert_eq!(run_test("resvg/text/font-weight/inherit"), 0)}
-#[test] fn resvg_text_font_weight_normal() {assert_eq!(run_test("resvg/text/font-weight/normal"), 0)}
-#[test] fn resvg_text_font_weight_invalid_number_1() {assert_eq!(run_test("resvg/text/font-weight/invalid-number-1"), 0)}
-#[test] fn resvg_text_font_weight_bolder_without_parent() {assert_eq!(run_test("resvg/text/font-weight/bolder-without-parent"), 0)}
-#[test] fn resvg_text_font_weight_650() {assert_eq!(run_test("resvg/text/font-weight/650"), 0)}
+#[ignore] #[test] fn resvg_text_font_weight_lighter_without_parent() {assert_eq!(run_test("resvg/text/font-weight/lighter-without-parent", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_bold() {assert_eq!(run_test("resvg/text/font-weight/bold", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_inherit() {assert_eq!(run_test("resvg/text/font-weight/inherit", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_normal() {assert_eq!(run_test("resvg/text/font-weight/normal", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_invalid_number_1() {assert_eq!(run_test("resvg/text/font-weight/invalid-number-1", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_bolder_without_parent() {assert_eq!(run_test("resvg/text/font-weight/bolder-without-parent", Options::default()), 0)}
+#[test] fn resvg_text_font_weight_650() {assert_eq!(run_test("resvg/text/font-weight/650", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_text_font_weight_bolder_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/bolder-with-clamping"), 0)}
-#[test] fn resvg_text_text_rendering_optimizeLegibility() {assert_eq!(run_test("resvg/text/text-rendering/optimizeLegibility"), 0)}
-#[test] fn resvg_text_text_rendering_geometricPrecision() {assert_eq!(run_test("resvg/text/text-rendering/geometricPrecision"), 0)}
-#[test] fn resvg_text_text_rendering_on_tspan() {assert_eq!(run_test("resvg/text/text-rendering/on-tspan"), 0)}
-#[test] fn resvg_text_text_rendering_with_underline() {assert_eq!(run_test("resvg/text/text-rendering/with-underline"), 0)}
-#[test] fn resvg_text_text_rendering_optimizeSpeed() {assert_eq!(run_test("resvg/text/text-rendering/optimizeSpeed"), 0)}
-#[test] fn resvg_text_font_size_zero_size() {assert_eq!(run_test("resvg/text/font-size/zero-size"), 0)}
-#[test] fn resvg_text_font_size_ex() {assert_eq!(run_test("resvg/text/font-size/ex"), 0)}
-#[test] fn resvg_text_font_size_em() {assert_eq!(run_test("resvg/text/font-size/em"), 0)}
-#[test] fn resvg_text_font_size_named_value() {assert_eq!(run_test("resvg/text/font-size/named-value"), 0)}
-#[test] fn resvg_text_font_size_simple_case() {assert_eq!(run_test("resvg/text/font-size/simple-case"), 0)}
-#[test] fn resvg_text_font_size_inheritance() {assert_eq!(run_test("resvg/text/font-size/inheritance"), 0)}
-#[test] fn resvg_text_font_size_negative_size() {assert_eq!(run_test("resvg/text/font-size/negative-size"), 0)}
-#[test] fn resvg_text_font_size_zero_size_on_parent_1() {assert_eq!(run_test("resvg/text/font-size/zero-size-on-parent-1"), 0)}
-#[test] fn resvg_text_font_size_zero_size_on_parent_2() {assert_eq!(run_test("resvg/text/font-size/zero-size-on-parent-2"), 0)}
-#[test] fn resvg_text_font_size_zero_size_on_parent_3() {assert_eq!(run_test("resvg/text/font-size/zero-size-on-parent-3"), 0)}
-#[test] fn resvg_text_font_size_percent_value_without_a_parent() {assert_eq!(run_test("resvg/text/font-size/percent-value-without-a-parent"), 0)}
-#[test] fn resvg_text_font_size_ex_nested_and_mixed() {assert_eq!(run_test("resvg/text/font-size/ex-nested-and-mixed"), 0)}
-#[test] fn resvg_text_font_size_nested_percent_values_2() {assert_eq!(run_test("resvg/text/font-size/nested-percent-values-2"), 0)}
-#[test] fn resvg_text_font_size_percent_value() {assert_eq!(run_test("resvg/text/font-size/percent-value"), 0)}
-#[test] fn resvg_text_font_size_em_nested_and_mixed() {assert_eq!(run_test("resvg/text/font-size/em-nested-and-mixed"), 0)}
-#[test] fn resvg_text_font_size_named_value_without_a_parent() {assert_eq!(run_test("resvg/text/font-size/named-value-without-a-parent"), 0)}
-#[test] fn resvg_text_font_size_nested_percent_values_1() {assert_eq!(run_test("resvg/text/font-size/nested-percent-values-1"), 0)}
-#[test] fn resvg_text_font_size_ex_on_the_root_element() {assert_eq!(run_test("resvg/text/font-size/ex-on-the-root-element"), 0)}
-#[test] fn resvg_text_font_size_em_on_the_root_element() {assert_eq!(run_test("resvg/text/font-size/em-on-the-root-element"), 0)}
-#[test] fn resvg_text_font_size_mixed_values() {assert_eq!(run_test("resvg/text/font-size/mixed-values"), 0)}
-#[test] fn resvg_text_direction_rtl() {assert_eq!(run_test("resvg/text/direction/rtl"), 0)}
-#[test] fn resvg_text_direction_rtl_with_vertical_writing_mode() {assert_eq!(run_test("resvg/text/direction/rtl-with-vertical-writing-mode"), 0)}
-#[test] fn resvg_text_text_escaped_text_4() {assert_eq!(run_test("resvg/text/text/escaped-text-4"), 0)}
-#[test] fn resvg_text_text_xml_lang_ja() {assert_eq!(run_test("resvg/text/text/xml-lang=ja"), 0)}
-#[test] fn resvg_text_text_dx_and_dy_with_multiple_values() {assert_eq!(run_test("resvg/text/text/dx-and-dy-with-multiple-values"), 0)}
-#[test] fn resvg_text_text_complex_graphemes() {assert_eq!(run_test("resvg/text/text/complex-graphemes"), 0)}
-#[test] fn resvg_text_text_escaped_text_2() {assert_eq!(run_test("resvg/text/text/escaped-text-2"), 0)}
-#[test] fn resvg_text_text_dx_and_dy_instead_of_x_and_y() {assert_eq!(run_test("resvg/text/text/dx-and-dy-instead-of-x-and-y"), 0)}
-#[test] fn resvg_text_text_rotate() {assert_eq!(run_test("resvg/text/text/rotate"), 0)}
+#[ignore] #[test] fn resvg_text_font_weight_bolder_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/bolder-with-clamping", Options::default()), 0)}
+#[test] fn resvg_text_text_rendering_optimizeLegibility() {assert_eq!(run_test("resvg/text/text-rendering/optimizeLegibility", Options::default()), 0)}
+#[test] fn resvg_text_text_rendering_geometricPrecision() {assert_eq!(run_test("resvg/text/text-rendering/geometricPrecision", Options::default()), 0)}
+#[test] fn resvg_text_text_rendering_on_tspan() {assert_eq!(run_test("resvg/text/text-rendering/on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_text_rendering_with_underline() {assert_eq!(run_test("resvg/text/text-rendering/with-underline", Options::default()), 0)}
+#[test] fn resvg_text_text_rendering_optimizeSpeed() {assert_eq!(run_test("resvg/text/text-rendering/optimizeSpeed", Options::default()), 0)}
+#[test] fn resvg_text_font_size_zero_size() {assert_eq!(run_test("resvg/text/font-size/zero-size", Options::default()), 0)}
+#[test] fn resvg_text_font_size_ex() {assert_eq!(run_test("resvg/text/font-size/ex", Options::default()), 0)}
+#[test] fn resvg_text_font_size_em() {assert_eq!(run_test("resvg/text/font-size/em", Options::default()), 0)}
+#[test] fn resvg_text_font_size_named_value() {assert_eq!(run_test("resvg/text/font-size/named-value", Options::default()), 0)}
+#[test] fn resvg_text_font_size_simple_case() {assert_eq!(run_test("resvg/text/font-size/simple-case", Options::default()), 0)}
+#[test] fn resvg_text_font_size_inheritance() {assert_eq!(run_test("resvg/text/font-size/inheritance", Options::default()), 0)}
+#[test] fn resvg_text_font_size_negative_size() {assert_eq!(run_test("resvg/text/font-size/negative-size", Options::default()), 0)}
+#[test] fn resvg_text_font_size_zero_size_on_parent_1() {assert_eq!(run_test("resvg/text/font-size/zero-size-on-parent-1", Options::default()), 0)}
+#[test] fn resvg_text_font_size_zero_size_on_parent_2() {assert_eq!(run_test("resvg/text/font-size/zero-size-on-parent-2", Options::default()), 0)}
+#[test] fn resvg_text_font_size_zero_size_on_parent_3() {assert_eq!(run_test("resvg/text/font-size/zero-size-on-parent-3", Options::default()), 0)}
+#[test] fn resvg_text_font_size_percent_value_without_a_parent() {assert_eq!(run_test("resvg/text/font-size/percent-value-without-a-parent", Options::default()), 0)}
+#[test] fn resvg_text_font_size_ex_nested_and_mixed() {assert_eq!(run_test("resvg/text/font-size/ex-nested-and-mixed", Options::default()), 0)}
+#[test] fn resvg_text_font_size_nested_percent_values_2() {assert_eq!(run_test("resvg/text/font-size/nested-percent-values-2", Options::default()), 0)}
+#[test] fn resvg_text_font_size_percent_value() {assert_eq!(run_test("resvg/text/font-size/percent-value", Options::default()), 0)}
+#[test] fn resvg_text_font_size_em_nested_and_mixed() {assert_eq!(run_test("resvg/text/font-size/em-nested-and-mixed", Options::default()), 0)}
+#[test] fn resvg_text_font_size_named_value_without_a_parent() {assert_eq!(run_test("resvg/text/font-size/named-value-without-a-parent", Options::default()), 0)}
+#[test] fn resvg_text_font_size_nested_percent_values_1() {assert_eq!(run_test("resvg/text/font-size/nested-percent-values-1", Options::default()), 0)}
+#[test] fn resvg_text_font_size_ex_on_the_root_element() {assert_eq!(run_test("resvg/text/font-size/ex-on-the-root-element", Options::default()), 0)}
+#[test] fn resvg_text_font_size_em_on_the_root_element() {assert_eq!(run_test("resvg/text/font-size/em-on-the-root-element", Options::default()), 0)}
+#[test] fn resvg_text_font_size_mixed_values() {assert_eq!(run_test("resvg/text/font-size/mixed-values", Options::default()), 0)}
+#[test] fn resvg_text_direction_rtl() {assert_eq!(run_test("resvg/text/direction/rtl", Options::default()), 0)}
+#[test] fn resvg_text_direction_rtl_with_vertical_writing_mode() {assert_eq!(run_test("resvg/text/direction/rtl-with-vertical-writing-mode", Options::default()), 0)}
+#[test] fn resvg_text_text_escaped_text_4() {assert_eq!(run_test("resvg/text/text/escaped-text-4", Options::default()), 0)}
+#[test] fn resvg_text_text_xml_lang_ja() {assert_eq!(run_test("resvg/text/text/xml-lang=ja", Options::default()), 0)}
+#[test] fn resvg_text_text_dx_and_dy_with_multiple_values() {assert_eq!(run_test("resvg/text/text/dx-and-dy-with-multiple-values", Options::default()), 0)}
+#[test] fn resvg_text_text_complex_graphemes() {assert_eq!(run_test("resvg/text/text/complex-graphemes", Options::default()), 0)}
+#[test] fn resvg_text_text_escaped_text_2() {assert_eq!(run_test("resvg/text/text/escaped-text-2", Options::default()), 0)}
+#[test] fn resvg_text_text_dx_and_dy_instead_of_x_and_y() {assert_eq!(run_test("resvg/text/text/dx-and-dy-instead-of-x-and-y", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate() {assert_eq!(run_test("resvg/text/text/rotate", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_text_text_compound_emojis_and_coordinates_list() {assert_eq!(run_test("resvg/text/text/compound-emojis-and-coordinates-list"), 0)}
-#[test] fn resvg_text_text_escaped_text_3() {assert_eq!(run_test("resvg/text/text/escaped-text-3"), 0)}
-#[test] fn resvg_text_text_escaped_text_1() {assert_eq!(run_test("resvg/text/text/escaped-text-1"), 0)}
-#[test] fn resvg_text_text_x_and_y_with_multiple_values() {assert_eq!(run_test("resvg/text/text/x-and-y-with-multiple-values"), 0)}
-#[test] fn resvg_text_text_x_and_y_with_less_values_than_characters() {assert_eq!(run_test("resvg/text/text/x-and-y-with-less-values-than-characters"), 0)}
-#[test] fn resvg_text_text_transform() {assert_eq!(run_test("resvg/text/text/transform"), 0)}
-#[test] fn resvg_text_text_rotate_with_multiple_values_underline_and_pattern() {assert_eq!(run_test("resvg/text/text/rotate-with-multiple-values-underline-and-pattern"), 0)}
-#[test] fn resvg_text_text_rotate_on_Arabic() {assert_eq!(run_test("resvg/text/text/rotate-on-Arabic"), 0)}
-#[test] fn resvg_text_text_bidi_reordering() {assert_eq!(run_test("resvg/text/text/bidi-reordering"), 0)}
-#[test] fn resvg_text_text_nested() {assert_eq!(run_test("resvg/text/text/nested"), 0)}
-#[test] fn resvg_text_text_zalgo() {assert_eq!(run_test("resvg/text/text/zalgo"), 0)}
-#[test] fn resvg_text_text_rotate_with_more_values_than_characters() {assert_eq!(run_test("resvg/text/text/rotate-with-more-values-than-characters"), 0)}
-#[test] fn resvg_text_text_x_and_y_with_dx_and_dy() {assert_eq!(run_test("resvg/text/text/x-and-y-with-dx-and-dy"), 0)}
-#[test] fn resvg_text_text_real_text_height() {assert_eq!(run_test("resvg/text/text/real-text-height"), 0)}
-#[test] fn resvg_text_text_dx_and_dy_with_more_values_than_characters() {assert_eq!(run_test("resvg/text/text/dx-and-dy-with-more-values-than-characters"), 0)}
+#[ignore] #[test] fn resvg_text_text_compound_emojis_and_coordinates_list() {assert_eq!(run_test("resvg/text/text/compound-emojis-and-coordinates-list", Options::default()), 0)}
+#[test] fn resvg_text_text_escaped_text_3() {assert_eq!(run_test("resvg/text/text/escaped-text-3", Options::default()), 0)}
+#[test] fn resvg_text_text_escaped_text_1() {assert_eq!(run_test("resvg/text/text/escaped-text-1", Options::default()), 0)}
+#[test] fn resvg_text_text_x_and_y_with_multiple_values() {assert_eq!(run_test("resvg/text/text/x-and-y-with-multiple-values", Options::default()), 0)}
+#[test] fn resvg_text_text_x_and_y_with_less_values_than_characters() {assert_eq!(run_test("resvg/text/text/x-and-y-with-less-values-than-characters", Options::default()), 0)}
+#[test] fn resvg_text_text_transform() {assert_eq!(run_test("resvg/text/text/transform", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate_with_multiple_values_underline_and_pattern() {assert_eq!(run_test("resvg/text/text/rotate-with-multiple-values-underline-and-pattern", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate_on_Arabic() {assert_eq!(run_test("resvg/text/text/rotate-on-Arabic", Options::default()), 0)}
+#[test] fn resvg_text_text_bidi_reordering() {assert_eq!(run_test("resvg/text/text/bidi-reordering", Options::default()), 0)}
+#[test] fn resvg_text_text_nested() {assert_eq!(run_test("resvg/text/text/nested", Options::default()), 0)}
+#[test] fn resvg_text_text_zalgo() {assert_eq!(run_test("resvg/text/text/zalgo", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate_with_more_values_than_characters() {assert_eq!(run_test("resvg/text/text/rotate-with-more-values-than-characters", Options::default()), 0)}
+#[test] fn resvg_text_text_x_and_y_with_dx_and_dy() {assert_eq!(run_test("resvg/text/text/x-and-y-with-dx-and-dy", Options::default()), 0)}
+#[test] fn resvg_text_text_real_text_height() {assert_eq!(run_test("resvg/text/text/real-text-height", Options::default()), 0)}
+#[test] fn resvg_text_text_dx_and_dy_with_more_values_than_characters() {assert_eq!(run_test("resvg/text/text/dx-and-dy-with-more-values-than-characters", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_text_text_emojis() {assert_eq!(run_test("resvg/text/text/emojis"), 0)}
-#[test] fn resvg_text_text_x_and_y_with_multiple_values_and_arabic_text() {assert_eq!(run_test("resvg/text/text/x-and-y-with-multiple-values-and-arabic-text"), 0)}
-#[test] fn resvg_text_text_simple_case() {assert_eq!(run_test("resvg/text/text/simple-case"), 0)}
-#[test] fn resvg_text_text_x_and_y_with_multiple_values_and_tspan() {assert_eq!(run_test("resvg/text/text/x-and-y-with-multiple-values-and-tspan"), 0)}
-#[test] fn resvg_text_text_rotate_with_less_values_than_characters() {assert_eq!(run_test("resvg/text/text/rotate-with-less-values-than-characters"), 0)}
-#[test] fn resvg_text_text_complex_grapheme_split_by_tspan() {assert_eq!(run_test("resvg/text/text/complex-grapheme-split-by-tspan"), 0)}
-#[test] fn resvg_text_text_dx_and_dy_with_less_values_than_characters() {assert_eq!(run_test("resvg/text/text/dx-and-dy-with-less-values-than-characters"), 0)}
-#[test] fn resvg_text_text_percent_value_on_x_and_y() {assert_eq!(run_test("resvg/text/text/percent-value-on-x-and-y"), 0)}
+#[ignore] #[test] fn resvg_text_text_emojis() {assert_eq!(run_test("resvg/text/text/emojis", Options::default()), 0)}
+#[test] fn resvg_text_text_x_and_y_with_multiple_values_and_arabic_text() {assert_eq!(run_test("resvg/text/text/x-and-y-with-multiple-values-and-arabic-text", Options::default()), 0)}
+#[test] fn resvg_text_text_simple_case() {assert_eq!(run_test("resvg/text/text/simple-case", Options::default()), 0)}
+#[test] fn resvg_text_text_x_and_y_with_multiple_values_and_tspan() {assert_eq!(run_test("resvg/text/text/x-and-y-with-multiple-values-and-tspan", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate_with_less_values_than_characters() {assert_eq!(run_test("resvg/text/text/rotate-with-less-values-than-characters", Options::default()), 0)}
+#[test] fn resvg_text_text_complex_grapheme_split_by_tspan() {assert_eq!(run_test("resvg/text/text/complex-grapheme-split-by-tspan", Options::default()), 0)}
+#[test] fn resvg_text_text_dx_and_dy_with_less_values_than_characters() {assert_eq!(run_test("resvg/text/text/dx-and-dy-with-less-values-than-characters", Options::default()), 0)}
+#[test] fn resvg_text_text_percent_value_on_x_and_y() {assert_eq!(run_test("resvg/text/text/percent-value-on-x-and-y", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_text_text_compound_emojis() {assert_eq!(run_test("resvg/text/text/compound-emojis"), 0)}
-#[test] fn resvg_text_text_xml_space() {assert_eq!(run_test("resvg/text/text/xml-space"), 0)}
-#[test] fn resvg_text_text_fill_rule_evenodd() {assert_eq!(run_test("resvg/text/text/fill-rule=evenodd"), 0)}
-#[test] fn resvg_text_text_complex_graphemes_and_coordinates_list() {assert_eq!(run_test("resvg/text/text/complex-graphemes-and-coordinates-list"), 0)}
-#[test] fn resvg_text_text_x_and_y_with_dx_and_dy_lists() {assert_eq!(run_test("resvg/text/text/x-and-y-with-dx-and-dy-lists"), 0)}
-#[test] fn resvg_text_text_rotate_with_multiple_values_and_complex_text() {assert_eq!(run_test("resvg/text/text/rotate-with-multiple-values-and-complex-text"), 0)}
-#[test] fn resvg_text_text_rotate_with_an_invalid_angle() {assert_eq!(run_test("resvg/text/text/rotate-with-an-invalid-angle"), 0)}
-#[test] fn resvg_text_text_filter_bbox() {assert_eq!(run_test("resvg/text/text/filter-bbox"), 0)}
-#[test] fn resvg_text_text_no_coordinates() {assert_eq!(run_test("resvg/text/text/no-coordinates"), 0)}
-#[test] fn resvg_text_text_percent_value_on_dx_and_dy() {assert_eq!(run_test("resvg/text/text/percent-value-on-dx-and-dy"), 0)}
-#[test] fn resvg_text_text_mm_coordinates() {assert_eq!(run_test("resvg/text/text/mm-coordinates"), 0)}
-#[test] fn resvg_text_text_x_and_y_with_more_values_than_characters() {assert_eq!(run_test("resvg/text/text/x-and-y-with-more-values-than-characters"), 0)}
-#[test] fn resvg_text_text_rotate_with_multiple_values() {assert_eq!(run_test("resvg/text/text/rotate-with-multiple-values"), 0)}
-#[test] fn resvg_text_text_em_and_ex_coordinates() {assert_eq!(run_test("resvg/text/text/em-and-ex-coordinates"), 0)}
-#[test] fn resvg_text_font_font_shorthand() {assert_eq!(run_test("resvg/text/font/font-shorthand"), 0)}
-#[test] fn resvg_text_font_simple_case() {assert_eq!(run_test("resvg/text/font/simple-case"), 0)}
-#[test] fn resvg_text_glyph_orientation_vertical_simple_case() {assert_eq!(run_test("resvg/text/glyph-orientation-vertical/simple-case"), 0)}
-#[test] fn resvg_text_textLength_zero() {assert_eq!(run_test("resvg/text/textLength/zero"), 0)}
-#[test] fn resvg_text_textLength_150_on_parent() {assert_eq!(run_test("resvg/text/textLength/150-on-parent"), 0)}
-#[test] fn resvg_text_textLength_on_a_single_tspan() {assert_eq!(run_test("resvg/text/textLength/on-a-single-tspan"), 0)}
-#[test] fn resvg_text_textLength_75percent() {assert_eq!(run_test("resvg/text/textLength/75percent"), 0)}
-#[test] fn resvg_text_textLength_arabic() {assert_eq!(run_test("resvg/text/textLength/arabic"), 0)}
-#[test] fn resvg_text_textLength_150() {assert_eq!(run_test("resvg/text/textLength/150"), 0)}
-#[test] fn resvg_text_textLength_arabic_with_lengthAdjust() {assert_eq!(run_test("resvg/text/textLength/arabic-with-lengthAdjust"), 0)}
-#[test] fn resvg_text_textLength_150_on_tspan() {assert_eq!(run_test("resvg/text/textLength/150-on-tspan"), 0)}
-#[test] fn resvg_text_textLength_inherit() {assert_eq!(run_test("resvg/text/textLength/inherit"), 0)}
-#[test] fn resvg_text_textLength_on_text_and_tspan() {assert_eq!(run_test("resvg/text/textLength/on-text-and-tspan"), 0)}
-#[test] fn resvg_text_textLength_negative() {assert_eq!(run_test("resvg/text/textLength/negative"), 0)}
-#[test] fn resvg_text_textLength_40mm() {assert_eq!(run_test("resvg/text/textLength/40mm"), 0)}
-#[test] fn resvg_text_font_size_adjust_simple_case() {assert_eq!(run_test("resvg/text/font-size-adjust/simple-case"), 0)}
-#[test] fn resvg_text_font_style_inherit() {assert_eq!(run_test("resvg/text/font-style/inherit"), 0)}
-#[test] fn resvg_text_font_style_italic() {assert_eq!(run_test("resvg/text/font-style/italic"), 0)}
-#[test] fn resvg_text_font_style_oblique() {assert_eq!(run_test("resvg/text/font-style/oblique"), 0)}
-#[test] fn resvg_text_font_family_font_list() {assert_eq!(run_test("resvg/text/font-family/font-list"), 0)}
-#[test] fn resvg_text_font_family_source_sans_pro() {assert_eq!(run_test("resvg/text/font-family/source-sans-pro"), 0)}
-#[test] fn resvg_text_font_family_serif() {assert_eq!(run_test("resvg/text/font-family/serif"), 0)}
-#[test] fn resvg_text_font_family_noto_sans() {assert_eq!(run_test("resvg/text/font-family/noto-sans"), 0)}
-#[test] fn resvg_text_font_family_fantasy() {assert_eq!(run_test("resvg/text/font-family/fantasy"), 0)}
-#[test] fn resvg_text_font_family_monospace() {assert_eq!(run_test("resvg/text/font-family/monospace"), 0)}
-#[test] fn resvg_text_font_family_fallback_2() {assert_eq!(run_test("resvg/text/font-family/fallback-2"), 0)}
-#[test] fn resvg_text_font_family_double_quoted() {assert_eq!(run_test("resvg/text/font-family/double-quoted"), 0)}
-#[test] fn resvg_text_font_family_cursive() {assert_eq!(run_test("resvg/text/font-family/cursive"), 0)}
-#[test] fn resvg_text_font_family_fallback_1() {assert_eq!(run_test("resvg/text/font-family/fallback-1"), 0)}
-#[test] fn resvg_text_font_family_bold_sans_serif() {assert_eq!(run_test("resvg/text/font-family/bold-sans-serif"), 0)}
-#[test] fn resvg_text_font_family_sans_serif() {assert_eq!(run_test("resvg/text/font-family/sans-serif"), 0)}
-#[test] fn resvg_text_text_decoration_underline() {assert_eq!(run_test("resvg/text/text-decoration/underline"), 0)}
-#[test] fn resvg_text_text_decoration_line_through() {assert_eq!(run_test("resvg/text/text-decoration/line-through"), 0)}
-#[test] fn resvg_text_text_decoration_all_types_inline_comma_separated() {assert_eq!(run_test("resvg/text/text-decoration/all-types-inline-comma-separated"), 0)}
-#[test] fn resvg_text_text_decoration_tspan_decoration() {assert_eq!(run_test("resvg/text/text-decoration/tspan-decoration"), 0)}
-#[test] fn resvg_text_text_decoration_underline_with_dy_list_2() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-dy-list-2"), 0)}
-#[test] fn resvg_text_text_decoration_outside_the_text_element() {assert_eq!(run_test("resvg/text/text-decoration/outside-the-text-element"), 0)}
-#[test] fn resvg_text_text_decoration_underline_with_dy_list_1() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-dy-list-1"), 0)}
-#[test] fn resvg_text_text_decoration_all_types_nested() {assert_eq!(run_test("resvg/text/text-decoration/all-types-nested"), 0)}
-#[test] fn resvg_text_text_decoration_overline() {assert_eq!(run_test("resvg/text/text-decoration/overline"), 0)}
-#[test] fn resvg_text_text_decoration_underline_with_y_list() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-y-list"), 0)}
-#[test] fn resvg_text_text_decoration_all_types_inline_no_spaces() {assert_eq!(run_test("resvg/text/text-decoration/all-types-inline-no-spaces"), 0)}
-#[test] fn resvg_text_text_decoration_indirect_with_multiple_colors() {assert_eq!(run_test("resvg/text/text-decoration/indirect-with-multiple-colors"), 0)}
-#[test] fn resvg_text_text_decoration_underline_with_rotate_list_4() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-rotate-list-4"), 0)}
-#[test] fn resvg_text_text_decoration_indirect() {assert_eq!(run_test("resvg/text/text-decoration/indirect"), 0)}
-#[test] fn resvg_text_text_decoration_underline_with_rotate_list_3() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-rotate-list-3"), 0)}
-#[test] fn resvg_text_text_decoration_style_resolving_3() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-3"), 0)}
-#[test] fn resvg_text_text_decoration_all_types_inline() {assert_eq!(run_test("resvg/text/text-decoration/all-types-inline"), 0)}
-#[test] fn resvg_text_text_decoration_style_resolving_2() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-2"), 0)}
-#[test] fn resvg_text_text_decoration_style_resolving_1() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-1"), 0)}
-#[test] fn resvg_text_text_decoration_style_resolving_4() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-4"), 0)}
-#[test] fn resvg_text_text_decoration_with_textLength_on_a_single_character() {assert_eq!(run_test("resvg/text/text-decoration/with-textLength-on-a-single-character"), 0)}
-#[test] fn resvg_text_textPath_invalid_textPath_in_the_middle() {assert_eq!(run_test("resvg/text/textPath/invalid-textPath-in-the-middle"), 0)}
-#[test] fn resvg_text_textPath_spacing_auto() {assert_eq!(run_test("resvg/text/textPath/spacing=auto"), 0)}
-#[test] fn resvg_text_textPath_with_letter_spacing() {assert_eq!(run_test("resvg/text/textPath/with-letter-spacing"), 0)}
-#[test] fn resvg_text_textPath_with_invalid_path_and_xlink_href() {assert_eq!(run_test("resvg/text/textPath/with-invalid-path-and-xlink-href"), 0)}
-#[test] fn resvg_text_textPath_link_to_rect() {assert_eq!(run_test("resvg/text/textPath/link-to-rect"), 0)}
-#[test] fn resvg_text_textPath_dy_with_tiny_coordinates() {assert_eq!(run_test("resvg/text/textPath/dy-with-tiny-coordinates"), 0)}
-#[test] fn resvg_text_textPath_with_path() {assert_eq!(run_test("resvg/text/textPath/with-path"), 0)}
-#[test] fn resvg_text_textPath_with_filter() {assert_eq!(run_test("resvg/text/textPath/with-filter"), 0)}
-#[test] fn resvg_text_textPath_complex() {assert_eq!(run_test("resvg/text/textPath/complex"), 0)}
-#[test] fn resvg_text_textPath_invalid_link() {assert_eq!(run_test("resvg/text/textPath/invalid-link"), 0)}
-#[test] fn resvg_text_textPath_mixed_children_2() {assert_eq!(run_test("resvg/text/textPath/mixed-children-2"), 0)}
-#[test] fn resvg_text_textPath_startOffset_9999() {assert_eq!(run_test("resvg/text/textPath/startOffset=9999"), 0)}
-#[test] fn resvg_text_textPath_mixed_children_1() {assert_eq!(run_test("resvg/text/textPath/mixed-children-1"), 0)}
-#[test] fn resvg_text_textPath_nested() {assert_eq!(run_test("resvg/text/textPath/nested"), 0)}
-#[test] fn resvg_text_textPath_with_transform_outside_a_referenced_path() {assert_eq!(run_test("resvg/text/textPath/with-transform-outside-a-referenced-path"), 0)}
-#[test] fn resvg_text_textPath_with_text_anchor() {assert_eq!(run_test("resvg/text/textPath/with-text-anchor"), 0)}
-#[test] fn resvg_text_textPath_writing_mode_tb() {assert_eq!(run_test("resvg/text/textPath/writing-mode=tb"), 0)}
-#[test] fn resvg_text_textPath_with_big_letter_spacing() {assert_eq!(run_test("resvg/text/textPath/with-big-letter-spacing"), 0)}
-#[test] fn resvg_text_textPath_path_with_ClosePath() {assert_eq!(run_test("resvg/text/textPath/path-with-ClosePath"), 0)}
-#[test] fn resvg_text_textPath_simple_case() {assert_eq!(run_test("resvg/text/textPath/simple-case"), 0)}
-#[test] fn resvg_text_textPath_path_with_subpaths_and_startOffset() {assert_eq!(run_test("resvg/text/textPath/path-with-subpaths-and-startOffset"), 0)}
-#[test] fn resvg_text_textPath_method_stretch() {assert_eq!(run_test("resvg/text/textPath/method=stretch"), 0)}
-#[test] fn resvg_text_textPath_with_path_and_xlink_href() {assert_eq!(run_test("resvg/text/textPath/with-path-and-xlink-href"), 0)}
-#[test] fn resvg_text_textPath_no_link() {assert_eq!(run_test("resvg/text/textPath/no-link"), 0)}
-#[test] fn resvg_text_textPath_with_coordinates_on_text() {assert_eq!(run_test("resvg/text/textPath/with-coordinates-on-text"), 0)}
-#[test] fn resvg_text_textPath_m_A_path() {assert_eq!(run_test("resvg/text/textPath/m-A-path"), 0)}
-#[test] fn resvg_text_textPath_closed_path() {assert_eq!(run_test("resvg/text/textPath/closed-path"), 0)}
-#[test] fn resvg_text_textPath_with_baseline_shift() {assert_eq!(run_test("resvg/text/textPath/with-baseline-shift"), 0)}
-#[test] fn resvg_text_textPath_with_baseline_shift_and_rotate() {assert_eq!(run_test("resvg/text/textPath/with-baseline-shift-and-rotate"), 0)}
-#[test] fn resvg_text_textPath_very_long_text() {assert_eq!(run_test("resvg/text/textPath/very-long-text"), 0)}
-#[test] fn resvg_text_textPath_startOffset_5mm() {assert_eq!(run_test("resvg/text/textPath/startOffset=5mm"), 0)}
-#[test] fn resvg_text_textPath_with_underline() {assert_eq!(run_test("resvg/text/textPath/with-underline"), 0)}
-#[test] fn resvg_text_textPath_tspan_with_absolute_position() {assert_eq!(run_test("resvg/text/textPath/tspan-with-absolute-position"), 0)}
-#[test] fn resvg_text_textPath_startOffset_10percent() {assert_eq!(run_test("resvg/text/textPath/startOffset=10percent"), 0)}
-#[test] fn resvg_text_textPath_side_right() {assert_eq!(run_test("resvg/text/textPath/side=right"), 0)}
-#[test] fn resvg_text_textPath_with_rotate() {assert_eq!(run_test("resvg/text/textPath/with-rotate"), 0)}
-#[test] fn resvg_text_textPath_m_L_Z_path() {assert_eq!(run_test("resvg/text/textPath/m-L-Z-path"), 0)}
-#[test] fn resvg_text_textPath_with_transform_on_a_referenced_path() {assert_eq!(run_test("resvg/text/textPath/with-transform-on-a-referenced-path"), 0)}
-#[test] fn resvg_text_textPath_path_with_subpaths() {assert_eq!(run_test("resvg/text/textPath/path-with-subpaths"), 0)}
-#[test] fn resvg_text_textPath_with_coordinates_on_textPath() {assert_eq!(run_test("resvg/text/textPath/with-coordinates-on-textPath"), 0)}
-#[test] fn resvg_text_textPath_startOffset__100() {assert_eq!(run_test("resvg/text/textPath/startOffset=-100"), 0)}
-#[test] fn resvg_text_textPath_two_paths() {assert_eq!(run_test("resvg/text/textPath/two-paths"), 0)}
-#[test] fn resvg_text_textPath_startOffset_30() {assert_eq!(run_test("resvg/text/textPath/startOffset=30"), 0)}
-#[test] fn resvg_text_textPath_tspan_with_relative_position() {assert_eq!(run_test("resvg/text/textPath/tspan-with-relative-position"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_rect_and_percent_values() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-percent-values"), 0)}
+#[ignore] #[test] fn resvg_text_text_compound_emojis() {assert_eq!(run_test("resvg/text/text/compound-emojis", Options::default()), 0)}
+#[test] fn resvg_text_text_xml_space() {assert_eq!(run_test("resvg/text/text/xml-space", Options::default()), 0)}
+#[test] fn resvg_text_text_fill_rule_evenodd() {assert_eq!(run_test("resvg/text/text/fill-rule=evenodd", Options::default()), 0)}
+#[test] fn resvg_text_text_complex_graphemes_and_coordinates_list() {assert_eq!(run_test("resvg/text/text/complex-graphemes-and-coordinates-list", Options::default()), 0)}
+#[test] fn resvg_text_text_x_and_y_with_dx_and_dy_lists() {assert_eq!(run_test("resvg/text/text/x-and-y-with-dx-and-dy-lists", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate_with_multiple_values_and_complex_text() {assert_eq!(run_test("resvg/text/text/rotate-with-multiple-values-and-complex-text", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate_with_an_invalid_angle() {assert_eq!(run_test("resvg/text/text/rotate-with-an-invalid-angle", Options::default()), 0)}
+#[test] fn resvg_text_text_filter_bbox() {assert_eq!(run_test("resvg/text/text/filter-bbox", Options::default()), 0)}
+#[test] fn resvg_text_text_no_coordinates() {assert_eq!(run_test("resvg/text/text/no-coordinates", Options::default()), 0)}
+#[test] fn resvg_text_text_percent_value_on_dx_and_dy() {assert_eq!(run_test("resvg/text/text/percent-value-on-dx-and-dy", Options::default()), 0)}
+#[test] fn resvg_text_text_mm_coordinates() {assert_eq!(run_test("resvg/text/text/mm-coordinates", Options::default()), 0)}
+#[test] fn resvg_text_text_x_and_y_with_more_values_than_characters() {assert_eq!(run_test("resvg/text/text/x-and-y-with-more-values-than-characters", Options::default()), 0)}
+#[test] fn resvg_text_text_rotate_with_multiple_values() {assert_eq!(run_test("resvg/text/text/rotate-with-multiple-values", Options::default()), 0)}
+#[test] fn resvg_text_text_em_and_ex_coordinates() {assert_eq!(run_test("resvg/text/text/em-and-ex-coordinates", Options::default()), 0)}
+#[test] fn resvg_text_font_font_shorthand() {assert_eq!(run_test("resvg/text/font/font-shorthand", Options::default()), 0)}
+#[test] fn resvg_text_font_simple_case() {assert_eq!(run_test("resvg/text/font/simple-case", Options::default()), 0)}
+#[test] fn resvg_text_glyph_orientation_vertical_simple_case() {assert_eq!(run_test("resvg/text/glyph-orientation-vertical/simple-case", Options::default()), 0)}
+#[test] fn resvg_text_textLength_zero() {assert_eq!(run_test("resvg/text/textLength/zero", Options::default()), 0)}
+#[test] fn resvg_text_textLength_150_on_parent() {assert_eq!(run_test("resvg/text/textLength/150-on-parent", Options::default()), 0)}
+#[test] fn resvg_text_textLength_on_a_single_tspan() {assert_eq!(run_test("resvg/text/textLength/on-a-single-tspan", Options::default()), 0)}
+#[test] fn resvg_text_textLength_75percent() {assert_eq!(run_test("resvg/text/textLength/75percent", Options::default()), 0)}
+#[test] fn resvg_text_textLength_arabic() {assert_eq!(run_test("resvg/text/textLength/arabic", Options::default()), 0)}
+#[test] fn resvg_text_textLength_150() {assert_eq!(run_test("resvg/text/textLength/150", Options::default()), 0)}
+#[test] fn resvg_text_textLength_arabic_with_lengthAdjust() {assert_eq!(run_test("resvg/text/textLength/arabic-with-lengthAdjust", Options::default()), 0)}
+#[test] fn resvg_text_textLength_150_on_tspan() {assert_eq!(run_test("resvg/text/textLength/150-on-tspan", Options::default()), 0)}
+#[test] fn resvg_text_textLength_inherit() {assert_eq!(run_test("resvg/text/textLength/inherit", Options::default()), 0)}
+#[test] fn resvg_text_textLength_on_text_and_tspan() {assert_eq!(run_test("resvg/text/textLength/on-text-and-tspan", Options::default()), 0)}
+#[test] fn resvg_text_textLength_negative() {assert_eq!(run_test("resvg/text/textLength/negative", Options::default()), 0)}
+#[test] fn resvg_text_textLength_40mm() {assert_eq!(run_test("resvg/text/textLength/40mm", Options::default()), 0)}
+#[test] fn resvg_text_font_size_adjust_simple_case() {assert_eq!(run_test("resvg/text/font-size-adjust/simple-case", Options::default()), 0)}
+#[test] fn resvg_text_font_style_inherit() {assert_eq!(run_test("resvg/text/font-style/inherit", Options::default()), 0)}
+#[test] fn resvg_text_font_style_italic() {assert_eq!(run_test("resvg/text/font-style/italic", Options::default()), 0)}
+#[test] fn resvg_text_font_style_oblique() {assert_eq!(run_test("resvg/text/font-style/oblique", Options::default()), 0)}
+#[test] fn resvg_text_font_family_font_list() {assert_eq!(run_test("resvg/text/font-family/font-list", Options::default()), 0)}
+#[test] fn resvg_text_font_family_source_sans_pro() {assert_eq!(run_test("resvg/text/font-family/source-sans-pro", Options::default()), 0)}
+#[test] fn resvg_text_font_family_serif() {assert_eq!(run_test("resvg/text/font-family/serif", Options::default()), 0)}
+#[test] fn resvg_text_font_family_noto_sans() {assert_eq!(run_test("resvg/text/font-family/noto-sans", Options::default()), 0)}
+#[test] fn resvg_text_font_family_fantasy() {assert_eq!(run_test("resvg/text/font-family/fantasy", Options::default()), 0)}
+#[test] fn resvg_text_font_family_monospace() {assert_eq!(run_test("resvg/text/font-family/monospace", Options::default()), 0)}
+#[test] fn resvg_text_font_family_fallback_2() {assert_eq!(run_test("resvg/text/font-family/fallback-2", Options::default()), 0)}
+#[test] fn resvg_text_font_family_double_quoted() {assert_eq!(run_test("resvg/text/font-family/double-quoted", Options::default()), 0)}
+#[test] fn resvg_text_font_family_cursive() {assert_eq!(run_test("resvg/text/font-family/cursive", Options::default()), 0)}
+#[test] fn resvg_text_font_family_fallback_1() {assert_eq!(run_test("resvg/text/font-family/fallback-1", Options::default()), 0)}
+#[test] fn resvg_text_font_family_bold_sans_serif() {assert_eq!(run_test("resvg/text/font-family/bold-sans-serif", Options::default()), 0)}
+#[test] fn resvg_text_font_family_sans_serif() {assert_eq!(run_test("resvg/text/font-family/sans-serif", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_underline() {assert_eq!(run_test("resvg/text/text-decoration/underline", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_line_through() {assert_eq!(run_test("resvg/text/text-decoration/line-through", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_all_types_inline_comma_separated() {assert_eq!(run_test("resvg/text/text-decoration/all-types-inline-comma-separated", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_tspan_decoration() {assert_eq!(run_test("resvg/text/text-decoration/tspan-decoration", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_underline_with_dy_list_2() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-dy-list-2", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_outside_the_text_element() {assert_eq!(run_test("resvg/text/text-decoration/outside-the-text-element", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_underline_with_dy_list_1() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-dy-list-1", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_all_types_nested() {assert_eq!(run_test("resvg/text/text-decoration/all-types-nested", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_overline() {assert_eq!(run_test("resvg/text/text-decoration/overline", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_underline_with_y_list() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-y-list", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_all_types_inline_no_spaces() {assert_eq!(run_test("resvg/text/text-decoration/all-types-inline-no-spaces", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_indirect_with_multiple_colors() {assert_eq!(run_test("resvg/text/text-decoration/indirect-with-multiple-colors", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_underline_with_rotate_list_4() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-rotate-list-4", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_indirect() {assert_eq!(run_test("resvg/text/text-decoration/indirect", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_underline_with_rotate_list_3() {assert_eq!(run_test("resvg/text/text-decoration/underline-with-rotate-list-3", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_style_resolving_3() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-3", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_all_types_inline() {assert_eq!(run_test("resvg/text/text-decoration/all-types-inline", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_style_resolving_2() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-2", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_style_resolving_1() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-1", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_style_resolving_4() {assert_eq!(run_test("resvg/text/text-decoration/style-resolving-4", Options::default()), 0)}
+#[test] fn resvg_text_text_decoration_with_textLength_on_a_single_character() {assert_eq!(run_test("resvg/text/text-decoration/with-textLength-on-a-single-character", Options::default()), 0)}
+#[test] fn resvg_text_textPath_invalid_textPath_in_the_middle() {assert_eq!(run_test("resvg/text/textPath/invalid-textPath-in-the-middle", Options::default()), 0)}
+#[test] fn resvg_text_textPath_spacing_auto() {assert_eq!(run_test("resvg/text/textPath/spacing=auto", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_letter_spacing() {assert_eq!(run_test("resvg/text/textPath/with-letter-spacing", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_invalid_path_and_xlink_href() {assert_eq!(run_test("resvg/text/textPath/with-invalid-path-and-xlink-href", Options::default()), 0)}
+#[test] fn resvg_text_textPath_link_to_rect() {assert_eq!(run_test("resvg/text/textPath/link-to-rect", Options::default()), 0)}
+#[test] fn resvg_text_textPath_dy_with_tiny_coordinates() {assert_eq!(run_test("resvg/text/textPath/dy-with-tiny-coordinates", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_path() {assert_eq!(run_test("resvg/text/textPath/with-path", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_filter() {assert_eq!(run_test("resvg/text/textPath/with-filter", Options::default()), 0)}
+#[test] fn resvg_text_textPath_complex() {assert_eq!(run_test("resvg/text/textPath/complex", Options::default()), 0)}
+#[test] fn resvg_text_textPath_invalid_link() {assert_eq!(run_test("resvg/text/textPath/invalid-link", Options::default()), 0)}
+#[test] fn resvg_text_textPath_mixed_children_2() {assert_eq!(run_test("resvg/text/textPath/mixed-children-2", Options::default()), 0)}
+#[test] fn resvg_text_textPath_startOffset_9999() {assert_eq!(run_test("resvg/text/textPath/startOffset=9999", Options::default()), 0)}
+#[test] fn resvg_text_textPath_mixed_children_1() {assert_eq!(run_test("resvg/text/textPath/mixed-children-1", Options::default()), 0)}
+#[test] fn resvg_text_textPath_nested() {assert_eq!(run_test("resvg/text/textPath/nested", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_transform_outside_a_referenced_path() {assert_eq!(run_test("resvg/text/textPath/with-transform-outside-a-referenced-path", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_text_anchor() {assert_eq!(run_test("resvg/text/textPath/with-text-anchor", Options::default()), 0)}
+#[test] fn resvg_text_textPath_writing_mode_tb() {assert_eq!(run_test("resvg/text/textPath/writing-mode=tb", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_big_letter_spacing() {assert_eq!(run_test("resvg/text/textPath/with-big-letter-spacing", Options::default()), 0)}
+#[test] fn resvg_text_textPath_path_with_ClosePath() {assert_eq!(run_test("resvg/text/textPath/path-with-ClosePath", Options::default()), 0)}
+#[test] fn resvg_text_textPath_simple_case() {assert_eq!(run_test("resvg/text/textPath/simple-case", Options::default()), 0)}
+#[test] fn resvg_text_textPath_path_with_subpaths_and_startOffset() {assert_eq!(run_test("resvg/text/textPath/path-with-subpaths-and-startOffset", Options::default()), 0)}
+#[test] fn resvg_text_textPath_method_stretch() {assert_eq!(run_test("resvg/text/textPath/method=stretch", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_path_and_xlink_href() {assert_eq!(run_test("resvg/text/textPath/with-path-and-xlink-href", Options::default()), 0)}
+#[test] fn resvg_text_textPath_no_link() {assert_eq!(run_test("resvg/text/textPath/no-link", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_coordinates_on_text() {assert_eq!(run_test("resvg/text/textPath/with-coordinates-on-text", Options::default()), 0)}
+#[test] fn resvg_text_textPath_m_A_path() {assert_eq!(run_test("resvg/text/textPath/m-A-path", Options::default()), 0)}
+#[test] fn resvg_text_textPath_closed_path() {assert_eq!(run_test("resvg/text/textPath/closed-path", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_baseline_shift() {assert_eq!(run_test("resvg/text/textPath/with-baseline-shift", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_baseline_shift_and_rotate() {assert_eq!(run_test("resvg/text/textPath/with-baseline-shift-and-rotate", Options::default()), 0)}
+#[test] fn resvg_text_textPath_very_long_text() {assert_eq!(run_test("resvg/text/textPath/very-long-text", Options::default()), 0)}
+#[test] fn resvg_text_textPath_startOffset_5mm() {assert_eq!(run_test("resvg/text/textPath/startOffset=5mm", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_underline() {assert_eq!(run_test("resvg/text/textPath/with-underline", Options::default()), 0)}
+#[test] fn resvg_text_textPath_tspan_with_absolute_position() {assert_eq!(run_test("resvg/text/textPath/tspan-with-absolute-position", Options::default()), 0)}
+#[test] fn resvg_text_textPath_startOffset_10percent() {assert_eq!(run_test("resvg/text/textPath/startOffset=10percent", Options::default()), 0)}
+#[test] fn resvg_text_textPath_side_right() {assert_eq!(run_test("resvg/text/textPath/side=right", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_rotate() {assert_eq!(run_test("resvg/text/textPath/with-rotate", Options::default()), 0)}
+#[test] fn resvg_text_textPath_m_L_Z_path() {assert_eq!(run_test("resvg/text/textPath/m-L-Z-path", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_transform_on_a_referenced_path() {assert_eq!(run_test("resvg/text/textPath/with-transform-on-a-referenced-path", Options::default()), 0)}
+#[test] fn resvg_text_textPath_path_with_subpaths() {assert_eq!(run_test("resvg/text/textPath/path-with-subpaths", Options::default()), 0)}
+#[test] fn resvg_text_textPath_with_coordinates_on_textPath() {assert_eq!(run_test("resvg/text/textPath/with-coordinates-on-textPath", Options::default()), 0)}
+#[test] fn resvg_text_textPath_startOffset__100() {assert_eq!(run_test("resvg/text/textPath/startOffset=-100", Options::default()), 0)}
+#[test] fn resvg_text_textPath_two_paths() {assert_eq!(run_test("resvg/text/textPath/two-paths", Options::default()), 0)}
+#[test] fn resvg_text_textPath_startOffset_30() {assert_eq!(run_test("resvg/text/textPath/startOffset=30", Options::default()), 0)}
+#[test] fn resvg_text_textPath_tspan_with_relative_position() {assert_eq!(run_test("resvg/text/textPath/tspan-with-relative-position", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_rect_and_percent_values() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-percent-values", Options::default()), 0)}
 // invalid size
-#[ignore] #[test] fn resvg_structure_svg_zero_size() {assert_eq!(run_test("resvg/structure/svg/zero-size"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_xMinYMin() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMinYMin"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_2() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-2"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_3() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-3"), 0)}
-#[test] fn resvg_structure_svg_no_children() {assert_eq!(run_test("resvg/structure/svg/no-children"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_1() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-1"), 0)}
+#[ignore] #[test] fn resvg_structure_svg_zero_size() {assert_eq!(run_test("resvg/structure/svg/zero-size", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_xMinYMin() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMinYMin", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_2() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-2", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_3() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-3", Options::default()), 0)}
+#[test] fn resvg_structure_svg_no_children() {assert_eq!(run_test("resvg/structure/svg/no-children", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_1() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-1", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_structure_svg_funcIRI_with_invalid_characters() {assert_eq!(run_test("resvg/structure/svg/funcIRI-with-invalid-characters"), 0)}
-#[test] fn resvg_structure_svg_elements_via_ENTITY_reference_1() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-1"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_xMaxYMax_slice() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMaxYMax-slice"), 0)}
-#[test] fn resvg_structure_svg_elements_via_ENTITY_reference_3() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-3"), 0)}
-#[test] fn resvg_structure_svg_elements_via_ENTITY_reference_2() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-2"), 0)}
-#[test] fn resvg_structure_svg_deeply_nested_svg() {assert_eq!(run_test("resvg/structure/svg/deeply-nested-svg"), 0)}
-#[test] fn resvg_structure_svg_viewBox_not_at_zero_pos() {assert_eq!(run_test("resvg/structure/svg/viewBox-not-at-zero-pos"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_xMaxYMax() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMaxYMax"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_relative_width_and_height() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-relative-width-and-height"), 0)}
-#[test] fn resvg_structure_svg_mixed_namespaces() {assert_eq!(run_test("resvg/structure/svg/mixed-namespaces"), 0)}
-#[test] fn resvg_structure_svg_funcIRI_with_quotes() {assert_eq!(run_test("resvg/structure/svg/funcIRI-with-quotes"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_overflow_visible() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-overflow-visible"), 0)}
+#[ignore] #[test] fn resvg_structure_svg_funcIRI_with_invalid_characters() {assert_eq!(run_test("resvg/structure/svg/funcIRI-with-invalid-characters", Options::default()), 0)}
+#[test] fn resvg_structure_svg_elements_via_ENTITY_reference_1() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-1", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_xMaxYMax_slice() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMaxYMax-slice", Options::default()), 0)}
+#[test] fn resvg_structure_svg_elements_via_ENTITY_reference_3() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-3", Options::default()), 0)}
+#[test] fn resvg_structure_svg_elements_via_ENTITY_reference_2() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-2", Options::default()), 0)}
+#[test] fn resvg_structure_svg_deeply_nested_svg() {assert_eq!(run_test("resvg/structure/svg/deeply-nested-svg", Options::default()), 0)}
+#[test] fn resvg_structure_svg_viewBox_not_at_zero_pos() {assert_eq!(run_test("resvg/structure/svg/viewBox-not-at-zero-pos", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_xMaxYMax() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMaxYMax", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_relative_width_and_height() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-relative-width-and-height", Options::default()), 0)}
+#[test] fn resvg_structure_svg_mixed_namespaces() {assert_eq!(run_test("resvg/structure/svg/mixed-namespaces", Options::default()), 0)}
+#[test] fn resvg_structure_svg_funcIRI_with_quotes() {assert_eq!(run_test("resvg/structure/svg/funcIRI-with-quotes", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_overflow_visible() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-overflow-visible", Options::default()), 0)}
 // invalid size
-#[ignore] #[test] fn resvg_structure_svg_negative_size() {assert_eq!(run_test("resvg/structure/svg/negative-size"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_xMidYMid() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMidYMid"), 0)}
-#[test] fn resvg_structure_svg_proportional_viewBox() {assert_eq!(run_test("resvg/structure/svg/proportional-viewBox"), 0)}
+#[ignore] #[test] fn resvg_structure_svg_negative_size() {assert_eq!(run_test("resvg/structure/svg/negative-size", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_xMidYMid() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMidYMid", Options::default()), 0)}
+#[test] fn resvg_structure_svg_proportional_viewBox() {assert_eq!(run_test("resvg/structure/svg/proportional-viewBox", Options::default()), 0)}
 // invalid size
-#[ignore] #[test] fn resvg_structure_svg_no_size() {assert_eq!(run_test("resvg/structure/svg/no-size"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_xMidYMid_slice() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMidYMid-slice"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_xMinYMin_slice() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMinYMin-slice"), 0)}
+#[ignore] #[test] fn resvg_structure_svg_no_size() {assert_eq!(run_test("resvg/structure/svg/no-size", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_xMidYMid_slice() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMidYMid-slice", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_xMinYMin_slice() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMinYMin-slice", Options::default()), 0)}
 // invalid encoding
-#[ignore] #[test] fn resvg_structure_svg_not_UTF_8_encoding() {assert_eq!(run_test("resvg/structure/svg/not-UTF-8-encoding"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_none() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=none"), 0)}
-#[test] fn resvg_structure_svg_attribute_value_via_ENTITY_reference() {assert_eq!(run_test("resvg/structure/svg/attribute-value-via-ENTITY-reference"), 0)}
-#[test] fn resvg_structure_svg_explicit_svg_namespace() {assert_eq!(run_test("resvg/structure/svg/explicit-svg-namespace"), 0)}
-#[test] fn resvg_structure_svg_invalid_id_attribute_2() {assert_eq!(run_test("resvg/structure/svg/invalid-id-attribute-2"), 0)}
+#[ignore] #[test] fn resvg_structure_svg_not_UTF_8_encoding() {assert_eq!(run_test("resvg/structure/svg/not-UTF-8-encoding", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_none() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=none", Options::default()), 0)}
+#[test] fn resvg_structure_svg_attribute_value_via_ENTITY_reference() {assert_eq!(run_test("resvg/structure/svg/attribute-value-via-ENTITY-reference", Options::default()), 0)}
+#[test] fn resvg_structure_svg_explicit_svg_namespace() {assert_eq!(run_test("resvg/structure/svg/explicit-svg-namespace", Options::default()), 0)}
+#[test] fn resvg_structure_svg_invalid_id_attribute_2() {assert_eq!(run_test("resvg/structure/svg/invalid-id-attribute-2", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_structure_svg_funcIRI_parsing() {assert_eq!(run_test("resvg/structure/svg/funcIRI-parsing"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_overflow_auto() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-overflow-auto"), 0)}
-#[test] fn resvg_structure_svg_invalid_id_attribute_1() {assert_eq!(run_test("resvg/structure/svg/invalid-id-attribute-1"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_viewBox() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-viewBox"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_one_with_rect_and_one_with_viewBox() {assert_eq!(run_test("resvg/structure/svg/nested-svg-one-with-rect-and-one-with-viewBox"), 0)}
-#[test] fn resvg_structure_svg_nested_svg() {assert_eq!(run_test("resvg/structure/svg/nested-svg"), 0)}
-#[test] fn resvg_structure_svg_xmlns_validation() {assert_eq!(run_test("resvg/structure/svg/xmlns-validation"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_rect() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_viewBox_and_percent_values() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-viewBox-and-percent-values"), 0)}
-#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_and_percent_values() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-and-percent-values"), 0)}
-#[test] fn resvg_structure_svg_rect_inside_a_non_SVG_element() {assert_eq!(run_test("resvg/structure/svg/rect-inside-a-non-SVG-element"), 0)}
-#[test] fn resvg_structure_svg_preserveAspectRatio_with_viewBox_not_at_zero_pos() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio-with-viewBox-not-at-zero-pos"), 0)}
-#[test] fn resvg_structure_systemLanguage_on_svg() {assert_eq!(run_test("resvg/structure/systemLanguage/on-svg"), 0)}
-#[test] fn resvg_structure_systemLanguage_on_defs() {assert_eq!(run_test("resvg/structure/systemLanguage/on-defs"), 0)}
-#[test] fn resvg_structure_systemLanguage_en_GB() {assert_eq!(run_test("resvg/structure/systemLanguage/en-GB"), 0)}
-#[test] fn resvg_structure_systemLanguage_en() {assert_eq!(run_test("resvg/structure/systemLanguage/en"), 0)}
-#[test] fn resvg_structure_systemLanguage_on_clipPath() {assert_eq!(run_test("resvg/structure/systemLanguage/on-clipPath"), 0)}
-#[test] fn resvg_structure_systemLanguage_en_US() {assert_eq!(run_test("resvg/structure/systemLanguage/en-US"), 0)}
-#[test] fn resvg_structure_systemLanguage_on_tspan() {assert_eq!(run_test("resvg/structure/systemLanguage/on-tspan"), 0)}
-#[test] fn resvg_structure_systemLanguage_on_linearGradient() {assert_eq!(run_test("resvg/structure/systemLanguage/on-linearGradient"), 0)}
-#[test] fn resvg_structure_systemLanguage_ru_en() {assert_eq!(run_test("resvg/structure/systemLanguage/ru-en"), 0)}
-#[test] fn resvg_structure_systemLanguage_ru_Ru() {assert_eq!(run_test("resvg/structure/systemLanguage/ru-Ru"), 0)}
-#[test] fn resvg_structure_g_deeply_nested_groups() {assert_eq!(run_test("resvg/structure/g/deeply-nested-groups"), 0)}
-#[test] fn resvg_structure_g_recursive_inheritance() {assert_eq!(run_test("resvg/structure/g/recursive-inheritance"), 0)}
-#[test] fn resvg_structure_style_iD_selector() {assert_eq!(run_test("resvg/structure/style/iD-selector"), 0)}
-#[test] fn resvg_structure_style_non_presentational_attribute() {assert_eq!(run_test("resvg/structure/style/non-presentational-attribute"), 0)}
-#[test] fn resvg_structure_style_invalid_type() {assert_eq!(run_test("resvg/structure/style/invalid-type"), 0)}
-#[test] fn resvg_structure_style_important() {assert_eq!(run_test("resvg/structure/style/important"), 0)}
-#[test] fn resvg_structure_style_transform() {assert_eq!(run_test("resvg/structure/style/transform"), 0)}
-#[test] fn resvg_structure_style_external_CSS() {assert_eq!(run_test("resvg/structure/style/external-CSS"), 0)}
-#[test] fn resvg_structure_style_type_selector() {assert_eq!(run_test("resvg/structure/style/type-selector"), 0)}
-#[test] fn resvg_structure_style_class_selector() {assert_eq!(run_test("resvg/structure/style/class-selector"), 0)}
-#[test] fn resvg_structure_style_resolve_order() {assert_eq!(run_test("resvg/structure/style/resolve-order"), 0)}
-#[test] fn resvg_structure_style_unresolved_class_selector() {assert_eq!(run_test("resvg/structure/style/unresolved-class-selector"), 0)}
-#[test] fn resvg_structure_style_attribute_selector() {assert_eq!(run_test("resvg/structure/style/attribute-selector"), 0)}
-#[test] fn resvg_structure_style_combined_selectors() {assert_eq!(run_test("resvg/structure/style/combined-selectors"), 0)}
-#[test] fn resvg_structure_style_style_inside_CDATA() {assert_eq!(run_test("resvg/structure/style/style-inside-CDATA"), 0)}
-#[test] fn resvg_structure_style_rule_specificity() {assert_eq!(run_test("resvg/structure/style/rule-specificity"), 0)}
-#[test] fn resvg_structure_style_universal_selector() {assert_eq!(run_test("resvg/structure/style/universal-selector"), 0)}
-#[test] fn resvg_structure_style_style_after_usage() {assert_eq!(run_test("resvg/structure/style/style-after-usage"), 0)}
-#[test] fn resvg_structure_symbol_with_transform_on_use_no_size() {assert_eq!(run_test("resvg/structure/symbol/with-transform-on-use-no-size"), 0)}
-#[test] fn resvg_structure_symbol_unused_symbol() {assert_eq!(run_test("resvg/structure/symbol/unused-symbol"), 0)}
-#[test] fn resvg_structure_symbol_with_viewBox() {assert_eq!(run_test("resvg/structure/symbol/with-viewBox"), 0)}
-#[test] fn resvg_structure_symbol_with_transform_on_use() {assert_eq!(run_test("resvg/structure/symbol/with-transform-on-use"), 0)}
-#[test] fn resvg_structure_symbol_indirect_symbol_reference() {assert_eq!(run_test("resvg/structure/symbol/indirect-symbol-reference"), 0)}
-#[test] fn resvg_structure_symbol_with_custom_use_size() {assert_eq!(run_test("resvg/structure/symbol/with-custom-use-size"), 0)}
-#[test] fn resvg_structure_symbol_simple_case() {assert_eq!(run_test("resvg/structure/symbol/simple-case"), 0)}
-#[test] fn resvg_structure_symbol_opacity_on_symbol_with_viewBox() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-symbol-with-viewBox"), 0)}
-#[test] fn resvg_structure_symbol_with_viewBox_and_custom_use_size() {assert_eq!(run_test("resvg/structure/symbol/with-viewBox-and-custom-use-size"), 0)}
-#[test] fn resvg_structure_symbol_opacity_on_symbol() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-symbol"), 0)}
-#[test] fn resvg_structure_symbol_content_outside_the_viewbox() {assert_eq!(run_test("resvg/structure/symbol/content-outside-the-viewbox"), 0)}
-#[test] fn resvg_structure_symbol_opacity_on_use_and_symbol() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-use-and-symbol"), 0)}
-#[test] fn resvg_structure_symbol_with_overflow_visible() {assert_eq!(run_test("resvg/structure/symbol/with-overflow-visible"), 0)}
-#[test] fn resvg_structure_symbol_with_viewBox_and_custom_use_rect() {assert_eq!(run_test("resvg/structure/symbol/with-viewBox-and-custom-use-rect"), 0)}
-#[test] fn resvg_structure_symbol_opacity_on_use() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-use"), 0)}
-#[test] fn resvg_structure_symbol_with_transform() {assert_eq!(run_test("resvg/structure/symbol/with-transform"), 0)}
-#[test] fn resvg_structure_a_inside_text() {assert_eq!(run_test("resvg/structure/a/inside-text"), 0)}
-#[test] fn resvg_structure_a_on_text() {assert_eq!(run_test("resvg/structure/a/on-text"), 0)}
-#[test] fn resvg_structure_a_on_shape() {assert_eq!(run_test("resvg/structure/a/on-shape"), 0)}
-#[test] fn resvg_structure_a_on_tspan() {assert_eq!(run_test("resvg/structure/a/on-tspan"), 0)}
-#[test] fn resvg_structure_a_inside_tspan() {assert_eq!(run_test("resvg/structure/a/inside-tspan"), 0)}
+#[ignore] #[test] fn resvg_structure_svg_funcIRI_parsing() {assert_eq!(run_test("resvg/structure/svg/funcIRI-parsing", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_overflow_auto() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-overflow-auto", Options::default()), 0)}
+#[test] fn resvg_structure_svg_invalid_id_attribute_1() {assert_eq!(run_test("resvg/structure/svg/invalid-id-attribute-1", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_viewBox() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-viewBox", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_one_with_rect_and_one_with_viewBox() {assert_eq!(run_test("resvg/structure/svg/nested-svg-one-with-rect-and-one-with-viewBox", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg() {assert_eq!(run_test("resvg/structure/svg/nested-svg", Options::default()), 0)}
+#[test] fn resvg_structure_svg_xmlns_validation() {assert_eq!(run_test("resvg/structure/svg/xmlns-validation", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_rect() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_viewBox_and_percent_values() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-viewBox-and-percent-values", Options::default()), 0)}
+#[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_and_percent_values() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-and-percent-values", Options::default()), 0)}
+#[test] fn resvg_structure_svg_rect_inside_a_non_SVG_element() {assert_eq!(run_test("resvg/structure/svg/rect-inside-a-non-SVG-element", Options::default()), 0)}
+#[test] fn resvg_structure_svg_preserveAspectRatio_with_viewBox_not_at_zero_pos() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio-with-viewBox-not-at-zero-pos", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_on_svg() {assert_eq!(run_test("resvg/structure/systemLanguage/on-svg", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_on_defs() {assert_eq!(run_test("resvg/structure/systemLanguage/on-defs", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_en_GB() {assert_eq!(run_test("resvg/structure/systemLanguage/en-GB", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_en() {assert_eq!(run_test("resvg/structure/systemLanguage/en", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_on_clipPath() {assert_eq!(run_test("resvg/structure/systemLanguage/on-clipPath", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_en_US() {assert_eq!(run_test("resvg/structure/systemLanguage/en-US", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_on_tspan() {assert_eq!(run_test("resvg/structure/systemLanguage/on-tspan", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_on_linearGradient() {assert_eq!(run_test("resvg/structure/systemLanguage/on-linearGradient", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_ru_en() {assert_eq!(run_test("resvg/structure/systemLanguage/ru-en", Options::default()), 0)}
+#[test] fn resvg_structure_systemLanguage_ru_Ru() {assert_eq!(run_test("resvg/structure/systemLanguage/ru-Ru", Options::default()), 0)}
+#[test] fn resvg_structure_g_deeply_nested_groups() {assert_eq!(run_test("resvg/structure/g/deeply-nested-groups", Options::default()), 0)}
+#[test] fn resvg_structure_g_recursive_inheritance() {assert_eq!(run_test("resvg/structure/g/recursive-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_style_iD_selector() {assert_eq!(run_test("resvg/structure/style/iD-selector", Options::default()), 0)}
+#[test] fn resvg_structure_style_non_presentational_attribute() {assert_eq!(run_test("resvg/structure/style/non-presentational-attribute", Options::default()), 0)}
+#[test] fn resvg_structure_style_invalid_type() {assert_eq!(run_test("resvg/structure/style/invalid-type", Options::default()), 0)}
+#[test] fn resvg_structure_style_important() {assert_eq!(run_test("resvg/structure/style/important", Options::default()), 0)}
+#[test] fn resvg_structure_style_transform() {assert_eq!(run_test("resvg/structure/style/transform", Options::default()), 0)}
+#[test] fn resvg_structure_style_external_CSS() {assert_eq!(run_test("resvg/structure/style/external-CSS", Options::default()), 0)}
+#[test] fn resvg_structure_style_type_selector() {assert_eq!(run_test("resvg/structure/style/type-selector", Options::default()), 0)}
+#[test] fn resvg_structure_style_class_selector() {assert_eq!(run_test("resvg/structure/style/class-selector", Options::default()), 0)}
+#[test] fn resvg_structure_style_resolve_order() {assert_eq!(run_test("resvg/structure/style/resolve-order", Options::default()), 0)}
+#[test] fn resvg_structure_style_unresolved_class_selector() {assert_eq!(run_test("resvg/structure/style/unresolved-class-selector", Options::default()), 0)}
+#[test] fn resvg_structure_style_attribute_selector() {assert_eq!(run_test("resvg/structure/style/attribute-selector", Options::default()), 0)}
+#[test] fn resvg_structure_style_combined_selectors() {assert_eq!(run_test("resvg/structure/style/combined-selectors", Options::default()), 0)}
+#[test] fn resvg_structure_style_style_inside_CDATA() {assert_eq!(run_test("resvg/structure/style/style-inside-CDATA", Options::default()), 0)}
+#[test] fn resvg_structure_style_rule_specificity() {assert_eq!(run_test("resvg/structure/style/rule-specificity", Options::default()), 0)}
+#[test] fn resvg_structure_style_universal_selector() {assert_eq!(run_test("resvg/structure/style/universal-selector", Options::default()), 0)}
+#[test] fn resvg_structure_style_style_after_usage() {assert_eq!(run_test("resvg/structure/style/style-after-usage", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_transform_on_use_no_size() {assert_eq!(run_test("resvg/structure/symbol/with-transform-on-use-no-size", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_unused_symbol() {assert_eq!(run_test("resvg/structure/symbol/unused-symbol", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_viewBox() {assert_eq!(run_test("resvg/structure/symbol/with-viewBox", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_transform_on_use() {assert_eq!(run_test("resvg/structure/symbol/with-transform-on-use", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_indirect_symbol_reference() {assert_eq!(run_test("resvg/structure/symbol/indirect-symbol-reference", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_custom_use_size() {assert_eq!(run_test("resvg/structure/symbol/with-custom-use-size", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_simple_case() {assert_eq!(run_test("resvg/structure/symbol/simple-case", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_opacity_on_symbol_with_viewBox() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-symbol-with-viewBox", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_viewBox_and_custom_use_size() {assert_eq!(run_test("resvg/structure/symbol/with-viewBox-and-custom-use-size", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_opacity_on_symbol() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-symbol", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_content_outside_the_viewbox() {assert_eq!(run_test("resvg/structure/symbol/content-outside-the-viewbox", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_opacity_on_use_and_symbol() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-use-and-symbol", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_overflow_visible() {assert_eq!(run_test("resvg/structure/symbol/with-overflow-visible", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_viewBox_and_custom_use_rect() {assert_eq!(run_test("resvg/structure/symbol/with-viewBox-and-custom-use-rect", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_opacity_on_use() {assert_eq!(run_test("resvg/structure/symbol/opacity-on-use", Options::default()), 0)}
+#[test] fn resvg_structure_symbol_with_transform() {assert_eq!(run_test("resvg/structure/symbol/with-transform", Options::default()), 0)}
+#[test] fn resvg_structure_a_inside_text() {assert_eq!(run_test("resvg/structure/a/inside-text", Options::default()), 0)}
+#[test] fn resvg_structure_a_on_text() {assert_eq!(run_test("resvg/structure/a/on-text", Options::default()), 0)}
+#[test] fn resvg_structure_a_on_shape() {assert_eq!(run_test("resvg/structure/a/on-shape", Options::default()), 0)}
+#[test] fn resvg_structure_a_on_tspan() {assert_eq!(run_test("resvg/structure/a/on-tspan", Options::default()), 0)}
+#[test] fn resvg_structure_a_inside_tspan() {assert_eq!(run_test("resvg/structure/a/inside-tspan", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_external_jpeg() {assert_eq!(run_test("resvg/structure/image/external-jpeg"), 0)}
+#[ignore] #[test] fn resvg_structure_image_external_jpeg() {assert_eq!(run_test("resvg/structure/image/external-jpeg", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_external_svg() {assert_eq!(run_test("resvg/structure/image/external-svg"), 0)}
-#[test] fn resvg_structure_image_url_to_png() {assert_eq!(run_test("resvg/structure/image/url-to-png"), 0)}
-#[test] fn resvg_structure_image_embedded_svg() {assert_eq!(run_test("resvg/structure/image/embedded-svg"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_meet() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-meet"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_meet() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-meet"), 0)}
+#[ignore] #[test] fn resvg_structure_image_external_svg() {assert_eq!(run_test("resvg/structure/image/external-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_url_to_png() {assert_eq!(run_test("resvg/structure/image/url-to-png", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_svg() {assert_eq!(run_test("resvg/structure/image/embedded-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_meet() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-meet", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_meet() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-meet", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_zero_height() {assert_eq!(run_test("resvg/structure/image/zero-height"), 0)}
+#[ignore] #[test] fn resvg_structure_image_zero_height() {assert_eq!(run_test("resvg/structure/image/zero-height", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_no_width_and_height_on_svg() {assert_eq!(run_test("resvg/structure/image/no-width-and-height-on-svg"), 0)}
-#[test] fn resvg_structure_image_embedded_16bit_png() {assert_eq!(run_test("resvg/structure/image/embedded-16bit-png"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-meet-on-svg"), 0)}
+#[ignore] #[test] fn resvg_structure_image_no_width_and_height_on_svg() {assert_eq!(run_test("resvg/structure/image/no-width-and-height-on-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_16bit_png() {assert_eq!(run_test("resvg/structure/image/embedded-16bit-png", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-meet-on-svg", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_zero_width() {assert_eq!(run_test("resvg/structure/image/zero-width"), 0)}
-#[test] fn resvg_structure_image_embedded_svgz() {assert_eq!(run_test("resvg/structure/image/embedded-svgz"), 0)}
+#[ignore] #[test] fn resvg_structure_image_zero_width() {assert_eq!(run_test("resvg/structure/image/zero-width", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_svgz() {assert_eq!(run_test("resvg/structure/image/embedded-svgz", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_external_svg_with_transform() {assert_eq!(run_test("resvg/structure/image/external-svg-with-transform"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_slice_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-slice-on-svg"), 0)}
-#[test] fn resvg_structure_image_embedded_jpeg_as_image_jpeg() {assert_eq!(run_test("resvg/structure/image/embedded-jpeg-as-image-jpeg"), 0)}
+#[ignore] #[test] fn resvg_structure_image_external_svg_with_transform() {assert_eq!(run_test("resvg/structure/image/external-svg-with-transform", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_slice_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-slice-on-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_jpeg_as_image_jpeg() {assert_eq!(run_test("resvg/structure/image/embedded-jpeg-as-image-jpeg", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_raster_image_and_size_with_odd_numbers() {assert_eq!(run_test("resvg/structure/image/raster-image-and-size-with-odd-numbers"), 0)}
+#[ignore] #[test] fn resvg_structure_image_raster_image_and_size_with_odd_numbers() {assert_eq!(run_test("resvg/structure/image/raster-image-and-size-with-odd-numbers", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_float_size() {assert_eq!(run_test("resvg/structure/image/float-size"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_slice() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-slice"), 0)}
+#[ignore] #[test] fn resvg_structure_image_float_size() {assert_eq!(run_test("resvg/structure/image/float-size", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_slice() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-slice", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_no_height() {assert_eq!(run_test("resvg/structure/image/no-height"), 0)}
+#[ignore] #[test] fn resvg_structure_image_no_height() {assert_eq!(run_test("resvg/structure/image/no-height", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_width_and_height_set_to_auto() {assert_eq!(run_test("resvg/structure/image/width-and-height-set-to-auto"), 0)}
+#[ignore] #[test] fn resvg_structure_image_width_and_height_set_to_auto() {assert_eq!(run_test("resvg/structure/image/width-and-height-set-to-auto", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_external_png() {assert_eq!(run_test("resvg/structure/image/external-png"), 0)}
-#[test] fn resvg_structure_image_url_to_svg() {assert_eq!(run_test("resvg/structure/image/url-to-svg"), 0)}
+#[ignore] #[test] fn resvg_structure_image_external_png() {assert_eq!(run_test("resvg/structure/image/external-png", Options::default()), 0)}
+#[test] fn resvg_structure_image_url_to_svg() {assert_eq!(run_test("resvg/structure/image/url-to-svg", Options::default()), 0)}
 // bug. need to rewrite logic for nested SVG images.
-#[ignore] #[test] fn resvg_structure_image_embedded_svg_with_text() {assert_eq!(run_test("resvg/structure/image/embedded-svg-with-text"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_slice_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-slice-on-svg"), 0)}
-#[test] fn resvg_structure_image_embedded_svg_without_mime() {assert_eq!(run_test("resvg/structure/image/embedded-svg-without-mime"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-meet"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-meet-on-svg"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_none_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=none-on-svg"), 0)}
-#[test] fn resvg_structure_image_embedded_png() {assert_eq!(run_test("resvg/structure/image/embedded-png"), 0)}
+#[ignore] #[test] fn resvg_structure_image_embedded_svg_with_text() {assert_eq!(run_test("resvg/structure/image/embedded-svg-with-text", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_slice_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-slice-on-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_svg_without_mime() {assert_eq!(run_test("resvg/structure/image/embedded-svg-without-mime", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-meet", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-meet-on-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_none_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=none-on-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_png() {assert_eq!(run_test("resvg/structure/image/embedded-png", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_recursive_2() {assert_eq!(run_test("resvg/structure/image/recursive-2"), 0)}
+#[ignore] #[test] fn resvg_structure_image_recursive_2() {assert_eq!(run_test("resvg/structure/image/recursive-2", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_no_width() {assert_eq!(run_test("resvg/structure/image/no-width"), 0)}
-#[test] fn resvg_structure_image_embedded_jpeg_as_image_jpg() {assert_eq!(run_test("resvg/structure/image/embedded-jpeg-as-image-jpg"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_slice() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-slice"), 0)}
+#[ignore] #[test] fn resvg_structure_image_no_width() {assert_eq!(run_test("resvg/structure/image/no-width", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_jpeg_as_image_jpg() {assert_eq!(run_test("resvg/structure/image/embedded-jpeg-as-image-jpg", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_slice() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-slice", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_recursive_1() {assert_eq!(run_test("resvg/structure/image/recursive-1"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_slice() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-slice"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_none() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=none"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg"), 0)}
+#[ignore] #[test] fn resvg_structure_image_recursive_1() {assert_eq!(run_test("resvg/structure/image/recursive-1", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_slice() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-slice", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_none() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=none", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_external_svgz() {assert_eq!(run_test("resvg/structure/image/external-svgz"), 0)}
+#[ignore] #[test] fn resvg_structure_image_external_svgz() {assert_eq!(run_test("resvg/structure/image/external-svgz", Options::default()), 0)}
 // need to investigate
-#[ignore] #[test] fn resvg_structure_image_image_with_float_size_scaling() {assert_eq!(run_test("resvg/structure/image/image-with-float-size-scaling"), 0)}
+#[ignore] #[test] fn resvg_structure_image_image_with_float_size_scaling() {assert_eq!(run_test("resvg/structure/image/image-with-float-size-scaling", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_no_height_on_svg() {assert_eq!(run_test("resvg/structure/image/no-height-on-svg"), 0)}
+#[ignore] #[test] fn resvg_structure_image_no_height_on_svg() {assert_eq!(run_test("resvg/structure/image/no-height-on-svg", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_no_width_on_svg() {assert_eq!(run_test("resvg/structure/image/no-width-on-svg"), 0)}
+#[ignore] #[test] fn resvg_structure_image_no_width_on_svg() {assert_eq!(run_test("resvg/structure/image/no-width-on-svg", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_no_width_and_height() {assert_eq!(run_test("resvg/structure/image/no-width-and-height"), 0)}
-#[test] fn resvg_structure_image_with_zero_width_and_height() {assert_eq!(run_test("resvg/structure/image/with-zero-width-and-height"), 0)}
-#[test] fn resvg_structure_image_embedded_gif() {assert_eq!(run_test("resvg/structure/image/embedded-gif"), 0)}
-#[test] fn resvg_structure_image_embedded_jpeg_without_mime() {assert_eq!(run_test("resvg/structure/image/embedded-jpeg-without-mime"), 0)}
-#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_slice_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-slice-on-svg"), 0)}
-#[test] fn resvg_structure_image_with_transform() {assert_eq!(run_test("resvg/structure/image/with-transform"), 0)}
-#[test] fn resvg_structure_image_no_height_non_square() {assert_eq!(run_test("resvg/structure/image/no-height-non-square"), 0)}
+#[ignore] #[test] fn resvg_structure_image_no_width_and_height() {assert_eq!(run_test("resvg/structure/image/no-width-and-height", Options::default()), 0)}
+#[test] fn resvg_structure_image_with_zero_width_and_height() {assert_eq!(run_test("resvg/structure/image/with-zero-width-and-height", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_gif() {assert_eq!(run_test("resvg/structure/image/embedded-gif", Options::default()), 0)}
+#[test] fn resvg_structure_image_embedded_jpeg_without_mime() {assert_eq!(run_test("resvg/structure/image/embedded-jpeg-without-mime", Options::default()), 0)}
+#[test] fn resvg_structure_image_preserveAspectRatio_xMaxYMax_slice_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMaxYMax-slice-on-svg", Options::default()), 0)}
+#[test] fn resvg_structure_image_with_transform() {assert_eq!(run_test("resvg/structure/image/with-transform", Options::default()), 0)}
+#[test] fn resvg_structure_image_no_height_non_square() {assert_eq!(run_test("resvg/structure/image/no-height-non-square", Options::default()), 0)}
 // no relative paths supported
-#[ignore] #[test] fn resvg_structure_image_external_gif() {assert_eq!(run_test("resvg/structure/image/external-gif"), 0)}
-#[test] fn resvg_structure_use_xlink_to_an_invalid_element_1() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-invalid-element-1"), 0)}
-#[test] fn resvg_structure_use_xlink_to_a_child_of_a_non_SVG_element() {assert_eq!(run_test("resvg/structure/use/xlink-to-a-child-of-a-non-SVG-element"), 0)}
-#[test] fn resvg_structure_use_xlink_to_an_external_file() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-external-file"), 0)}
-#[test] fn resvg_structure_use_xlink_to_an_invalid_element_2() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-invalid-element-2"), 0)}
-#[test] fn resvg_structure_use_transform_inheritance() {assert_eq!(run_test("resvg/structure/use/transform-inheritance"), 0)}
-#[test] fn resvg_structure_use_complex_style_resolving_order() {assert_eq!(run_test("resvg/structure/use/complex-style-resolving-order"), 0)}
-#[test] fn resvg_structure_use_xlink_to_an_invalid_element_3() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-invalid-element-3"), 0)}
-#[test] fn resvg_structure_use_fill_opacity_inheritance() {assert_eq!(run_test("resvg/structure/use/fill-opacity-inheritance"), 0)}
-#[test] fn resvg_structure_use_recursive() {assert_eq!(run_test("resvg/structure/use/recursive"), 0)}
-#[test] fn resvg_structure_use_nested_recursive_1() {assert_eq!(run_test("resvg/structure/use/nested-recursive-1"), 0)}
-#[test] fn resvg_structure_use_transform_attribute_1() {assert_eq!(run_test("resvg/structure/use/transform-attribute-1"), 0)}
-#[test] fn resvg_structure_use_nested_recursive_2() {assert_eq!(run_test("resvg/structure/use/nested-recursive-2"), 0)}
-#[test] fn resvg_structure_use_from_defs() {assert_eq!(run_test("resvg/structure/use/from-defs"), 0)}
-#[test] fn resvg_structure_use_transform_attribute_2() {assert_eq!(run_test("resvg/structure/use/transform-attribute-2"), 0)}
-#[test] fn resvg_structure_use_style_inheritance_1() {assert_eq!(run_test("resvg/structure/use/style-inheritance-1"), 0)}
-#[test] fn resvg_structure_use_xlink_to_svg_element_with_rect_only_width() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-rect-only-width"), 0)}
-#[test] fn resvg_structure_use_with_size() {assert_eq!(run_test("resvg/structure/use/with-size"), 0)}
-#[test] fn resvg_structure_use_display_inheritance() {assert_eq!(run_test("resvg/structure/use/display-inheritance"), 0)}
-#[test] fn resvg_structure_use_duplicated_IDs() {assert_eq!(run_test("resvg/structure/use/duplicated-IDs"), 0)}
-#[test] fn resvg_structure_use_style_inheritance_2() {assert_eq!(run_test("resvg/structure/use/style-inheritance-2"), 0)}
-#[test] fn resvg_structure_use_cSS_rules() {assert_eq!(run_test("resvg/structure/use/cSS-rules"), 0)}
-#[test] fn resvg_structure_use_simple_case() {assert_eq!(run_test("resvg/structure/use/simple-case"), 0)}
-#[test] fn resvg_structure_use_stroke_opacity_inheritance() {assert_eq!(run_test("resvg/structure/use/stroke-opacity-inheritance"), 0)}
-#[test] fn resvg_structure_use_style_inheritance_3() {assert_eq!(run_test("resvg/structure/use/style-inheritance-3"), 0)}
-#[test] fn resvg_structure_use_href_without_the_xlink_namespace() {assert_eq!(run_test("resvg/structure/use/href-without-the-xlink-namespace"), 0)}
-#[test] fn resvg_structure_use_xlink_to_svg_element_with_rect() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-rect"), 0)}
-#[test] fn resvg_structure_use_indirect_recursive_1() {assert_eq!(run_test("resvg/structure/use/indirect-recursive-1"), 0)}
-#[test] fn resvg_structure_use_xlink_to_svg_element_with_x_y_on_use() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-x-y-on-use"), 0)}
-#[test] fn resvg_structure_use_indirect_recursive_2() {assert_eq!(run_test("resvg/structure/use/indirect-recursive-2"), 0)}
-#[test] fn resvg_structure_use_indirect_recursive_3() {assert_eq!(run_test("resvg/structure/use/indirect-recursive-3"), 0)}
-#[test] fn resvg_structure_use_with_currentColor() {assert_eq!(run_test("resvg/structure/use/with-currentColor"), 0)}
-#[test] fn resvg_structure_use_opacity_inheritance() {assert_eq!(run_test("resvg/structure/use/opacity-inheritance"), 0)}
-#[test] fn resvg_structure_use_indirect() {assert_eq!(run_test("resvg/structure/use/indirect"), 0)}
-#[test] fn resvg_structure_use_xlink_to_a_child_of_an_invalid_element() {assert_eq!(run_test("resvg/structure/use/xlink-to-a-child-of-an-invalid-element"), 0)}
-#[test] fn resvg_structure_use_non_linear_order() {assert_eq!(run_test("resvg/structure/use/non-linear-order"), 0)}
-#[test] fn resvg_structure_use_xlink_to_svg_element_with_width_height_on_use() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-width-height-on-use"), 0)}
-#[test] fn resvg_structure_use_xlink_to_svg_element_with_viewBox() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-viewBox"), 0)}
-#[test] fn resvg_structure_use_nested_xlink_to_svg_element_with_rect_and_size() {assert_eq!(run_test("resvg/structure/use/nested-xlink-to-svg-element-with-rect-and-size"), 0)}
-#[test] fn resvg_structure_use_self_recursive() {assert_eq!(run_test("resvg/structure/use/self-recursive"), 0)}
-#[test] fn resvg_structure_use_xlink_to_svg_element() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element"), 0)}
-#[test] fn resvg_structure_use_position_inheritance() {assert_eq!(run_test("resvg/structure/use/position-inheritance"), 0)}
-#[test] fn resvg_structure_switch_systemLanguage_en_US() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=en-US"), 0)}
-#[test] fn resvg_structure_switch_requiredFeatures() {assert_eq!(run_test("resvg/structure/switch/requiredFeatures"), 0)}
-#[test] fn resvg_structure_switch_comment_as_first_child() {assert_eq!(run_test("resvg/structure/switch/comment-as-first-child"), 0)}
-#[test] fn resvg_structure_switch_display_none_on_child() {assert_eq!(run_test("resvg/structure/switch/display-none-on-child"), 0)}
-#[test] fn resvg_structure_switch_systemLanguage_en_GB() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=en-GB"), 0)}
-#[test] fn resvg_structure_switch_non_SVG_child() {assert_eq!(run_test("resvg/structure/switch/non-SVG-child"), 0)}
-#[test] fn resvg_structure_switch_single_child() {assert_eq!(run_test("resvg/structure/switch/single-child"), 0)}
-#[test] fn resvg_structure_switch_systemLanguage_en() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=en"), 0)}
-#[test] fn resvg_structure_switch_simple_case() {assert_eq!(run_test("resvg/structure/switch/simple-case"), 0)}
-#[test] fn resvg_structure_switch_systemLanguage() {assert_eq!(run_test("resvg/structure/switch/systemLanguage"), 0)}
-#[test] fn resvg_structure_switch_systemLanguage_ru_Ru() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=ru-Ru"), 0)}
-#[test] fn resvg_structure_switch_systemLanguage_ru_en() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=ru-en"), 0)}
-#[test] fn resvg_structure_switch_with_attributes() {assert_eq!(run_test("resvg/structure/switch/with-attributes"), 0)}
-#[test] fn resvg_structure_style_attribute_non_presentational_attribute() {assert_eq!(run_test("resvg/structure/style-attribute/non-presentational-attribute"), 0)}
-#[test] fn resvg_structure_style_attribute_comments() {assert_eq!(run_test("resvg/structure/style-attribute/comments"), 0)}
-#[test] fn resvg_structure_style_attribute_transform() {assert_eq!(run_test("resvg/structure/style-attribute/transform"), 0)}
-#[test] fn resvg_structure_style_attribute_simple_case() {assert_eq!(run_test("resvg/structure/style-attribute/simple-case"), 0)}
-#[test] fn resvg_structure_transform_origin_no_transform() {assert_eq!(run_test("resvg/structure/transform-origin/no-transform"), 0)}
-#[test] fn resvg_structure_transform_origin_on_gradient_user_space_on_use() {assert_eq!(run_test("resvg/structure/transform-origin/on-gradient-user-space-on-use"), 0)}
-#[test] fn resvg_structure_transform_origin_on_text() {assert_eq!(run_test("resvg/structure/transform-origin/on-text"), 0)}
-#[test] fn resvg_structure_transform_origin_length_px() {assert_eq!(run_test("resvg/structure/transform-origin/length-px"), 0)}
-#[test] fn resvg_structure_transform_origin_bottom() {assert_eq!(run_test("resvg/structure/transform-origin/bottom"), 0)}
-#[test] fn resvg_structure_transform_origin_on_shape() {assert_eq!(run_test("resvg/structure/transform-origin/on-shape"), 0)}
-#[test] fn resvg_structure_transform_origin_keyword_length() {assert_eq!(run_test("resvg/structure/transform-origin/keyword-length"), 0)}
-#[test] fn resvg_structure_transform_origin_on_clippath() {assert_eq!(run_test("resvg/structure/transform-origin/on-clippath"), 0)}
-#[test] fn resvg_structure_transform_origin_right_bottom() {assert_eq!(run_test("resvg/structure/transform-origin/right-bottom"), 0)}
-#[test] fn resvg_structure_transform_origin_transform_on_parent() {assert_eq!(run_test("resvg/structure/transform-origin/transform-on-parent"), 0)}
-#[test] fn resvg_structure_transform_origin_on_clippath_objectBoundingBox() {assert_eq!(run_test("resvg/structure/transform-origin/on-clippath-objectBoundingBox"), 0)}
-#[test] fn resvg_structure_transform_origin_on_group() {assert_eq!(run_test("resvg/structure/transform-origin/on-group"), 0)}
-#[test] fn resvg_structure_transform_origin_right() {assert_eq!(run_test("resvg/structure/transform-origin/right"), 0)}
-#[test] fn resvg_structure_transform_origin_on_image() {assert_eq!(run_test("resvg/structure/transform-origin/on-image"), 0)}
-#[test] fn resvg_structure_transform_origin_on_pattern_object_bounding_box() {assert_eq!(run_test("resvg/structure/transform-origin/on-pattern-object-bounding-box"), 0)}
-#[test] fn resvg_structure_transform_origin_length_percent() {assert_eq!(run_test("resvg/structure/transform-origin/length-percent"), 0)}
-#[test] fn resvg_structure_transform_origin_on_text_path() {assert_eq!(run_test("resvg/structure/transform-origin/on-text-path"), 0)}
-#[test] fn resvg_structure_transform_origin_on_pattern_user_space_on_use() {assert_eq!(run_test("resvg/structure/transform-origin/on-pattern-user-space-on-use"), 0)}
-#[test] fn resvg_structure_transform_origin_on_gradient_object_bounding_box() {assert_eq!(run_test("resvg/structure/transform-origin/on-gradient-object-bounding-box"), 0)}
-#[test] fn resvg_structure_transform_origin_center() {assert_eq!(run_test("resvg/structure/transform-origin/center"), 0)}
-#[test] fn resvg_structure_transform_origin_top() {assert_eq!(run_test("resvg/structure/transform-origin/top"), 0)}
-#[test] fn resvg_structure_transform_origin_top_left() {assert_eq!(run_test("resvg/structure/transform-origin/top-left"), 0)}
-#[test] fn resvg_structure_transform_origin_left() {assert_eq!(run_test("resvg/structure/transform-origin/left"), 0)}
-#[test] fn resvg_structure_transform_rotate_at_position() {assert_eq!(run_test("resvg/structure/transform/rotate-at-position"), 0)}
-#[test] fn resvg_structure_transform_matrix() {assert_eq!(run_test("resvg/structure/transform/matrix"), 0)}
-#[test] fn resvg_structure_transform_translate() {assert_eq!(run_test("resvg/structure/transform/translate"), 0)}
-#[test] fn resvg_structure_transform_extra_spaces() {assert_eq!(run_test("resvg/structure/transform/extra-spaces"), 0)}
-#[test] fn resvg_structure_transform_matrix_no_commas() {assert_eq!(run_test("resvg/structure/transform/matrix-no-commas"), 0)}
-#[test] fn resvg_structure_transform_skewY() {assert_eq!(run_test("resvg/structure/transform/skewY"), 0)}
-#[test] fn resvg_structure_transform_rotate() {assert_eq!(run_test("resvg/structure/transform/rotate"), 0)}
-#[test] fn resvg_structure_transform_skewX() {assert_eq!(run_test("resvg/structure/transform/skewX"), 0)}
-#[test] fn resvg_structure_transform_zeroed_matrix() {assert_eq!(run_test("resvg/structure/transform/zeroed-matrix"), 0)}
-#[test] fn resvg_structure_transform_empty() {assert_eq!(run_test("resvg/structure/transform/empty"), 0)}
-#[test] fn resvg_structure_transform_scale_without_Y() {assert_eq!(run_test("resvg/structure/transform/scale-without-Y"), 0)}
-#[test] fn resvg_structure_transform_numeric_character_references() {assert_eq!(run_test("resvg/structure/transform/numeric-character-references"), 0)}
-#[test] fn resvg_structure_transform_transform_list() {assert_eq!(run_test("resvg/structure/transform/transform-list"), 0)}
-#[test] fn resvg_structure_transform_nested_transforms_2() {assert_eq!(run_test("resvg/structure/transform/nested-transforms-2"), 0)}
-#[test] fn resvg_structure_transform_scale() {assert_eq!(run_test("resvg/structure/transform/scale"), 0)}
-#[test] fn resvg_structure_transform_nested_transforms_1() {assert_eq!(run_test("resvg/structure/transform/nested-transforms-1"), 0)}
-#[test] fn resvg_structure_transform_default() {assert_eq!(run_test("resvg/structure/transform/default"), 0)}
-#[test] fn resvg_structure_transform_translate_without_Y() {assert_eq!(run_test("resvg/structure/transform/translate-without-Y"), 0)}
-#[test] fn resvg_structure_transform_direct_transform() {assert_eq!(run_test("resvg/structure/transform/direct-transform"), 0)}
-#[test] fn resvg_structure_defs_style_inheritance() {assert_eq!(run_test("resvg/structure/defs/style-inheritance"), 0)}
-#[test] fn resvg_structure_defs_out_of_order() {assert_eq!(run_test("resvg/structure/defs/out-of-order"), 0)}
-#[test] fn resvg_structure_defs_simple_case() {assert_eq!(run_test("resvg/structure/defs/simple-case"), 0)}
-#[test] fn resvg_structure_defs_ignore_shapes_inside_defs() {assert_eq!(run_test("resvg/structure/defs/ignore-shapes-inside-defs"), 0)}
-#[test] fn resvg_structure_defs_style_inheritance_on_text() {assert_eq!(run_test("resvg/structure/defs/style-inheritance-on-text"), 0)}
-#[test] fn resvg_structure_defs_multiple_defs() {assert_eq!(run_test("resvg/structure/defs/multiple-defs"), 0)}
-#[test] fn resvg_structure_defs_nested_defs() {assert_eq!(run_test("resvg/structure/defs/nested-defs"), 0)}
-#[test] fn resvg_masking_clip_rule_clip_rule_evenodd() {assert_eq!(run_test("resvg/masking/clip-rule/clip-rule=evenodd"), 0)}
-#[test] fn resvg_masking_clip_simple_case() {assert_eq!(run_test("resvg/masking/clip/simple-case"), 0)}
-#[test] fn resvg_masking_clipPath_with_marker_on_clip() {assert_eq!(run_test("resvg/masking/clipPath/with-marker-on-clip"), 0)}
-#[test] fn resvg_masking_clipPath_mixed_clip_rule() {assert_eq!(run_test("resvg/masking/clipPath/mixed-clip-rule"), 0)}
-#[test] fn resvg_masking_clipPath_circle_shorthand() {assert_eq!(run_test("resvg/masking/clipPath/circle-shorthand"), 0)}
-#[test] fn resvg_masking_clipPath_clip_rule_evenodd() {assert_eq!(run_test("resvg/masking/clipPath/clip-rule=evenodd"), 0)}
-#[test] fn resvg_masking_clipPath_switch_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/switch-is-not-a-valid-child"), 0)}
-#[test] fn resvg_masking_clipPath_g_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/g-is-not-a-valid-child"), 0)}
-#[test] fn resvg_masking_clipPath_with_invalid_child_via_use() {assert_eq!(run_test("resvg/masking/clipPath/with-invalid-child-via-use"), 0)}
-#[test] fn resvg_masking_clipPath_recursive_on_child() {assert_eq!(run_test("resvg/masking/clipPath/recursive-on-child"), 0)}
-#[test] fn resvg_masking_clipPath_no_children() {assert_eq!(run_test("resvg/masking/clipPath/no-children"), 0)}
-#[test] fn resvg_masking_clipPath_invalid_transform_on_clipPath() {assert_eq!(run_test("resvg/masking/clipPath/invalid-transform-on-clipPath"), 0)}
-#[test] fn resvg_masking_clipPath_mask_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/mask-has-no-effect"), 0)}
-#[test] fn resvg_masking_clipPath_fill_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/fill-has-no-effect"), 0)}
-#[test] fn resvg_masking_clipPath_recursive() {assert_eq!(run_test("resvg/masking/clipPath/recursive"), 0)}
-#[test] fn resvg_masking_clipPath_clip_path_on_children() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-children"), 0)}
-#[test] fn resvg_masking_clipPath_opacity_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/opacity-has-no-effect"), 0)}
-#[test] fn resvg_masking_clipPath_invisible_child_2() {assert_eq!(run_test("resvg/masking/clipPath/invisible-child-2"), 0)}
-#[test] fn resvg_masking_clipPath_multiple_children() {assert_eq!(run_test("resvg/masking/clipPath/multiple-children"), 0)}
-#[test] fn resvg_masking_clipPath_on_the_root_svg_without_size() {assert_eq!(run_test("resvg/masking/clipPath/on-the-root-svg-without-size"), 0)}
-#[test] fn resvg_masking_clipPath_invisible_child_1() {assert_eq!(run_test("resvg/masking/clipPath/invisible-child-1"), 0)}
-#[test] fn resvg_masking_clipPath_transform_on_clipPath() {assert_eq!(run_test("resvg/masking/clipPath/transform-on-clipPath"), 0)}
-#[test] fn resvg_masking_clipPath_on_a_horizontal_line() {assert_eq!(run_test("resvg/masking/clipPath/on-a-horizontal-line"), 0)}
-#[test] fn resvg_masking_clipPath_invalid_clip_path_on_self() {assert_eq!(run_test("resvg/masking/clipPath/invalid-clip-path-on-self"), 0)}
-#[test] fn resvg_masking_clipPath_clip_path_on_child() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-child"), 0)}
-#[test] fn resvg_masking_clipPath_circle_shorthand_with_view_box() {assert_eq!(run_test("resvg/masking/clipPath/circle-shorthand-with-view-box"), 0)}
-#[test] fn resvg_masking_clipPath_clipping_with_complex_text_and_clip_rule() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-complex-text-and-clip-rule"), 0)}
-#[test] fn resvg_masking_clipPath_simple_case() {assert_eq!(run_test("resvg/masking/clipPath/simple-case"), 0)}
-#[test] fn resvg_masking_clipPath_clipPathUnits_objectBoundingBox() {assert_eq!(run_test("resvg/masking/clipPath/clipPathUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_masking_clipPath_with_use_child() {assert_eq!(run_test("resvg/masking/clipPath/with-use-child"), 0)}
-#[test] fn resvg_masking_clipPath_clipping_with_text() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-text"), 0)}
-#[test] fn resvg_masking_clipPath_clip_path_with_transform_on_text() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-with-transform-on-text"), 0)}
-#[test] fn resvg_masking_clipPath_malformed_path_child() {assert_eq!(run_test("resvg/masking/clipPath/malformed-path-child"), 0)}
-#[test] fn resvg_masking_clipPath_line_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/line-is-not-a-valid-child"), 0)}
-#[test] fn resvg_masking_clipPath_recursive_on_self() {assert_eq!(run_test("resvg/masking/clipPath/recursive-on-self"), 0)}
-#[test] fn resvg_masking_clipPath_none() {assert_eq!(run_test("resvg/masking/clipPath/none"), 0)}
-#[test] fn resvg_masking_clipPath_clip_path_on_self() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-self"), 0)}
-#[test] fn resvg_masking_clipPath_overlapped_shapes_with_evenodd() {assert_eq!(run_test("resvg/masking/clipPath/overlapped-shapes-with-evenodd"), 0)}
-#[test] fn resvg_masking_clipPath_clipping_with_complex_text_2() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-complex-text-2"), 0)}
-#[test] fn resvg_masking_clipPath_circle_shorthand_with_stroke_box() {assert_eq!(run_test("resvg/masking/clipPath/circle-shorthand-with-stroke-box"), 0)}
-#[test] fn resvg_masking_clipPath_invalid_clip_path_on_child() {assert_eq!(run_test("resvg/masking/clipPath/invalid-clip-path-on-child"), 0)}
-#[test] fn resvg_masking_clipPath_symbol_via_use_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/symbol-via-use-is-not-a-valid-child"), 0)}
-#[test] fn resvg_masking_clipPath_clip_rule_from_parent_node() {assert_eq!(run_test("resvg/masking/clipPath/clip-rule-from-parent-node"), 0)}
-#[test] fn resvg_masking_clipPath_clipping_with_complex_text_1() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-complex-text-1"), 0)}
-#[test] fn resvg_masking_clipPath_image_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/image-is-not-a-valid-child"), 0)}
-#[test] fn resvg_masking_clipPath_filter_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/filter-has-no-effect"), 0)}
-#[test] fn resvg_masking_clipPath_on_the_root_svg_with_size() {assert_eq!(run_test("resvg/masking/clipPath/on-the-root-svg-with-size"), 0)}
-#[test] fn resvg_masking_clipPath_invalid_FuncIRI() {assert_eq!(run_test("resvg/masking/clipPath/invalid-FuncIRI"), 0)}
-#[test] fn resvg_masking_clipPath_clip_path_with_transform() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-with-transform"), 0)}
-#[test] fn resvg_masking_clipPath_self_recursive() {assert_eq!(run_test("resvg/masking/clipPath/self-recursive"), 0)}
-#[test] fn resvg_masking_clipPath_stroke_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/stroke-has-no-effect"), 0)}
-#[test] fn resvg_masking_clipPath_nested_clip_path() {assert_eq!(run_test("resvg/masking/clipPath/nested-clip-path"), 0)}
-#[test] fn resvg_masking_clipPath_clip_path_on_child_with_transform() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-child-with-transform"), 0)}
-#[test] fn resvg_masking_clipPath_clip_path_on_self_2() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-self-2"), 0)}
-#[test] fn resvg_masking_mask_with_image() {assert_eq!(run_test("resvg/masking/mask/with-image"), 0)}
-#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_without_rect() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-without-rect"), 0)}
+#[ignore] #[test] fn resvg_structure_image_external_gif() {assert_eq!(run_test("resvg/structure/image/external-gif", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_an_invalid_element_1() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-invalid-element-1", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_a_child_of_a_non_SVG_element() {assert_eq!(run_test("resvg/structure/use/xlink-to-a-child-of-a-non-SVG-element", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_an_external_file() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-external-file", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_an_invalid_element_2() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-invalid-element-2", Options::default()), 0)}
+#[test] fn resvg_structure_use_transform_inheritance() {assert_eq!(run_test("resvg/structure/use/transform-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_use_complex_style_resolving_order() {assert_eq!(run_test("resvg/structure/use/complex-style-resolving-order", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_an_invalid_element_3() {assert_eq!(run_test("resvg/structure/use/xlink-to-an-invalid-element-3", Options::default()), 0)}
+#[test] fn resvg_structure_use_fill_opacity_inheritance() {assert_eq!(run_test("resvg/structure/use/fill-opacity-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_use_recursive() {assert_eq!(run_test("resvg/structure/use/recursive", Options::default()), 0)}
+#[test] fn resvg_structure_use_nested_recursive_1() {assert_eq!(run_test("resvg/structure/use/nested-recursive-1", Options::default()), 0)}
+#[test] fn resvg_structure_use_transform_attribute_1() {assert_eq!(run_test("resvg/structure/use/transform-attribute-1", Options::default()), 0)}
+#[test] fn resvg_structure_use_nested_recursive_2() {assert_eq!(run_test("resvg/structure/use/nested-recursive-2", Options::default()), 0)}
+#[test] fn resvg_structure_use_from_defs() {assert_eq!(run_test("resvg/structure/use/from-defs", Options::default()), 0)}
+#[test] fn resvg_structure_use_transform_attribute_2() {assert_eq!(run_test("resvg/structure/use/transform-attribute-2", Options::default()), 0)}
+#[test] fn resvg_structure_use_style_inheritance_1() {assert_eq!(run_test("resvg/structure/use/style-inheritance-1", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_svg_element_with_rect_only_width() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-rect-only-width", Options::default()), 0)}
+#[test] fn resvg_structure_use_with_size() {assert_eq!(run_test("resvg/structure/use/with-size", Options::default()), 0)}
+#[test] fn resvg_structure_use_display_inheritance() {assert_eq!(run_test("resvg/structure/use/display-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_use_duplicated_IDs() {assert_eq!(run_test("resvg/structure/use/duplicated-IDs", Options::default()), 0)}
+#[test] fn resvg_structure_use_style_inheritance_2() {assert_eq!(run_test("resvg/structure/use/style-inheritance-2", Options::default()), 0)}
+#[test] fn resvg_structure_use_cSS_rules() {assert_eq!(run_test("resvg/structure/use/cSS-rules", Options::default()), 0)}
+#[test] fn resvg_structure_use_simple_case() {assert_eq!(run_test("resvg/structure/use/simple-case", Options::default()), 0)}
+#[test] fn resvg_structure_use_stroke_opacity_inheritance() {assert_eq!(run_test("resvg/structure/use/stroke-opacity-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_use_style_inheritance_3() {assert_eq!(run_test("resvg/structure/use/style-inheritance-3", Options::default()), 0)}
+#[test] fn resvg_structure_use_href_without_the_xlink_namespace() {assert_eq!(run_test("resvg/structure/use/href-without-the-xlink-namespace", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_svg_element_with_rect() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-rect", Options::default()), 0)}
+#[test] fn resvg_structure_use_indirect_recursive_1() {assert_eq!(run_test("resvg/structure/use/indirect-recursive-1", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_svg_element_with_x_y_on_use() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-x-y-on-use", Options::default()), 0)}
+#[test] fn resvg_structure_use_indirect_recursive_2() {assert_eq!(run_test("resvg/structure/use/indirect-recursive-2", Options::default()), 0)}
+#[test] fn resvg_structure_use_indirect_recursive_3() {assert_eq!(run_test("resvg/structure/use/indirect-recursive-3", Options::default()), 0)}
+#[test] fn resvg_structure_use_with_currentColor() {assert_eq!(run_test("resvg/structure/use/with-currentColor", Options::default()), 0)}
+#[test] fn resvg_structure_use_opacity_inheritance() {assert_eq!(run_test("resvg/structure/use/opacity-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_use_indirect() {assert_eq!(run_test("resvg/structure/use/indirect", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_a_child_of_an_invalid_element() {assert_eq!(run_test("resvg/structure/use/xlink-to-a-child-of-an-invalid-element", Options::default()), 0)}
+#[test] fn resvg_structure_use_non_linear_order() {assert_eq!(run_test("resvg/structure/use/non-linear-order", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_svg_element_with_width_height_on_use() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-width-height-on-use", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_svg_element_with_viewBox() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element-with-viewBox", Options::default()), 0)}
+#[test] fn resvg_structure_use_nested_xlink_to_svg_element_with_rect_and_size() {assert_eq!(run_test("resvg/structure/use/nested-xlink-to-svg-element-with-rect-and-size", Options::default()), 0)}
+#[test] fn resvg_structure_use_self_recursive() {assert_eq!(run_test("resvg/structure/use/self-recursive", Options::default()), 0)}
+#[test] fn resvg_structure_use_xlink_to_svg_element() {assert_eq!(run_test("resvg/structure/use/xlink-to-svg-element", Options::default()), 0)}
+#[test] fn resvg_structure_use_position_inheritance() {assert_eq!(run_test("resvg/structure/use/position-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_switch_systemLanguage_en_US() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=en-US", Options::default()), 0)}
+#[test] fn resvg_structure_switch_requiredFeatures() {assert_eq!(run_test("resvg/structure/switch/requiredFeatures", Options::default()), 0)}
+#[test] fn resvg_structure_switch_comment_as_first_child() {assert_eq!(run_test("resvg/structure/switch/comment-as-first-child", Options::default()), 0)}
+#[test] fn resvg_structure_switch_display_none_on_child() {assert_eq!(run_test("resvg/structure/switch/display-none-on-child", Options::default()), 0)}
+#[test] fn resvg_structure_switch_systemLanguage_en_GB() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=en-GB", Options::default()), 0)}
+#[test] fn resvg_structure_switch_non_SVG_child() {assert_eq!(run_test("resvg/structure/switch/non-SVG-child", Options::default()), 0)}
+#[test] fn resvg_structure_switch_single_child() {assert_eq!(run_test("resvg/structure/switch/single-child", Options::default()), 0)}
+#[test] fn resvg_structure_switch_systemLanguage_en() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=en", Options::default()), 0)}
+#[test] fn resvg_structure_switch_simple_case() {assert_eq!(run_test("resvg/structure/switch/simple-case", Options::default()), 0)}
+#[test] fn resvg_structure_switch_systemLanguage() {assert_eq!(run_test("resvg/structure/switch/systemLanguage", Options::default()), 0)}
+#[test] fn resvg_structure_switch_systemLanguage_ru_Ru() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=ru-Ru", Options::default()), 0)}
+#[test] fn resvg_structure_switch_systemLanguage_ru_en() {assert_eq!(run_test("resvg/structure/switch/systemLanguage=ru-en", Options::default()), 0)}
+#[test] fn resvg_structure_switch_with_attributes() {assert_eq!(run_test("resvg/structure/switch/with-attributes", Options::default()), 0)}
+#[test] fn resvg_structure_style_attribute_non_presentational_attribute() {assert_eq!(run_test("resvg/structure/style-attribute/non-presentational-attribute", Options::default()), 0)}
+#[test] fn resvg_structure_style_attribute_comments() {assert_eq!(run_test("resvg/structure/style-attribute/comments", Options::default()), 0)}
+#[test] fn resvg_structure_style_attribute_transform() {assert_eq!(run_test("resvg/structure/style-attribute/transform", Options::default()), 0)}
+#[test] fn resvg_structure_style_attribute_simple_case() {assert_eq!(run_test("resvg/structure/style-attribute/simple-case", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_no_transform() {assert_eq!(run_test("resvg/structure/transform-origin/no-transform", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_gradient_user_space_on_use() {assert_eq!(run_test("resvg/structure/transform-origin/on-gradient-user-space-on-use", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_text() {assert_eq!(run_test("resvg/structure/transform-origin/on-text", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_length_px() {assert_eq!(run_test("resvg/structure/transform-origin/length-px", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_bottom() {assert_eq!(run_test("resvg/structure/transform-origin/bottom", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_shape() {assert_eq!(run_test("resvg/structure/transform-origin/on-shape", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_keyword_length() {assert_eq!(run_test("resvg/structure/transform-origin/keyword-length", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_clippath() {assert_eq!(run_test("resvg/structure/transform-origin/on-clippath", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_right_bottom() {assert_eq!(run_test("resvg/structure/transform-origin/right-bottom", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_transform_on_parent() {assert_eq!(run_test("resvg/structure/transform-origin/transform-on-parent", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_clippath_objectBoundingBox() {assert_eq!(run_test("resvg/structure/transform-origin/on-clippath-objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_group() {assert_eq!(run_test("resvg/structure/transform-origin/on-group", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_right() {assert_eq!(run_test("resvg/structure/transform-origin/right", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_image() {assert_eq!(run_test("resvg/structure/transform-origin/on-image", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_pattern_object_bounding_box() {assert_eq!(run_test("resvg/structure/transform-origin/on-pattern-object-bounding-box", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_length_percent() {assert_eq!(run_test("resvg/structure/transform-origin/length-percent", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_text_path() {assert_eq!(run_test("resvg/structure/transform-origin/on-text-path", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_pattern_user_space_on_use() {assert_eq!(run_test("resvg/structure/transform-origin/on-pattern-user-space-on-use", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_on_gradient_object_bounding_box() {assert_eq!(run_test("resvg/structure/transform-origin/on-gradient-object-bounding-box", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_center() {assert_eq!(run_test("resvg/structure/transform-origin/center", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_top() {assert_eq!(run_test("resvg/structure/transform-origin/top", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_top_left() {assert_eq!(run_test("resvg/structure/transform-origin/top-left", Options::default()), 0)}
+#[test] fn resvg_structure_transform_origin_left() {assert_eq!(run_test("resvg/structure/transform-origin/left", Options::default()), 0)}
+#[test] fn resvg_structure_transform_rotate_at_position() {assert_eq!(run_test("resvg/structure/transform/rotate-at-position", Options::default()), 0)}
+#[test] fn resvg_structure_transform_matrix() {assert_eq!(run_test("resvg/structure/transform/matrix", Options::default()), 0)}
+#[test] fn resvg_structure_transform_translate() {assert_eq!(run_test("resvg/structure/transform/translate", Options::default()), 0)}
+#[test] fn resvg_structure_transform_extra_spaces() {assert_eq!(run_test("resvg/structure/transform/extra-spaces", Options::default()), 0)}
+#[test] fn resvg_structure_transform_matrix_no_commas() {assert_eq!(run_test("resvg/structure/transform/matrix-no-commas", Options::default()), 0)}
+#[test] fn resvg_structure_transform_skewY() {assert_eq!(run_test("resvg/structure/transform/skewY", Options::default()), 0)}
+#[test] fn resvg_structure_transform_rotate() {assert_eq!(run_test("resvg/structure/transform/rotate", Options::default()), 0)}
+#[test] fn resvg_structure_transform_skewX() {assert_eq!(run_test("resvg/structure/transform/skewX", Options::default()), 0)}
+#[test] fn resvg_structure_transform_zeroed_matrix() {assert_eq!(run_test("resvg/structure/transform/zeroed-matrix", Options::default()), 0)}
+#[test] fn resvg_structure_transform_empty() {assert_eq!(run_test("resvg/structure/transform/empty", Options::default()), 0)}
+#[test] fn resvg_structure_transform_scale_without_Y() {assert_eq!(run_test("resvg/structure/transform/scale-without-Y", Options::default()), 0)}
+#[test] fn resvg_structure_transform_numeric_character_references() {assert_eq!(run_test("resvg/structure/transform/numeric-character-references", Options::default()), 0)}
+#[test] fn resvg_structure_transform_transform_list() {assert_eq!(run_test("resvg/structure/transform/transform-list", Options::default()), 0)}
+#[test] fn resvg_structure_transform_nested_transforms_2() {assert_eq!(run_test("resvg/structure/transform/nested-transforms-2", Options::default()), 0)}
+#[test] fn resvg_structure_transform_scale() {assert_eq!(run_test("resvg/structure/transform/scale", Options::default()), 0)}
+#[test] fn resvg_structure_transform_nested_transforms_1() {assert_eq!(run_test("resvg/structure/transform/nested-transforms-1", Options::default()), 0)}
+#[test] fn resvg_structure_transform_default() {assert_eq!(run_test("resvg/structure/transform/default", Options::default()), 0)}
+#[test] fn resvg_structure_transform_translate_without_Y() {assert_eq!(run_test("resvg/structure/transform/translate-without-Y", Options::default()), 0)}
+#[test] fn resvg_structure_transform_direct_transform() {assert_eq!(run_test("resvg/structure/transform/direct-transform", Options::default()), 0)}
+#[test] fn resvg_structure_defs_style_inheritance() {assert_eq!(run_test("resvg/structure/defs/style-inheritance", Options::default()), 0)}
+#[test] fn resvg_structure_defs_out_of_order() {assert_eq!(run_test("resvg/structure/defs/out-of-order", Options::default()), 0)}
+#[test] fn resvg_structure_defs_simple_case() {assert_eq!(run_test("resvg/structure/defs/simple-case", Options::default()), 0)}
+#[test] fn resvg_structure_defs_ignore_shapes_inside_defs() {assert_eq!(run_test("resvg/structure/defs/ignore-shapes-inside-defs", Options::default()), 0)}
+#[test] fn resvg_structure_defs_style_inheritance_on_text() {assert_eq!(run_test("resvg/structure/defs/style-inheritance-on-text", Options::default()), 0)}
+#[test] fn resvg_structure_defs_multiple_defs() {assert_eq!(run_test("resvg/structure/defs/multiple-defs", Options::default()), 0)}
+#[test] fn resvg_structure_defs_nested_defs() {assert_eq!(run_test("resvg/structure/defs/nested-defs", Options::default()), 0)}
+#[test] fn resvg_masking_clip_rule_clip_rule_evenodd() {assert_eq!(run_test("resvg/masking/clip-rule/clip-rule=evenodd", Options::default()), 0)}
+#[test] fn resvg_masking_clip_simple_case() {assert_eq!(run_test("resvg/masking/clip/simple-case", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_with_marker_on_clip() {assert_eq!(run_test("resvg/masking/clipPath/with-marker-on-clip", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_mixed_clip_rule() {assert_eq!(run_test("resvg/masking/clipPath/mixed-clip-rule", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_circle_shorthand() {assert_eq!(run_test("resvg/masking/clipPath/circle-shorthand", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_rule_evenodd() {assert_eq!(run_test("resvg/masking/clipPath/clip-rule=evenodd", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_switch_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/switch-is-not-a-valid-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_g_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/g-is-not-a-valid-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_with_invalid_child_via_use() {assert_eq!(run_test("resvg/masking/clipPath/with-invalid-child-via-use", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_recursive_on_child() {assert_eq!(run_test("resvg/masking/clipPath/recursive-on-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_no_children() {assert_eq!(run_test("resvg/masking/clipPath/no-children", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_invalid_transform_on_clipPath() {assert_eq!(run_test("resvg/masking/clipPath/invalid-transform-on-clipPath", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_mask_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/mask-has-no-effect", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_fill_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/fill-has-no-effect", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_recursive() {assert_eq!(run_test("resvg/masking/clipPath/recursive", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_path_on_children() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-children", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_opacity_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/opacity-has-no-effect", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_invisible_child_2() {assert_eq!(run_test("resvg/masking/clipPath/invisible-child-2", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_multiple_children() {assert_eq!(run_test("resvg/masking/clipPath/multiple-children", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_on_the_root_svg_without_size() {assert_eq!(run_test("resvg/masking/clipPath/on-the-root-svg-without-size", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_invisible_child_1() {assert_eq!(run_test("resvg/masking/clipPath/invisible-child-1", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_transform_on_clipPath() {assert_eq!(run_test("resvg/masking/clipPath/transform-on-clipPath", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_on_a_horizontal_line() {assert_eq!(run_test("resvg/masking/clipPath/on-a-horizontal-line", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_invalid_clip_path_on_self() {assert_eq!(run_test("resvg/masking/clipPath/invalid-clip-path-on-self", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_path_on_child() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_circle_shorthand_with_view_box() {assert_eq!(run_test("resvg/masking/clipPath/circle-shorthand-with-view-box", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clipping_with_complex_text_and_clip_rule() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-complex-text-and-clip-rule", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_simple_case() {assert_eq!(run_test("resvg/masking/clipPath/simple-case", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clipPathUnits_objectBoundingBox() {assert_eq!(run_test("resvg/masking/clipPath/clipPathUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_with_use_child() {assert_eq!(run_test("resvg/masking/clipPath/with-use-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clipping_with_text() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-text", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_path_with_transform_on_text() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-with-transform-on-text", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_malformed_path_child() {assert_eq!(run_test("resvg/masking/clipPath/malformed-path-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_line_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/line-is-not-a-valid-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_recursive_on_self() {assert_eq!(run_test("resvg/masking/clipPath/recursive-on-self", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_none() {assert_eq!(run_test("resvg/masking/clipPath/none", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_path_on_self() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-self", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_overlapped_shapes_with_evenodd() {assert_eq!(run_test("resvg/masking/clipPath/overlapped-shapes-with-evenodd", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clipping_with_complex_text_2() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-complex-text-2", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_circle_shorthand_with_stroke_box() {assert_eq!(run_test("resvg/masking/clipPath/circle-shorthand-with-stroke-box", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_invalid_clip_path_on_child() {assert_eq!(run_test("resvg/masking/clipPath/invalid-clip-path-on-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_symbol_via_use_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/symbol-via-use-is-not-a-valid-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_rule_from_parent_node() {assert_eq!(run_test("resvg/masking/clipPath/clip-rule-from-parent-node", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clipping_with_complex_text_1() {assert_eq!(run_test("resvg/masking/clipPath/clipping-with-complex-text-1", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_image_is_not_a_valid_child() {assert_eq!(run_test("resvg/masking/clipPath/image-is-not-a-valid-child", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_filter_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/filter-has-no-effect", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_on_the_root_svg_with_size() {assert_eq!(run_test("resvg/masking/clipPath/on-the-root-svg-with-size", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_invalid_FuncIRI() {assert_eq!(run_test("resvg/masking/clipPath/invalid-FuncIRI", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_path_with_transform() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-with-transform", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_self_recursive() {assert_eq!(run_test("resvg/masking/clipPath/self-recursive", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_stroke_has_no_effect() {assert_eq!(run_test("resvg/masking/clipPath/stroke-has-no-effect", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_nested_clip_path() {assert_eq!(run_test("resvg/masking/clipPath/nested-clip-path", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_path_on_child_with_transform() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-child-with-transform", Options::default()), 0)}
+#[test] fn resvg_masking_clipPath_clip_path_on_self_2() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-self-2", Options::default()), 0)}
+#[test] fn resvg_masking_mask_with_image() {assert_eq!(run_test("resvg/masking/mask/with-image", Options::default()), 0)}
+#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_without_rect() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-without-rect", Options::default()), 0)}
 // bug. the soft mask that will be created as part of the gradientwill override the soft mask currently in place when rendering
-#[ignore] #[test] fn resvg_masking_mask_recursive_on_child() {assert_eq!(run_test("resvg/masking/mask/recursive-on-child"), 0)}
-#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_rect() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-with-rect"), 0)}
-#[test] fn resvg_masking_mask_mask_on_child() {assert_eq!(run_test("resvg/masking/mask/mask-on-child"), 0)}
-#[test] fn resvg_masking_mask_no_children() {assert_eq!(run_test("resvg/masking/mask/no-children"), 0)}
-#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-with-percent"), 0)}
-#[test] fn resvg_masking_mask_recursive() {assert_eq!(run_test("resvg/masking/mask/recursive"), 0)}
-#[test] fn resvg_masking_mask_mask_type_invalid() {assert_eq!(run_test("resvg/masking/mask/mask-type=invalid"), 0)}
-#[test] fn resvg_masking_mask_with_opacity_1() {assert_eq!(run_test("resvg/masking/mask/with-opacity-1"), 0)}
-#[test] fn resvg_masking_mask_invisible_child_2() {assert_eq!(run_test("resvg/masking/mask/invisible-child-2"), 0)}
-#[test] fn resvg_masking_mask_on_group_with_transform() {assert_eq!(run_test("resvg/masking/mask/on-group-with-transform"), 0)}
-#[test] fn resvg_masking_mask_mask_type_alpha() {assert_eq!(run_test("resvg/masking/mask/mask-type=alpha"), 0)}
-#[test] fn resvg_masking_mask_with_opacity_2() {assert_eq!(run_test("resvg/masking/mask/with-opacity-2"), 0)}
-#[test] fn resvg_masking_mask_color_interpolation_linearRGB() {assert_eq!(run_test("resvg/masking/mask/color-interpolation=linearRGB"), 0)}
-#[test] fn resvg_masking_mask_with_opacity_3() {assert_eq!(run_test("resvg/masking/mask/with-opacity-3"), 0)}
-#[test] fn resvg_masking_mask_invisible_child_1() {assert_eq!(run_test("resvg/masking/mask/invisible-child-1"), 0)}
-#[test] fn resvg_masking_mask_transform_on_shape() {assert_eq!(run_test("resvg/masking/mask/transform-on-shape"), 0)}
-#[test] fn resvg_masking_mask_mask_on_self_with_mask_type_alpha() {assert_eq!(run_test("resvg/masking/mask/mask-on-self-with-mask-type=alpha"), 0)}
-#[test] fn resvg_masking_mask_half_width_region_with_rotation() {assert_eq!(run_test("resvg/masking/mask/half-width-region-with-rotation"), 0)}
-#[test] fn resvg_masking_mask_on_a_horizontal_line() {assert_eq!(run_test("resvg/masking/mask/on-a-horizontal-line"), 0)}
-#[test] fn resvg_masking_mask_nested_objectBoundingBox() {assert_eq!(run_test("resvg/masking/mask/nested-objectBoundingBox"), 0)}
-#[test] fn resvg_masking_mask_maskUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/masking/mask/maskUnits=objectBoundingBox-with-percent"), 0)}
-#[test] fn resvg_masking_mask_simple_case() {assert_eq!(run_test("resvg/masking/mask/simple-case"), 0)}
-#[test] fn resvg_masking_mask_maskContentUnits_objectBoundingBox() {assert_eq!(run_test("resvg/masking/mask/maskContentUnits=objectBoundingBox"), 0)}
-#[test] fn resvg_masking_mask_mask_on_self_with_mixed_mask_type() {assert_eq!(run_test("resvg/masking/mask/mask-on-self-with-mixed-mask-type"), 0)}
-#[test] fn resvg_masking_mask_with_clip_path() {assert_eq!(run_test("resvg/masking/mask/with-clip-path"), 0)}
-#[test] fn resvg_masking_mask_recursive_on_self() {assert_eq!(run_test("resvg/masking/mask/recursive-on-self"), 0)}
-#[test] fn resvg_masking_mask_none() {assert_eq!(run_test("resvg/masking/mask/none"), 0)}
-#[test] fn resvg_masking_mask_on_a_small_object() {assert_eq!(run_test("resvg/masking/mask/on-a-small-object"), 0)}
-#[test] fn resvg_masking_mask_transform_has_no_effect() {assert_eq!(run_test("resvg/masking/mask/transform-has-no-effect"), 0)}
-#[test] fn resvg_masking_mask_mask_type_in_style() {assert_eq!(run_test("resvg/masking/mask/mask-type-in-style"), 0)}
-#[test] fn resvg_masking_mask_mask_type_luminance() {assert_eq!(run_test("resvg/masking/mask/mask-type=luminance"), 0)}
-#[test] fn resvg_masking_mask_with_grayscale_image() {assert_eq!(run_test("resvg/masking/mask/with-grayscale-image"), 0)}
-#[test] fn resvg_masking_mask_invalid_child() {assert_eq!(run_test("resvg/masking/mask/invalid-child"), 0)}
-#[test] fn resvg_masking_mask_invalid_FuncIRI() {assert_eq!(run_test("resvg/masking/mask/invalid-FuncIRI"), 0)}
-#[test] fn resvg_masking_mask_self_recursive() {assert_eq!(run_test("resvg/masking/mask/self-recursive"), 0)}
-#[test] fn resvg_masking_mask_mask_on_self() {assert_eq!(run_test("resvg/masking/mask/mask-on-self"), 0)}
-#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_width_only() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-with-width-only"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_2() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-2"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_3() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-3"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_1() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-1"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_4() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-4"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_5() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-5"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_6() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-6"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_18() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-18"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_19() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-19"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_14() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-14"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_15() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-15"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_17() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-17"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_16() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-16"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_12() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-12"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_13() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-13"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_11() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-11"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_10() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-10"), 0)}
-#[test] fn custom_paint_servers_linearGradient_linear_gradient_9() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-9"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_10() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-10"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_11() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-11"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_12() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-12"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_9() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-9"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_8() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-8"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_6() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-6"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_7() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-7"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_5() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-5"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_4() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-4"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_1() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-1"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_3() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-3"), 0)}
-#[test] fn custom_paint_servers_pattern_patterns_2() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-2"), 0)}
-#[test] fn custom_integration_drawio_diagram1() {assert_eq!(run_test("custom/integration/drawio/diagram1"), 0)}
-#[test] fn custom_integration_matplotlib_bar_label() {assert_eq!(run_test("custom/integration/matplotlib/bar_label"), 0)}
-#[test] fn custom_integration_matplotlib_multi_colored_lines() {assert_eq!(run_test("custom/integration/matplotlib/multi_colored_lines"), 0)}
-#[test] fn custom_integration_matplotlib_signals() {assert_eq!(run_test("custom/integration/matplotlib/signals"), 0)}
-#[test] fn custom_integration_matplotlib_bar_char_with_gradient() {assert_eq!(run_test("custom/integration/matplotlib/bar_char_with_gradient"), 0)}
-#[test] fn custom_integration_matplotlib_stairs() {assert_eq!(run_test("custom/integration/matplotlib/stairs"), 0)}
-#[test] fn custom_integration_matplotlib_affine_image_transformation() {assert_eq!(run_test("custom/integration/matplotlib/affine_image_transformation"), 0)}
-#[test] fn custom_integration_matplotlib_tripcolor() {assert_eq!(run_test("custom/integration/matplotlib/tripcolor"), 0)}
-#[test] fn custom_integration_matplotlib_time_series() {assert_eq!(run_test("custom/integration/matplotlib/time_series"), 0)}
-#[test] fn custom_integration_wikimedia_coat_of_the_arms_of_edinburgh_city_council() {assert_eq!(run_test("custom/integration/wikimedia/coat_of_the_arms_of_edinburgh_city_council"), 0)}
-#[test] fn custom_painting_stroke_stroke_with_stroke_opacity_0() {assert_eq!(run_test("custom/painting/stroke/stroke-with-stroke-opacity-0"), 0)}
-#[test] fn custom_painting_stroke_dasharray_on_path_with_fill() {assert_eq!(run_test("custom/painting/stroke-dasharray/on-path-with-fill"), 0)}
-#[test] fn custom_structure_image_png_lumaa_16() {assert_eq!(run_test("custom/structure/image/png-lumaa-16"), 0)}
-#[test] fn custom_structure_image_png_luma_16() {assert_eq!(run_test("custom/structure/image/png-luma-16"), 0)}
-#[test] fn custom_structure_image_embedded_jpeg_as_image_jpeg() {assert_eq!(run_test("custom/structure/image/embedded-jpeg-as-image-jpeg"), 0)}
-#[test] fn custom_structure_image_png_rgb_16() {assert_eq!(run_test("custom/structure/image/png-rgb-16"), 0)}
-#[test] fn custom_structure_image_png_lumaa_8() {assert_eq!(run_test("custom/structure/image/png-lumaa-8"), 0)}
-#[test] fn custom_structure_image_embedded_jpeg_as_image_jpg() {assert_eq!(run_test("custom/structure/image/embedded-jpeg-as-image-jpg"), 0)}
-#[test] fn custom_structure_image_image_2() {assert_eq!(run_test("custom/structure/image/image-2"), 0)}
-#[test] fn custom_structure_image_image_1() {assert_eq!(run_test("custom/structure/image/image-1"), 0)}
-#[test] fn custom_structure_image_png_luma_8() {assert_eq!(run_test("custom/structure/image/png-luma-8"), 0)}
-#[test] fn custom_structure_image_png_rgba_8() {assert_eq!(run_test("custom/structure/image/png-rgba-8"), 0)}
-#[test] fn custom_structure_image_png_rgb_8() {assert_eq!(run_test("custom/structure/image/png-rgb-8"), 0)}
-#[test] fn custom_structure_image_png_rgba_16() {assert_eq!(run_test("custom/structure/image/png-rgba-16"), 0)}
-#[test] fn custom_structure_image_embedded_jpeg_without_mime() {assert_eq!(run_test("custom/structure/image/embedded-jpeg-without-mime"), 0)}
-#[test] fn custom_structure_viewbox_negative_viewbox() {assert_eq!(run_test("custom/structure/viewbox/negative_viewbox"), 0)}
-#[test] fn custom_masking_clipPath_clip_path_with_nested_clip_path_and_transform() {assert_eq!(run_test("custom/masking/clipPath/clip-path-with-nested-clip-path-and-transform"), 0)}
-#[test] fn custom_masking_clipPath_complex_clip_path_with_nested_clip_path_on_child() {assert_eq!(run_test("custom/masking/clipPath/complex-clip-path-with-nested-clip-path-on-child"), 0)}
+#[ignore] #[test] fn resvg_masking_mask_recursive_on_child() {assert_eq!(run_test("resvg/masking/mask/recursive-on-child", Options::default()), 0)}
+#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_rect() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-with-rect", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_on_child() {assert_eq!(run_test("resvg/masking/mask/mask-on-child", Options::default()), 0)}
+#[test] fn resvg_masking_mask_no_children() {assert_eq!(run_test("resvg/masking/mask/no-children", Options::default()), 0)}
+#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_percent() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-with-percent", Options::default()), 0)}
+#[test] fn resvg_masking_mask_recursive() {assert_eq!(run_test("resvg/masking/mask/recursive", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_type_invalid() {assert_eq!(run_test("resvg/masking/mask/mask-type=invalid", Options::default()), 0)}
+#[test] fn resvg_masking_mask_with_opacity_1() {assert_eq!(run_test("resvg/masking/mask/with-opacity-1", Options::default()), 0)}
+#[test] fn resvg_masking_mask_invisible_child_2() {assert_eq!(run_test("resvg/masking/mask/invisible-child-2", Options::default()), 0)}
+#[test] fn resvg_masking_mask_on_group_with_transform() {assert_eq!(run_test("resvg/masking/mask/on-group-with-transform", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_type_alpha() {assert_eq!(run_test("resvg/masking/mask/mask-type=alpha", Options::default()), 0)}
+#[test] fn resvg_masking_mask_with_opacity_2() {assert_eq!(run_test("resvg/masking/mask/with-opacity-2", Options::default()), 0)}
+#[test] fn resvg_masking_mask_color_interpolation_linearRGB() {assert_eq!(run_test("resvg/masking/mask/color-interpolation=linearRGB", Options::default()), 0)}
+#[test] fn resvg_masking_mask_with_opacity_3() {assert_eq!(run_test("resvg/masking/mask/with-opacity-3", Options::default()), 0)}
+#[test] fn resvg_masking_mask_invisible_child_1() {assert_eq!(run_test("resvg/masking/mask/invisible-child-1", Options::default()), 0)}
+#[test] fn resvg_masking_mask_transform_on_shape() {assert_eq!(run_test("resvg/masking/mask/transform-on-shape", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_on_self_with_mask_type_alpha() {assert_eq!(run_test("resvg/masking/mask/mask-on-self-with-mask-type=alpha", Options::default()), 0)}
+#[test] fn resvg_masking_mask_half_width_region_with_rotation() {assert_eq!(run_test("resvg/masking/mask/half-width-region-with-rotation", Options::default()), 0)}
+#[test] fn resvg_masking_mask_on_a_horizontal_line() {assert_eq!(run_test("resvg/masking/mask/on-a-horizontal-line", Options::default()), 0)}
+#[test] fn resvg_masking_mask_nested_objectBoundingBox() {assert_eq!(run_test("resvg/masking/mask/nested-objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_masking_mask_maskUnits_objectBoundingBox_with_percent() {assert_eq!(run_test("resvg/masking/mask/maskUnits=objectBoundingBox-with-percent", Options::default()), 0)}
+#[test] fn resvg_masking_mask_simple_case() {assert_eq!(run_test("resvg/masking/mask/simple-case", Options::default()), 0)}
+#[test] fn resvg_masking_mask_maskContentUnits_objectBoundingBox() {assert_eq!(run_test("resvg/masking/mask/maskContentUnits=objectBoundingBox", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_on_self_with_mixed_mask_type() {assert_eq!(run_test("resvg/masking/mask/mask-on-self-with-mixed-mask-type", Options::default()), 0)}
+#[test] fn resvg_masking_mask_with_clip_path() {assert_eq!(run_test("resvg/masking/mask/with-clip-path", Options::default()), 0)}
+#[test] fn resvg_masking_mask_recursive_on_self() {assert_eq!(run_test("resvg/masking/mask/recursive-on-self", Options::default()), 0)}
+#[test] fn resvg_masking_mask_none() {assert_eq!(run_test("resvg/masking/mask/none", Options::default()), 0)}
+#[test] fn resvg_masking_mask_on_a_small_object() {assert_eq!(run_test("resvg/masking/mask/on-a-small-object", Options::default()), 0)}
+#[test] fn resvg_masking_mask_transform_has_no_effect() {assert_eq!(run_test("resvg/masking/mask/transform-has-no-effect", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_type_in_style() {assert_eq!(run_test("resvg/masking/mask/mask-type-in-style", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_type_luminance() {assert_eq!(run_test("resvg/masking/mask/mask-type=luminance", Options::default()), 0)}
+#[test] fn resvg_masking_mask_with_grayscale_image() {assert_eq!(run_test("resvg/masking/mask/with-grayscale-image", Options::default()), 0)}
+#[test] fn resvg_masking_mask_invalid_child() {assert_eq!(run_test("resvg/masking/mask/invalid-child", Options::default()), 0)}
+#[test] fn resvg_masking_mask_invalid_FuncIRI() {assert_eq!(run_test("resvg/masking/mask/invalid-FuncIRI", Options::default()), 0)}
+#[test] fn resvg_masking_mask_self_recursive() {assert_eq!(run_test("resvg/masking/mask/self-recursive", Options::default()), 0)}
+#[test] fn resvg_masking_mask_mask_on_self() {assert_eq!(run_test("resvg/masking/mask/mask-on-self", Options::default()), 0)}
+#[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_width_only() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-with-width-only", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_2() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-2", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_3() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-3", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_1() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-1", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_4() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-4", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_5() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-5", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_6() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-6", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_18() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-18", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_19() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-19", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_14() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-14", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_15() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-15", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_17() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-17", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_16() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-16", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_12() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-12", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_13() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-13", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_11() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-11", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_10() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-10", Options::default()), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_9() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-9", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_10() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-10", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_11() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-11", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_12() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-12", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_9() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-9", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_8() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-8", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_6() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-6", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_7() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-7", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_5() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-5", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_4() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-4", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_1() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-1", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_3() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-3", Options::default()), 0)}
+#[test] fn custom_paint_servers_pattern_patterns_2() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-2", Options::default()), 0)}
+#[test] fn custom_integration_drawio_diagram1() {assert_eq!(run_test("custom/integration/drawio/diagram1", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_bar_label() {assert_eq!(run_test("custom/integration/matplotlib/bar_label", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_multi_colored_lines() {assert_eq!(run_test("custom/integration/matplotlib/multi_colored_lines", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_signals() {assert_eq!(run_test("custom/integration/matplotlib/signals", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_bar_char_with_gradient() {assert_eq!(run_test("custom/integration/matplotlib/bar_char_with_gradient", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_stairs() {assert_eq!(run_test("custom/integration/matplotlib/stairs", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_affine_image_transformation() {assert_eq!(run_test("custom/integration/matplotlib/affine_image_transformation", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_tripcolor() {assert_eq!(run_test("custom/integration/matplotlib/tripcolor", Options::default()), 0)}
+#[test] fn custom_integration_matplotlib_time_series() {assert_eq!(run_test("custom/integration/matplotlib/time_series", Options::default()), 0)}
+#[test] fn custom_integration_wikimedia_coat_of_the_arms_of_edinburgh_city_council() {assert_eq!(run_test("custom/integration/wikimedia/coat_of_the_arms_of_edinburgh_city_council", Options::default()), 0)}
+#[test] fn custom_painting_stroke_stroke_with_stroke_opacity_0() {assert_eq!(run_test("custom/painting/stroke/stroke-with-stroke-opacity-0", Options::default()), 0)}
+#[test] fn custom_painting_stroke_dasharray_on_path_with_fill() {assert_eq!(run_test("custom/painting/stroke-dasharray/on-path-with-fill", Options::default()), 0)}
+#[test] fn custom_structure_image_png_lumaa_16() {assert_eq!(run_test("custom/structure/image/png-lumaa-16", Options::default()), 0)}
+#[test] fn custom_structure_image_png_luma_16() {assert_eq!(run_test("custom/structure/image/png-luma-16", Options::default()), 0)}
+#[test] fn custom_structure_image_embedded_jpeg_as_image_jpeg() {assert_eq!(run_test("custom/structure/image/embedded-jpeg-as-image-jpeg", Options::default()), 0)}
+#[test] fn custom_structure_image_png_rgb_16() {assert_eq!(run_test("custom/structure/image/png-rgb-16", Options::default()), 0)}
+#[test] fn custom_structure_image_png_lumaa_8() {assert_eq!(run_test("custom/structure/image/png-lumaa-8", Options::default()), 0)}
+#[test] fn custom_structure_image_embedded_jpeg_as_image_jpg() {assert_eq!(run_test("custom/structure/image/embedded-jpeg-as-image-jpg", Options::default()), 0)}
+#[test] fn custom_structure_image_image_2() {assert_eq!(run_test("custom/structure/image/image-2", Options::default()), 0)}
+#[test] fn custom_structure_image_image_1() {assert_eq!(run_test("custom/structure/image/image-1", Options::default()), 0)}
+#[test] fn custom_structure_image_png_luma_8() {assert_eq!(run_test("custom/structure/image/png-luma-8", Options::default()), 0)}
+#[test] fn custom_structure_image_png_rgba_8() {assert_eq!(run_test("custom/structure/image/png-rgba-8", Options::default()), 0)}
+#[test] fn custom_structure_image_png_rgb_8() {assert_eq!(run_test("custom/structure/image/png-rgb-8", Options::default()), 0)}
+#[test] fn custom_structure_image_png_rgba_16() {assert_eq!(run_test("custom/structure/image/png-rgba-16", Options::default()), 0)}
+#[test] fn custom_structure_image_embedded_jpeg_without_mime() {assert_eq!(run_test("custom/structure/image/embedded-jpeg-without-mime", Options::default()), 0)}
+#[test] fn custom_structure_viewbox_negative_viewbox() {assert_eq!(run_test("custom/structure/viewbox/negative_viewbox", Options::default()), 0)}
+#[test] fn custom_masking_clipPath_clip_path_with_nested_clip_path_and_transform() {assert_eq!(run_test("custom/masking/clipPath/clip-path-with-nested-clip-path-and-transform", Options::default()), 0)}
+#[test] fn custom_masking_clipPath_complex_clip_path_with_nested_clip_path_on_child() {assert_eq!(run_test("custom/masking/clipPath/complex-clip-path-with-nested-clip-path-on-child", Options::default()), 0)}
 // bug. we currently override the soft mask thatis in place in the content stream by creating anSMask entry in the Image XObject for transparency
-#[ignore] #[test] fn custom_masking_mask_mask_and_image_with_transparency() {assert_eq!(run_test("custom/masking/mask/mask-and-image-with-transparency"), 0)}
+#[ignore] #[test] fn custom_masking_mask_mask_and_image_with_transparency() {assert_eq!(run_test("custom/masking/mask/mask-and-image-with-transparency", Options::default()), 0)}

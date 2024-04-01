@@ -91,7 +91,7 @@ pub struct Options {
     /// Higher values will lead to better quality, but will increase the size of
     /// the pdf.
     ///
-    /// _Default:_ 1
+    /// _Default:_ 1.5
     pub raster_scale: f32,
 
     /// Whether text should be embedded as actual selectable text inside
@@ -106,7 +106,7 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             compress: false,
-            raster_scale: 1.0,
+            raster_scale: 1.5,
             embed_text: true,
         }
     }
