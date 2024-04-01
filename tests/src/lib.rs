@@ -102,7 +102,7 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
         || pixel1.0[3] != pixel2.0[3]
 }
 
-const REPLACE: bool = true;
+const REPLACE: bool = false;
 const PDF: bool = false;
 
 pub fn get_diff(
