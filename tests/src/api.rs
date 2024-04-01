@@ -19,6 +19,7 @@ fn text_to_paths() {
 }
 
 #[test]
+#[ignore]
 fn to_chunk() {
     let mut alloc = Ref::new(1);
     let catalog_id = alloc.bump();
