@@ -58,7 +58,7 @@ fn to_chunk() {
     resources.finish();
     page.finish();
 
-    pdf.type1_font(font_id).base_font(Name(b"Helvetica"));
+    pdf.type1_font(font_id).base_font(Name(b"Times-Roman"));
 
     let mut content = Content::new();
     content
