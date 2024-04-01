@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for text embedding.
 - Added a `text` feature flag.
 - The `convert_str` method has been removed. You should now always convert your SVG string into a `usvg` 
- tree yourself.
+ tree yourself and then call either `to_pdf` or `to_chunk`.
 - The `convert_tree` method has been renamed into `to_pdf`, and now requires you to provide the fontdb
- used for the `usvg` tree.
+ used for the `usvg` tree, unless you have disabled the `text` feature.
 - `convert_tree_into` has been renamed into `to_chunk` and now returns an independent chunk as well
- as the object ID of the SVG.
+ as the object ID of the actual SVG in the chunk.
 
 - TODO: The CLI options have been (temporarily) removed. They will be readded before the next release.
 - TODO: Add tests for CLI and svg options

@@ -1,9 +1,9 @@
 #[allow(unused_imports)]
 use {
-    std::collections::HashMap,
     crate::{convert_svg, run_test_impl},
     crate::{render_pdf, FONTDB},
     pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str},
+    std::collections::HashMap,
     std::path::Path,
     svg2pdf::Options,
 };
@@ -36,8 +36,7 @@ fn to_chunk() {
     let tree =
         svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default(), &db)
             .unwrap();
-    let (mut svg_chunk, svg_id) =
-        svg2pdf::to_chunk(&tree, svg2pdf::Options::default(), &db);
+    let (svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::Options::default(), &db);
 
     let mut map = HashMap::new();
     let svg_chunk =
