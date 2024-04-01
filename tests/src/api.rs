@@ -58,18 +58,19 @@ fn to_chunk() {
     resources.finish();
     page.finish();
 
-    pdf.type1_font(font_id).base_font(Name(b"Helvetica"));
+    pdf.type1_font(font_id).base_font(Name(b"Times-Roman"));
 
     let mut content = Content::new();
-    content
-        .begin_text()
-        .set_font(font_name, 16.0)
-        .next_line(108.0, 734.0)
-        .show(Str(b"Look at my wonderful (distorted) vector graphic!"))
-        .end_text();
+    // We don't include the text because it causes issue in CI since it's OS-dependent
+    // content
+    //     .begin_text()
+    //     .set_font(font_name, 16.0)
+    //     .next_line(108.0, 734.0)
+    //     .show(Str(b"Look at my wonderful (distorted) vector graphic!"))
+    //     .end_text();
 
     content
-        .transform([300.0, 0.0, 0.0, 225.0, 147.5, 385.0])
+        .transform([300.0, 0.0, 0.0, 300.0, 200.0, 400.0])
         .x_object(svg_name);
 
     pdf.stream(content_id, &content.finish());
