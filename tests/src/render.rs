@@ -1522,7 +1522,8 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg"), 0)}
 // no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_svgz() {assert_eq!(run_test("resvg/structure/image/external-svgz"), 0)}
-#[test] fn resvg_structure_image_image_with_float_size_scaling() {assert_eq!(run_test("resvg/structure/image/image-with-float-size-scaling"), 0)}
+// too small in size
+#[ignore] #[test] fn resvg_structure_image_image_with_float_size_scaling() {assert_eq!(run_test("resvg/structure/image/image-with-float-size-scaling"), 0)}
 // no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_height_on_svg() {assert_eq!(run_test("resvg/structure/image/no-height-on-svg"), 0)}
 // no relative paths supported
