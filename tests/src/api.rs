@@ -21,6 +21,20 @@ fn text_to_paths() {
 }
 
 #[test]
+fn dpi() {
+    let conversion_options = ConversionOptions::default();
+    let page_options = PageOptions {
+        dpi: 140.0
+    };
+
+    let svg_path = "svg/resvg/text/text/simple-case.svg";
+    let (pdf, actual_image) =
+        convert_svg(Path::new(svg_path), conversion_options, page_options);
+    let res = run_test_impl(pdf, actual_image, "api/dpi");
+    assert_eq!(res, 0);
+}
+
+#[test]
 fn to_chunk() {
     let mut alloc = Ref::new(1);
     let catalog_id = alloc.bump();
