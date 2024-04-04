@@ -78,8 +78,6 @@ IGNORE_TESTS = {
                                                      "will override the soft mask currently in place when rendering",
     "svg/resvg/painting/stroke-linecap/zero-length-path-with-round.svg": "need to check how Chrome does it",
     "svg/resvg/painting/stroke-linecap/zero-length-path-with-square.svg": "need to check how Firefox does it",
-
-    "svg/resvg/structure/image/embedded-svg-with-text.svg": "bug. need to rewrite logic for nested SVG images.",
 }
 
 
