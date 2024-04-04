@@ -23,9 +23,7 @@ fn text_to_paths() {
 #[test]
 fn dpi() {
     let conversion_options = ConversionOptions::default();
-    let page_options = PageOptions {
-        dpi: 140.0
-    };
+    let page_options = PageOptions { dpi: 140.0 };
 
     let svg_path = "svg/resvg/text/text/simple-case.svg";
     let (pdf, actual_image) =
