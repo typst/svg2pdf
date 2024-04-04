@@ -45,6 +45,16 @@ pub fn render(
         gs.finish();
         content.set_parameters(rc.add_graphics_state(gs_ref).to_pdf_name());
 
+        // We need to render the mask here instead of in `create_to_stream` so that
+        // if we have a child as an image with a SMask, it won't override
+        // the soft mask of the group. Unfortunately, this means we need this ugly
+        // hack of setting and then reversing the transform.
+        if let Some(mask) = group.mask() {
+            content.transform(group.transform().to_pdf_transform());
+            mask::render(group, mask, chunk, content, ctx, rc);
+            content.transform(group.transform().invert().unwrap().to_pdf_transform());
+        }
+
         // We don't need to pass the accumulated transform here because if a pattern appears in a
         // XObject, it will be mapped to the coordinate space of where the XObject was invoked, meaning
         // that it will also be affected by the transforms in the content stream. If we passed on the
@@ -114,10 +124,6 @@ fn create_to_stream(
     content.save_state();
     content.transform(group.transform().to_pdf_transform());
     let accumulated_transform = accumulated_transform.pre_concat(group.transform());
-
-    if let Some(mask) = &group.mask() {
-        mask::render(group, mask, chunk, content, ctx, rc);
-    }
 
     if let Some(clip_path) = &group.clip_path() {
         clip_path::render(group, clip_path, chunk, content, ctx, rc);
