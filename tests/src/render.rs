@@ -1102,8 +1102,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_text_letter_spacing_1mm() {assert_eq!(run_test("resvg/text/letter-spacing/1mm"), 0)}
 #[test] fn resvg_text_letter_spacing_normal() {assert_eq!(run_test("resvg/text/letter-spacing/normal"), 0)}
 #[test] fn resvg_text_letter_spacing_filter_bbox() {assert_eq!(run_test("resvg/text/letter-spacing/filter-bbox"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_text_letter_spacing_mixed_scripts() {assert_eq!(run_test("resvg/text/letter-spacing/mixed-scripts"), 0)}
+#[test] fn resvg_text_letter_spacing_mixed_scripts() {assert_eq!(run_test("resvg/text/letter-spacing/mixed-scripts"), 0)}
 #[test] fn resvg_text_dominant_baseline_mathematical() {assert_eq!(run_test("resvg/text/dominant-baseline/mathematical"), 0)}
 #[test] fn resvg_text_dominant_baseline_dummy_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/dummy-tspan"), 0)}
 #[test] fn resvg_text_dominant_baseline_equal_alignment_baseline_on_tspan() {assert_eq!(run_test("resvg/text/dominant-baseline/equal-alignment-baseline-on-tspan"), 0)}
@@ -1196,18 +1195,15 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_text_font_weight_700() {assert_eq!(run_test("resvg/text/font-weight/700"), 0)}
 #[test] fn resvg_text_font_weight_lighter() {assert_eq!(run_test("resvg/text/font-weight/lighter"), 0)}
 #[test] fn resvg_text_font_weight_bolder() {assert_eq!(run_test("resvg/text/font-weight/bolder"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_text_font_weight_lighter_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/lighter-with-clamping"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_text_font_weight_lighter_without_parent() {assert_eq!(run_test("resvg/text/font-weight/lighter-without-parent"), 0)}
+#[test] fn resvg_text_font_weight_lighter_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/lighter-with-clamping"), 0)}
+#[test] fn resvg_text_font_weight_lighter_without_parent() {assert_eq!(run_test("resvg/text/font-weight/lighter-without-parent"), 0)}
 #[test] fn resvg_text_font_weight_bold() {assert_eq!(run_test("resvg/text/font-weight/bold"), 0)}
 #[test] fn resvg_text_font_weight_inherit() {assert_eq!(run_test("resvg/text/font-weight/inherit"), 0)}
 #[test] fn resvg_text_font_weight_normal() {assert_eq!(run_test("resvg/text/font-weight/normal"), 0)}
 #[test] fn resvg_text_font_weight_invalid_number_1() {assert_eq!(run_test("resvg/text/font-weight/invalid-number-1"), 0)}
 #[test] fn resvg_text_font_weight_bolder_without_parent() {assert_eq!(run_test("resvg/text/font-weight/bolder-without-parent"), 0)}
 #[test] fn resvg_text_font_weight_650() {assert_eq!(run_test("resvg/text/font-weight/650"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_text_font_weight_bolder_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/bolder-with-clamping"), 0)}
+#[test] fn resvg_text_font_weight_bolder_with_clamping() {assert_eq!(run_test("resvg/text/font-weight/bolder-with-clamping"), 0)}
 #[test] fn resvg_text_text_rendering_optimizeLegibility() {assert_eq!(run_test("resvg/text/text-rendering/optimizeLegibility"), 0)}
 #[test] fn resvg_text_text_rendering_geometricPrecision() {assert_eq!(run_test("resvg/text/text-rendering/geometricPrecision"), 0)}
 #[test] fn resvg_text_text_rendering_on_tspan() {assert_eq!(run_test("resvg/text/text-rendering/on-tspan"), 0)}
@@ -1386,8 +1382,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_3() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-3"), 0)}
 #[test] fn resvg_structure_svg_no_children() {assert_eq!(run_test("resvg/structure/svg/no-children"), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_rect_and_viewBox_1() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-rect-and-viewBox-1"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_structure_svg_funcIRI_with_invalid_characters() {assert_eq!(run_test("resvg/structure/svg/funcIRI-with-invalid-characters"), 0)}
+#[test] fn resvg_structure_svg_funcIRI_with_invalid_characters() {assert_eq!(run_test("resvg/structure/svg/funcIRI-with-invalid-characters"), 0)}
 #[test] fn resvg_structure_svg_elements_via_ENTITY_reference_1() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-1"), 0)}
 #[test] fn resvg_structure_svg_preserveAspectRatio_xMaxYMax_slice() {assert_eq!(run_test("resvg/structure/svg/preserveAspectRatio=xMaxYMax-slice"), 0)}
 #[test] fn resvg_structure_svg_elements_via_ENTITY_reference_3() {assert_eq!(run_test("resvg/structure/svg/elements-via-ENTITY-reference-3"), 0)}
@@ -1413,8 +1408,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_structure_svg_attribute_value_via_ENTITY_reference() {assert_eq!(run_test("resvg/structure/svg/attribute-value-via-ENTITY-reference"), 0)}
 #[test] fn resvg_structure_svg_explicit_svg_namespace() {assert_eq!(run_test("resvg/structure/svg/explicit-svg-namespace"), 0)}
 #[test] fn resvg_structure_svg_invalid_id_attribute_2() {assert_eq!(run_test("resvg/structure/svg/invalid-id-attribute-2"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_structure_svg_funcIRI_parsing() {assert_eq!(run_test("resvg/structure/svg/funcIRI-parsing"), 0)}
+#[test] fn resvg_structure_svg_funcIRI_parsing() {assert_eq!(run_test("resvg/structure/svg/funcIRI-parsing"), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_overflow_auto() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-overflow-auto"), 0)}
 #[test] fn resvg_structure_svg_invalid_id_attribute_1() {assert_eq!(run_test("resvg/structure/svg/invalid-id-attribute-1"), 0)}
 #[test] fn resvg_structure_svg_nested_svg_with_viewBox() {assert_eq!(run_test("resvg/structure/svg/nested-svg-with-viewBox"), 0)}
@@ -1528,8 +1522,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg"), 0)}
 // no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_svgz() {assert_eq!(run_test("resvg/structure/image/external-svgz"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_structure_image_image_with_float_size_scaling() {assert_eq!(run_test("resvg/structure/image/image-with-float-size-scaling"), 0)}
+#[test] fn resvg_structure_image_image_with_float_size_scaling() {assert_eq!(run_test("resvg/structure/image/image-with-float-size-scaling"), 0)}
 // no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_no_height_on_svg() {assert_eq!(run_test("resvg/structure/image/no-height-on-svg"), 0)}
 // no relative paths supported

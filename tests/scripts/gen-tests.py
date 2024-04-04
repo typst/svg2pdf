@@ -17,13 +17,6 @@ NO_FONT = "font is not part of test suite yet"
 IGNORE_TESTS = {
     # The following test cases still need to be investigated
     "svg/resvg/painting/stroke-dasharray/n-0.svg": INVESTIGATE,
-    "svg/resvg/structure/image/image-with-float-size-scaling.svg": INVESTIGATE,
-    "svg/resvg/structure/svg/funcIRI-parsing.svg": INVESTIGATE,
-    "svg/resvg/structure/svg/funcIRI-with-invalid-characters.svg": INVESTIGATE,
-    "svg/resvg/text/font-weight/bolder-with-clamping.svg": INVESTIGATE,
-    "svg/resvg/text/font-weight/lighter-with-clamping.svg": INVESTIGATE,
-    "svg/resvg/text/font-weight/lighter-without-parent.svg": INVESTIGATE,
-    "svg/resvg/text/letter-spacing/mixed-scripts.svg": INVESTIGATE,
     "svg/resvg/text/text/compound-emojis.svg": INVESTIGATE,
     "svg/resvg/text/text/compound-emojis-and-coordinates-list.svg": INVESTIGATE,
     "svg/resvg/text/text/emojis.svg": INVESTIGATE,
@@ -37,6 +30,7 @@ IGNORE_TESTS = {
     "svg/resvg/structure/svg/zero-size.svg": "invalid size",
     "svg/resvg/structure/svg/not-UTF-8-encoding.svg": "invalid encoding",
     "svg/resvg/filters/feImage/simple-case.svg": NO_RELATIVE_PATHS,
+    "svg/resvg/structure/image/image-with-float-size-scaling.svg": "too small in size",
     "svg/resvg/painting/marker/with-an-image-child.svg": NO_RELATIVE_PATHS,
     "svg/resvg/painting/mix-blend-mode/color-dodge.svg": "pdfium bug",
     "svg/resvg/painting/stroke-linejoin/miter-clip.svg": NO_SUPPORT,
