@@ -12,12 +12,12 @@ use {
 
 use super::helper::deflate;
 use crate::util::allocate::RefAllocator;
-use crate::{Options, GRAY_ICC_DEFLATED, SRGB_ICC_DEFLATED};
+use crate::{ConversionOptions, GRAY_ICC_DEFLATED, SRGB_ICC_DEFLATED};
 
 /// Holds all of the necessary information for the conversion process.
 pub struct Context {
     /// Options that where passed by the user.
-    pub options: Options,
+    pub options: ConversionOptions,
     /// The refs of the fonts
     #[cfg(feature = "text")]
     pub fonts: HashMap<ID, Option<Font>>,
@@ -29,7 +29,11 @@ pub struct Context {
 impl Context {
     /// Create a new context.
     #[cfg(feature = "text")]
-    pub fn new(tree: &Tree, options: Options, fontdb: &fontdb::Database) -> Self {
+    pub fn new(
+        tree: &Tree,
+        options: ConversionOptions,
+        fontdb: &fontdb::Database,
+    ) -> Self {
         let mut ctx = Self {
             ref_allocator: RefAllocator::new(),
             options,
@@ -48,7 +52,7 @@ impl Context {
     // TODO: Make context less ugly with different features.
     /// Create a new context.
     #[cfg(not(feature = "text"))]
-    pub fn new(options: Options) -> Self {
+    pub fn new(options: ConversionOptions) -> Self {
         Self {
             ref_allocator: RefAllocator::new(),
             options,
@@ -109,7 +113,7 @@ impl Context {
     }
 
     /// Just a helper method so that we don't have to manually compress the content if this was
-    /// set in the [Options] struct.
+    /// set in the [ConversionOptions] struct.
     pub fn finish_content(&self, content: Content) -> Vec<u8> {
         if self.options.compress {
             deflate(&content.finish())

@@ -14,7 +14,7 @@ use pdfium_render::pdfium::Pdfium;
 use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
 use usvg::Tree;
 
-use svg2pdf::Options;
+use svg2pdf::{ConversionOptions, PageOptions};
 
 /// The global fontdb instance.
 static FONTDB: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| {
@@ -70,10 +70,15 @@ pub fn read_svg(svg_string: &str) -> Tree {
 
 /// Converts an image into a PDF and returns the PDF as well as a rendered version
 /// of it.
-pub fn convert_svg(svg_path: &Path, options: Options) -> (Vec<u8>, RgbaImage) {
+pub fn convert_svg(
+    svg_path: &Path,
+    conversion_options: ConversionOptions,
+    page_options: PageOptions,
+) -> (Vec<u8>, RgbaImage) {
     let svg = fs::read_to_string(svg_path).unwrap();
     let tree = read_svg(&svg);
-    let pdf = svg2pdf::to_pdf(&tree, options, &FONTDB.lock().unwrap());
+    let pdf =
+        svg2pdf::to_pdf(&tree, conversion_options, page_options, &FONTDB.lock().unwrap());
     let image = render_pdf(pdf.as_slice());
     (pdf, image)
 }
@@ -186,7 +191,7 @@ pub fn run_test_impl(pdf: Vec<u8>, actual_image: RgbaImage, test_name: &str) -> 
     let (diff_image, pixel_diff) = get_diff(&expected_image, &actual_image);
 
     if pixel_diff > 0 {
-        fs::create_dir_all(&diff_path.parent().unwrap()).unwrap();
+        fs::create_dir_all(diff_path.parent().unwrap()).unwrap();
 
         diff_image
             .save_with_format(&diff_path, image::ImageFormat::Png)

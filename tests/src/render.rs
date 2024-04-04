@@ -5,7 +5,7 @@
 #[allow(unused_imports)]
 use std::path::PathBuf;
 use crate::{run_test_impl, convert_svg};
-use svg2pdf::Options;
+use svg2pdf::{ConversionOptions, PageOptions};
 
 #[allow(dead_code)]
 pub fn get_svg_path(test_name: &str) -> PathBuf {
@@ -15,7 +15,7 @@ pub fn get_svg_path(test_name: &str) -> PathBuf {
 #[allow(dead_code)]
 pub fn run_test(test_name: &str) -> i32 {
     let svg_path = get_svg_path(test_name);
-    let (pdf, actual_image) = convert_svg(&svg_path, Options::default());
+    let (pdf, actual_image) = convert_svg(&svg_path, ConversionOptions::default(), PageOptions::default());
     run_test_impl(pdf, actual_image, test_name)
 }
 
