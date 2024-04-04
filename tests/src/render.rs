@@ -560,8 +560,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_paint_servers_pattern_out_of_order_referencing() {assert_eq!(run_test("resvg/paint-servers/pattern/out-of-order-referencing"), 0)}
 #[test] fn resvg_paint_servers_pattern_with_patternTransform() {assert_eq!(run_test("resvg/paint-servers/pattern/with-patternTransform"), 0)}
 #[test] fn resvg_paint_servers_pattern_with_x_and_y() {assert_eq!(run_test("resvg/paint-servers/pattern/with-x-and-y"), 0)}
-// need to investigate
-#[ignore] #[test] fn resvg_paint_servers_pattern_nested_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/nested-objectBoundingBox"), 0)}
+#[test] fn resvg_paint_servers_pattern_nested_objectBoundingBox() {assert_eq!(run_test("resvg/paint-servers/pattern/nested-objectBoundingBox"), 0)}
 #[test] fn resvg_paint_servers_pattern_preserveAspectRatio() {assert_eq!(run_test("resvg/paint-servers/pattern/preserveAspectRatio"), 0)}
 #[test] fn resvg_paint_servers_pattern_simple_case() {assert_eq!(run_test("resvg/paint-servers/pattern/simple-case"), 0)}
 #[test] fn resvg_paint_servers_pattern_missing_width() {assert_eq!(run_test("resvg/paint-servers/pattern/missing-width"), 0)}
@@ -1509,8 +1508,7 @@ pub fn run_test(test_name: &str) -> i32 {
 // no relative paths supported
 #[ignore] #[test] fn resvg_structure_image_external_png() {assert_eq!(run_test("resvg/structure/image/external-png"), 0)}
 #[test] fn resvg_structure_image_url_to_svg() {assert_eq!(run_test("resvg/structure/image/url-to-svg"), 0)}
-// bug. need to rewrite logic for nested SVG images.
-#[ignore] #[test] fn resvg_structure_image_embedded_svg_with_text() {assert_eq!(run_test("resvg/structure/image/embedded-svg-with-text"), 0)}
+#[test] fn resvg_structure_image_embedded_svg_with_text() {assert_eq!(run_test("resvg/structure/image/embedded-svg-with-text"), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMidYMid_slice_on_svg() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMidYMid-slice-on-svg"), 0)}
 #[test] fn resvg_structure_image_embedded_svg_without_mime() {assert_eq!(run_test("resvg/structure/image/embedded-svg-without-mime"), 0)}
 #[test] fn resvg_structure_image_preserveAspectRatio_xMinYMin_meet() {assert_eq!(run_test("resvg/structure/image/preserveAspectRatio=xMinYMin-meet"), 0)}
@@ -1709,8 +1707,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn resvg_masking_clipPath_clip_path_on_self_2() {assert_eq!(run_test("resvg/masking/clipPath/clip-path-on-self-2"), 0)}
 #[test] fn resvg_masking_mask_with_image() {assert_eq!(run_test("resvg/masking/mask/with-image"), 0)}
 #[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_without_rect() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-without-rect"), 0)}
-// bug. the soft mask that will be created as part of the gradientwill override the soft mask currently in place when rendering
-#[ignore] #[test] fn resvg_masking_mask_recursive_on_child() {assert_eq!(run_test("resvg/masking/mask/recursive-on-child"), 0)}
+#[test] fn resvg_masking_mask_recursive_on_child() {assert_eq!(run_test("resvg/masking/mask/recursive-on-child"), 0)}
 #[test] fn resvg_masking_mask_maskUnits_userSpaceOnUse_with_rect() {assert_eq!(run_test("resvg/masking/mask/maskUnits=userSpaceOnUse-with-rect"), 0)}
 #[test] fn resvg_masking_mask_mask_on_child() {assert_eq!(run_test("resvg/masking/mask/mask-on-child"), 0)}
 #[test] fn resvg_masking_mask_no_children() {assert_eq!(run_test("resvg/masking/mask/no-children"), 0)}
@@ -1804,5 +1801,4 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn custom_structure_viewbox_negative_viewbox() {assert_eq!(run_test("custom/structure/viewbox/negative_viewbox"), 0)}
 #[test] fn custom_masking_clipPath_clip_path_with_nested_clip_path_and_transform() {assert_eq!(run_test("custom/masking/clipPath/clip-path-with-nested-clip-path-and-transform"), 0)}
 #[test] fn custom_masking_clipPath_complex_clip_path_with_nested_clip_path_on_child() {assert_eq!(run_test("custom/masking/clipPath/complex-clip-path-with-nested-clip-path-on-child"), 0)}
-// bug. we currently override the soft mask thatis in place in the content stream by creating anSMask entry in the Image XObject for transparency
-#[ignore] #[test] fn custom_masking_mask_mask_and_image_with_transparency() {assert_eq!(run_test("custom/masking/mask/mask-and-image-with-transparency"), 0)}
+#[test] fn custom_masking_mask_mask_and_image_with_transparency() {assert_eq!(run_test("custom/masking/mask/mask-and-image-with-transparency"), 0)}
