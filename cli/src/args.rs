@@ -19,10 +19,10 @@ pub struct CliArguments {
     /// The number of SVG pixels per PDF points.
     #[clap(long, default_value = "72.0")]
     pub dpi: f32,
-    /// Whether text should be embedded directly instead of being
-    /// converted into paths.
-    #[clap(long, default_value = "true")]
-    pub embed_text: bool,
+    /// Whether text should be converted to paths
+    /// before embedding it into the PDF.
+    #[clap(long, short, action=ArgAction::SetTrue)]
+    pub text_to_paths: bool,
     /// How much raster images of rasterized effects should be scaled up.
     #[clap(long, default_value = "1.5")]
     pub raster_scale: f32,

@@ -25,11 +25,11 @@ fn run() -> Result<(), String> {
     if let Some(input) = args.input {
         let conversion_options = ConversionOptions {
             compress: true,
-            embed_text: args.embed_text,
+            embed_text: !args.text_to_paths,
             raster_scale: args.raster_scale,
         };
 
-        let page_options = PageOptions { dpi: 72.0 };
+        let page_options = PageOptions { dpi: args.dpi };
 
         return convert::convert_(&input, args.output, conversion_options, page_options);
     };
