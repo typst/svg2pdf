@@ -1,13 +1,12 @@
-use crate::args::ConvertCommand;
 use std::path::{Path, PathBuf};
-use svg2pdf::Options;
+use svg2pdf::{ConversionOptions, PageOptions};
 
-/// Execute a font listing command.
-pub fn _convert(command: ConvertCommand) -> Result<(), String> {
-    convert_(&command.input, command.output)
-}
-
-pub fn convert_(input: &PathBuf, output: Option<PathBuf>) -> Result<(), String> {
+pub fn convert_(
+    input: &PathBuf,
+    output: Option<PathBuf>,
+    conversion_options: ConversionOptions,
+    page_options: PageOptions,
+) -> Result<(), String> {
     if let Ok(()) = log::set_logger(&LOGGER) {
         log::set_max_level(log::LevelFilter::Warn);
     }
@@ -40,7 +39,8 @@ pub fn convert_(input: &PathBuf, output: Option<PathBuf>) -> Result<(), String> 
 
     let pdf = svg2pdf::to_pdf(
         &tree,
-        Options::default(),
+        conversion_options,
+        page_options,
         #[cfg(feature = "text")]
         &fontdb,
     );

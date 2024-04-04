@@ -8,6 +8,7 @@ use std::{
     io::{self, Write},
     process,
 };
+use svg2pdf::{ConversionOptions, PageOptions};
 use termcolor::{ColorChoice, ColorSpec, StandardStream, WriteColor};
 
 fn main() {
@@ -22,7 +23,15 @@ fn run() -> Result<(), String> {
 
     // If an input argument was provided, convert the svg file to pdf.
     if let Some(input) = args.input {
-        return convert::convert_(&input, args.output);
+        let conversion_options = ConversionOptions {
+            compress: true,
+            embed_text: !args.text_to_paths,
+            raster_scale: args.raster_scale,
+        };
+
+        let page_options = PageOptions { dpi: args.dpi };
+
+        return convert::convert_(&input, args.output, conversion_options, page_options);
     };
 
     // Otherwise execute the command provided if any.

@@ -5,16 +5,30 @@ use {
     pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str},
     std::collections::HashMap,
     std::path::Path,
-    svg2pdf::Options,
+    svg2pdf::ConversionOptions,
+    svg2pdf::PageOptions,
 };
 
 #[test]
 fn text_to_paths() {
-    let options = Options { embed_text: false, ..Options::default() };
+    let options = ConversionOptions { embed_text: false, ..ConversionOptions::default() };
 
     let svg_path = "svg/resvg/text/text/simple-case.svg";
-    let (pdf, actual_image) = convert_svg(Path::new(svg_path), options);
+    let (pdf, actual_image) =
+        convert_svg(Path::new(svg_path), options, PageOptions::default());
     let res = run_test_impl(pdf, actual_image, "api/text_to_paths");
+    assert_eq!(res, 0);
+}
+
+#[test]
+fn dpi() {
+    let conversion_options = ConversionOptions::default();
+    let page_options = PageOptions { dpi: 140.0 };
+
+    let svg_path = "svg/resvg/text/text/simple-case.svg";
+    let (pdf, actual_image) =
+        convert_svg(Path::new(svg_path), conversion_options, page_options);
+    let res = run_test_impl(pdf, actual_image, "api/dpi");
     assert_eq!(res, 0);
 }
 
@@ -36,7 +50,8 @@ fn to_chunk() {
     let tree =
         svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default(), &db)
             .unwrap();
-    let (svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::Options::default(), &db);
+    let (svg_chunk, svg_id) =
+        svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default(), &db);
 
     let mut map = HashMap::new();
     let svg_chunk =

@@ -7,17 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Added support for text embedding.
-- Added a `text` feature flag.
+- Made the CLI more flexible in terms of which features you want to include.
+- Added `raster-scale` and `text-to-paths` as arguments for the CLI.
+- Removed the option to configure the view box from the API. This might be readded in 
+ a later update.
 - The `convert_str` method has been removed. You should now always convert your SVG string into a `usvg` 
  tree yourself and then call either `to_pdf` or `to_chunk`.
 - The `convert_tree` method has been renamed into `to_pdf`, and now requires you to provide the fontdb
  used for the `usvg` tree, unless you have disabled the `text` feature.
 - `convert_tree_into` has been renamed into `to_chunk` and now returns an independent chunk as well
  as the object ID of the actual SVG in the chunk.
-
-- TODO: The CLI options have been (temporarily) removed. They will be readded before the next release.
-- TODO: Add tests for CLI and svg options
-- TODO: Add CLI option to convert text to paths.
 
 ### Changed
 - Bumped resvg to v0.40.

@@ -19,6 +19,13 @@ pub struct CliArguments {
     /// The number of SVG pixels per PDF points.
     #[clap(long, default_value = "72.0")]
     pub dpi: f32,
+    /// Whether text should be converted to paths
+    /// before embedding it into the PDF.
+    #[clap(long, short, action=ArgAction::SetTrue)]
+    pub text_to_paths: bool,
+    /// How much raster images of rasterized effects should be scaled up.
+    #[clap(long, default_value = "1.5")]
+    pub raster_scale: f32,
 }
 
 // What to do.
@@ -27,21 +34,6 @@ pub struct CliArguments {
 pub enum Command {
     /// Lists all discovered fonts in system
     Fonts(FontsCommand),
-}
-
-/// Lists all discovered fonts in system.
-#[derive(Debug, Clone, Parser)]
-pub struct ConvertCommand {
-    /// Path to read SVG file from.
-    pub input: PathBuf,
-    /// Path to write PDF file to.
-    pub output: Option<PathBuf>,
-    /// The number of SVG pixels per PDF points.
-    #[clap(long, default_value = "72.0")]
-    pub dpi: f32,
-    // How much rasterized effects should be scaled up.
-    #[clap(long, default_value = "1.0")]
-    pub raster_scale: f32,
 }
 
 /// Lists all discovered fonts in system.
