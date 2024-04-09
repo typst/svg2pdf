@@ -16,19 +16,8 @@ use usvg::Tree;
 
 use svg2pdf::{ConversionOptions, PageOptions};
 
-/// The global fontdb instance.
-static FONTDB: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| {
-    let mut fontdb = fontdb::Database::new();
-    fontdb.load_fonts_dir("fonts");
-
-    fontdb.set_serif_family("Noto Serif");
-    fontdb.set_sans_serif_family("Noto Sans");
-    fontdb.set_cursive_family("Yellowtail");
-    fontdb.set_fantasy_family("Sedgwick Ave Display");
-    fontdb.set_monospace_family("Noto Mono");
-
-    std::sync::Mutex::new(fontdb)
-});
+static FONTDB1: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| create_fontdb());
+static FONTDB2: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| create_fontdb());
 
 /// The global pdfium instance.
 static PDFIUM: Lazy<std::sync::Mutex<Pdfium>> = Lazy::new(|| {
@@ -62,10 +51,23 @@ pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
     result
 }
 
+pub fn create_fontdb() -> std::sync::Mutex<fontdb::Database> {
+    let mut fontdb = fontdb::Database::new();
+    fontdb.load_fonts_dir("fonts");
+
+    fontdb.set_serif_family("Noto Serif");
+    fontdb.set_sans_serif_family("Noto Sans");
+    fontdb.set_cursive_family("Yellowtail");
+    fontdb.set_fantasy_family("Sedgwick Ave Display");
+    fontdb.set_monospace_family("Noto Mono");
+
+    std::sync::Mutex::new(fontdb)
+}
+
 /// Converts an SVG string into a usvg Tree
 pub fn read_svg(svg_string: &str) -> Tree {
     let options = usvg::Options::default();
-    Tree::from_str(svg_string, &options, &FONTDB.lock().unwrap()).unwrap()
+    Tree::from_str(svg_string, &options, &FONTDB1.lock().unwrap()).unwrap()
 }
 
 /// Converts an image into a PDF and returns the PDF as well as a rendered version
@@ -77,8 +79,12 @@ pub fn convert_svg(
 ) -> (Vec<u8>, RgbaImage) {
     let svg = fs::read_to_string(svg_path).unwrap();
     let tree = read_svg(&svg);
-    let pdf =
-        svg2pdf::to_pdf(&tree, conversion_options, page_options, &FONTDB.lock().unwrap());
+    let pdf = svg2pdf::to_pdf(
+        &tree,
+        conversion_options,
+        page_options,
+        &FONTDB2.lock().unwrap(),
+    );
     let image = render_pdf(pdf.as_slice());
     (pdf, image)
 }
@@ -107,7 +113,7 @@ fn is_pix_diff(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> bool {
         || pixel1.0[3] != pixel2.0[3]
 }
 
-const REPLACE: bool = false;
+const REPLACE: bool = true;
 const PDF: bool = false;
 
 pub fn get_diff(

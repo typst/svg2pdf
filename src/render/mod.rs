@@ -29,11 +29,9 @@ pub fn tree_to_stream(
 ) {
     content.save_state();
 
+    // From PDF coordinate system to SVG coordinate system
     let initial_transform =
-        // From PDF coordinate system to SVG coordinate system
-        Transform::from_row(1.0, 0.0, 0.0, -1.0, 0.0, tree.size().height())
-            // Account for view box of tree.
-            .pre_concat(tree.view_box().to_transform(tree.size()));
+        Transform::from_row(1.0, 0.0, 0.0, -1.0, 0.0, tree.size().height());
 
     content.transform(initial_transform.to_pdf_transform());
 
@@ -100,7 +98,7 @@ impl Render for Node {
             Node::Image(ref image) => image::render(
                 image.visibility(),
                 image.kind(),
-                image.view_box(),
+                None,
                 chunk,
                 content,
                 ctx,

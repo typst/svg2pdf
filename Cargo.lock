@@ -994,8 +994,7 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 [[package]]
 name = "resvg"
 version = "0.41.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2327ced609dadeed3e9702fec3e6b2ddd208758a9268d13e06566c6101ba533"
+source = "git+https://github.com/RazrFalcon/resvg#b908baf1a2b7bd724a7896f29bf56e2d666b87ff"
 dependencies = [
  "gif 0.13.1",
  "jpeg-decoder",
@@ -1357,8 +1356,7 @@ checksum = "b1d386ff53b415b7fe27b50bb44679e2cc4660272694b7b6f3326d8480823a94"
 [[package]]
 name = "usvg"
 version = "0.41.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c704361d822337cfc00387672c7b59eaa72a1f0744f62b2a68aa228a0c6927d"
+source = "git+https://github.com/RazrFalcon/resvg#b908baf1a2b7bd724a7896f29bf56e2d666b87ff"
 dependencies = [
  "base64",
  "data-url",

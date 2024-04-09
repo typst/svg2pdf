@@ -3,19 +3,18 @@ use std::rc::Rc;
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{ImageKind, Size, Transform, Tree, ViewBox, Visibility};
+use usvg::{ImageKind, Rect, Size, Transform, Tree, Visibility};
 
 use crate::render::tree_to_xobject;
 use crate::util::context::Context;
-use crate::util::helper;
-use crate::util::helper::{image_rect, NameExt, TransformExt};
+use crate::util::helper::{NameExt, TransformExt};
 use crate::util::resources::ResourceContainer;
 
 /// Render an image into a content stream.
 pub fn render(
     visibility: Visibility,
     kind: &ImageKind,
-    view_box: ViewBox,
+    view_box: Option<Rect>,
     chunk: &mut Chunk,
     content: &mut Content,
     ctx: &mut Context,
@@ -79,29 +78,26 @@ pub fn render(
         ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx, rc),
     };
 
-    // Get the dimensions of the actual rect that is needed to scale the image into the image view
-    // box. If the keepAspectRatio is slice, this rect will exceed the actual image view box, but
-    // it will be clipped further below so that it always stays within the bounds of the actual image
-    // rect.
-    let image_rect = image_rect(&view_box, image_size);
+    let view_box = view_box.unwrap_or(
+        Rect::from_xywh(0.0, 0.0, image_size.width(), image_size.height()).unwrap(),
+    );
 
     content.save_state();
-    // Clip the image so just the part inside of the view box is actually visible.
-    helper::clip_to_rect(view_box.rect, content);
 
     // Account for the x/y of the viewbox.
     content.transform(
-        Transform::from_translate(image_rect.x(), image_rect.y()).to_pdf_transform(),
+        Transform::from_translate(view_box.x(), view_box.y()).to_pdf_transform(),
     );
+
     // Scale the image from 1x1 to the actual dimensions.
     content.transform(
         Transform::from_row(
-            image_rect.width(),
+            view_box.width(),
             0.0,
             0.0,
-            -image_rect.height(),
+            -view_box.height(),
             0.0,
-            image_rect.height(),
+            view_box.height(),
         )
         .to_pdf_transform(),
     );
