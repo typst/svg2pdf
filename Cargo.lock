@@ -561,8 +561,7 @@ dependencies = [
 [[package]]
 name = "fontdb"
 version = "0.16.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0299020c3ef3f60f526a4f64ab4a3d4ce116b1acbf24cdd22da0068e5d81dc3"
+source = "git+https://github.com/LaurenzV/fontdb?branch=custom#ad8e8061fc78270cd01f30a47b02982e3407fc54"
 dependencies = [
  "fontconfig-parser",
  "log",
@@ -1332,7 +1331,7 @@ checksum = "adad44e29e4c806119491a7f06f03de4d1af22c3a680dd47f1e6e179439d1f56"
 [[package]]
 name = "resvg"
 version = "0.41.0"
-source = "git+https://github.com/RazrFalcon/resvg#45f086762ff10b5443d472f09d5caabdf2a54de7"
+source = "git+https://github.com/LaurenzV/resvg?branch=new_fontdb#d92ab2067e84427048e35e2ad660e4addb4f69cd"
 dependencies = [
  "gif",
  "jpeg-decoder",
@@ -1804,7 +1803,7 @@ checksum = "b1d386ff53b415b7fe27b50bb44679e2cc4660272694b7b6f3326d8480823a94"
 [[package]]
 name = "usvg"
 version = "0.41.0"
-source = "git+https://github.com/RazrFalcon/resvg#45f086762ff10b5443d472f09d5caabdf2a54de7"
+source = "git+https://github.com/LaurenzV/resvg?branch=new_fontdb#d92ab2067e84427048e35e2ad660e4addb4f69cd"
 dependencies = [
  "base64",
  "data-url",
