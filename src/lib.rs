@@ -120,7 +120,7 @@ pub struct ConversionOptions {
 impl Default for ConversionOptions {
     fn default() -> Self {
         Self {
-            compress: false,
+            compress: true,
             raster_scale: 1.5,
             embed_text: true,
         }
