@@ -10,6 +10,7 @@ use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref, Str};
 use siphasher::sip128::{Hasher128, SipHasher13};
 use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
+use std::sync::Arc;
 use ttf_parser::{name_id, Face, GlyphId, PlatformId, Tag};
 use unicode_properties::{GeneralCategory, UnicodeGeneralCategory};
 use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform, Visibility};
@@ -478,7 +479,7 @@ where
 pub struct Font {
     pub glyph_set: BTreeMap<u16, String>,
     pub reference: Ref,
-    pub face_data: Vec<u8>,
+    pub face_data: Arc<Vec<u8>>,
     pub units_per_em: u16,
     pub face_index: u32,
 }
@@ -503,7 +504,7 @@ pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
                                         let glyph_set = BTreeMap::new();
                                         return Some(Font {
                                             reference,
-                                            face_data: Vec::from(data),
+                                            face_data: Arc::new(Vec::from(data)),
                                             units_per_em: ttf.units_per_em(),
                                             glyph_set,
                                             face_index,
