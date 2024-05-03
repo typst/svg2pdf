@@ -245,9 +245,9 @@ pub fn render(
 
                 let name = font_names.get(&font.reference).unwrap();
 
-                let gid = glyph.glyph_id.0;
+                let gid = glyph.id.0;
                 let ts = glyph
-                    .transform
+                    .outline_transform()
                     .pre_scale(font.units_per_em as f32, font.units_per_em as f32)
                     // The glyphs in usvg are already scaled according the font size, but
                     // we want to leverage the native PDF font size feature instead, so we downscale
@@ -517,7 +517,7 @@ pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
                         });
 
                         if let Some(ref mut font) = font {
-                            font.glyph_set.insert(g.glyph_id.0, g.text.clone());
+                            font.glyph_set.insert(g.id.0, g.text.clone());
                         }
                     }
                 }
