@@ -1743,6 +1743,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_1() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-1"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_4() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-4"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_5() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-5"), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_7() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-7"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_6() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-6"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_18() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-18"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_19() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-19"), 0)}
@@ -1754,6 +1755,7 @@ pub fn run_test(test_name: &str) -> i32 {
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_13() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-13"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_11() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-11"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_10() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-10"), 0)}
+#[test] fn custom_paint_servers_linearGradient_linear_gradient_8() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-8"), 0)}
 #[test] fn custom_paint_servers_linearGradient_linear_gradient_9() {assert_eq!(run_test("custom/paint-servers/linearGradient/linear-gradient-9"), 0)}
 #[test] fn custom_paint_servers_pattern_patterns_10() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-10"), 0)}
 #[test] fn custom_paint_servers_pattern_patterns_11() {assert_eq!(run_test("custom/paint-servers/pattern/patterns-11"), 0)}
