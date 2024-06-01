@@ -132,9 +132,9 @@ pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) 
         .flags(flags)
         .bbox(bbox)
         .italic_angle(italic_angle)
-        .ascent(ascender as f32)
-        .descent(descender as f32)
-        .cap_height(cap_height as f32)
+        .ascent(ascender)
+        .descent(descender)
+        .cap_height(cap_height)
         .stem_v(stem_v);
 
     if is_cff {
