@@ -4,7 +4,7 @@ use crate::util::resources::ResourceContainer;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
-use usvg::{AspectRatio, Group, ImageKind, Node, ViewBox, Visibility};
+use usvg::{Group, ImageKind, Node};
 
 /// Render a group with filters as an image.
 pub fn render(
@@ -46,9 +46,9 @@ pub fn render(
     let encoded_image = pixmap.encode_png().ok()?;
 
     image::render(
-        Visibility::Visible,
+        true,
         &ImageKind::PNG(Arc::new(encoded_image)),
-        ViewBox { rect: layer_bbox, aspect: AspectRatio::default() },
+        Some(layer_bbox.to_rect()),
         chunk,
         content,
         ctx,

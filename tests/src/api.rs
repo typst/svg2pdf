@@ -1,7 +1,8 @@
 #[allow(unused_imports)]
 use {
+    crate::render_pdf,
+    crate::FONTDB,
     crate::{convert_svg, run_test_impl},
-    crate::{render_pdf, FONTDB},
     pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str},
     std::collections::HashMap,
     std::path::Path,
@@ -46,12 +47,10 @@ fn to_chunk() {
     let path =
         "svg/custom/integration/wikimedia/coat_of_the_arms_of_edinburgh_city_council.svg";
     let svg = std::fs::read_to_string(path).unwrap();
-    let db = FONTDB.lock().unwrap();
-    let tree =
-        svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default(), &db)
-            .unwrap();
+    let options = usvg::Options { fontdb: FONTDB.clone(), ..usvg::Options::default() };
+    let tree = svg2pdf::usvg::Tree::from_str(&svg, &options).unwrap();
     let (svg_chunk, svg_id) =
-        svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default(), &db);
+        svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default());
 
     let mut map = HashMap::new();
     let svg_chunk =
@@ -76,13 +75,6 @@ fn to_chunk() {
     pdf.type1_font(font_id).base_font(Name(b"Times-Roman"));
 
     let mut content = Content::new();
-    // We don't include the text because it causes issue in CI since it's OS-dependent
-    // content
-    //     .begin_text()
-    //     .set_font(font_name, 16.0)
-    //     .next_line(108.0, 734.0)
-    //     .show(Str(b"Look at my wonderful (distorted) vector graphic!"))
-    //     .end_text();
 
     content
         .transform([300.0, 0.0, 0.0, 300.0, 200.0, 400.0])

@@ -1,7 +1,5 @@
 use pdf_writer::types::{BlendMode, LineCapStyle, LineJoinStyle, MaskType};
 use pdf_writer::{Content, Name, Rect};
-#[cfg(feature = "image")]
-use usvg::Size;
 use usvg::{LineCap, LineJoin, NonZeroRect, Transform};
 
 use crate::render::gradient::Stop;
@@ -163,38 +161,6 @@ pub fn bbox_to_non_zero_rect(rect: Option<usvg::Rect>) -> NonZeroRect {
     // Convenience method to not panic if bbox is not well-defined
     rect.and_then(|bb| bb.to_non_zero_rect())
         .unwrap_or(NonZeroRect::from_xywh(0.0, 0.0, 1.0, 1.0).unwrap())
-}
-
-// Taken from resvg
-/// Calculate the rect of an image after it is scaled using a view box.
-#[cfg(feature = "image")]
-pub fn image_rect(view_box: &usvg::ViewBox, img_size: Size) -> NonZeroRect {
-    let new_size = fit_view_box(img_size, view_box);
-    let (x, y) = usvg::utils::aligned_pos(
-        view_box.aspect.align,
-        view_box.rect.x(),
-        view_box.rect.y(),
-        view_box.rect.width() - new_size.width(),
-        view_box.rect.height() - new_size.height(),
-    );
-
-    new_size.to_non_zero_rect(x, y)
-}
-
-// Taken from resvg
-/// Calculate the new size of a view box that is the result of applying a view box
-/// to a certain size.
-#[cfg(feature = "image")]
-pub fn fit_view_box(size: Size, vb: &usvg::ViewBox) -> usvg::Size {
-    let s = vb.rect.size();
-
-    if vb.aspect.align == usvg::Align::None {
-        s
-    } else if vb.aspect.slice {
-        size.expand_to(s)
-    } else {
-        size.scale_to(s)
-    }
 }
 
 /// Compress data using the deflate algorithm.

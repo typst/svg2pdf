@@ -1,4 +1,6 @@
 use std::path::{Path, PathBuf};
+#[cfg(feature = "text")]
+use std::sync::Arc;
 use svg2pdf::{ConversionOptions, PageOptions};
 
 pub fn convert_(
@@ -11,7 +13,6 @@ pub fn convert_(
         log::set_max_level(log::LevelFilter::Warn);
     }
 
-    // Prepare the font database.
     let mut fontdb = fontdb::Database::new();
     fontdb.load_system_fonts();
 
@@ -21,29 +22,24 @@ pub fn convert_(
     fontdb.set_fantasy_family("Impact");
     fontdb.set_monospace_family("Courier New");
 
+    #[cfg(feature = "text")]
+    let options = usvg::Options {
+        fontdb: Arc::new(fontdb),
+        ..usvg::Options::default()
+    };
+
+    #[cfg(not(feature = "text"))]
+    let options = usvg::Options::default();
+
     // Convert the file.
     let name = Path::new(input.file_name().ok_or("Input path does not point to a file")?);
     let output = output.unwrap_or_else(|| name.with_extension("pdf"));
 
     let svg = std::fs::read_to_string(input).map_err(|_| "Failed to load SVG file")?;
 
-    let options = usvg::Options::default();
+    let tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
 
-    let tree = usvg::Tree::from_str(
-        &svg,
-        &options,
-        #[cfg(feature = "text")]
-        &fontdb,
-    )
-    .map_err(|err| err.to_string())?;
-
-    let pdf = svg2pdf::to_pdf(
-        &tree,
-        conversion_options,
-        page_options,
-        #[cfg(feature = "text")]
-        &fontdb,
-    );
+    let pdf = svg2pdf::to_pdf(&tree, conversion_options, page_options);
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 

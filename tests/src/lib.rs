@@ -5,6 +5,7 @@ mod api;
 use std::cmp::max;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
@@ -16,8 +17,7 @@ use usvg::Tree;
 
 use svg2pdf::{ConversionOptions, PageOptions};
 
-/// The global fontdb instance.
-static FONTDB: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| {
+static FONTDB: Lazy<Arc<fontdb::Database>> = Lazy::new(|| {
     let mut fontdb = fontdb::Database::new();
     fontdb.load_fonts_dir("fonts");
 
@@ -27,7 +27,7 @@ static FONTDB: Lazy<std::sync::Mutex<fontdb::Database>> = Lazy::new(|| {
     fontdb.set_fantasy_family("Sedgwick Ave Display");
     fontdb.set_monospace_family("Noto Mono");
 
-    std::sync::Mutex::new(fontdb)
+    Arc::new(fontdb)
 });
 
 /// The global pdfium instance.
@@ -64,8 +64,8 @@ pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
 
 /// Converts an SVG string into a usvg Tree
 pub fn read_svg(svg_string: &str) -> Tree {
-    let options = usvg::Options::default();
-    Tree::from_str(svg_string, &options, &FONTDB.lock().unwrap()).unwrap()
+    let options = usvg::Options { fontdb: FONTDB.clone(), ..usvg::Options::default() };
+    Tree::from_str(svg_string, &options).unwrap()
 }
 
 /// Converts an image into a PDF and returns the PDF as well as a rendered version
@@ -77,8 +77,7 @@ pub fn convert_svg(
 ) -> (Vec<u8>, RgbaImage) {
     let svg = fs::read_to_string(svg_path).unwrap();
     let tree = read_svg(&svg);
-    let pdf =
-        svg2pdf::to_pdf(&tree, conversion_options, page_options, &FONTDB.lock().unwrap());
+    let pdf = svg2pdf::to_pdf(&tree, conversion_options, page_options);
     let image = render_pdf(pdf.as_slice());
     (pdf, image)
 }

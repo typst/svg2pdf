@@ -16,17 +16,17 @@ This example reads an SVG file and writes the corresponding PDF back to the disk
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
 use svg2pdf::usvg::fontdb;
 use svg2pdf::{ConversionOptions, PageOptions};
+use std::sync::Arc;
 
 let input = "tests/svg/custom/integration/matplotlib/stairs.svg";
 let output = "target/stairs.pdf";
 
 let svg = std::fs::read_to_string(input)?;
-let options = svg2pdf::usvg::Options::default();
-let mut db = fontdb::Database::new();
-db.load_system_fonts();
-let tree = svg2pdf::usvg::Tree::from_str(&svg, &options, &db)?;
+let mut options = svg2pdf::usvg::Options::default();
+options.fontdb_mut().load_system_fonts();
+let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 
-let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default(), &db);
+let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default());
 std::fs::write(output, pdf)?;
 # Ok(()) }
 ```
@@ -60,8 +60,6 @@ pub use usvg;
 
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Ref, TextStr};
-#[cfg(feature = "text")]
-use usvg::fontdb;
 use usvg::{Size, Transform, Tree};
 
 use crate::render::{tree_to_stream, tree_to_xobject};
@@ -120,7 +118,7 @@ pub struct ConversionOptions {
 impl Default for ConversionOptions {
     fn default() -> Self {
         Self {
-            compress: false,
+            compress: true,
             raster_scale: 1.5,
             embed_text: true,
         }
@@ -128,9 +126,6 @@ impl Default for ConversionOptions {
 }
 
 /// Convert a [`usvg` tree](Tree) into a standalone PDF buffer.
-///
-/// IMPORTANT: The fontdb that is passed to this function needs to be the
-/// same one that was used to convert the SVG string into a [`usvg` tree](Tree)!
 ///
 /// ## Example
 /// The example below reads an SVG file, processes text within it, then converts
@@ -140,18 +135,18 @@ impl Default for ConversionOptions {
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf::usvg::fontdb;
 /// use svg2pdf::{ConversionOptions, PageOptions};
+/// use std::sync::Arc;
 ///
 /// let input = "tests/svg/custom/integration/matplotlib/stairs.svg";
 /// let output = "target/stairs.pdf";
 ///
 /// let svg = std::fs::read_to_string(input)?;
-/// let options = svg2pdf::usvg::Options::default();
-/// let mut db = fontdb::Database::new();
-/// db.load_system_fonts();
-/// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options, &db)?;
+/// let mut options = svg2pdf::usvg::Options::default();
+/// options.fontdb_mut().load_system_fonts();
+/// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 ///
 ///
-/// let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default(), &db);
+/// let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default());
 /// std::fs::write(output, pdf)?;
 /// # Ok(()) }
 /// ```
@@ -159,15 +154,8 @@ pub fn to_pdf(
     tree: &Tree,
     conversion_options: ConversionOptions,
     page_options: PageOptions,
-    #[cfg(feature = "text")] fontdb: &fontdb::Database,
 ) -> Vec<u8> {
-    let mut ctx = Context::new(
-        #[cfg(feature = "text")]
-        tree,
-        conversion_options,
-        #[cfg(feature = "text")]
-        fontdb,
-    );
+    let mut ctx = Context::new(tree, conversion_options);
     let mut pdf = Pdf::new();
 
     let dpi_ratio = 72.0 / page_options.dpi;
@@ -225,9 +213,6 @@ pub fn to_pdf(
 
 /// Convert a [Tree] into a [`Chunk`].
 ///
-/// IMPORTANT: The fontdb that is passed to this function needs to be the
-/// same one that was used to convert the SVG string into a [`usvg` tree](Tree)!
-///
 /// This method is intended for use in an existing [`pdf-writer`] workflow. It
 /// will always produce a chunk that contains all the necessary objects
 /// to embed the SVG into an existing chunk. This method returns the chunk that
@@ -245,6 +230,7 @@ pub fn to_pdf(
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use std::collections::HashMap;
+/// use std::sync::Arc;
 /// use svg2pdf;
 /// use pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str};
 /// use svg2pdf::usvg::fontdb;
@@ -262,10 +248,10 @@ pub fn to_pdf(
 /// // Let's first convert the SVG into an independent chunk.
 /// let path = "tests/svg/custom/integration/wikimedia/coat_of_the_arms_of_edinburgh_city_council.svg";
 /// let svg = std::fs::read_to_string(path)?;
-/// let mut db = fontdb::Database::new();
-/// db.load_system_fonts();
-/// let tree = svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default(), &db)?;
-/// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default(), &db);
+/// let mut options = svg2pdf::usvg::Options::default();
+/// options.fontdb_mut().load_system_fonts();
+/// let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
+/// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default());
 ///
 /// // Renumber the chunk so that we can embed it into our existing workflow, and also make sure
 /// // to update `svg_id`.
@@ -320,20 +306,10 @@ pub fn to_pdf(
 /// std::fs::write("target/embedded.pdf", pdf.finish())?;
 /// # Ok(()) }
 /// ```
-pub fn to_chunk(
-    tree: &Tree,
-    conversion_options: ConversionOptions,
-    #[cfg(feature = "text")] fontdb: &fontdb::Database,
-) -> (Chunk, Ref) {
+pub fn to_chunk(tree: &Tree, conversion_options: ConversionOptions) -> (Chunk, Ref) {
     let mut chunk = Chunk::new();
 
-    let mut ctx = Context::new(
-        #[cfg(feature = "text")]
-        tree,
-        conversion_options,
-        #[cfg(feature = "text")]
-        fontdb,
-    );
+    let mut ctx = Context::new(tree, conversion_options);
     let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx);
     ctx.write_global_objects(&mut chunk);
     (chunk, x_ref)

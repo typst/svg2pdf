@@ -10,9 +10,10 @@ use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref, Str};
 use siphasher::sip128::{Hasher128, SipHasher13};
 use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
+use std::sync::Arc;
 use ttf_parser::{name_id, Face, GlyphId, PlatformId, Tag};
 use unicode_properties::{GeneralCategory, UnicodeGeneralCategory};
-use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform, Visibility};
+use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform};
 
 const CFF: Tag = Tag::from_bytes(b"CFF ");
 const CFF2: Tag = Tag::from_bytes(b"CFF2");
@@ -239,7 +240,7 @@ pub fn render(
     }
 
     for span in text.layouted() {
-        if span.visibility != Visibility::Visible {
+        if !span.visible {
             continue;
         }
 
@@ -251,9 +252,9 @@ pub fn render(
 
                 let name = font_names.get(&font.reference).unwrap();
 
-                let gid = glyph.glyph_id.0;
+                let gid = glyph.id.0;
                 let ts = glyph
-                    .transform
+                    .outline_transform()
                     .pre_scale(font.units_per_em as f32, font.units_per_em as f32)
                     // The glyphs in usvg are already scaled according the font size, but
                     // we want to leverage the native PDF font size feature instead, so we downscale
@@ -485,7 +486,7 @@ where
 pub struct Font {
     pub glyph_set: BTreeMap<u16, String>,
     pub reference: Ref,
-    pub face_data: Vec<u8>,
+    pub face_data: Arc<Vec<u8>>,
     pub units_per_em: u16,
     pub face_index: u32,
 }
@@ -510,7 +511,7 @@ pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
                                         let glyph_set = BTreeMap::new();
                                         return Some(Font {
                                             reference,
-                                            face_data: Vec::from(data),
+                                            face_data: Arc::new(Vec::from(data)),
                                             units_per_em: ttf.units_per_em(),
                                             glyph_set,
                                             face_index,
@@ -523,7 +524,7 @@ pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
                         });
 
                         if let Some(ref mut font) = font {
-                            font.glyph_set.insert(g.glyph_id.0, g.text.clone());
+                            font.glyph_set.insert(g.id.0, g.text.clone());
                         }
                     }
                 }

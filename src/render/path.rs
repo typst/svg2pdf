@@ -2,8 +2,8 @@ use pdf_writer::types::ColorSpaceOperand;
 use pdf_writer::types::ColorSpaceOperand::Pattern;
 use pdf_writer::{Chunk, Content, Finish};
 use usvg::tiny_skia_path::PathSegment;
+use usvg::Path;
 use usvg::{Fill, FillRule, Opacity, Paint, PaintOrder, Rect};
-use usvg::{Path, Visibility};
 use usvg::{Stroke, Transform};
 
 use super::{gradient, pattern};
@@ -20,7 +20,7 @@ pub fn render(
     rc: &mut ResourceContainer,
     accumulated_transform: Transform,
 ) {
-    if path.visibility() != Visibility::Visible {
+    if !path.is_visible() {
         return;
     }
 

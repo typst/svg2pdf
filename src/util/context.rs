@@ -1,13 +1,12 @@
 use pdf_writer::{Chunk, Content, Filter, Ref};
+use usvg::Tree;
 
 #[cfg(feature = "text")]
 use {
     crate::render::text,
     crate::render::text::{write_font, Font},
     std::collections::HashMap,
-    usvg::fontdb,
     usvg::fontdb::ID,
-    usvg::Tree,
 };
 
 use super::helper::deflate;
@@ -27,38 +26,26 @@ pub struct Context {
 }
 
 impl Context {
-    /// Create a new context.
-    #[cfg(feature = "text")]
     pub fn new(
-        tree: &Tree,
+        #[allow(unused_variables)] tree: &Tree,
         options: ConversionOptions,
-        fontdb: &fontdb::Database,
     ) -> Self {
+        #[allow(unused_mut)]
         let mut ctx = Self {
             ref_allocator: RefAllocator::new(),
             options,
+            #[cfg(feature = "text")]
             fonts: HashMap::new(),
             srgb_ref: None,
             sgray_ref: None,
         };
 
+        #[cfg(feature = "text")]
         if options.embed_text {
-            text::fill_fonts(tree.root(), &mut ctx, fontdb);
+            text::fill_fonts(tree.root(), &mut ctx, tree.fontdb().as_ref());
         }
 
         ctx
-    }
-
-    // TODO: Make context less ugly with different features.
-    /// Create a new context.
-    #[cfg(not(feature = "text"))]
-    pub fn new(options: ConversionOptions) -> Self {
-        Self {
-            ref_allocator: RefAllocator::new(),
-            options,
-            srgb_ref: None,
-            sgray_ref: None,
-        }
     }
 
     /// Allocate a new reference.
