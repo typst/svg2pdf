@@ -11,15 +11,22 @@ pub fn convert_(
         log::set_max_level(log::LevelFilter::Warn);
     }
 
-    // Prepare the font database.
-    let mut fontdb = fontdb::Database::new();
-    fontdb.load_system_fonts();
+    #[cfg(feature = "text")]
+    let mut options = usvg::Options::default();
 
-    fontdb.set_serif_family("Times New Roman");
-    fontdb.set_sans_serif_family("Arial");
-    fontdb.set_cursive_family("Comic Sans MS");
-    fontdb.set_fantasy_family("Impact");
-    fontdb.set_monospace_family("Courier New");
+    #[cfg(not(feature = "text"))]
+    let options = usvg::Options::default();
+
+    #[cfg(feature = "text")]
+    {
+        options.fontdb_mut().load_system_fonts();
+
+        options.fontdb_mut().set_serif_family("Times New Roman");
+        options.fontdb_mut().set_sans_serif_family("Arial");
+        options.fontdb_mut().set_cursive_family("Comic Sans MS");
+        options.fontdb_mut().set_fantasy_family("Impact");
+        options.fontdb_mut().set_monospace_family("Courier New");
+    }
 
     // Convert the file.
     let name = Path::new(input.file_name().ok_or("Input path does not point to a file")?);
@@ -27,23 +34,10 @@ pub fn convert_(
 
     let svg = std::fs::read_to_string(input).map_err(|_| "Failed to load SVG file")?;
 
-    let options = usvg::Options::default();
+    let tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
 
-    let tree = usvg::Tree::from_str(
-        &svg,
-        &options,
-        #[cfg(feature = "text")]
-        &fontdb,
-    )
-    .map_err(|err| err.to_string())?;
-
-    let pdf = svg2pdf::to_pdf(
-        &tree,
-        conversion_options,
-        page_options,
-        #[cfg(feature = "text")]
-        &fontdb,
-    );
+    let pdf =
+        svg2pdf::to_pdf(&tree, conversion_options, page_options, options.fontdb.as_ref());
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 

@@ -16,15 +16,20 @@ This example reads an SVG file and writes the corresponding PDF back to the disk
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
 use svg2pdf::usvg::fontdb;
 use svg2pdf::{ConversionOptions, PageOptions};
+use std::sync::Arc;
 
 let input = "tests/svg/custom/integration/matplotlib/stairs.svg";
 let output = "target/stairs.pdf";
 
 let svg = std::fs::read_to_string(input)?;
-let options = svg2pdf::usvg::Options::default();
 let mut db = fontdb::Database::new();
 db.load_system_fonts();
-let tree = svg2pdf::usvg::Tree::from_str(&svg, &options, &db)?;
+let db = Arc::new(db);
+let options = svg2pdf::usvg::Options {
+    fontdb: db.clone(),
+    ..svg2pdf::usvg::Options::default()
+};
+let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 
 let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default(), &db);
 std::fs::write(output, pdf)?;
@@ -140,15 +145,20 @@ impl Default for ConversionOptions {
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use svg2pdf::usvg::fontdb;
 /// use svg2pdf::{ConversionOptions, PageOptions};
+/// use std::sync::Arc;
 ///
 /// let input = "tests/svg/custom/integration/matplotlib/stairs.svg";
 /// let output = "target/stairs.pdf";
 ///
 /// let svg = std::fs::read_to_string(input)?;
-/// let options = svg2pdf::usvg::Options::default();
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
-/// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options, &db)?;
+/// let db = Arc::new(db);
+/// let options = svg2pdf::usvg::Options {
+///   fontdb: db.clone(),
+///   ..svg2pdf::usvg::Options::default()
+/// };
+/// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 ///
 ///
 /// let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default(), &db);
@@ -245,6 +255,7 @@ pub fn to_pdf(
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use std::collections::HashMap;
+/// use std::sync::Arc;
 /// use svg2pdf;
 /// use pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str};
 /// use svg2pdf::usvg::fontdb;
@@ -264,7 +275,12 @@ pub fn to_pdf(
 /// let svg = std::fs::read_to_string(path)?;
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
-/// let tree = svg2pdf::usvg::Tree::from_str(&svg, &svg2pdf::usvg::Options::default(), &db)?;
+/// let db = Arc::new(db);
+/// let options = svg2pdf::usvg::Options {
+///   fontdb: db.clone(),
+///   ..svg2pdf::usvg::Options::default()
+/// };
+/// let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 /// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default(), &db);
 ///
 /// // Renumber the chunk so that we can embed it into our existing workflow, and also make sure
