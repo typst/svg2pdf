@@ -60,13 +60,12 @@ unicode-properties = { workspace = true, optional = true }
 miniz_oxide = { workspace = true }
 once_cell = { workspace = true }
 pdf-writer = { workspace = true }
-fontdb = { workspace = true, optional = true}
+fontdb = { workspace = true, optional = true }
 usvg = { workspace = true }
 log = { workspace = true }
 image = { workspace = true, optional = true }
-tiny-skia = {workspace = true, optional = true }
-resvg = {workspace = true, optional = true }
+tiny-skia = { workspace = true, optional = true }
+resvg = { workspace = true, optional = true }
 subsetter = { workspace = true, optional = true }
 ttf-parser = { workspace = true, optional = true }
 siphasher = { workspace = true, optional = true }
-
