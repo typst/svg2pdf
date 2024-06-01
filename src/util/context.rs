@@ -26,10 +26,7 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new(
-        tree: &Tree,
-        options: ConversionOptions
-    ) -> Self {
+    pub fn new(tree: &Tree, options: ConversionOptions) -> Self {
         let mut ctx = Self {
             ref_allocator: RefAllocator::new(),
             options,

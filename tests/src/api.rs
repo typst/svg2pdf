@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use {
-    crate::FONTDB,
     crate::render_pdf,
+    crate::FONTDB,
     crate::{convert_svg, run_test_impl},
     pdf_writer::{Content, Finish, Name, Pdf, Rect, Ref, Str},
     std::collections::HashMap,

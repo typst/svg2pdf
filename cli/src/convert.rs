@@ -38,8 +38,7 @@ pub fn convert_(
 
     let tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
 
-    let pdf =
-        svg2pdf::to_pdf(&tree, conversion_options, page_options);
+    let pdf = svg2pdf::to_pdf(&tree, conversion_options, page_options);
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 

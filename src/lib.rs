@@ -166,10 +166,7 @@ pub fn to_pdf(
     conversion_options: ConversionOptions,
     page_options: PageOptions,
 ) -> Vec<u8> {
-    let mut ctx = Context::new(
-        tree,
-        conversion_options,
-    );
+    let mut ctx = Context::new(tree, conversion_options);
     let mut pdf = Pdf::new();
 
     let dpi_ratio = 72.0 / page_options.dpi;
@@ -327,16 +324,10 @@ pub fn to_pdf(
 /// std::fs::write("target/embedded.pdf", pdf.finish())?;
 /// # Ok(()) }
 /// ```
-pub fn to_chunk(
-    tree: &Tree,
-    conversion_options: ConversionOptions
-) -> (Chunk, Ref) {
+pub fn to_chunk(tree: &Tree, conversion_options: ConversionOptions) -> (Chunk, Ref) {
     let mut chunk = Chunk::new();
 
-    let mut ctx = Context::new(
-        tree,
-        conversion_options,
-    );
+    let mut ctx = Context::new(tree, conversion_options);
     let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx);
     ctx.write_global_objects(&mut chunk);
     (chunk, x_ref)
