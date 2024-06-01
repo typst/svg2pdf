@@ -107,9 +107,7 @@ pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) 
     flags.insert(FontFlags::SYMBOLIC);
     flags.insert(FontFlags::SMALL_CAP);
 
-    let convert = |val| {
-        (val / units_per_em as f32) * 1000.0
-    };
+    let convert = |val| (val / units_per_em as f32) * 1000.0;
 
     let global_bbox = ttf.global_bounding_box();
     let bbox = pdf_writer::Rect::new(
@@ -121,8 +119,13 @@ pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) 
 
     let italic_angle = ttf.italic_angle().unwrap_or(0.0);
     let ascender = convert(ttf.typographic_ascender().unwrap_or(ttf.ascender()) as f32);
-    let descender = convert(ttf.typographic_descender().unwrap_or(ttf.descender()) as f32);
-    let cap_height = ttf.capital_height().filter(|&h| h > 0).map(|h| convert(h as f32)).unwrap_or(ascender);
+    let descender =
+        convert(ttf.typographic_descender().unwrap_or(ttf.descender()) as f32);
+    let cap_height = ttf
+        .capital_height()
+        .filter(|&h| h > 0)
+        .map(|h| convert(h as f32))
+        .unwrap_or(ascender);
     let stem_v = 10.0 + 0.244 * (f32::from(ttf.weight().to_number()) - 50.0);
 
     // Write the font descriptor (contains metrics about the font).
