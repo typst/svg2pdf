@@ -24,14 +24,13 @@ let output = "target/stairs.pdf";
 let svg = std::fs::read_to_string(input)?;
 let mut db = fontdb::Database::new();
 db.load_system_fonts();
-let db = Arc::new(db);
 let options = svg2pdf::usvg::Options {
-    fontdb: db.clone(),
+    fontdb: Arc::new(db),
     ..svg2pdf::usvg::Options::default()
 };
 let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 
-let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default(), &db);
+let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default());
 std::fs::write(output, pdf)?;
 # Ok(()) }
 ```
@@ -65,8 +64,6 @@ pub use usvg;
 
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Ref, TextStr};
-#[cfg(feature = "text")]
-use usvg::fontdb;
 use usvg::{Size, Transform, Tree};
 
 use crate::render::{tree_to_stream, tree_to_xobject};
@@ -153,15 +150,14 @@ impl Default for ConversionOptions {
 /// let svg = std::fs::read_to_string(input)?;
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
-/// let db = Arc::new(db);
 /// let options = svg2pdf::usvg::Options {
-///   fontdb: db.clone(),
+///   fontdb: Arc::new(db),
 ///   ..svg2pdf::usvg::Options::default()
 /// };
 /// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 ///
 ///
-/// let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default(), &db);
+/// let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default());
 /// std::fs::write(output, pdf)?;
 /// # Ok(()) }
 /// ```
@@ -169,14 +165,10 @@ pub fn to_pdf(
     tree: &Tree,
     conversion_options: ConversionOptions,
     page_options: PageOptions,
-    #[cfg(feature = "text")] fontdb: &fontdb::Database,
 ) -> Vec<u8> {
     let mut ctx = Context::new(
-        #[cfg(feature = "text")]
         tree,
         conversion_options,
-        #[cfg(feature = "text")]
-        fontdb,
     );
     let mut pdf = Pdf::new();
 
@@ -275,13 +267,12 @@ pub fn to_pdf(
 /// let svg = std::fs::read_to_string(path)?;
 /// let mut db = fontdb::Database::new();
 /// db.load_system_fonts();
-/// let db = Arc::new(db);
 /// let options = svg2pdf::usvg::Options {
-///   fontdb: db.clone(),
+///   fontdb: Arc::new(db),
 ///   ..svg2pdf::usvg::Options::default()
 /// };
 /// let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
-/// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default(), &db);
+/// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default());
 ///
 /// // Renumber the chunk so that we can embed it into our existing workflow, and also make sure
 /// // to update `svg_id`.
@@ -338,17 +329,13 @@ pub fn to_pdf(
 /// ```
 pub fn to_chunk(
     tree: &Tree,
-    conversion_options: ConversionOptions,
-    #[cfg(feature = "text")] fontdb: &fontdb::Database,
+    conversion_options: ConversionOptions
 ) -> (Chunk, Ref) {
     let mut chunk = Chunk::new();
 
     let mut ctx = Context::new(
-        #[cfg(feature = "text")]
         tree,
         conversion_options,
-        #[cfg(feature = "text")]
-        fontdb,
     );
     let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx);
     ctx.write_global_objects(&mut chunk);

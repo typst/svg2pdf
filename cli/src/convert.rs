@@ -22,7 +22,7 @@ pub fn convert_(
     fontdb.set_monospace_family("Courier New");
 
     #[cfg(feature = "text")]
-    let mut options = usvg::Options {
+    let options = usvg::Options {
         fontdb: Arc::new(fontdb),
         ..usvg::Options::default()
     };
@@ -39,7 +39,7 @@ pub fn convert_(
     let tree = usvg::Tree::from_str(&svg, &options).map_err(|err| err.to_string())?;
 
     let pdf =
-        svg2pdf::to_pdf(&tree, conversion_options, page_options, options.fontdb.as_ref());
+        svg2pdf::to_pdf(&tree, conversion_options, page_options);
 
     std::fs::write(output, pdf).map_err(|_| "Failed to write PDF file")?;
 
