@@ -13,7 +13,7 @@ use std::hash::Hash;
 use std::sync::Arc;
 use ttf_parser::{name_id, Face, GlyphId, PlatformId, Tag};
 use unicode_properties::{GeneralCategory, UnicodeGeneralCategory};
-use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform, Visibility};
+use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform};
 
 const CFF: Tag = Tag::from_bytes(b"CFF ");
 const CFF2: Tag = Tag::from_bytes(b"CFF2");
@@ -233,7 +233,7 @@ pub fn render(
     }
 
     for span in text.layouted() {
-        if span.visibility != Visibility::Visible {
+        if !span.visible {
             continue;
         }
 

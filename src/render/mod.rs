@@ -96,7 +96,7 @@ impl Render for Node {
             }
             #[cfg(feature = "image")]
             Node::Image(ref image) => image::render(
-                image.visibility(),
+                image.is_visible(),
                 image.kind(),
                 None,
                 chunk,

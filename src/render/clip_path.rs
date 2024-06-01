@@ -1,7 +1,7 @@
 use pdf_writer::types::MaskType;
 use pdf_writer::{Chunk, Content, Filter, Finish, Ref};
 use usvg::tiny_skia_path::PathSegment;
-use usvg::{ClipPath, FillRule, Group, Node, Transform, Visibility};
+use usvg::{ClipPath, FillRule, Group, Node, Transform};
 
 use super::group;
 use super::path::draw_path;
@@ -127,7 +127,7 @@ fn extend_segments_from_group(
     for child in group.children() {
         match child {
             Node::Path(ref path) => {
-                if path.visibility() != Visibility::Hidden {
+                if path.is_visible() {
                     path.data().segments().for_each(|segment| match segment {
                         PathSegment::MoveTo(mut p) => {
                             transform.map_point(&mut p);

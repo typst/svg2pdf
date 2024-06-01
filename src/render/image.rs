@@ -3,7 +3,7 @@ use std::rc::Rc;
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Chunk, Content, Filter, Finish};
-use usvg::{ImageKind, Rect, Size, Transform, Tree, Visibility};
+use usvg::{ImageKind, Rect, Size, Transform, Tree};
 
 use crate::render::tree_to_xobject;
 use crate::util::context::Context;
@@ -12,7 +12,7 @@ use crate::util::resources::ResourceContainer;
 
 /// Render an image into a content stream.
 pub fn render(
-    visibility: Visibility,
+    is_visible: bool,
     kind: &ImageKind,
     view_box: Option<Rect>,
     chunk: &mut Chunk,
@@ -20,7 +20,7 @@ pub fn render(
     ctx: &mut Context,
     rc: &mut ResourceContainer,
 ) {
-    if visibility != Visibility::Visible {
+    if !is_visible {
         return;
     }
 

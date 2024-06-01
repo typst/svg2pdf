@@ -25,10 +25,10 @@ oxipng = { version = "9", default-features = false, features = ["filetime", "par
 pdf-writer = "0.10"
 pdfium-render = "0.8.6"
 termcolor = "1.2"
-usvg = { git = "https://github.com/RazrFalcon/resvg", default-features = false }
+usvg = { version = "0.42.0", default-features = false }
 tiny-skia = "0.11.4"
 unicode-properties = "0.1.1"
-resvg = { git = "https://github.com/RazrFalcon/resvg", default-features = false }
+resvg = { version = "0.42.0", default-features = false }
 subsetter = "0.1.1"
 ttf-parser = { version = "0.21.1" }
 siphasher = { version = "1.0.1"}
