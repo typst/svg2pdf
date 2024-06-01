@@ -47,8 +47,7 @@ fn to_chunk() {
     let path =
         "svg/custom/integration/wikimedia/coat_of_the_arms_of_edinburgh_city_council.svg";
     let svg = std::fs::read_to_string(path).unwrap();
-    let mut options = svg2pdf::usvg::Options::default();
-    options.fontdb = FONTDB.clone();
+    let options = usvg::Options { fontdb: FONTDB.clone(), ..usvg::Options::default() };
     let tree = svg2pdf::usvg::Tree::from_str(&svg, &options).unwrap();
     let (svg_chunk, svg_id) =
         svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default());

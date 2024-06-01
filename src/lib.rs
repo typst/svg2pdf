@@ -22,12 +22,8 @@ let input = "tests/svg/custom/integration/matplotlib/stairs.svg";
 let output = "target/stairs.pdf";
 
 let svg = std::fs::read_to_string(input)?;
-let mut db = fontdb::Database::new();
-db.load_system_fonts();
-let options = svg2pdf::usvg::Options {
-    fontdb: Arc::new(db),
-    ..svg2pdf::usvg::Options::default()
-};
+let mut options = svg2pdf::usvg::Options::default();
+options.fontdb_mut().load_system_fonts();
 let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 
 let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default());
@@ -131,9 +127,6 @@ impl Default for ConversionOptions {
 
 /// Convert a [`usvg` tree](Tree) into a standalone PDF buffer.
 ///
-/// IMPORTANT: The fontdb that is passed to this function needs to be the
-/// same one that was used to convert the SVG string into a [`usvg` tree](Tree)!
-///
 /// ## Example
 /// The example below reads an SVG file, processes text within it, then converts
 /// it into a PDF and finally writes it back to the file system.
@@ -148,12 +141,8 @@ impl Default for ConversionOptions {
 /// let output = "target/stairs.pdf";
 ///
 /// let svg = std::fs::read_to_string(input)?;
-/// let mut db = fontdb::Database::new();
-/// db.load_system_fonts();
-/// let options = svg2pdf::usvg::Options {
-///   fontdb: Arc::new(db),
-///   ..svg2pdf::usvg::Options::default()
-/// };
+/// let mut options = svg2pdf::usvg::Options::default();
+/// options.fontdb_mut().load_system_fonts();
 /// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 ///
 ///
@@ -224,9 +213,6 @@ pub fn to_pdf(
 
 /// Convert a [Tree] into a [`Chunk`].
 ///
-/// IMPORTANT: The fontdb that is passed to this function needs to be the
-/// same one that was used to convert the SVG string into a [`usvg` tree](Tree)!
-///
 /// This method is intended for use in an existing [`pdf-writer`] workflow. It
 /// will always produce a chunk that contains all the necessary objects
 /// to embed the SVG into an existing chunk. This method returns the chunk that
@@ -262,12 +248,8 @@ pub fn to_pdf(
 /// // Let's first convert the SVG into an independent chunk.
 /// let path = "tests/svg/custom/integration/wikimedia/coat_of_the_arms_of_edinburgh_city_council.svg";
 /// let svg = std::fs::read_to_string(path)?;
-/// let mut db = fontdb::Database::new();
-/// db.load_system_fonts();
-/// let options = svg2pdf::usvg::Options {
-///   fontdb: Arc::new(db),
-///   ..svg2pdf::usvg::Options::default()
-/// };
+/// let mut options = svg2pdf::usvg::Options::default();
+/// options.fontdb_mut().load_system_fonts();
 /// let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 /// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default());
 ///

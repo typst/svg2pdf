@@ -17,7 +17,18 @@ use usvg::Tree;
 
 use svg2pdf::{ConversionOptions, PageOptions};
 
-static FONTDB: Lazy<Arc<fontdb::Database>> = Lazy::new(|| create_fontdb());
+static FONTDB: Lazy<Arc<fontdb::Database>> = Lazy::new(|| {
+    let mut fontdb = fontdb::Database::new();
+    fontdb.load_fonts_dir("fonts");
+
+    fontdb.set_serif_family("Noto Serif");
+    fontdb.set_sans_serif_family("Noto Sans");
+    fontdb.set_cursive_family("Yellowtail");
+    fontdb.set_fantasy_family("Sedgwick Ave Display");
+    fontdb.set_monospace_family("Noto Mono");
+
+    Arc::new(fontdb)
+});
 
 /// The global pdfium instance.
 static PDFIUM: Lazy<std::sync::Mutex<Pdfium>> = Lazy::new(|| {
@@ -51,23 +62,9 @@ pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
     result
 }
 
-pub fn create_fontdb() -> Arc<fontdb::Database> {
-    let mut fontdb = fontdb::Database::new();
-    fontdb.load_fonts_dir("fonts");
-
-    fontdb.set_serif_family("Noto Serif");
-    fontdb.set_sans_serif_family("Noto Sans");
-    fontdb.set_cursive_family("Yellowtail");
-    fontdb.set_fantasy_family("Sedgwick Ave Display");
-    fontdb.set_monospace_family("Noto Mono");
-
-    Arc::new(fontdb)
-}
-
 /// Converts an SVG string into a usvg Tree
 pub fn read_svg(svg_string: &str) -> Tree {
-    let mut options = usvg::Options::default();
-    options.fontdb = FONTDB.clone();
+    let options = usvg::Options { fontdb: FONTDB.clone(), ..usvg::Options::default() };
     Tree::from_str(svg_string, &options).unwrap()
 }
 
