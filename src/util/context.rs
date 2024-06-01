@@ -1,4 +1,5 @@
 use pdf_writer::{Chunk, Content, Filter, Ref};
+use usvg::Tree;
 
 #[cfg(feature = "text")]
 use {
@@ -6,7 +7,6 @@ use {
     crate::render::text::{write_font, Font},
     std::collections::HashMap,
     usvg::fontdb::ID,
-    usvg::Tree,
 };
 
 use super::helper::deflate;
@@ -26,7 +26,12 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new(tree: &Tree, options: ConversionOptions) -> Self {
+    pub fn new(
+        #[allow(unused_variables)]
+        tree: &Tree,
+        options: ConversionOptions) -> Self {
+
+        #[allow(unused_mut)]
         let mut ctx = Self {
             ref_allocator: RefAllocator::new(),
             options,

@@ -1,4 +1,5 @@
 use std::path::{Path, PathBuf};
+#[cfg(feature = "text")]
 use std::sync::Arc;
 use svg2pdf::{ConversionOptions, PageOptions};
 
