@@ -11,6 +11,7 @@ use siphasher::sip128::{Hasher128, SipHasher13};
 use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
 use std::sync::Arc;
+use subsetter::GlyphRemapper;
 use ttf_parser::{name_id, Face, GlyphId, PlatformId, Tag};
 use unicode_properties::{GeneralCategory, UnicodeGeneralCategory};
 use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform};
@@ -38,6 +39,7 @@ pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) 
     let data_ref = alloc.alloc_ref();
 
     let glyph_set = &mut font.glyph_set;
+    let glyph_remapper = &font.glyph_remapper;
 
     // Do we have a TrueType or CFF font?
     //
@@ -76,14 +78,10 @@ pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) 
     }
 
     let mut widths = vec![];
-    for gid in std::iter::once(0).chain(glyph_set.keys().copied()) {
-        let width = ttf.glyph_hor_advance(GlyphId(gid)).unwrap_or(0);
+    for old_gid in glyph_remapper.remapped_gids() {
+        let width = ttf.glyph_hor_advance(GlyphId(old_gid)).unwrap_or(0);
         let units = (width as f64 / units_per_em as f64) * 1000.0;
-        let cid = glyph_cid(&ttf, gid);
-        if usize::from(cid) >= widths.len() {
-            widths.resize(usize::from(cid) + 1, 0.0);
-            widths[usize::from(cid)] = units as f32;
-        }
+        widths.push(units as f32);
     }
 
     // Write all non-zero glyph widths.
@@ -149,12 +147,10 @@ pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) 
 
     font_descriptor.finish();
 
-    let cmap = create_cmap(&ttf, glyph_set);
+    let cmap = create_cmap(&ttf, glyph_set, glyph_remapper);
     chunk.cmap(cmap_ref, &cmap.finish());
 
-    // Subset and write the font's bytes.
-    let glyphs: Vec<_> = glyph_set.keys().copied().collect();
-    let data = subset_font(&font.face_data, font.face_index, &glyphs);
+    let data = subset_font(&font.face_data, font.face_index, &glyph_remapper);
 
     let mut stream = chunk.stream(data_ref, &data);
     stream.filter(Filter::FlateDecode);
@@ -166,7 +162,7 @@ pub fn write_font(chunk: &mut Chunk, alloc: &mut RefAllocator, font: &mut Font) 
 }
 
 /// Create a /ToUnicode CMap.
-fn create_cmap(ttf: &Face, glyph_set: &mut BTreeMap<u16, String>) -> UnicodeCmap {
+fn create_cmap(ttf: &Face, glyph_set: &mut BTreeMap<u16, String>, glyph_remapper: &GlyphRemapper) -> UnicodeCmap {
     // For glyphs that have codepoints mapping to them in the font's cmap table,
     // we prefer them over pre-existing text mappings from the document. Only
     // things that don't have a corresponding codepoint (or only a private-use
@@ -193,19 +189,19 @@ fn create_cmap(ttf: &Face, glyph_set: &mut BTreeMap<u16, String>) -> UnicodeCmap
     // Produce a reverse mapping from glyphs' CIDs to unicode strings.
     let mut cmap = UnicodeCmap::new(CMAP_NAME, SYSTEM_INFO);
     for (&g, text) in glyph_set.iter() {
+        let new_gid = glyph_remapper.get(g).unwrap();
         if !text.is_empty() {
-            cmap.pair_with_multiple(glyph_cid(ttf, g), text.chars());
+            cmap.pair_with_multiple(new_gid, text.chars());
         }
     }
 
     cmap
 }
 
-fn subset_font(font_data: &[u8], index: u32, glyphs: &[u16]) -> Vec<u8> {
+fn subset_font(font_data: &[u8], index: u32, glyph_remapper: &GlyphRemapper) -> Vec<u8> {
     let data = font_data;
-    let profile = subsetter::Profile::pdf(glyphs);
-    let subsetted = subsetter::subset(data, index, profile);
-    let mut data = subsetted.as_deref().unwrap_or(data);
+    let subsetted = subsetter::subset(data, index, glyph_remapper).unwrap();
+    let mut data = subsetted.as_ref();
 
     // Extract the standalone CFF font program if applicable.
     let face = ttf_parser::RawFace::parse(data, 0).unwrap();
@@ -252,7 +248,8 @@ pub fn render(
 
                 let name = font_names.get(&font.reference).unwrap();
 
-                let gid = glyph.id.0;
+                // TODO: Remove unwraps and switch to error-based handling.
+                let cid = font.glyph_remapper.get(glyph.id.0).unwrap();
                 let ts = glyph
                     .outline_transform()
                     .pre_scale(font.units_per_em as f32, font.units_per_em as f32)
@@ -264,7 +261,7 @@ pub fn render(
                 content.begin_text();
                 content.set_text_matrix(ts.to_pdf_transform());
                 content.set_font(Name(name.as_bytes()), span.font_size.get());
-                content.show(Str(&[(gid >> 8) as u8, (gid & 0xff) as u8]));
+                content.show(Str(&[(cid >> 8) as u8, (cid & 0xff) as u8]));
                 content.end_text();
                 content.restore_state();
             }
@@ -436,13 +433,6 @@ fn decode_mac_roman(coded: &[u8]) -> String {
     coded.iter().copied().map(char_from_mac_roman).collect()
 }
 
-fn glyph_cid(ttf: &Face, glyph_id: u16) -> u16 {
-    ttf.tables()
-        .cff
-        .and_then(|cff| cff.glyph_cid(GlyphId(glyph_id)))
-        .unwrap_or(glyph_id)
-}
-
 /// Extra methods for [`[T]`](slice).
 pub trait SliceExt<T> {
     /// Split a slice into consecutive runs with the same key and yield for
@@ -485,6 +475,7 @@ where
 #[derive(Clone)]
 pub struct Font {
     pub glyph_set: BTreeMap<u16, String>,
+    pub glyph_remapper: GlyphRemapper,
     pub reference: Ref,
     pub face_data: Arc<Vec<u8>>,
     pub units_per_em: u16,
@@ -509,11 +500,13 @@ pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
                                     {
                                         let reference = allocator.alloc_ref();
                                         let glyph_set = BTreeMap::new();
+                                        let glyph_remapper = GlyphRemapper::new();
                                         return Some(Font {
                                             reference,
                                             face_data: Arc::new(Vec::from(data)),
                                             units_per_em: ttf.units_per_em(),
                                             glyph_set,
+                                            glyph_remapper,
                                             face_index,
                                         });
                                     }
@@ -525,6 +518,7 @@ pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
 
                         if let Some(ref mut font) = font {
                             font.glyph_set.insert(g.id.0, g.text.clone());
+                            font.glyph_remapper.remap(g.id.0);
                         }
                     }
                 }
