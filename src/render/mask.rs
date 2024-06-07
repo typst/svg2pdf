@@ -5,6 +5,7 @@ use super::group;
 use crate::util::context::Context;
 use crate::util::helper::{clip_to_rect, MaskTypeExt, NameExt, RectExt};
 use crate::util::resources::ResourceContainer;
+use crate::Result;
 
 /// Render a mask into a content stream.
 pub fn render(
@@ -14,14 +15,21 @@ pub fn render(
     content: &mut Content,
     ctx: &mut Context,
     rc: &mut ResourceContainer,
-) {
-    let mask_ref = create(group, mask, chunk, ctx);
+) -> Result<()> {
+    let mask_ref = create(group, mask, chunk, ctx)?;
     let mask_name = rc.add_graphics_state(mask_ref);
     content.set_parameters(mask_name.to_pdf_name());
+
+    Ok(())
 }
 
 /// Create a mask and return the object reference to it.
-pub fn create(parent: &Group, mask: &Mask, chunk: &mut Chunk, ctx: &mut Context) -> Ref {
+pub fn create(
+    parent: &Group,
+    mask: &Mask,
+    chunk: &mut Chunk,
+    ctx: &mut Context,
+) -> Result<Ref> {
     let x_ref = ctx.alloc_ref();
     let mut rc = ResourceContainer::new();
 
@@ -29,7 +37,7 @@ pub fn create(parent: &Group, mask: &Mask, chunk: &mut Chunk, ctx: &mut Context)
     content.save_state();
 
     if let Some(mask) = mask.mask() {
-        render(parent, mask, chunk, &mut content, ctx, &mut rc);
+        render(parent, mask, chunk, &mut content, ctx, &mut rc)?;
     }
 
     let rect = mask.rect();
@@ -46,7 +54,7 @@ pub fn create(parent: &Group, mask: &Mask, chunk: &mut Chunk, ctx: &mut Context)
         Transform::default(),
         None,
         &mut rc,
-    );
+    )?;
 
     content.restore_state();
     let content_stream = ctx.finish_content(content);
@@ -73,5 +81,5 @@ pub fn create(parent: &Group, mask: &Mask, chunk: &mut Chunk, ctx: &mut Context)
     let mut gs = chunk.ext_graphics(gs_ref);
     gs.soft_mask().subtype(mask.kind().to_pdf_mask_type()).group(x_ref);
 
-    gs_ref
+    Ok(gs_ref)
 }

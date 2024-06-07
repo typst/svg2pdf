@@ -8,6 +8,7 @@ use super::group;
 use crate::util::context::Context;
 use crate::util::helper::TransformExt;
 use crate::util::resources::ResourceContainer;
+use crate::Result;
 
 /// Turn a pattern into a PDF tiling pattern.
 pub fn create(
@@ -16,7 +17,7 @@ pub fn create(
     ctx: &mut Context,
     matrix: Transform,
     initial_opacity: Option<Opacity>,
-) -> Ref {
+) -> Result<Ref> {
     let pattern_ref = ctx.alloc_ref();
     let mut rc = ResourceContainer::new();
 
@@ -35,7 +36,7 @@ pub fn create(
         Transform::default(),
         initial_opacity,
         &mut rc,
-    );
+    )?;
 
     let content_stream = ctx.finish_content(content);
 
@@ -60,5 +61,5 @@ pub fn create(
         .x_step(final_bbox.x2 - final_bbox.x1)
         .y_step(final_bbox.y2 - final_bbox.y1);
 
-    pattern_ref
+    Ok(pattern_ref)
 }

@@ -50,7 +50,7 @@ fn to_chunk() {
     let options = usvg::Options { fontdb: FONTDB.clone(), ..usvg::Options::default() };
     let tree = svg2pdf::usvg::Tree::from_str(&svg, &options).unwrap();
     let (svg_chunk, svg_id) =
-        svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default());
+        svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default()).unwrap();
 
     let mut map = HashMap::new();
     let svg_chunk =

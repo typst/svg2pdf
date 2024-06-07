@@ -1,6 +1,8 @@
 use crate::render::image;
 use crate::util::context::Context;
 use crate::util::resources::ResourceContainer;
+use crate::ConversionError::UnknownError;
+use crate::Result;
 use pdf_writer::{Chunk, Content};
 use std::sync::Arc;
 use tiny_skia::{Size, Transform};
@@ -13,18 +15,23 @@ pub fn render(
     content: &mut Content,
     ctx: &mut Context,
     rc: &mut ResourceContainer,
-) -> Option<()> {
+) -> Result<()> {
     // TODO: Add a check so that huge regions don't crash svg2pdf (see huge-region.svg test case)
-    let layer_bbox = group.layer_bounding_box().transform(group.transform())?;
+    let layer_bbox = group
+        .layer_bounding_box()
+        .transform(group.transform())
+        .ok_or(UnknownError)?;
     let pixmap_size = Size::from_wh(
         layer_bbox.width() * ctx.options.raster_scale,
         layer_bbox.height() * ctx.options.raster_scale,
-    )?;
+    )
+    .ok_or(UnknownError)?;
 
     let mut pixmap = tiny_skia::Pixmap::new(
         pixmap_size.width().round() as u32,
         pixmap_size.height().round() as u32,
-    )?;
+    )
+    .ok_or(UnknownError)?;
 
     let initial_transform =
         Transform::from_scale(ctx.options.raster_scale, ctx.options.raster_scale)
@@ -43,7 +50,7 @@ pub fn render(
         &mut pixmap.as_mut(),
     );
 
-    let encoded_image = pixmap.encode_png().ok()?;
+    let encoded_image = pixmap.encode_png().map_err(|_| UnknownError)?;
 
     image::render(
         true,
@@ -53,7 +60,7 @@ pub fn render(
         content,
         ctx,
         rc,
-    );
+    )?;
 
-    Some(())
+    Ok(())
 }

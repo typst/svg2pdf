@@ -10,6 +10,7 @@ use super::{gradient, pattern};
 use crate::util::context::Context;
 use crate::util::helper::{ColorExt, LineCapExt, LineJoinExt, NameExt};
 use crate::util::resources::ResourceContainer;
+use crate::Result;
 
 /// Render a path into a content stream.
 pub fn render(
@@ -19,9 +20,9 @@ pub fn render(
     ctx: &mut Context,
     rc: &mut ResourceContainer,
     accumulated_transform: Transform,
-) {
+) -> Result<()> {
     if !path.is_visible() {
-        return;
+        return Ok(());
     }
 
     // In order to support different stroke and fill orders as well as "advanced" paths
@@ -30,14 +31,16 @@ pub fn render(
     // higher file sizes depending on the SVG.
     match path.paint_order() {
         PaintOrder::FillAndStroke => {
-            fill_path(path, chunk, content, ctx, rc, accumulated_transform);
-            stroke_path(path, chunk, content, ctx, rc, accumulated_transform);
+            fill_path(path, chunk, content, ctx, rc, accumulated_transform)?;
+            stroke_path(path, chunk, content, ctx, rc, accumulated_transform)?;
         }
         PaintOrder::StrokeAndFill => {
-            stroke_path(path, chunk, content, ctx, rc, accumulated_transform);
-            fill_path(path, chunk, content, ctx, rc, accumulated_transform);
+            stroke_path(path, chunk, content, ctx, rc, accumulated_transform)?;
+            fill_path(path, chunk, content, ctx, rc, accumulated_transform)?;
         }
     }
+
+    Ok(())
 }
 
 /// Draws a path into a content stream. Note that this does not perform any stroking/filling,
@@ -93,9 +96,9 @@ pub(crate) fn stroke_path(
     ctx: &mut Context,
     rc: &mut ResourceContainer,
     accumulated_transform: Transform,
-) {
+) -> Result<()> {
     if path.data().bounds().width() == 0.0 && path.data().bounds().height() == 0.0 {
-        return;
+        return Ok(());
     }
 
     let operation = |content: &mut Content, stroke: &Stroke| {
@@ -113,8 +116,10 @@ pub(crate) fn stroke_path(
             operation,
             accumulated_transform,
             path.stroke_bounding_box(),
-        );
+        )?;
     }
+
+    Ok(())
 }
 
 /// Prepare the stroke color and then perform some operation (either drawing text or
@@ -129,7 +134,7 @@ pub(crate) fn stroke(
     operation: impl Fn(&mut Content, &Stroke),
     accumulated_transform: Transform,
     bbox: Rect,
-) {
+) -> Result<()> {
     let paint = &stroke.paint();
 
     content.save_state();
@@ -154,7 +159,7 @@ pub(crate) fn stroke(
                 ctx,
                 accumulated_transform,
                 Some(stroke.opacity()),
-            );
+            )?;
             let pattern_name = rc.add_pattern(pattern_ref);
             content.set_stroke_color_space(Pattern);
             content.set_stroke_pattern(None, pattern_name.to_pdf_name());
@@ -204,6 +209,8 @@ pub(crate) fn stroke(
     operation(content, stroke);
 
     content.restore_state();
+
+    Ok(())
 }
 
 /// Draws a filled path into the content stream.
@@ -214,9 +221,9 @@ pub(crate) fn fill_path(
     ctx: &mut Context,
     rc: &mut ResourceContainer,
     accumulated_transform: Transform,
-) {
+) -> Result<()> {
     if path.data().bounds().width() == 0.0 || path.data().bounds().height() == 0.0 {
-        return;
+        return Ok(());
     }
 
     let operation = |content: &mut Content, fill: &Fill| {
@@ -234,8 +241,10 @@ pub(crate) fn fill_path(
             operation,
             accumulated_transform,
             path.bounding_box(),
-        );
+        )?;
     }
+
+    Ok(())
 }
 
 /// Prepare the fill color and then perform some operation (either drawing text or
@@ -250,7 +259,7 @@ pub(crate) fn fill(
     operation: impl Fn(&mut Content, &Fill),
     accumulated_transform: Transform,
     bbox: Rect,
-) {
+) -> Result<()> {
     let paint = &fill.paint();
 
     content.save_state();
@@ -271,7 +280,7 @@ pub(crate) fn fill(
                 ctx,
                 accumulated_transform,
                 Some(fill.opacity()),
-            );
+            )?;
             let pattern_name = rc.add_pattern(pattern_ref);
             content.set_fill_color_space(Pattern);
             content.set_fill_pattern(None, pattern_name.to_pdf_name());
@@ -300,6 +309,8 @@ pub(crate) fn fill(
 
     operation(content, fill);
     content.restore_state();
+
+    Ok(())
 }
 
 fn finish_path(stroke: Option<&Stroke>, fill: Option<&Fill>, content: &mut Content) {
