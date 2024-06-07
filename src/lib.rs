@@ -112,7 +112,9 @@ impl Display for ConversionError {
         match self {
             Self::InvalidImage => f.write_str("An unknown type of image appears in the SVG."),
             Self::UnknownError => f.write_str("An unknown error occurred during the conversion. This could indicate a bug in svg2pdf"),
+            #[cfg(feature = "text")]
             Self::SubsetError(_) => f.write_str("An error occurred while subsetting a font."),
+            #[cfg(feature = "text")]
             Self::InvalidFont(_) => f.write_str("An error occurred while reading a font."),
         }
     }
