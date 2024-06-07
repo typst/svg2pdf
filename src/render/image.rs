@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use crate::ConversionError::InvalidImage;
 use image::{ColorType, DynamicImage, ImageFormat, Luma, Rgb, Rgba};
 use miniz_oxide::deflate::{compress_to_vec_zlib, CompressionLevel};
 use pdf_writer::{Chunk, Content, Filter, Finish};
@@ -9,6 +10,7 @@ use crate::render::tree_to_xobject;
 use crate::util::context::Context;
 use crate::util::helper::{NameExt, TransformExt};
 use crate::util::resources::ResourceContainer;
+use crate::Result;
 
 /// Render an image into a content stream.
 pub fn render(
@@ -19,9 +21,9 @@ pub fn render(
     content: &mut Content,
     ctx: &mut Context,
     rc: &mut ResourceContainer,
-) {
+) -> Result<()> {
     if !is_visible {
-        return;
+        return Ok(());
     }
 
     // Will return the name of the image (in the Resources dictionary) and the dimensions of the
@@ -30,7 +32,8 @@ pub fn render(
     let (image_name, image_size) = match kind {
         ImageKind::JPEG(content) => {
             let dynamic_image =
-                image::load_from_memory_with_format(content, ImageFormat::Jpeg).unwrap();
+                image::load_from_memory_with_format(content, ImageFormat::Jpeg)
+                    .map_err(|_| InvalidImage)?;
             // JPEGs don't support alphas, so no extra processing is required.
             create_raster_image(
                 chunk,
@@ -44,7 +47,8 @@ pub fn render(
         }
         ImageKind::PNG(content) => {
             let dynamic_image =
-                image::load_from_memory_with_format(content, ImageFormat::Png).unwrap();
+                image::load_from_memory_with_format(content, ImageFormat::Png)
+                    .map_err(|_| InvalidImage)?;
             // Alpha channels need to be written separately as a soft mask, hence the extra processing
             // step.
             let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
@@ -60,7 +64,8 @@ pub fn render(
         }
         ImageKind::GIF(content) => {
             let dynamic_image =
-                image::load_from_memory_with_format(content, ImageFormat::Gif).unwrap();
+                image::load_from_memory_with_format(content, ImageFormat::Gif)
+                    .map_err(|_| InvalidImage)?;
             // Alpha channels need to be written separately as a soft mask, hence the extra processing
             // step.
             let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
@@ -75,7 +80,7 @@ pub fn render(
             )
         }
         // SVGs just get rendered recursively.
-        ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx, rc),
+        ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx, rc)?,
     };
 
     let view_box = view_box.unwrap_or(
@@ -103,6 +108,8 @@ pub fn render(
     );
     content.x_object(image_name.to_pdf_name());
     content.restore_state();
+
+    Ok(())
 }
 
 fn handle_transparent_image(image: &DynamicImage) -> (Vec<u8>, Filter, Option<Vec<u8>>) {
@@ -214,8 +221,8 @@ fn create_svg_image(
     chunk: &mut Chunk,
     ctx: &mut Context,
     rc: &mut ResourceContainer,
-) -> (Rc<String>, Size) {
-    let image_ref = tree_to_xobject(tree, chunk, ctx);
+) -> Result<(Rc<String>, Size)> {
+    let image_ref = tree_to_xobject(tree, chunk, ctx)?;
     let image_name = rc.add_x_object(image_ref);
-    (image_name, tree.size())
+    Ok((image_name, tree.size()))
 }

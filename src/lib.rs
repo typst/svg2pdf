@@ -26,7 +26,7 @@ let mut options = svg2pdf::usvg::Options::default();
 options.fontdb_mut().load_system_fonts();
 let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 
-let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default());
+let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default()).unwrap();
 std::fs::write(output, pdf)?;
 # Ok(()) }
 ```
@@ -56,8 +56,11 @@ comprehensive list.
 mod render;
 mod util;
 
+use std::fmt;
+use std::fmt::{Display, Formatter};
 pub use usvg;
 
+use crate::ConversionError::UnknownError;
 use once_cell::sync::Lazy;
 use pdf_writer::{Chunk, Content, Filter, Finish, Pdf, Ref, TextStr};
 use usvg::{Size, Transform, Tree};
@@ -87,6 +90,36 @@ impl Default for PageOptions {
         Self { dpi: 72.0 }
     }
 }
+
+/// A error that can appear during conversion.
+#[derive(Copy, Clone, Debug)]
+pub enum ConversionError {
+    /// The SVG image contains an unrecognized type of image.
+    InvalidImage,
+    /// An unknown error occurred during the conversion. This could indicate a bug in the
+    /// svg2pdf.
+    UnknownError,
+    /// An error occurred while subsetting a font.
+    #[cfg(feature = "text")]
+    SubsetError(fontdb::ID),
+    /// An error occurred while reading a font.
+    #[cfg(feature = "text")]
+    InvalidFont(fontdb::ID),
+}
+
+impl Display for ConversionError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        match self {
+            Self::InvalidImage => f.write_str("An unknown type of image appears in the SVG."),
+            Self::UnknownError => f.write_str("An unknown error occurred during the conversion. This could indicate a bug in svg2pdf"),
+            Self::SubsetError(_) => f.write_str("An error occurred while subsetting a font."),
+            Self::InvalidFont(_) => f.write_str("An error occurred while reading a font."),
+        }
+    }
+}
+
+/// The result type for everything.
+type Result<T> = std::result::Result<T, ConversionError>;
 
 /// Options for the PDF conversion.
 #[derive(Copy, Clone)]
@@ -146,7 +179,7 @@ impl Default for ConversionOptions {
 /// let mut tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
 ///
 ///
-/// let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default());
+/// let pdf = svg2pdf::to_pdf(&tree, ConversionOptions::default(), PageOptions::default()).unwrap();
 /// std::fs::write(output, pdf)?;
 /// # Ok(()) }
 /// ```
@@ -154,7 +187,7 @@ pub fn to_pdf(
     tree: &Tree,
     conversion_options: ConversionOptions,
     page_options: PageOptions,
-) -> Vec<u8> {
+) -> Result<Vec<u8>> {
     let mut ctx = Context::new(tree, conversion_options);
     let mut pdf = Pdf::new();
 
@@ -162,7 +195,7 @@ pub fn to_pdf(
     let dpi_transform = Transform::from_scale(dpi_ratio, dpi_ratio);
     let page_size =
         Size::from_wh(tree.size().width() * dpi_ratio, tree.size().height() * dpi_ratio)
-            .unwrap();
+            .ok_or(UnknownError)?;
 
     let catalog_ref = ctx.alloc_ref();
     let page_tree_ref = ctx.alloc_ref();
@@ -177,7 +210,7 @@ pub fn to_pdf(
     let mut content = Content::new();
     content.save_state();
     content.transform(dpi_transform.to_pdf_transform());
-    tree_to_stream(tree, &mut pdf, &mut content, &mut ctx, &mut rc);
+    tree_to_stream(tree, &mut pdf, &mut content, &mut ctx, &mut rc)?;
     content.restore_state();
     let content_stream = ctx.finish_content(content);
     let mut stream = pdf.stream(content_ref, &content_stream);
@@ -203,12 +236,12 @@ pub fn to_pdf(
     page.contents(content_ref);
     page.finish();
 
-    ctx.write_global_objects(&mut pdf);
+    ctx.write_global_objects(&mut pdf)?;
 
     let document_info_id = ctx.alloc_ref();
     pdf.document_info(document_info_id).producer(TextStr("svg2pdf"));
 
-    pdf.finish()
+    Ok(pdf.finish())
 }
 
 /// Convert a [Tree] into a [`Chunk`].
@@ -251,7 +284,7 @@ pub fn to_pdf(
 /// let mut options = svg2pdf::usvg::Options::default();
 /// options.fontdb_mut().load_system_fonts();
 /// let tree = svg2pdf::usvg::Tree::from_str(&svg, &options)?;
-/// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default());
+/// let (mut svg_chunk, svg_id) = svg2pdf::to_chunk(&tree, svg2pdf::ConversionOptions::default()).unwrap();
 ///
 /// // Renumber the chunk so that we can embed it into our existing workflow, and also make sure
 /// // to update `svg_id`.
@@ -306,11 +339,14 @@ pub fn to_pdf(
 /// std::fs::write("target/embedded.pdf", pdf.finish())?;
 /// # Ok(()) }
 /// ```
-pub fn to_chunk(tree: &Tree, conversion_options: ConversionOptions) -> (Chunk, Ref) {
+pub fn to_chunk(
+    tree: &Tree,
+    conversion_options: ConversionOptions,
+) -> Result<(Chunk, Ref)> {
     let mut chunk = Chunk::new();
 
     let mut ctx = Context::new(tree, conversion_options);
-    let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx);
-    ctx.write_global_objects(&mut chunk);
-    (chunk, x_ref)
+    let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx)?;
+    ctx.write_global_objects(&mut chunk)?;
+    Ok((chunk, x_ref))
 }

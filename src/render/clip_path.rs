@@ -8,6 +8,7 @@ use super::path::draw_path;
 use crate::util::context::Context;
 use crate::util::helper::{bbox_to_non_zero_rect, NameExt, RectExt, TransformExt};
 use crate::util::resources::ResourceContainer;
+use crate::Result;
 
 /// Render a clip path into a content stream.
 pub fn render(
@@ -17,7 +18,7 @@ pub fn render(
     content: &mut Content,
     ctx: &mut Context,
     rc: &mut ResourceContainer,
-) {
+) -> Result<()> {
     // Unfortunately, clip paths are a bit tricky to deal with, the reason being that clip paths in
     // SVGs can be much more complex than in PDF. In SVG, clip paths can have transforms, as well as
     // nested clip paths. The objects inside of the clip path can have transforms as well, making it
@@ -54,10 +55,12 @@ pub fn render(
             clip_rules.first().copied().unwrap_or(FillRule::NonZero),
         );
     } else {
-        let clip_path_ref = create_complex_clip_path(group, clip_path, chunk, ctx);
+        let clip_path_ref = create_complex_clip_path(group, clip_path, chunk, ctx)?;
         let clip_path_name = rc.add_graphics_state(clip_path_ref);
         content.set_parameters(clip_path_name.to_pdf_name());
     }
+
+    Ok(())
 }
 
 fn is_simple_clip_path(group: &Group) -> bool {
@@ -173,7 +176,7 @@ fn create_complex_clip_path(
     clip_path: &ClipPath,
     chunk: &mut Chunk,
     ctx: &mut Context,
-) -> Ref {
+) -> Result<Ref> {
     let mut rc = ResourceContainer::new();
     let x_ref = ctx.alloc_ref();
 
@@ -181,7 +184,7 @@ fn create_complex_clip_path(
     content.save_state();
 
     if let Some(clip_path) = clip_path.clip_path() {
-        render(parent, clip_path, chunk, &mut content, ctx, &mut rc);
+        render(parent, clip_path, chunk, &mut content, ctx, &mut rc)?;
     }
 
     content.transform(clip_path.transform().to_pdf_transform());
@@ -196,7 +199,7 @@ fn create_complex_clip_path(
         Transform::default(),
         None,
         &mut rc,
-    );
+    )?;
     content.restore_state();
 
     let content_stream = ctx.finish_content(content);
@@ -224,5 +227,5 @@ fn create_complex_clip_path(
     let mut gs = chunk.ext_graphics(gs_ref);
     gs.soft_mask().subtype(MaskType::Alpha).group(x_ref);
 
-    gs_ref
+    Ok(gs_ref)
 }
