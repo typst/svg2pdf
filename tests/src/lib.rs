@@ -77,7 +77,7 @@ pub fn convert_svg(
 ) -> (Vec<u8>, RgbaImage) {
     let svg = fs::read_to_string(svg_path).unwrap();
     let tree = read_svg(&svg);
-    let pdf = svg2pdf::to_pdf(&tree, conversion_options, page_options);
+    let pdf = svg2pdf::to_pdf(&tree, conversion_options, page_options).unwrap();
     let image = render_pdf(pdf.as_slice());
     (pdf, image)
 }

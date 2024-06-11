@@ -11,6 +11,7 @@ use {
 
 use super::helper::deflate;
 use crate::util::allocate::RefAllocator;
+use crate::Result;
 use crate::{ConversionOptions, GRAY_ICC_DEFLATED, SRGB_ICC_DEFLATED};
 
 /// Holds all of the necessary information for the conversion process.
@@ -72,14 +73,14 @@ impl Context {
         self.fonts.get(&id).and_then(|f| f.as_ref())
     }
 
-    pub fn write_global_objects(&mut self, pdf: &mut Chunk) {
+    pub fn write_global_objects(&mut self, pdf: &mut Chunk) -> Result<()> {
         #[cfg(feature = "text")]
         {
             let allocator = &mut self.ref_allocator;
 
             for font in self.fonts.values_mut() {
                 if let Some(font) = font.as_mut() {
-                    write_font(pdf, allocator, font);
+                    write_font(pdf, allocator, font)?
                 }
             }
         }
@@ -97,6 +98,8 @@ impl Context {
                 .range([0.0, 1.0])
                 .filter(Filter::FlateDecode);
         }
+
+        Ok(())
     }
 
     /// Just a helper method so that we don't have to manually compress the content if this was
