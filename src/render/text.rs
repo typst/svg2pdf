@@ -154,13 +154,12 @@ pub fn write_font(
 
     font_descriptor.finish();
 
-    let cmap = create_cmap(&ttf, glyph_set, glyph_remapper);
+    let cmap =
+        create_cmap(&ttf, glyph_set, glyph_remapper).ok_or(SubsetError(font.id))?;
     chunk.cmap(cmap_ref, &cmap.finish());
 
     // Subset and write the font's bytes.
-    let glyphs: Vec<_> = glyph_set.keys().copied().collect();
-    let data = subset_font(&font.face_data, font.face_index, &glyphs, font.id)?;
-    let data = subset_font(&font.face_data, font.face_index, &glyph_remapper);
+    let data = subset_font(&font.face_data, font.face_index, glyph_remapper, font.id)?;
 
     let mut stream = chunk.stream(data_ref, &data);
     stream.filter(Filter::FlateDecode);
@@ -173,7 +172,11 @@ pub fn write_font(
 }
 
 /// Create a /ToUnicode CMap.
-fn create_cmap(ttf: &Face, glyph_set: &mut BTreeMap<u16, String>, glyph_remapper: &GlyphRemapper) -> UnicodeCmap {
+fn create_cmap(
+    ttf: &Face,
+    glyph_set: &mut BTreeMap<u16, String>,
+    glyph_remapper: &GlyphRemapper,
+) -> Option<UnicodeCmap> {
     // For glyphs that have codepoints mapping to them in the font's cmap table,
     // we prefer them over pre-existing text mappings from the document. Only
     // things that don't have a corresponding codepoint (or only a private-use
@@ -200,24 +203,24 @@ fn create_cmap(ttf: &Face, glyph_set: &mut BTreeMap<u16, String>, glyph_remapper
     // Produce a reverse mapping from glyphs' CIDs to unicode strings.
     let mut cmap = UnicodeCmap::new(CMAP_NAME, SYSTEM_INFO);
     for (&g, text) in glyph_set.iter() {
-        let new_gid = glyph_remapper.get(g).unwrap();
+        let new_gid = glyph_remapper.get(g)?;
         if !text.is_empty() {
             cmap.pair_with_multiple(new_gid, text.chars());
         }
     }
 
-    cmap
+    Some(cmap)
 }
 
 fn subset_font(
     font_data: &[u8],
     index: u32,
-    glyphs: &[u16],
+    glyph_remapper: &GlyphRemapper,
     id: fontdb::ID,
 ) -> Result<Vec<u8>> {
-fn subset_font(font_data: &[u8], index: u32, glyph_remapper: &GlyphRemapper) -> Vec<u8> {
     let data = font_data;
-    let subsetted = subsetter::subset(data, index, glyph_remapper).unwrap();
+    let subsetted =
+        subsetter::subset(data, index, glyph_remapper).map_err(|_| SubsetError(id))?;
     let mut data = subsetted.as_ref();
 
     // Extract the standalone CFF font program if applicable.
