@@ -1540,8 +1540,8 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "subsetter"
-version = "0.1.1"
-source = "git+https://github.com/LaurenzV/subsetter?branch=rewrite#8a2f02dc0c972b65a948843ef33d5ccd158010eb"
+version = "0.11.0"
+source = "git+https://github.com/typst/subsetter?branch=main#4e0058b4b9a0948a5f79894111948d95e59ba350"
 
 [[package]]
 name = "svg2pdf"
