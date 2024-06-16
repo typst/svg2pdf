@@ -1540,9 +1540,8 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "subsetter"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09eab8a83bff89ba2200bd4c59be45c7c787f988431b936099a5a266c957f2f9"
+version = "0.11.0"
+source = "git+https://github.com/typst/subsetter?rev=4e0058b#4e0058b4b9a0948a5f79894111948d95e59ba350"
 
 [[package]]
 name = "svg2pdf"
