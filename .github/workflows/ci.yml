@@ -30,11 +30,11 @@ jobs:
           mv ./pdfium-linux-x64/lib/libpdfium.so ./tests/pdfium
 
       - name: Build svg2pdf
-        run: cargo build --all --release
+        run: cargo build --all
 
       - name: Run tests
         id: tests
-        run: cargo test --release --workspace
+        run: cargo test --workspace
 
       - name: Upload artifacts
         if: failure()
