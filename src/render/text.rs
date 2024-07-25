@@ -15,7 +15,6 @@ use std::hash::Hash;
 use std::sync::Arc;
 use subsetter::GlyphRemapper;
 use ttf_parser::{name_id, Face, GlyphId, PlatformId, Tag};
-use unicode_properties::{GeneralCategory, UnicodeGeneralCategory};
 use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform};
 
 const CFF: Tag = Tag::from_bytes(b"CFF ");
@@ -154,8 +153,7 @@ pub fn write_font(
 
     font_descriptor.finish();
 
-    let cmap =
-        create_cmap(&ttf, glyph_set, glyph_remapper).ok_or(SubsetError(font.id))?;
+    let cmap = create_cmap(glyph_set, glyph_remapper).ok_or(SubsetError(font.id))?;
     chunk.cmap(cmap_ref, &cmap.finish());
 
     // Subset and write the font's bytes.
@@ -173,33 +171,9 @@ pub fn write_font(
 
 /// Create a /ToUnicode CMap.
 fn create_cmap(
-    ttf: &Face,
     glyph_set: &mut BTreeMap<u16, String>,
     glyph_remapper: &GlyphRemapper,
 ) -> Option<UnicodeCmap> {
-    // For glyphs that have codepoints mapping to them in the font's cmap table,
-    // we prefer them over pre-existing text mappings from the document. Only
-    // things that don't have a corresponding codepoint (or only a private-use
-    // one) like the "Th" in Linux Libertine get the text of their first
-    // occurrences in the document instead.
-    for subtable in ttf.tables().cmap.into_iter().flat_map(|table| table.subtables) {
-        if !subtable.is_unicode() {
-            continue;
-        }
-
-        subtable.codepoints(|n| {
-            let Some(c) = std::char::from_u32(n) else { return };
-            if c.general_category() == GeneralCategory::PrivateUse {
-                return;
-            }
-
-            let Some(GlyphId(g)) = ttf.glyph_index(c) else { return };
-            if glyph_set.contains_key(&g) {
-                glyph_set.insert(g, c.into());
-            }
-        });
-    }
-
     // Produce a reverse mapping from glyphs' CIDs to unicode strings.
     let mut cmap = UnicodeCmap::new(CMAP_NAME, SYSTEM_INFO);
     for (&g, text) in glyph_set.iter() {
