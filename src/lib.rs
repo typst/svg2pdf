@@ -49,8 +49,8 @@ Among the unsupported features are currently:
 - The `spreadMethod` attribute of gradients
 - Raster images are not color managed but use PDF's DeviceRGB color space
 - A number of features that were added in SVG2, See
-[here](https://github.com/RazrFalcon/resvg/blob/master/docs/svg2-changelog.md) for a more
-comprehensive list.
+    [here](https://github.com/RazrFalcon/resvg/blob/master/docs/svg2-changelog.md) for a more
+    comprehensive list.
  */
 
 mod render;
