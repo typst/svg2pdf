@@ -26,75 +26,30 @@ pub fn render(
         return Ok(());
     }
 
+    let load_with_format = |content, format| {
+        image::load_from_memory_with_format(content, format).map_err(|_| InvalidImage)
+    };
+
     // Will return the name of the image (in the Resources dictionary) and the dimensions of the
     // actual image (i.e. the actual image size, not the size in the PDF, which will always be 1x1
     // because that's how ImageXObjects are scaled by default.
     let (image_name, image_size) = match kind {
         ImageKind::JPEG(content) => {
-            let dynamic_image =
-                image::load_from_memory_with_format(content, ImageFormat::Jpeg)
-                    .map_err(|_| InvalidImage)?;
             // JPEGs don't support alphas, so no extra processing is required.
-            create_raster_image(
-                chunk,
-                ctx,
-                content,
-                Filter::DctDecode,
-                &dynamic_image,
-                None,
-                rc,
-            )
+            let image = load_with_format(content, ImageFormat::Jpeg)?;
+            create_raster_image(chunk, ctx, content, Filter::DctDecode, &image, None, rc)
         }
         ImageKind::PNG(content) => {
-            let dynamic_image =
-                image::load_from_memory_with_format(content, ImageFormat::Png)
-                    .map_err(|_| InvalidImage)?;
-            // Alpha channels need to be written separately as a soft mask, hence the extra processing
-            // step.
-            let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
-            create_raster_image(
-                chunk,
-                ctx,
-                &samples,
-                filter,
-                &dynamic_image,
-                alpha_mask.as_deref(),
-                rc,
-            )
+            let image = load_with_format(content, ImageFormat::Png)?;
+            create_transparent_image(chunk, ctx, &image, rc)
         }
         ImageKind::GIF(content) => {
-            let dynamic_image =
-                image::load_from_memory_with_format(content, ImageFormat::Gif)
-                    .map_err(|_| InvalidImage)?;
-            // Alpha channels need to be written separately as a soft mask, hence the extra processing
-            // step.
-            let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
-            create_raster_image(
-                chunk,
-                ctx,
-                &samples,
-                filter,
-                &dynamic_image,
-                alpha_mask.as_deref(),
-                rc,
-            )
+            let image = load_with_format(content, ImageFormat::Gif)?;
+            create_transparent_image(chunk, ctx, &image, rc)
         }
         ImageKind::WEBP(content) => {
-            let dynamic_image =
-                image::load_from_memory_with_format(content, ImageFormat::WebP)
-                    .map_err(|_| InvalidImage)?;
-            // Alpha channels need to be written separately as a soft mask, hence the extra processing
-            // step.
-            let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
-            create_raster_image(
-                chunk,
-                ctx,
-                &samples,
-                filter,
-                &dynamic_image,
-                alpha_mask.as_deref(),
-                rc,
-            )
+            let image = load_with_format(content, ImageFormat::WebP)?;
+            create_transparent_image(chunk, ctx, &image, rc)
         }
         // SVGs just get rendered recursively.
         ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx, rc)?,
@@ -129,7 +84,12 @@ pub fn render(
     Ok(())
 }
 
-fn handle_transparent_image(image: &DynamicImage) -> (Vec<u8>, Filter, Option<Vec<u8>>) {
+fn create_transparent_image(
+    chunk: &mut Chunk,
+    ctx: &mut Context,
+    image: &DynamicImage,
+    rc: &mut ResourceContainer,
+) -> (Rc<String>, Size) {
     let color = image.color();
     let bits = color.bits_per_pixel();
     let channels = color.channel_count() as u16;
@@ -179,7 +139,15 @@ fn handle_transparent_image(image: &DynamicImage) -> (Vec<u8>, Filter, Option<Ve
     let compressed_mask =
         encoded_mask.map(|m| compress_to_vec_zlib(&m, compression_level));
 
-    (compressed_image, Filter::FlateDecode, compressed_mask)
+    create_raster_image(
+        chunk,
+        ctx,
+        &compressed_image,
+        Filter::FlateDecode,
+        image,
+        compressed_mask.as_deref(),
+        rc,
+    )
 }
 
 fn create_raster_image(
