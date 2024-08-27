@@ -79,6 +79,23 @@ pub fn render(
                 rc,
             )
         }
+        ImageKind::WEBP(content) => {
+            let dynamic_image =
+                image::load_from_memory_with_format(content, ImageFormat::WebP)
+                    .map_err(|_| InvalidImage)?;
+            // Alpha channels need to be written separately as a soft mask, hence the extra processing
+            // step.
+            let (samples, filter, alpha_mask) = handle_transparent_image(&dynamic_image);
+            create_raster_image(
+                chunk,
+                ctx,
+                &samples,
+                filter,
+                &dynamic_image,
+                alpha_mask.as_deref(),
+                rc,
+            )
+        }
         // SVGs just get rendered recursively.
         ImageKind::SVG(tree) => create_svg_image(tree, chunk, ctx, rc)?,
     };
