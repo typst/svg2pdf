@@ -7,7 +7,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use image::io::Reader;
+use image::ImageReader;
 use image::{Rgba, RgbaImage};
 use once_cell::sync::Lazy;
 use oxipng::{InFile, OutFile};
@@ -185,7 +185,8 @@ pub fn run_test_impl(pdf: Vec<u8>, actual_image: RgbaImage, test_name: &str) -> 
         fs::write(pdf_path, pdf).unwrap();
     }
 
-    let expected_image = Reader::open(&ref_path).unwrap().decode().unwrap().into_rgba8();
+    let expected_image =
+        ImageReader::open(&ref_path).unwrap().decode().unwrap().into_rgba8();
 
     let (diff_image, pixel_diff) = get_diff(&expected_image, &actual_image);
 
