@@ -67,7 +67,7 @@ use usvg::{Size, Transform, Tree};
 
 use crate::render::{tree_to_stream, tree_to_xobject};
 use crate::util::context::Context;
-use crate::util::helper::{deflate, RectExt, TransformExt};
+use crate::util::helper::{deflate, ContentExt, RectExt, TransformExt};
 use crate::util::resources::ResourceContainer;
 
 // The ICC profiles.
@@ -96,6 +96,11 @@ impl Default for PageOptions {
 pub enum ConversionError {
     /// The SVG image contains an unrecognized type of image.
     InvalidImage,
+    /// Text shaping resulted in a .notdef glyph. Can only occur if PDF/A
+    /// processing is enabled.
+    MissingGlyphs,
+    /// Converting the SVG would require too much nesting depth.
+    TooMuchNesting,
     /// An unknown error occurred during the conversion. This could indicate a bug in the
     /// svg2pdf.
     UnknownError,
@@ -111,6 +116,8 @@ impl Display for ConversionError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             Self::InvalidImage => f.write_str("An unknown type of image appears in the SVG."),
+            Self::MissingGlyphs => f.write_str("A piece of text could not be displayed with any font."),
+            Self::TooMuchNesting => f.write_str("The SVG's nesting depth is too high."),
             Self::UnknownError => f.write_str("An unknown error occurred during the conversion. This could indicate a bug in svg2pdf"),
             #[cfg(feature = "text")]
             Self::SubsetError(_) => f.write_str("An error occurred while subsetting a font."),
@@ -148,6 +155,9 @@ pub struct ConversionOptions {
     ///
     /// _Default:_ `true`.
     pub embed_text: bool,
+
+    /// Whether to enforce PDF/A rules.
+    pub pdfa: bool,
 }
 
 impl Default for ConversionOptions {
@@ -156,6 +166,7 @@ impl Default for ConversionOptions {
             compress: true,
             raster_scale: 1.5,
             embed_text: true,
+            pdfa: false,
         }
     }
 }
@@ -190,7 +201,7 @@ pub fn to_pdf(
     conversion_options: ConversionOptions,
     page_options: PageOptions,
 ) -> Result<Vec<u8>> {
-    let mut ctx = Context::new(tree, conversion_options);
+    let mut ctx = Context::new(tree, conversion_options)?;
     let mut pdf = Pdf::new();
 
     let dpi_ratio = 72.0 / page_options.dpi;
@@ -210,7 +221,7 @@ pub fn to_pdf(
     // Generate main content
     let mut rc = ResourceContainer::new();
     let mut content = Content::new();
-    content.save_state();
+    content.save_state_checked()?;
     content.transform(dpi_transform.to_pdf_transform());
     tree_to_stream(tree, &mut pdf, &mut content, &mut ctx, &mut rc)?;
     content.restore_state();
@@ -347,7 +358,7 @@ pub fn to_chunk(
 ) -> Result<(Chunk, Ref)> {
     let mut chunk = Chunk::new();
 
-    let mut ctx = Context::new(tree, conversion_options);
+    let mut ctx = Context::new(tree, conversion_options)?;
     let x_ref = tree_to_xobject(tree, &mut chunk, &mut ctx)?;
     ctx.write_global_objects(&mut chunk)?;
     Ok((chunk, x_ref))

@@ -30,7 +30,7 @@ impl Context {
     pub fn new(
         #[allow(unused_variables)] tree: &Tree,
         options: ConversionOptions,
-    ) -> Self {
+    ) -> Result<Self> {
         #[allow(unused_mut)]
         let mut ctx = Self {
             ref_allocator: RefAllocator::new(),
@@ -43,10 +43,10 @@ impl Context {
 
         #[cfg(feature = "text")]
         if options.embed_text {
-            text::fill_fonts(tree.root(), &mut ctx, tree.fontdb().as_ref());
+            text::fill_fonts(tree.root(), &mut ctx, tree.fontdb().as_ref())?;
         }
 
-        ctx
+        Ok(ctx)
     }
 
     /// Allocate a new reference.

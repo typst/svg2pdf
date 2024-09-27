@@ -8,7 +8,7 @@ use usvg::{ImageKind, Rect, Size, Transform, Tree};
 
 use crate::render::tree_to_xobject;
 use crate::util::context::Context;
-use crate::util::helper::{NameExt, TransformExt};
+use crate::util::helper::{ContentExt, NameExt, TransformExt};
 use crate::util::resources::ResourceContainer;
 use crate::Result;
 
@@ -59,7 +59,7 @@ pub fn render(
         Rect::from_xywh(0.0, 0.0, image_size.width(), image_size.height()).unwrap(),
     );
 
-    content.save_state();
+    content.save_state_checked()?;
 
     // Account for the x/y of the viewbox.
     content.transform(

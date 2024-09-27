@@ -8,7 +8,7 @@ use usvg::{Stroke, Transform};
 
 use super::{gradient, pattern};
 use crate::util::context::Context;
-use crate::util::helper::{ColorExt, LineCapExt, LineJoinExt, NameExt};
+use crate::util::helper::{ColorExt, ContentExt, LineCapExt, LineJoinExt, NameExt};
 use crate::util::resources::ResourceContainer;
 use crate::Result;
 
@@ -104,6 +104,7 @@ pub(crate) fn stroke_path(
     let operation = |content: &mut Content, stroke: &Stroke| {
         draw_path(path.data().segments(), content);
         finish_path(Some(stroke), None, content);
+        Ok(())
     };
 
     if let Some(path_stroke) = path.stroke() {
@@ -131,13 +132,13 @@ pub(crate) fn stroke(
     content: &mut Content,
     ctx: &mut Context,
     rc: &mut ResourceContainer,
-    operation: impl Fn(&mut Content, &Stroke),
+    operation: impl Fn(&mut Content, &Stroke) -> Result<()>,
     accumulated_transform: Transform,
     bbox: Rect,
 ) -> Result<()> {
     let paint = &stroke.paint();
 
-    content.save_state();
+    content.save_state_checked()?;
 
     match paint {
         Paint::Color(c) => {
@@ -206,7 +207,7 @@ pub(crate) fn stroke(
         content.set_dash_pattern(vec![], 0.0);
     }
 
-    operation(content, stroke);
+    operation(content, stroke)?;
 
     content.restore_state();
 
@@ -229,6 +230,7 @@ pub(crate) fn fill_path(
     let operation = |content: &mut Content, fill: &Fill| {
         draw_path(path.data().segments(), content);
         finish_path(None, Some(fill), content);
+        Ok(())
     };
 
     if let Some(path_fill) = path.fill() {
@@ -256,13 +258,13 @@ pub(crate) fn fill(
     content: &mut Content,
     ctx: &mut Context,
     rc: &mut ResourceContainer,
-    operation: impl Fn(&mut Content, &Fill),
+    operation: impl Fn(&mut Content, &Fill) -> Result<()>,
     accumulated_transform: Transform,
     bbox: Rect,
 ) -> Result<()> {
     let paint = &fill.paint();
 
-    content.save_state();
+    content.save_state_checked()?;
 
     match paint {
         Paint::Color(c) => {
@@ -307,7 +309,7 @@ pub(crate) fn fill(
         }
     }
 
-    operation(content, fill);
+    operation(content, fill)?;
     content.restore_state();
 
     Ok(())

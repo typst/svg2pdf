@@ -3,6 +3,7 @@ use pdf_writer::{Content, Name, Rect};
 use usvg::{LineCap, LineJoin, NonZeroRect, Transform};
 
 use crate::render::gradient::Stop;
+use crate::{ConversionError, Result};
 
 /// Extension trait to convert [Colors](usvg::Color) into PDF colors.
 pub trait ColorExt {
@@ -45,6 +46,21 @@ pub trait RectExt {
 impl RectExt for NonZeroRect {
     fn to_pdf_rect(&self) -> Rect {
         Rect::new(self.x(), self.y(), self.x() + self.width(), self.y() + self.height())
+    }
+}
+
+/// Extension trait for [Content].
+pub trait ContentExt {
+    fn save_state_checked(&mut self) -> Result<()>;
+}
+
+impl ContentExt for Content {
+    fn save_state_checked(&mut self) -> Result<()> {
+        self.save_state();
+        if self.state_nesting_depth() > 28 {
+            return Err(ConversionError::TooMuchNesting);
+        }
+        Ok(())
     }
 }
 
