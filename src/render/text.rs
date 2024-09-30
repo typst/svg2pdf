@@ -8,6 +8,7 @@ use crate::Result;
 use pdf_writer::types::{
     CidFontType, FontFlags, SystemInfo, TextRenderingMode, UnicodeCmap,
 };
+use pdf_writer::writers::WMode;
 use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref, Str};
 use siphasher::sip128::{Hasher128, SipHasher13};
 use std::collections::{BTreeMap, HashMap};
@@ -158,7 +159,7 @@ pub fn write_font(
     font_descriptor.finish();
 
     let cmap = create_cmap(glyph_set, glyph_remapper).ok_or(SubsetError(font.id))?;
-    chunk.cmap(cmap_ref, &cmap.finish());
+    chunk.cmap(cmap_ref, &cmap.finish()).writing_mode(WMode::Horizontal);
 
     // Subset and write the font's bytes.
     let data = subset_font(&font.face_data, font.face_index, glyph_remapper, font.id)?;
