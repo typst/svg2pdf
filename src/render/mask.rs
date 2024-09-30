@@ -3,7 +3,7 @@ use usvg::{Group, Mask, Transform};
 
 use super::group;
 use crate::util::context::Context;
-use crate::util::helper::{clip_to_rect, MaskTypeExt, NameExt, RectExt};
+use crate::util::helper::{clip_to_rect, ContentExt, MaskTypeExt, NameExt, RectExt};
 use crate::util::resources::ResourceContainer;
 use crate::Result;
 
@@ -34,7 +34,7 @@ pub fn create(
     let mut rc = ResourceContainer::new();
 
     let mut content = Content::new();
-    content.save_state();
+    content.save_state_checked()?;
 
     if let Some(mask) = mask.mask() {
         render(parent, mask, chunk, &mut content, ctx, &mut rc)?;

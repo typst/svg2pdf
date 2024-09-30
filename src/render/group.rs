@@ -7,7 +7,9 @@ use usvg::{Opacity, Transform};
 use super::filter;
 use super::{clip_path, mask, Render};
 use crate::util::context::Context;
-use crate::util::helper::{BlendModeExt, GroupExt, NameExt, RectExt, TransformExt};
+use crate::util::helper::{
+    BlendModeExt, ContentExt, GroupExt, NameExt, RectExt, TransformExt,
+};
 use crate::util::resources::ResourceContainer;
 use crate::Result;
 
@@ -36,7 +38,7 @@ pub fn render(
     let initial_opacity = initial_opacity.unwrap_or(Opacity::ONE);
 
     if group.is_isolated() || initial_opacity.get() != 1.0 {
-        content.save_state();
+        content.save_state_checked()?;
         let gs_ref = ctx.alloc_ref();
         let mut gs = chunk.ext_graphics(gs_ref);
         gs.non_stroking_alpha(group.opacity().mul(initial_opacity).get())
@@ -126,7 +128,7 @@ fn create_to_stream(
     accumulated_transform: Transform,
     rc: &mut ResourceContainer,
 ) -> Result<()> {
-    content.save_state();
+    content.save_state_checked()?;
     content.transform(group.transform().to_pdf_transform());
     let accumulated_transform = accumulated_transform.pre_concat(group.transform());
 

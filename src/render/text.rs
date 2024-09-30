@@ -1,13 +1,14 @@
 use crate::render::path;
 use crate::util::allocate::RefAllocator;
 use crate::util::context::Context;
-use crate::util::helper::{deflate, TransformExt};
+use crate::util::helper::{deflate, ContentExt, TransformExt};
 use crate::util::resources::ResourceContainer;
-use crate::ConversionError::{InvalidFont, SubsetError, UnknownError};
+use crate::ConversionError::{self, InvalidFont, SubsetError};
 use crate::Result;
 use pdf_writer::types::{
     CidFontType, FontFlags, SystemInfo, TextRenderingMode, UnicodeCmap,
 };
+use pdf_writer::writers::WMode;
 use pdf_writer::{Chunk, Content, Filter, Finish, Name, Ref, Str};
 use siphasher::sip128::{Hasher128, SipHasher13};
 use std::collections::{BTreeMap, HashMap};
@@ -19,6 +20,10 @@ use usvg::{Fill, Group, ImageKind, Node, PaintOrder, Stroke, Transform};
 
 const CFF: Tag = Tag::from_bytes(b"CFF ");
 const CFF2: Tag = Tag::from_bytes(b"CFF2");
+
+const SUBSET_TAG_LEN: usize = 6;
+const IDENTITY_H: &str = "Identity-H";
+
 const CMAP_NAME: Name = Name(b"Custom");
 const SYSTEM_INFO: SystemInfo = SystemInfo {
     registry: Str(b"Adobe"),
@@ -57,18 +62,14 @@ pub fn write_font(
         .or_else(|| ttf.raw_face().table(CFF2))
         .is_some();
 
-    let postscript_name = find_name(&ttf, name_id::POST_SCRIPT_NAME)
-        .unwrap_or_else(|| "unknown".to_string());
-
-    let subset_tag = subset_tag(glyph_set)?;
-    let base_font = format!("{subset_tag}+{postscript_name}");
+    let base_font = base_font_name(&ttf, glyph_set);
     let base_font_type0 =
-        if is_cff { format!("{base_font}-Identity-H") } else { base_font.clone() };
+        if is_cff { format!("{base_font}-{IDENTITY_H}") } else { base_font.clone() };
 
     chunk
         .type0_font(type0_ref)
         .base_font(Name(base_font_type0.as_bytes()))
-        .encoding_predefined(Name(b"Identity-H"))
+        .encoding_predefined(Name(IDENTITY_H.as_bytes()))
         .descendant_font(cid_ref)
         .to_unicode(cmap_ref);
 
@@ -106,7 +107,11 @@ pub fn write_font(
     cid.finish();
 
     let mut flags = FontFlags::empty();
-    flags.set(FontFlags::SERIF, postscript_name.contains("Serif"));
+    flags.set(
+        FontFlags::SERIF,
+        find_name(&ttf, name_id::POST_SCRIPT_NAME)
+            .is_some_and(|name| name.contains("Serif")),
+    );
     flags.set(FontFlags::FIXED_PITCH, ttf.is_monospaced());
     flags.set(FontFlags::ITALIC, ttf.is_italic());
     flags.insert(FontFlags::SYMBOLIC);
@@ -154,7 +159,7 @@ pub fn write_font(
     font_descriptor.finish();
 
     let cmap = create_cmap(glyph_set, glyph_remapper).ok_or(SubsetError(font.id))?;
-    chunk.cmap(cmap_ref, &cmap.finish());
+    chunk.cmap(cmap_ref, &cmap.finish()).writing_mode(WMode::Horizontal);
 
     // Subset and write the font's bytes.
     let data = subset_font(&font.face_data, font.face_index, glyph_remapper, font.id)?;
@@ -234,7 +239,7 @@ pub fn render(
             continue;
         }
 
-        let operation = |content: &mut Content| {
+        let operation = |content: &mut Content| -> Result<()> {
             for glyph in &span.positioned_glyphs {
                 let Some(font) = fonts.get(&glyph.font).and_then(|f| f.as_ref()) else {
                     continue;
@@ -243,6 +248,9 @@ pub fn render(
                 let name = font_names.get(&font.reference).unwrap();
 
                 // TODO: Remove unwraps and switch to error-based handling.
+                // NOTE(laurmaedje): If it can't happen, I think a panic is
+                // better. There is no way to handle it as a consumer of
+                // svg2pdf.
                 let cid = font.glyph_remapper.get(glyph.id.0).unwrap();
                 let ts = glyph
                     .outline_transform()
@@ -251,7 +259,7 @@ pub fn render(
                     // we want to leverage the native PDF font size feature instead, so we downscale
                     // it to a font size of 1.
                     .pre_scale(1.0 / span.font_size.get(), 1.0 / span.font_size.get());
-                content.save_state();
+                content.save_state_checked()?;
                 content.begin_text();
                 content.set_text_matrix(ts.to_pdf_transform());
                 content.set_font(Name(name.as_bytes()), span.font_size.get());
@@ -259,16 +267,18 @@ pub fn render(
                 content.end_text();
                 content.restore_state();
             }
+
+            Ok(())
         };
 
-        let stroke_operation = |content: &mut Content, _: &Stroke| {
+        let stroke_operation = |content: &mut Content, _: &Stroke| -> Result<()> {
             content.set_text_rendering_mode(TextRenderingMode::Stroke);
-            operation(content);
+            operation(content)
         };
 
-        let fill_operation = |content: &mut Content, _: &Fill| {
+        let fill_operation = |content: &mut Content, _: &Fill| -> Result<()> {
             content.set_text_rendering_mode(TextRenderingMode::Fill);
-            operation(content);
+            operation(content)
         };
 
         if let Some(overline) = &span.overline {
@@ -279,7 +289,7 @@ pub fn render(
             path::render(underline, chunk, content, ctx, rc, accumulated_transform)?;
         }
 
-        content.save_state();
+        content.save_state_checked()?;
         match (span.fill.as_ref(), span.stroke.as_ref()) {
             (Some(fill), Some(stroke)) => match span.paint_order {
                 PaintOrder::FillAndStroke => {
@@ -353,7 +363,7 @@ pub fn render(
             }
             (None, None) => {
                 content.set_text_rendering_mode(TextRenderingMode::Invisible);
-                operation(content);
+                operation(content)?;
             }
         };
 
@@ -367,17 +377,36 @@ pub fn render(
     Ok(())
 }
 
+/// Creates the base font name for a font with a specific glyph subset.
+/// Consists of a subset tag and the PostScript name of the font.
+///
+/// Returns a string of length maximum 116, so that even with `-Identity-H`
+/// added it does not exceed the maximum PDF/A name length of 127.
+fn base_font_name<T: Hash>(ttf: &Face, glyphs: &T) -> String {
+    const MAX_LEN: usize = 127 - REST_LEN;
+    const REST_LEN: usize = SUBSET_TAG_LEN + 1 + 1 + IDENTITY_H.len();
+
+    let postscript_name = find_name(ttf, name_id::POST_SCRIPT_NAME);
+    let name = postscript_name.as_deref().unwrap_or("unknown");
+    let trimmed = &name[..name.len().min(MAX_LEN)];
+
+    // Hash the full name (we might have trimmed) and the glyphs to produce
+    // a fairly unique subset tag.
+    let subset_tag = subset_tag(&(name, glyphs));
+
+    format!("{subset_tag}+{trimmed}")
+}
+
 /// Produce a unique 6 letter tag for a glyph set.
-fn subset_tag(glyphs: &mut BTreeMap<u16, String>) -> Result<String> {
-    const LEN: usize = 6;
+fn subset_tag<T: Hash>(glyphs: &T) -> String {
     const BASE: u128 = 26;
     let mut hash = hash128(&glyphs);
-    let mut letter = [b'A'; LEN];
+    let mut letter = [b'A'; SUBSET_TAG_LEN];
     for l in letter.iter_mut() {
         *l = b'A' + (hash % BASE) as u8;
         hash /= BASE;
     }
-    Ok(std::str::from_utf8(&letter).map_err(|_| UnknownError)?.to_string())
+    std::str::from_utf8(&letter).unwrap().into()
 }
 
 /// Calculate a 128-bit siphash of a value.
@@ -479,7 +508,11 @@ pub struct Font {
     pub face_index: u32,
 }
 
-pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
+pub fn fill_fonts(
+    group: &Group,
+    ctx: &mut Context,
+    fontdb: &fontdb::Database,
+) -> Result<()> {
     for child in group.children() {
         match child {
             Node::Text(t) => {
@@ -518,18 +551,28 @@ pub fn fill_fonts(group: &Group, ctx: &mut Context, fontdb: &fontdb::Database) {
                             font.glyph_set.insert(g.id.0, g.text.clone());
                             font.glyph_remapper.remap(g.id.0);
                         }
+
+                        if ctx.options.pdfa && g.id.0 == 0 {
+                            return Err(ConversionError::MissingGlyphs);
+                        }
                     }
                 }
             }
-            Node::Group(group) => fill_fonts(group, ctx, fontdb),
+            Node::Group(group) => fill_fonts(group, ctx, fontdb)?,
             Node::Image(image) => {
                 if let ImageKind::SVG(svg) = image.kind() {
-                    fill_fonts(svg.root(), ctx, fontdb);
+                    fill_fonts(svg.root(), ctx, fontdb)?;
                 }
             }
             _ => {}
         }
 
-        child.subroots(|subroot| fill_fonts(subroot, ctx, fontdb));
+        let mut result = Ok(());
+        child.subroots(|subroot| {
+            result = result.and(fill_fonts(subroot, ctx, fontdb));
+        });
+        result?;
     }
+
+    Ok(())
 }

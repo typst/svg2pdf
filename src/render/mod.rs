@@ -2,7 +2,7 @@ use pdf_writer::{Chunk, Content, Filter, Finish, Ref};
 use usvg::{Node, Transform, Tree};
 
 use crate::util::context::Context;
-use crate::util::helper::{RectExt, TransformExt};
+use crate::util::helper::{ContentExt, RectExt, TransformExt};
 use crate::util::resources::ResourceContainer;
 use crate::Result;
 
@@ -28,7 +28,7 @@ pub fn tree_to_stream(
     ctx: &mut Context,
     rc: &mut ResourceContainer,
 ) -> Result<()> {
-    content.save_state();
+    content.save_state_checked()?;
 
     // From PDF coordinate system to SVG coordinate system
     let initial_transform =

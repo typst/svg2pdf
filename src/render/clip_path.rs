@@ -6,7 +6,9 @@ use usvg::{ClipPath, FillRule, Group, Node, Transform};
 use super::group;
 use super::path::draw_path;
 use crate::util::context::Context;
-use crate::util::helper::{bbox_to_non_zero_rect, NameExt, RectExt, TransformExt};
+use crate::util::helper::{
+    bbox_to_non_zero_rect, ContentExt, NameExt, RectExt, TransformExt,
+};
 use crate::util::resources::ResourceContainer;
 use crate::Result;
 
@@ -181,7 +183,7 @@ fn create_complex_clip_path(
     let x_ref = ctx.alloc_ref();
 
     let mut content = Content::new();
-    content.save_state();
+    content.save_state_checked()?;
 
     if let Some(clip_path) = clip_path.clip_path() {
         render(parent, clip_path, chunk, &mut content, ctx, &mut rc)?;
