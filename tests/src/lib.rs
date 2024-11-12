@@ -11,8 +11,7 @@ use image::ImageReader;
 use image::{Rgba, RgbaImage};
 use once_cell::sync::Lazy;
 use oxipng::{InFile, OutFile};
-use pdfium_render::pdfium::Pdfium;
-use pdfium_render::prelude::{PdfColor, PdfRenderConfig};
+use pdfium_render::prelude::{PdfColor, PdfRenderConfig, Pdfium};
 use usvg::Tree;
 
 use svg2pdf::{ConversionOptions, PageOptions};
