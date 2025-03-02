@@ -19,7 +19,7 @@ enum PendingResourceType {
 }
 
 impl PendingResourceType {
-    fn get_dict<'a>(&'a self, resources: &'a mut Resources) -> Dict {
+    fn get_dict<'a>(&'a self, resources: &'a mut Resources) -> Dict<'a> {
         match *self {
             PendingResourceType::XObject => resources.x_objects(),
             PendingResourceType::Pattern => resources.patterns(),
