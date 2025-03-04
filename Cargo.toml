@@ -4,7 +4,7 @@ default-members = ["cli"]
 resolver = "2"
 
 [workspace.package]
-version = "0.12.0"
+version = "0.13.0"
 authors = ["Laurenz Stampfl <laurenz.stampfl@gmail.com>", "Martin Haug <mhaug@live.de>"]
 edition = "2021"
 repository = "https://github.com/typst/svg2pdf"
@@ -13,7 +13,7 @@ license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 log = "0.4"
-svg2pdf = { path = ".", default-features = false, version = "0.12.0" }
+svg2pdf = { path = ".", default-features = false, version = "0.13.0" }
 clap = { version = "4.5", features = ["derive"] }
 clap_complete = "4.5"
 clap_mangen = "0.2"

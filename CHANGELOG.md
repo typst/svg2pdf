@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.13.0]
 
 ### Changed
 - Bumped resvg to v0.45, fontdb to v0.23, ttf-parser to v0.25, and pdf-writer to v0.12.
@@ -60,3 +60,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.10.0]: https://github.com/typst/svg2pdf/compare/v0.9.1...v0.10.0
 [0.11.0]: https://github.com/typst/svg2pdf/compare/v0.10.0...v0.11.0
 [0.12.0]: https://github.com/typst/svg2pdf/compare/v0.11.0...v0.12.0
+[0.13.0]: https://github.com/typst/svg2pdf/compare/v0.12.0...v0.13.0
