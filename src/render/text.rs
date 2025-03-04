@@ -127,7 +127,7 @@ pub fn write_font(
         convert(global_bbox.y_max as f32),
     );
 
-    let italic_angle = ttf.italic_angle().unwrap_or(0.0);
+    let italic_angle = ttf.italic_angle();
     let ascender = convert(ttf.typographic_ascender().unwrap_or(ttf.ascender()) as f32);
     let descender =
         convert(ttf.typographic_descender().unwrap_or(ttf.descender()) as f32);
