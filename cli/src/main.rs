@@ -32,7 +32,13 @@ fn run() -> Result<(), String> {
 
         let page_options = PageOptions { dpi: args.dpi };
 
-        return convert::convert_(&input, args.output, conversion_options, page_options);
+        return convert::convert_(
+            &input,
+            args.output,
+            conversion_options,
+            page_options,
+            args.font,
+        );
     };
 
     // Otherwise execute the command provided if any.

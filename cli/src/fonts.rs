@@ -7,6 +7,10 @@ pub fn fonts(command: &FontsCommand) -> Result<(), String> {
     let mut fontdb = fontdb::Database::new();
     fontdb.load_system_fonts();
 
+    for font_path in &command.font.font_paths {
+        fontdb.load_fonts_dir(font_path);
+    }
+
     // Collect the font famillies.
     let mut font_families: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for face in fontdb.faces() {
