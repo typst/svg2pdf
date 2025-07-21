@@ -65,4 +65,9 @@ pub struct FontsArgs {
     /// separator (`:` on Unix-like systems and `;` on Windows).
     #[arg(long = "font-path", value_name = "DIR", value_delimiter = ENV_PATH_SEP)]
     pub font_paths: Vec<PathBuf>,
+
+    /// Ensures system fonts won't be used, unless explicitly included via
+    /// `--font-path`.
+    #[arg(long)]
+    pub ignore_system_fonts: bool,
 }

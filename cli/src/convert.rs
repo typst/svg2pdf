@@ -17,7 +17,10 @@ pub fn convert_(
     }
 
     let mut fontdb = fontdb::Database::new();
-    fontdb.load_system_fonts();
+
+    if !font_options.ignore_system_fonts {
+        fontdb.load_system_fonts();
+    }
 
     for font_path in &font_options.font_paths {
         fontdb.load_fonts_dir(font_path);

@@ -5,7 +5,10 @@ use std::collections::BTreeMap;
 pub fn fonts(command: &FontsCommand) -> Result<(), String> {
     // Prepare the font database.
     let mut fontdb = fontdb::Database::new();
-    fontdb.load_system_fonts();
+
+    if !command.font.ignore_system_fonts {
+        fontdb.load_system_fonts();
+    }
 
     for font_path in &command.font.font_paths {
         fontdb.load_fonts_dir(font_path);
