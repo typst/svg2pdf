@@ -3,18 +3,28 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use svg2pdf::{ConversionOptions, PageOptions};
 
+use crate::args::FontsArgs;
+
 pub fn convert_(
     input: &PathBuf,
     output: Option<PathBuf>,
     conversion_options: ConversionOptions,
     page_options: PageOptions,
+    font_options: FontsArgs,
 ) -> Result<(), String> {
     if let Ok(()) = log::set_logger(&LOGGER) {
         log::set_max_level(log::LevelFilter::Warn);
     }
 
     let mut fontdb = fontdb::Database::new();
-    fontdb.load_system_fonts();
+
+    if !font_options.ignore_system_fonts {
+        fontdb.load_system_fonts();
+    }
+
+    for font_path in &font_options.font_paths {
+        fontdb.load_fonts_dir(font_path);
+    }
 
     fontdb.set_serif_family("Times New Roman");
     fontdb.set_sans_serif_family("Arial");

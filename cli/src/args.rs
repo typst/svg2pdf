@@ -1,6 +1,10 @@
 use clap::{ArgAction, Parser, Subcommand};
 use std::path::PathBuf;
 
+/// The character typically used to separate path components
+/// in environment variables.
+const ENV_PATH_SEP: char = if cfg!(windows) { ';' } else { ':' };
+
 #[derive(Debug, Parser)]
 #[clap(about, version)]
 pub struct CliArguments {
@@ -26,6 +30,10 @@ pub struct CliArguments {
     /// How much raster images of rasterized effects should be scaled up.
     #[clap(long, default_value = "1.5")]
     pub raster_scale: f32,
+
+    /// Common font arguments.
+    #[command(flatten)]
+    pub font: FontsArgs,
 }
 
 // What to do.
@@ -42,4 +50,24 @@ pub struct FontsCommand {
     /// Also lists style variants of each font family
     #[arg(long)]
     pub all: bool,
+
+    /// Common font arguments.
+    #[command(flatten)]
+    pub font: FontsArgs,
+}
+
+/// Common arguments to customize available fonts.
+#[derive(Debug, Clone, Parser)]
+pub struct FontsArgs {
+    /// Adds additional directories to search for fonts.
+    ///
+    /// If multiple paths are specified, they are separated by the system's path
+    /// separator (`:` on Unix-like systems and `;` on Windows).
+    #[arg(long = "font-path", value_name = "DIR", value_delimiter = ENV_PATH_SEP)]
+    pub font_paths: Vec<PathBuf>,
+
+    /// Ensures system fonts won't be used, unless explicitly included via
+    /// `--font-path`.
+    #[arg(long)]
+    pub ignore_system_fonts: bool,
 }
