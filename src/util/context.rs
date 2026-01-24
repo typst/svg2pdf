@@ -108,7 +108,7 @@ impl Context {
         if self.options.compress {
             deflate(&content.finish())
         } else {
-            content.finish()
+            content.finish().into_vec()
         }
     }
 }
