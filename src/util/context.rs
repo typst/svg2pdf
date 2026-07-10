@@ -6,6 +6,7 @@ use {
     crate::render::text,
     crate::render::text::{write_font, Font},
     std::collections::HashMap,
+    std::sync::Arc,
     usvg::fontdb::ID,
 };
 
@@ -27,8 +28,20 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new(
-        #[allow(unused_variables)] tree: &Tree,
+    pub fn new(tree: &Tree, options: ConversionOptions) -> Result<Self> {
+        Self::new_multi(&[tree], options)
+    }
+
+    /// Create a context whose accumulated font set covers *all* of the given
+    /// trees.
+    ///
+    /// Because `fill_fonts` is additive and subsetting is deferred to
+    /// [`Self::write_global_objects`], running it for every tree up front means
+    /// each font is later written as a single union subset shared by all pages.
+    /// This is what lets [`crate::trees_to_pdf`] deduplicate fonts across the
+    /// pages of a multi-page document.
+    pub fn new_multi(
+        #[allow(unused_variables)] trees: &[&Tree],
         options: ConversionOptions,
     ) -> Result<Self> {
         #[allow(unused_mut)]
@@ -43,7 +56,19 @@ impl Context {
 
         #[cfg(feature = "text")]
         if options.embed_text {
-            text::fill_fonts(tree.root(), &mut ctx, tree.fontdb().as_ref())?;
+            // Fonts are keyed by `fontdb::ID`, which is only unique within a
+            // single database. Accumulating fonts from trees backed by different
+            // databases would merge unrelated faces under colliding IDs and
+            // silently emit the wrong glyphs, so require one shared database.
+            if let Some((first, rest)) = trees.split_first() {
+                if rest.iter().any(|tree| !Arc::ptr_eq(tree.fontdb(), first.fontdb())) {
+                    return Err(crate::ConversionError::MismatchedFontDatabases);
+                }
+            }
+
+            for tree in trees {
+                text::fill_fonts(tree.root(), &mut ctx, tree.fontdb().as_ref())?;
+            }
         }
 
         Ok(ctx)

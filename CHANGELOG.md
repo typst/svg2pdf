@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- New `trees_to_pdf` function that converts several SVG trees into a single multi-page PDF, one page per tree. Fonts and color profiles are embedded once and shared across all pages, so a multi-page document is much smaller than concatenating the output of `to_pdf` for each tree. `to_pdf` is now a thin wrapper over `trees_to_pdf`.
+- New `ConversionError::EmptyDocument` and `ConversionError::MismatchedFontDatabases` variants, returned by `trees_to_pdf` when it is given no trees, or trees created from different font databases, respectively.
+
 ### Changed
 - Bumped resvg to v0.46, pdf-writer to v0.14, oxi-png to v10, and miniz_oxide to v0.9.
 

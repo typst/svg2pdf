@@ -101,6 +101,14 @@ pub enum ConversionError {
     MissingGlyphs,
     /// Converting the SVG would require too much nesting depth.
     TooMuchNesting,
+    /// No trees were provided for conversion. A PDF must contain at least one
+    /// page, so an empty document cannot be produced.
+    EmptyDocument,
+    /// Trees passed to [`trees_to_pdf`] were created from different font
+    /// databases. Fonts are keyed per database, so all trees must share one;
+    /// otherwise their glyphs could be mixed up. Only reported when text is
+    /// being embedded.
+    MismatchedFontDatabases,
     /// An unknown error occurred during the conversion. This could indicate a bug in the
     /// svg2pdf.
     UnknownError,
@@ -118,6 +126,8 @@ impl Display for ConversionError {
             Self::InvalidImage => f.write_str("An unknown type of image appears in the SVG."),
             Self::MissingGlyphs => f.write_str("A piece of text could not be displayed with any font."),
             Self::TooMuchNesting => f.write_str("The SVG's nesting depth is too high."),
+            Self::EmptyDocument => f.write_str("No SVG trees were provided; a PDF must contain at least one page."),
+            Self::MismatchedFontDatabases => f.write_str("The provided trees do not all share the same font database."),
             Self::UnknownError => f.write_str("An unknown error occurred during the conversion. This could indicate a bug in svg2pdf"),
             #[cfg(feature = "text")]
             Self::SubsetError(_) => f.write_str("An error occurred while subsetting a font."),
@@ -177,6 +187,9 @@ impl Default for ConversionOptions {
 
 /// Convert a [`usvg` tree](Tree) into a standalone PDF buffer.
 ///
+/// To convert several trees into a single multi-page PDF that embeds shared
+/// fonts and color profiles only once, use [`trees_to_pdf`].
+///
 /// ## Example
 /// The example below reads an SVG file, processes text within it, then converts
 /// it into a PDF and finally writes it back to the file system.
@@ -205,54 +218,140 @@ pub fn to_pdf(
     conversion_options: ConversionOptions,
     page_options: PageOptions,
 ) -> Result<Vec<u8>> {
-    let mut ctx = Context::new(tree, conversion_options)?;
+    trees_to_pdf(&[tree], conversion_options, page_options)
+}
+
+/// Convert several [`usvg` trees](Tree) into a single multi-page PDF buffer,
+/// with one page per tree.
+///
+/// Fonts and color profiles are accumulated across all trees and embedded only
+/// once, shared by every page. As a result the produced document is
+/// substantially smaller than concatenating the output of [`to_pdf`] for each
+/// tree, which would re-embed each font subset and ICC profile on every page.
+///
+/// Each page's size is derived from its own tree (scaled by
+/// [`PageOptions::dpi`]), so pages may differ in size.
+///
+/// When embedding text, all trees **must** be created from the same
+/// [font database](usvg::fontdb::Database) — typically by parsing them with a
+/// single [`usvg::Options`] — because fonts are keyed by their
+/// [`fontdb::ID`], which is only unique within one database. Passing trees from
+/// different databases returns [`ConversionError::MismatchedFontDatabases`]
+/// rather than silently rendering the wrong glyphs.
+///
+/// Passing an empty slice returns [`ConversionError::EmptyDocument`], because a
+/// PDF must contain at least one page. Conversely,
+/// `trees_to_pdf(&[&tree], ..)` is equivalent to `to_pdf(&tree, ..)`.
+///
+/// ## Example
+/// The example below reads two SVG files and combines them into a single
+/// two-page PDF. Any font used by both files is embedded only once.
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use svg2pdf::{ConversionOptions, PageOptions};
+///
+/// let paths = [
+///     "tests/svg/custom/integration/matplotlib/stairs.svg",
+///     "tests/svg/custom/integration/matplotlib/signals.svg",
+/// ];
+///
+/// // Parse every SVG with the same options (and thus the same font database)
+/// // so that shared fonts can be deduplicated across pages.
+/// let mut options = svg2pdf::usvg::Options::default();
+/// options.fontdb_mut().load_system_fonts();
+///
+/// let mut trees = Vec::new();
+/// for path in paths {
+///     let svg = std::fs::read_to_string(path)?;
+///     trees.push(svg2pdf::usvg::Tree::from_str(&svg, &options)?);
+/// }
+///
+/// let tree_refs = trees.iter().collect::<Vec<_>>();
+/// let pdf = svg2pdf::trees_to_pdf(
+///     &tree_refs,
+///     ConversionOptions::default(),
+///     PageOptions::default(),
+/// )
+/// .unwrap();
+/// std::fs::write("target/report.pdf", pdf)?;
+/// # Ok(()) }
+/// ```
+pub fn trees_to_pdf(
+    trees: &[&Tree],
+    conversion_options: ConversionOptions,
+    page_options: PageOptions,
+) -> Result<Vec<u8>> {
+    if trees.is_empty() {
+        return Err(ConversionError::EmptyDocument);
+    }
+
+    let mut ctx = Context::new_multi(trees, conversion_options)?;
     let mut pdf = Pdf::new();
 
     let dpi_ratio = 72.0 / page_options.dpi;
     let dpi_transform = Transform::from_scale(dpi_ratio, dpi_ratio);
-    let page_size =
-        Size::from_wh(tree.size().width() * dpi_ratio, tree.size().height() * dpi_ratio)
-            .ok_or(UnknownError)?;
 
     let catalog_ref = ctx.alloc_ref();
     let page_tree_ref = ctx.alloc_ref();
-    let page_ref = ctx.alloc_ref();
-    let content_ref = ctx.alloc_ref();
-
     pdf.catalog(catalog_ref).pages(page_tree_ref);
-    pdf.pages(page_tree_ref).count(1).kids([page_ref]);
 
-    // Generate main content
-    let mut rc = ResourceContainer::new();
-    let mut content = Content::new();
-    content.save_state_checked()?;
-    content.transform(dpi_transform.to_pdf_transform());
-    tree_to_stream(tree, &mut pdf, &mut content, &mut ctx, &mut rc)?;
-    content.restore_state();
-    let content_stream = ctx.finish_content(content);
-    let mut stream = pdf.stream(content_ref, &content_stream);
+    // Write one page per tree, all sharing the same `Context` so that its fonts
+    // and color profiles are emitted only once, in `write_global_objects` below.
+    let mut page_refs = Vec::with_capacity(trees.len());
+    for &tree in trees {
+        let page_size = Size::from_wh(
+            tree.size().width() * dpi_ratio,
+            tree.size().height() * dpi_ratio,
+        )
+        .ok_or(UnknownError)?;
 
-    if ctx.options.compress {
-        stream.filter(Filter::FlateDecode);
+        let page_ref = ctx.alloc_ref();
+        let content_ref = ctx.alloc_ref();
+        page_refs.push(page_ref);
+
+        // Each page gets a fresh resource dictionary, but the font/XObject refs
+        // it names come from the shared context, so identical resources resolve
+        // to the same objects on every page.
+        let mut rc = ResourceContainer::new();
+        let mut content = Content::new();
+        content.save_state_checked()?;
+        content.transform(dpi_transform.to_pdf_transform());
+        tree_to_stream(tree, &mut pdf, &mut content, &mut ctx, &mut rc)?;
+        content.restore_state();
+        let content_stream = ctx.finish_content(content);
+        let mut stream = pdf.stream(content_ref, &content_stream);
+
+        if ctx.options.compress {
+            stream.filter(Filter::FlateDecode);
+        }
+        stream.finish();
+
+        let mut page = pdf.page(page_ref);
+        let mut page_resources = page.resources();
+        rc.finish(&mut page_resources);
+        page_resources.finish();
+
+        page.media_box(page_size.to_non_zero_rect(0.0, 0.0).to_pdf_rect());
+        page.parent(page_tree_ref);
+        // The sRGB reference is shared across pages, so every page's transparency
+        // group points at the same ICC profile object.
+        page.group()
+            .transparency()
+            .isolated(true)
+            .knockout(false)
+            .color_space()
+            .icc_based(ctx.srgb_ref());
+        page.contents(content_ref);
+        page.finish();
     }
-    stream.finish();
 
-    let mut page = pdf.page(page_ref);
-    let mut page_resources = page.resources();
-    rc.finish(&mut page_resources);
-    page_resources.finish();
+    pdf.pages(page_tree_ref)
+        .count(page_refs.len() as i32)
+        .kids(page_refs.iter().copied());
 
-    page.media_box(page_size.to_non_zero_rect(0.0, 0.0).to_pdf_rect());
-    page.parent(page_tree_ref);
-    page.group()
-        .transparency()
-        .isolated(true)
-        .knockout(false)
-        .color_space()
-        .icc_based(ctx.srgb_ref());
-    page.contents(content_ref);
-    page.finish();
-
+    // Fonts and ICC profiles accumulated across every page are written exactly
+    // once here — the whole reason for sharing a single context.
     ctx.write_global_objects(&mut pdf)?;
 
     let document_info_id = ctx.alloc_ref();

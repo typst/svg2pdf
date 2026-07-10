@@ -1,6 +1,7 @@
 #[rustfmt::skip]
 mod render;
 mod api;
+mod multi_page;
 
 use std::cmp::max;
 use std::fs;
@@ -40,25 +41,36 @@ static PDFIUM: Lazy<std::sync::Mutex<Pdfium>> = Lazy::new(|| {
     std::sync::Mutex::new(pdfium)
 });
 
-/// Converts a PDF into a png image.
+/// Converts a PDF into a png image, rendering its first page.
 pub fn render_pdf(pdf: &[u8]) -> RgbaImage {
+    render_pdf_page(pdf, 0)
+}
+
+/// Renders a specific (0-indexed) page of a PDF into a png image.
+pub fn render_pdf_page(pdf: &[u8], page_index: u16) -> RgbaImage {
     let pdfium = PDFIUM.lock().unwrap();
-    let document = pdfium.load_pdf_from_byte_slice(pdf, None);
+    let document = pdfium.load_pdf_from_byte_slice(pdf, None).unwrap();
 
     let render_config = PdfRenderConfig::new()
         .clear_before_rendering(true)
         .set_clear_color(PdfColor::new(255, 255, 255, 0));
 
     let result = document
-        .unwrap()
         .pages()
-        .first()
+        .get(page_index)
         .unwrap()
         .render_with_config(&render_config)
         .unwrap()
         .as_image()
         .into_rgba8();
     result
+}
+
+/// Returns the number of pages pdfium finds in a PDF.
+pub fn pdf_page_count(pdf: &[u8]) -> usize {
+    let pdfium = PDFIUM.lock().unwrap();
+    let document = pdfium.load_pdf_from_byte_slice(pdf, None).unwrap();
+    document.pages().len() as usize
 }
 
 /// Converts an SVG string into a usvg Tree
