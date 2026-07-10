@@ -1,3 +1,7 @@
+**Note: This project is not maintained anymore. Use [krilla](https://github.com/LaurenzV/krilla) with [krilla-svg](https://github.com/LaurenzV/krilla/tree/main/crates/krilla-svg) instead.**
+
+---
+
 # svg2pdf
 
 [![Build status](https://github.com/typst/svg2pdf/workflows/Continuous%20integration/badge.svg)](https://github.com/typst/svg2pdf/actions)
