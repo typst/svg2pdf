@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Re-exported `pdf-writer` at the crate root (`svg2pdf::pdf_writer`), mirroring the existing `usvg` re-export, so consumers of `to_chunk` can use a version-matched `pdf-writer` without separately pinning it.
+
 ### Changed
 - Bumped resvg to v0.46, pdf-writer to v0.14, oxi-png to v10, and miniz_oxide to v0.9.
 

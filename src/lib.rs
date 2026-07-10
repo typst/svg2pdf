@@ -56,6 +56,7 @@ Among the unsupported features are currently:
 mod render;
 mod util;
 
+pub use pdf_writer;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 pub use usvg;
